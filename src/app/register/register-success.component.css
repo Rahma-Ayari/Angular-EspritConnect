@@ -1,0 +1,176 @@
+:host {
+  --esprit-red: #CC0000;
+  --text-dark: #333;
+  --text-grey: #666;
+  --bg-light: #f8f9fa;
+}
+
+.success-page {
+  min-height: 100vh;
+  background: var(--bg-light);
+  font-family: 'Outfit', sans-serif;
+}
+
+.page-header {
+  padding: 20px 40px;
+  background: white;
+  border-bottom: 1px solid #eee;
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.esprit-logo {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+}
+
+.tagline {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: -10px;
+  margin-left: 100px;
+}
+
+.univ-logo {
+  font-size: 11px;
+  letter-spacing: 2px;
+  margin-top: 5px;
+  border-top: 1px solid var(--esprit-red);
+  padding-top: 2px;
+  width: fit-content;
+}
+
+.page-content {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.card {
+  background: white;
+  width: 100%;
+  max-width: 1000px;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+/* Stepper */
+.stepper-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 60px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #666;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.step.active .step-circle {
+  background: var(--esprit-red);
+}
+
+.step-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-grey);
+}
+
+.step.active .step-text {
+  color: var(--esprit-red);
+}
+
+.step-line {
+  flex: 1;
+  max-width: 150px;
+  height: 1px;
+  background: #ddd;
+  margin: 0 15px;
+}
+
+/* Verification Box */
+.verification-box {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 25px;
+}
+
+.intro {
+  font-size: 16px;
+  color: var(--text-grey);
+  line-height: 1.5;
+}
+
+.email-address {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 20px 0;
+}
+
+.resend-link {
+  color: var(--esprit-red);
+  text-decoration: underline;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 30px;
+}
+
+.footer-note {
+  font-size: 14px;
+  color: var(--text-grey);
+}
+
+.admin-notice {
+    background: #FFF9E6;
+    border: 1px solid #FFE58F;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 30px;
+    color: #856404;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.btn-login {
+    margin-top: 20px;
+    background: var(--esprit-red);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-login:hover {
+    background: #A30000;
+}

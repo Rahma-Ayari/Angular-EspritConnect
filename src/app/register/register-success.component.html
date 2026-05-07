@@ -1,0 +1,59 @@
+<div class="success-page">
+  
+  <!-- Header with Logo -->
+  <header class="page-header">
+    <div class="logo-container">
+      <img src="https://esprit.tn/assets/images/esprit-logo.png" alt="Esprit Logo" class="esprit-logo">
+      <div class="tagline">Se former autrement</div>
+      <div class="univ-logo">HONORIS UNITED UNIVERSITIES</div>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <div class="card">
+      
+      <!-- Horizontal Stepper -->
+      <div class="stepper-horizontal">
+        <div class="step active">
+          <div class="step-circle">1</div>
+          <div class="step-text">Profil de base</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step disabled">
+          <div class="step-circle">2</div>
+          <div class="step-text">Profil avancé</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step disabled">
+          <div class="step-circle">3</div>
+          <div class="step-text">Disponible pour une aide</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step disabled">
+          <div class="step-circle">4</div>
+          <div class="step-text">Recherche d'aide</div>
+        </div>
+      </div>
+
+      <div class="verification-box">
+        <h1>Vérification du e-mail</h1>
+        <p class="intro">Nous devons être certains que cet e-mail est bien le vôtre. Veuillez cliquer sur le lien que nous avons envoyé à</p>
+        
+        <p class="email-address">{{ email }}</p>
+        
+        <a href="javascript:void(0)" class="resend-link">Envoyer l'e-mail à nouveau</a>
+
+        <p class="footer-note">Si vous ne voyez pas cet e-mail dans votre boîte de réception, vérifiez votre dossier de courrier indésirable.</p>
+        
+        <div class="admin-notice">
+          <i class="bi bi-clock-history"></i>
+          Votre compte est en attente de validation par l'administrateur.
+        </div>
+
+        <button class="btn-login" (click)="goToLogin()">Retour à la connexion</button>
+      </div>
+
+    </div>
+  </main>
+
+</div>

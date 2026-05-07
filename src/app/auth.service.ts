@@ -47,9 +47,7 @@ export class AuthService {
 
   // ── Register ───────────────────────────────────────────────────────────────
   register(req: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.API}/register`, req).pipe(
-      tap(res => this.storeSession(res))
-    );
+    return this.http.post<AuthResponse>(`${this.API}/register`, req);
   }
 
   // ── Logout ─────────────────────────────────────────────────────────────────

@@ -8,6 +8,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { RegisterComponent } from './register/register.component';
+import { RegisterSuccessComponent } from './register/register-success.component';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
@@ -16,7 +18,9 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
   declarations: [
     AppComponent,
     LoginComponent,
-    DashboardComponent
+    DashboardComponent,
+    RegisterComponent,
+    RegisterSuccessComponent
   ],
   imports: [
     BrowserModule,
