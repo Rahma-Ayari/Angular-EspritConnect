@@ -1,10 +1,11 @@
 <div class="app-shell" [class.sidebar-collapsed]="!sidebarOpen">
 
-  <!-- ══ SIDEBAR ══════════════════════════════════════════════════════════════ -->
+  <!-- ══ SIDEBAR ══ -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="brand-mark">
         <span class="brand-logo-text">esprit</span>
+        <span class="brand-logo-mini">e</span>
       </div>
       <button class="toggle-btn" (click)="toggleSidebar()">
         <i class="bi" [class.bi-layout-sidebar]="sidebarOpen"
@@ -16,7 +17,7 @@
       <ul>
         <li *ngFor="let item of navItems">
           <a class="nav-link" [class.active]="activeNav === item.id"
-             (click)="setNav(item.id)">
+             (click)="setNav(item.id)" [title]="!sidebarOpen ? item.label : ''">
             <span class="nav-icon"><i class="bi" [class]="'bi ' + item.icon"></i></span>
             <span class="nav-label">{{ item.label }}</span>
             <span class="nav-indicator" *ngIf="activeNav === item.id"></span>
@@ -39,7 +40,7 @@
     </div>
   </aside>
 
-  <!-- ══ MAIN ══════════════════════════════════════════════════════════════════ -->
+  <!-- ══ MAIN ══ -->
   <main class="main-content">
 
     <!-- Top bar -->
@@ -63,45 +64,47 @@
       </div>
     </header>
 
-    <!-- ── CONTENT AREA ─────────────────────────────────────────────────────── -->
+    <!-- ── CONTENT AREA ── -->
     <div class="content-area">
 
-      <!-- Welcome Strip -->
-      <div class="welcome-strip">
-        <div class="welcome-left">
-          <p class="welcome-label">{{ greeting }},</p>
-          <h1 class="welcome-name">{{ user?.nom || 'Étudiant' }} 👋</h1>
-          <p class="welcome-sub">Votre snapshot carrière du jour</p>
+      <!-- Welcome & Stats Banner -->
+      <section class="dashboard-header">
+        <div class="welcome-strip">
+          <div class="welcome-left">
+            <p class="welcome-label">{{ greeting }},</p>
+            <h1 class="welcome-name">{{ user?.nom || 'Étudiant' }} 👋</h1>
+            <p class="welcome-sub">Votre snapshot carrière du jour</p>
+          </div>
+          <div class="welcome-actions">
+            <button class="btn-ghost"><i class="bi bi-chat-dots"></i> AI Assistant</button>
+            <button class="btn-primary"><i class="bi bi-person-check"></i> Améliorer mon profil</button>
+          </div>
         </div>
-        <div class="welcome-actions">
-          <button class="btn-ghost"><i class="bi bi-chat-dots"></i> AI Assistant</button>
-          <button class="btn-primary"><i class="bi bi-person-check"></i> Améliorer mon profil</button>
-        </div>
-      </div>
 
-      <!-- ── GRID ──────────────────────────────────────────────────────────── -->
+        <!-- Stats Row (Moved here for full-width impact) -->
+        <div class="stats-row">
+          <div class="stat-card" *ngFor="let s of stats">
+            <div class="stat-icon" [style.background]="s.color + '18'">
+              <i class="bi" [class]="'bi ' + s.icon" [style.color]="s.color"></i>
+            </div>
+            <div class="stat-body">
+              <p class="stat-label">{{ s.label }}</p>
+              <h3 class="stat-value">{{ s.value }}</h3>
+            </div>
+            <span class="stat-delta" [class.up]="s.trend==='up'" [class.down]="s.trend==='down'">
+              <i class="bi" [class.bi-arrow-up-short]="s.trend==='up'"
+                            [class.bi-arrow-down-short]="s.trend==='down'"></i>
+              {{ s.delta }}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── MAIN GRID ── -->
       <div class="dashboard-grid">
 
-        <!-- ── COL LEFT ──────────────────────────────────────────────────── -->
+        <!-- ── LEFT COLUMN ── -->
         <div class="col-main">
-
-          <!-- Stats Row -->
-          <div class="stats-row">
-            <div class="stat-card" *ngFor="let s of stats">
-              <div class="stat-icon" [style.background]="s.color + '18'">
-                <i class="bi" [class]="'bi ' + s.icon" [style.color]="s.color"></i>
-              </div>
-              <div class="stat-body">
-                <p class="stat-label">{{ s.label }}</p>
-                <h3 class="stat-value">{{ s.value }}</h3>
-              </div>
-              <span class="stat-delta" [class.up]="s.trend==='up'" [class.down]="s.trend==='down'">
-                <i class="bi" [class.bi-arrow-up-short]="s.trend==='up'"
-                              [class.bi-arrow-down-short]="s.trend==='down'"></i>
-                {{ s.delta }}
-              </span>
-            </div>
-          </div>
 
           <!-- Readiness Card -->
           <div class="card readiness-card">
@@ -116,7 +119,6 @@
             </div>
 
             <div class="readiness-body">
-              <!-- SVG Ring -->
               <div class="ring-wrap">
                 <svg viewBox="0 0 120 120" class="ring-svg">
                   <circle cx="60" cy="60" r="54" fill="none" stroke="#f0f0f0" stroke-width="10"/>
@@ -140,7 +142,6 @@
                 </div>
               </div>
 
-              <!-- Tasks -->
               <div class="readiness-tasks">
                 <div class="task-item" *ngFor="let t of readinessTasks; let i = index">
                   <div class="task-check" [class.done]="t.done" (click)="t.done = !t.done">
@@ -188,7 +189,7 @@
 
         </div>
 
-        <!-- ── COL RIGHT ─────────────────────────────────────────────────── -->
+        <!-- ── RIGHT COLUMN (Sidebar) ── -->
         <div class="col-side">
 
           <!-- AI Assistant -->
@@ -202,8 +203,7 @@
             </div>
             <p class="ai-text">
               Basé sur votre profil et activité récente, je recommande de vous concentrer sur les rôles
-              <a class="ai-link">Frontend Development</a>. Vous avez de solides compétences React, et il y a
-              <a class="ai-link">12 nouvelles positions</a> correspondant à votre profil à 85%+.
+              <a class="ai-link">Frontend Development</a>. Vous avez de solides compétences React.
             </p>
             <button class="btn-ai">Analyser mon profil <i class="bi bi-arrow-right"></i></button>
           </div>
@@ -226,15 +226,14 @@
             </div>
           </div>
 
-          <!-- Skills Radar -->
+          <!-- Skills -->
           <div class="card skills-card">
             <h2 class="card-title"><i class="bi bi-patch-check"></i> Mes compétences clés</h2>
             <div class="skills-list">
               <div class="skill-row" *ngFor="let s of [
                 {name:'Angular', pct:80, color:'#CC0000'},
                 {name:'Spring Boot', pct:70, color:'#7C3AED'},
-                {name:'MySQL', pct:65, color:'#059669'},
-                {name:'Docker', pct:50, color:'#D97706'}
+                {name:'MySQL', pct:65, color:'#059669'}
               ]">
                 <div class="skill-header">
                   <span>{{ s.name }}</span>
@@ -248,6 +247,7 @@
           </div>
 
         </div>
+
       </div>
     </div>
   </main>
