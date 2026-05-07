@@ -1,0 +1,115 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  nom: string;
+  email: string;
+  password: string;
+  niveau?: string;
+  filiere?: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  type: string;
+  role: string;
+  nom: string;
+  email: string;
+  scoreReadiness: number;
+  userId: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+
+  private readonly API = 'http://localhost:8080/espritconnect/api/auth';
+  private readonly TOKEN_KEY = 'esprit_token';
+  private readonly USER_KEY  = 'esprit_user';
+
+  private currentUserSubject = new BehaviorSubject<AuthResponse | null>(this.storedUser());
+  currentUser$ = this.currentUserSubject.asObservable();
+
+  constructor(private http: HttpClient, private router: Router) {}
+
+  // ── Login ──────────────────────────────────────────────────────────────────
+  login(req: LoginRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.API}/login`, req).pipe(
+      tap(res => this.storeSession(res))
+    );
+  }
+
+  // ── Register ───────────────────────────────────────────────────────────────
+  register(req: RegisterRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.API}/register`, req).pipe(
+      tap(res => this.storeSession(res))
+    );
+  }
+
+  // ── Logout ─────────────────────────────────────────────────────────────────
+  logout(): void {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(this.TOKEN_KEY);
+      localStorage.removeItem(this.USER_KEY);
+    }
+    this.currentUserSubject.next(null);
+    this.router.navigate(['/login']);
+  }
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  getToken(): string | null {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(this.TOKEN_KEY);
+    }
+    return null;
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
+  }
+
+  getRole(): string | null {
+    return this.currentUserSubject.value?.role ?? null;
+  }
+
+  getCurrentUser(): AuthResponse | null {
+    return this.currentUserSubject.value;
+  }
+
+  // ── Redirect after login ───────────────────────────────────────────────────
+  redirectAfterLogin(role: string): void {
+    switch (role) {
+      case 'ADMIN':
+        this.router.navigate(['/admin/dashboard']);
+        break;
+      case 'ENTREPRISE':
+        this.router.navigate(['/entreprise/dashboard']);
+        break;
+      case 'ETUDIANT':
+      default:
+        this.router.navigate(['/dashboard']);
+    }
+  }
+
+  private storeSession(res: AuthResponse): void {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(this.TOKEN_KEY, res.token);
+      localStorage.setItem(this.USER_KEY, JSON.stringify(res));
+    }
+    this.currentUserSubject.next(res);
+  }
+
+  private storedUser(): AuthResponse | null {
+    if (typeof window !== 'undefined') {
+      const raw = localStorage.getItem(this.USER_KEY);
+      return raw ? JSON.parse(raw) : null;
+    }
+    return null;
+  }
+}

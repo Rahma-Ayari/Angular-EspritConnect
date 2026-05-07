@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-
+import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -10,20 +10,25 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
 
   loginForm!: FormGroup;
-  isLoading = false;
+  isLoading   = false;
   showPassword = false;
   errorMessage = '';
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
-    // private authService: AuthService
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    // Redirect if already logged in
+    if (this.authService.isLoggedIn()) {
+      this.authService.redirectAfterLogin(this.authService.getRole()!);
+    }
+
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      email:      ['', [Validators.required, Validators.email]],
+      password:   ['', [Validators.required, Validators.minLength(6)]],
       rememberMe: [false]
     });
   }
@@ -42,34 +47,28 @@ export class LoginComponent implements OnInit {
       this.loginForm.markAllAsTouched();
       return;
     }
-    this.isLoading = true;
+    this.isLoading    = true;
     this.errorMessage = '';
+
     const { email, password } = this.loginForm.value;
 
-    // this.authService.login(email, password).subscribe({
-    //   next: (response) => {
-    //     localStorage.setItem('token', response.token);
-    //     this.router.navigate(['/dashboard']);
-    //   },
-    //   error: (err) => {
-    //     this.errorMessage = err.error?.message || 'Email ou mot de passe incorrect.';
-    //     this.isLoading = false;
-    //   }
-    // });
-
-    setTimeout(() => {
-      this.isLoading = false;
-      console.log('Login avec :', email, password);
-    }, 1500);
+    this.authService.login({ email, password }).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        this.authService.redirectAfterLogin(res.role);
+      },
+      error: (err) => {
+        this.isLoading    = false;
+        this.errorMessage = err.error?.message || 'Email ou mot de passe incorrect.';
+      }
+    });
   }
 
   loginWithGoogle(): void {
-    // window.location.href = 'http://localhost:8080/oauth2/authorization/google';
-    console.log('Login Google');
+    window.location.href = 'http://localhost:8080/espritconnect/oauth2/authorization/google';
   }
 
   loginWithLinkedIn(): void {
-    // window.location.href = 'http://localhost:8080/oauth2/authorization/linkedin';
-    console.log('Login LinkedIn');
+    window.location.href = 'http://localhost:8080/espritconnect/oauth2/authorization/linkedin';
   }
 }
