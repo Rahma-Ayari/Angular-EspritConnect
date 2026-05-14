@@ -1,0 +1,105 @@
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f9fafb;
+  position: relative;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  transition: margin-left 0.3s ease;
+}
+
+.admin-layout.sidebar-collapsed .main-content {
+  margin-left: 0;
+}
+
+.content-area {
+  padding: 24px 32px;
+  flex: 1;
+}
+
+/* Toggle Button */
+.sidebar-toggle {
+  position: fixed;
+  left: 248px;
+  top: 22px;
+  z-index: 200;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.sidebar-toggle:hover {
+  background: #f9fafb;
+  border-color: #dc2626;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+}
+
+.sidebar-toggle:hover svg {
+  color: #dc2626;
+}
+
+.sidebar-toggle svg {
+  width: 14px;
+  height: 14px;
+  color: #6b7280;
+  transition: color 0.15s ease;
+}
+
+.sidebar-toggle.collapsed {
+  left: 16px;
+  background: #dc2626;
+  border-color: #dc2626;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.sidebar-toggle.collapsed svg {
+  color: white;
+}
+
+.sidebar-toggle.collapsed:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.sidebar-toggle.collapsed:hover svg {
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 1280px) {
+  .content-area {
+    padding: 20px 24px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .sidebar-toggle {
+    left: 16px;
+  }
+  
+  .sidebar-toggle:not(.collapsed) {
+    left: 248px;
+  }
+  
+  .content-area {
+    padding: 16px 20px;
+  }
+}

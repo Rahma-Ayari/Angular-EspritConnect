@@ -34,13 +34,19 @@ export class RegisterComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required],
       acceptTerms: [false, Validators.requiredTrue],
-      typeUtilisateur: ['ETUDIANT', Validators.required], // Rattachement
+      typeUtilisateur: ['ETUDIANT', Validators.required],
 
-      // Step 2: Profile
-      niveau: ['DEBUTANT', Validators.required],
-      filiere: ['', Validators.required],
+      // Step 2: Profile - Etudiant
+      niveau: ['DEBUTANT'],
+      filiere: [''],
       diplome: [''],
-      photo: ['']
+      photo: [''],
+      
+      // Step 2: Profile - Alumni
+      anneePromotion: [null],
+      domaine: [''],
+      disponibleMentorat: [false],
+      entrepriseActuelle: ['']
     }, { validators: this.passwordMatchValidator });
   }
 
@@ -84,20 +90,28 @@ export class RegisterComponent implements OnInit {
     this.errorMessage = '';
 
     const val = this.registerForm.value;
-    const request = {
-      nom: `${val.prenom} ${val.nom}`, // Combine prenom and nom
+    const request: any = {
+      nom: `${val.prenom} ${val.nom}`,
       email: val.email,
       password: val.password,
-      niveau: val.niveau,
-      filiere: val.filiere,
+      role: val.typeUtilisateur,
       diplome: val.diplome,
       photo: val.photo
     };
 
+    if (val.typeUtilisateur === 'ETUDIANT') {
+      request.niveau = val.niveau;
+      request.filiere = val.filiere;
+    } else if (val.typeUtilisateur === 'ALUMNI') {
+      request.anneePromotion = val.anneePromotion;
+      request.domaine = val.domaine;
+      request.disponibleMentorat = val.disponibleMentorat;
+      request.entrepriseActuelle = val.entrepriseActuelle;
+    }
+
     this.authService.register(request).subscribe({
       next: () => {
         this.isLoading = false;
-        // Navigation vers la page de succès au lieu de changer currentStep
         this.router.navigate(['/register-success'], { 
           queryParams: { email: val.email } 
         });
@@ -105,7 +119,7 @@ export class RegisterComponent implements OnInit {
       error: (err) => {
         this.isLoading = false;
         this.errorMessage = err.error?.message || "Une erreur est survenue lors de l'inscription.";
-        this.currentStep = 1; // Go back to fix errors
+        this.currentStep = 1;
       }
     });
   }
