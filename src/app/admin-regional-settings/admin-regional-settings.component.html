@@ -1,0 +1,245 @@
+<div class="admin-layout" *ngIf="loading">
+  <div class="loading-full">Loading regional settings…</div>
+</div>
+
+<div class="admin-layout" *ngIf="!loading && settings">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-badge">E</span>
+      <span class="brand-text"><span class="brand-esprit">ESPRIT</span> Connect</span>
+    </div>
+
+    <nav class="menu">
+      <a class="menu-item" routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="bi bi-grid"></i> Dashboard
+      </a>
+      <a class="menu-item settings-toggle" (click)="toggleSettings()">
+        <span><i class="bi bi-gear"></i> Settings</span>
+        <i class="bi" [class.bi-chevron-down]="settingsExpanded" [class.bi-chevron-right]="!settingsExpanded"></i>
+      </a>
+      <ng-container *ngIf="settingsExpanded">
+        <a class="menu-sub" routerLink="/admin/settings/general" routerLinkActive="active">General</a>
+        <a class="menu-sub" routerLink="/admin/settings/regional" routerLinkActive="active">Regional</a>
+        <a class="menu-sub" routerLink="/admin/settings/registration" routerLinkActive="active">Registration</a>
+        <a class="menu-sub">Homepage</a>
+      </ng-container>
+      <a class="menu-item user-mgmt-toggle" (click)="toggleUserMgmt()">
+        <span><i class="bi bi-people"></i> User Management</span>
+        <i class="bi" [class.bi-chevron-down]="userMgmtExpanded" [class.bi-chevron-right]="!userMgmtExpanded"></i>
+      </a>
+      <ng-container *ngIf="userMgmtExpanded">
+        <a class="menu-sub" routerLink="/admin/dashboard">Approval</a>
+        <a class="menu-sub">Affiliations</a>
+        <a class="menu-sub">Profile Attributes</a>
+      </ng-container>
+      <a class="menu-item"><i class="bi bi-briefcase"></i> Jobs</a>
+      <a class="menu-item"><i class="bi bi-envelope"></i> Communications</a>
+    </nav>
+
+    <div class="profile-mini">
+      <div class="mini-avatar">AD</div>
+      <div>
+        <p class="mini-name">{{ adminName }}</p>
+        <p class="mini-mail">admin&#64;esprit.tn</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div class="search-wrap">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Search settings, users, or content..." />
+      </div>
+      <div class="top-actions">
+        <button type="button" class="icon-btn" aria-label="Messages"><i class="bi bi-chat-dots"></i></button>
+        <button type="button" class="icon-btn icon-btn-notify" aria-label="Notifications">
+          <i class="bi bi-bell"></i>
+        </button>
+        <button type="button" class="admin-pill">ADMIN VIEW</button>
+        <button type="button" class="link-switch">Switch to User <i class="bi bi-chevron-down"></i></button>
+        <button type="button" class="logout-btn" (click)="logout()">Logout</button>
+      </div>
+    </header>
+
+    <section class="body settings-body">
+      <div *ngIf="error" class="banner-error">{{ error }}</div>
+      <div *ngIf="saveOk" class="banner-ok">Changes saved successfully.</div>
+
+      <header class="page-head">
+        <h1>Regional Settings</h1>
+        <p>Configure location, timezone, and language preferences for your platform.</p>
+      </header>
+
+      <section class="card card-regional">
+        <div class="regional-card-head">
+          <div class="regional-icon maroon"><i class="bi bi-geo-alt"></i></div>
+          <div>
+            <h2 class="card-title tight">Location &amp; Timezone</h2>
+            <p class="card-desc tight">Set your institution's primary location and timezone</p>
+          </div>
+        </div>
+
+        <div class="detection-banner">
+          <div class="detection-text">
+            <strong>Automatic location detection</strong>
+            <span>When enabled, the platform may use device or browser signals to suggest regional defaults where permitted.</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="settings.locationDetectionEnabled" name="locDetect" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <label class="field-label">Address</label>
+        <div class="input-wrap">
+          <i class="bi bi-geo-alt"></i>
+          <input type="text" [(ngModel)]="settings.institutionAddress" name="address" />
+        </div>
+
+        <label class="field-label">Local Timezone</label>
+        <div class="input-wrap">
+          <i class="bi bi-clock"></i>
+          <select [(ngModel)]="settings.primaryTimezone" name="primaryTz" class="select-native">
+            <option *ngFor="let z of timezoneCatalog" [ngValue]="z.id">{{ z.label }}</option>
+          </select>
+        </div>
+
+        <label class="field-label">Additional timezones</label>
+        <p class="field-hint">Shown alongside the primary zone for scheduling and communications.</p>
+        <div class="tag-row" *ngIf="settings.additionalTimezones.length">
+          <span class="lang-tag" *ngFor="let tz of settings.additionalTimezones; let i = index">
+            {{ timezoneLabel(tz) }}
+            <button type="button" class="tag-remove" (click)="removeTimezone(i)" aria-label="Remove timezone">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </span>
+        </div>
+        <div class="add-inline" *ngIf="availableTimezonesToAdd().length">
+          <select [(ngModel)]="addTimezoneValue" name="addTz" class="select-native add-select">
+            <option value="">Select a timezone to add…</option>
+            <option *ngFor="let z of availableTimezonesToAdd()" [ngValue]="z.id">{{ z.label }}</option>
+          </select>
+          <button type="button" class="btn-add-lang" (click)="addTimezone()" [disabled]="!addTimezoneValue">
+            <i class="bi bi-plus-lg"></i> Add timezone
+          </button>
+        </div>
+      </section>
+
+      <section class="card card-regional">
+        <div class="regional-card-head">
+          <div class="regional-icon maroon"><i class="bi bi-clock-history"></i></div>
+          <div>
+            <h2 class="card-title tight">Date &amp; Time Format</h2>
+            <p class="card-desc tight">Choose how dates and times are displayed across the platform</p>
+          </div>
+        </div>
+
+        <p class="subhead-radio">Date format</p>
+        <div class="radio-grid three">
+          <label
+            class="radio-tile"
+            [class.radio-tile-active]="settings.dateFormat === 'DD_MM_YYYY'"
+          >
+            <input type="radio" name="dateFmt" value="DD_MM_YYYY" [(ngModel)]="settings.dateFormat" />
+            <span class="radio-main">dd/mm/yyyy</span>
+            <span class="radio-example">Example: 10/05/2026</span>
+          </label>
+          <label
+            class="radio-tile"
+            [class.radio-tile-active]="settings.dateFormat === 'MM_DD_YYYY'"
+          >
+            <input type="radio" name="dateFmt" value="MM_DD_YYYY" [(ngModel)]="settings.dateFormat" />
+            <span class="radio-main">mm/dd/yyyy</span>
+            <span class="radio-example">Example: 05/10/2026</span>
+          </label>
+          <label
+            class="radio-tile"
+            [class.radio-tile-active]="settings.dateFormat === 'YYYY_MM_DD'"
+          >
+            <input type="radio" name="dateFmt" value="YYYY_MM_DD" [(ngModel)]="settings.dateFormat" />
+            <span class="radio-main">yyyy-mm-dd</span>
+            <span class="radio-example">Example: 2026-05-10</span>
+          </label>
+        </div>
+
+        <p class="subhead-radio">Time format</p>
+        <div class="radio-grid two">
+          <label
+            class="radio-tile"
+            [class.radio-tile-active]="settings.timeFormat === 'HOUR_12'"
+          >
+            <input type="radio" name="timeFmt" value="HOUR_12" [(ngModel)]="settings.timeFormat" />
+            <span class="radio-main">12-hour (am/pm)</span>
+            <span class="radio-example">Example: 2:30 PM</span>
+          </label>
+          <label
+            class="radio-tile"
+            [class.radio-tile-active]="settings.timeFormat === 'HOUR_24'"
+          >
+            <input type="radio" name="timeFmt" value="HOUR_24" [(ngModel)]="settings.timeFormat" />
+            <span class="radio-main">24-hour</span>
+            <span class="radio-example">Example: 14:30</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="card card-regional">
+        <div class="regional-card-head">
+          <div class="regional-icon maroon"><i class="bi bi-translate"></i></div>
+          <div>
+            <h2 class="card-title tight">Platform Languages</h2>
+            <p class="card-desc tight">Manage available languages for your users.</p>
+          </div>
+        </div>
+
+        <label class="field-label">Default Language</label>
+        <div class="input-wrap">
+          <i class="bi bi-globe2"></i>
+          <select [(ngModel)]="settings.defaultLanguage" name="defLang" class="select-native">
+            <option *ngFor="let l of languageCatalog" [ngValue]="l.code">{{ l.label }}</option>
+          </select>
+        </div>
+
+        <label class="field-label">Additional Languages</label>
+        <div class="tag-row" *ngIf="settings.additionalLanguages.length">
+          <span class="lang-tag" *ngFor="let lang of settings.additionalLanguages; let i = index">
+            {{ languageLabel(lang) }}
+            <button type="button" class="tag-remove" (click)="removeLanguage(i)" aria-label="Remove language">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </span>
+        </div>
+        <div class="add-inline" *ngIf="availableLanguagesToAdd().length">
+          <select [(ngModel)]="addLanguageValue" name="addLang" class="select-native add-select">
+            <option value="">Select a language to add…</option>
+            <option *ngFor="let l of availableLanguagesToAdd()" [ngValue]="l.code">{{ l.label }}</option>
+          </select>
+          <button type="button" class="btn-add-lang" (click)="addLanguage()" [disabled]="!addLanguageValue">
+            <i class="bi bi-translate"></i> Add Language
+          </button>
+        </div>
+      </section>
+
+      <div class="regional-footer">
+        <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button type="button" class="btn-save" (click)="save()" [disabled]="saving">
+          <i class="bi bi-save"></i> {{ saving ? 'Saving…' : 'Save Changes' }}
+        </button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="admin-layout" *ngIf="!loading && !settings">
+  <main class="content">
+    <section class="body settings-body load-error-panel">
+      <div class="banner-error">{{ error || 'Unable to load regional settings.' }}</div>
+      <p class="error-hint">
+        This page needs the API at <code>http://localhost:8087/espritconnect</code>. Start Spring Boot and MySQL, then use
+        <code>ng serve</code> (proxy is already set in this project).
+      </p>
+      <button type="button" class="btn-save" (click)="load()">Retry</button>
+    </section>
+  </main>
+</div>

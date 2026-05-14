@@ -1,0 +1,168 @@
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-badge">E</span>
+      <span class="brand-text"><span class="brand-esprit">ESPRIT</span> Connect</span>
+    </div>
+
+    <nav class="menu">
+      <a class="menu-item" routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><i class="bi bi-grid"></i> Dashboard</a>
+      <a class="menu-item settings-toggle" (click)="toggleSettings()">
+        <span><i class="bi bi-gear"></i> Settings</span>
+        <i class="bi" [class.bi-chevron-down]="settingsExpanded" [class.bi-chevron-right]="!settingsExpanded"></i>
+      </a>
+      <ng-container *ngIf="settingsExpanded">
+        <a class="menu-sub" routerLink="/admin/settings/general" routerLinkActive="active">General</a>
+        <a class="menu-sub" routerLink="/admin/settings/regional" routerLinkActive="active">Regional</a>
+        <a class="menu-sub" routerLink="/admin/settings/registration" routerLinkActive="active">Registration</a>
+        <a class="menu-sub">Homepage</a>
+      </ng-container>
+      <a class="menu-item user-mgmt-toggle" (click)="toggleUserMgmt()">
+        <span><i class="bi bi-people"></i> User Management</span>
+        <i class="bi" [class.bi-chevron-down]="userMgmtExpanded" [class.bi-chevron-right]="!userMgmtExpanded"></i>
+      </a>
+      <ng-container *ngIf="userMgmtExpanded">
+        <a class="menu-sub" routerLink="/admin/dashboard">Approval</a>
+        <a class="menu-sub">Affiliations</a>
+        <a class="menu-sub">Profile Attributes</a>
+      </ng-container>
+      <a class="menu-item"><i class="bi bi-briefcase"></i> Jobs</a>
+      <a class="menu-item"><i class="bi bi-envelope"></i> Communications</a>
+    </nav>
+
+    <div class="profile-mini">
+      <div class="mini-avatar">{{ adminName.charAt(0).toUpperCase() }}</div>
+      <div>
+        <p class="mini-name">{{ adminName }}</p>
+        <p class="mini-mail">admin&#64;esprit.tn</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div class="search-wrap">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Search settings, users, or content..." />
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn"><i class="bi bi-bell"></i></button>
+        <button class="admin-pill">ADMIN VIEW</button>
+        <button class="logout-btn" (click)="logout()">Logout</button>
+      </div>
+    </header>
+
+    <section class="body" *ngIf="!loading; else loadingBlock">
+      <div *ngIf="error" class="error-box">
+        <span>{{ error }}</span>
+        <button (click)="loadDashboard()">Retry</button>
+      </div>
+
+      <ng-container *ngIf="dashboardData">
+        <div class="welcome">
+          <h1>Welcome back, {{ adminName }}</h1>
+          <p>Here's what's happening with ESPRIT Connect today.</p>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card" *ngFor="let stat of statCards">
+            <div class="stat-head">
+              <i class="bi" [class]="stat.icon"></i>
+              <span class="delta">{{ stat.delta }}</span>
+            </div>
+            <h3>{{ stat.value }}</h3>
+            <p>{{ stat.label }}</p>
+          </article>
+        </div>
+
+        <div class="middle-grid">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Pending Approvals</h2>
+                <p>{{ dashboardData.pendingApprovalsCount }} users waiting for review</p>
+              </div>
+              <a (click)="toggleApprovalsView()">{{ showingAllApprovals ? 'Show less' : 'View all' }}</a>
+            </div>
+
+            <div class="approvals-list">
+              <article class="approval-item" *ngFor="let approval of dashboardData.pendingApprovals">
+                <div class="approval-avatar">{{ approvalInitials(approval.companyName) }}</div>
+                <div class="approval-body">
+                  <h4>{{ approval.companyName }}</h4>
+                  <p>{{ approval.sector }} · {{ approval.statusLabel }}</p>
+                </div>
+                <div class="approval-actions">
+                  <button class="approve" (click)="approvePending(approval)">Approve</button>
+                  <button class="decline" (click)="declinePending(approval)">Decline</button>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Activity Overview</h2>
+                <p>Last 30 days</p>
+              </div>
+            </div>
+
+            <div class="metric">
+              <div class="metric-title">
+                <span>New Registrations</span>
+                <span>{{ dashboardData.activityOverview.newRegistrations }}</span>
+              </div>
+              <div class="bar red">
+                <span [style.width.%]="metricBarWidth([dashboardData.activityOverview.newRegistrations, dashboardData.activityOverview.activeJobPostings, dashboardData.activityOverview.sentEmailCampaigns], dashboardData.activityOverview.newRegistrations)"></span>
+              </div>
+              <small>{{ formatDelta(dashboardData.activityOverview.registrationDeltaPercent) }}</small>
+            </div>
+
+            <div class="metric">
+              <div class="metric-title">
+                <span>Job Postings</span>
+                <span>{{ dashboardData.activityOverview.activeJobPostings }}</span>
+              </div>
+              <div class="bar blue">
+                <span [style.width.%]="metricBarWidth([dashboardData.activityOverview.newRegistrations, dashboardData.activityOverview.activeJobPostings, dashboardData.activityOverview.sentEmailCampaigns], dashboardData.activityOverview.activeJobPostings)"></span>
+              </div>
+              <small>{{ formatDelta(dashboardData.activityOverview.jobPostingDeltaPercent) }}</small>
+            </div>
+
+            <div class="metric">
+              <div class="metric-title">
+                <span>Email Campaigns</span>
+                <span>{{ dashboardData.activityOverview.sentEmailCampaigns }}</span>
+              </div>
+              <div class="bar purple">
+                <span [style.width.%]="metricBarWidth([dashboardData.activityOverview.newRegistrations, dashboardData.activityOverview.activeJobPostings, dashboardData.activityOverview.sentEmailCampaigns], dashboardData.activityOverview.sentEmailCampaigns)"></span>
+              </div>
+              <small>{{ formatDelta(dashboardData.activityOverview.emailCampaignDeltaPercent) }} · Avg open: {{ dashboardData.activityOverview.avgOpenRatePercent }}%</small>
+            </div>
+          </section>
+        </div>
+
+        <section class="quick-start">
+          <div>
+            <h3>Quick Start Guide</h3>
+            <p>Complete your platform setup to unlock all features</p>
+            <p class="progress-label">
+              {{ dashboardData.quickStart.completedSteps }} of {{ dashboardData.quickStart.totalSteps }} completed
+            </p>
+          </div>
+          <div class="quick-progress">
+            <div class="progress-track">
+              <span [style.width.%]="quickStartPercent()"></span>
+            </div>
+            <button>Continue Setup</button>
+          </div>
+        </section>
+      </ng-container>
+    </section>
+  </main>
+</div>
+
+<ng-template #loadingBlock>
+  <div class="loading">Loading dashboard...</div>
+</ng-template>

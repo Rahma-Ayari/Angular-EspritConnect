@@ -1,0 +1,168 @@
+<div class="admin-layout" *ngIf="!loading && settings; else loadingTpl">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-badge">E</span>
+      <span class="brand-text"><span class="brand-esprit">ESPRIT</span> Connect</span>
+    </div>
+
+    <nav class="menu">
+      <a class="menu-item" routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="bi bi-grid"></i> Dashboard
+      </a>
+      <a class="menu-item settings-toggle" (click)="toggleSettings()">
+        <span><i class="bi bi-gear"></i> Settings</span>
+        <i class="bi" [class.bi-chevron-down]="settingsExpanded" [class.bi-chevron-right]="!settingsExpanded"></i>
+      </a>
+      <ng-container *ngIf="settingsExpanded">
+        <a class="menu-sub" routerLink="/admin/settings/general" routerLinkActive="active">General</a>
+        <a class="menu-sub" routerLink="/admin/settings/regional" routerLinkActive="active">Regional</a>
+        <a class="menu-sub" routerLink="/admin/settings/registration" routerLinkActive="active">Registration</a>
+        <a class="menu-sub">Homepage</a>
+      </ng-container>
+      <a class="menu-item user-mgmt-toggle" (click)="toggleUserMgmt()">
+        <span><i class="bi bi-people"></i> User Management</span>
+        <i class="bi" [class.bi-chevron-down]="userMgmtExpanded" [class.bi-chevron-right]="!userMgmtExpanded"></i>
+      </a>
+      <ng-container *ngIf="userMgmtExpanded">
+        <a class="menu-sub" routerLink="/admin/dashboard">Approval</a>
+        <a class="menu-sub">Affiliations</a>
+        <a class="menu-sub">Profile Attributes</a>
+      </ng-container>
+      <a class="menu-item"><i class="bi bi-briefcase"></i> Jobs</a>
+      <a class="menu-item"><i class="bi bi-envelope"></i> Communications</a>
+    </nav>
+
+    <div class="profile-mini">
+      <div class="mini-avatar">AD</div>
+      <div>
+        <p class="mini-name">{{ adminName }}</p>
+        <p class="mini-mail">admin&#64;esprit.tn</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div class="search-wrap">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Search settings, users, or content..." />
+      </div>
+      <div class="top-actions">
+        <button type="button" class="icon-btn" aria-label="Messages"><i class="bi bi-chat-dots"></i></button>
+        <button type="button" class="icon-btn icon-btn-notify" aria-label="Notifications">
+          <i class="bi bi-bell"></i>
+        </button>
+        <button type="button" class="admin-pill">ADMIN VIEW</button>
+        <button type="button" class="link-switch">Switch to User <i class="bi bi-chevron-down"></i></button>
+        <button type="button" class="logout-btn" (click)="logout()">Logout</button>
+      </div>
+    </header>
+
+    <section class="body settings-body">
+      <div *ngIf="error" class="banner-error">{{ error }}</div>
+      <div *ngIf="saveOk" class="banner-ok">Changes saved successfully.</div>
+
+      <header class="page-head">
+        <h1>General Settings</h1>
+        <p>Manage your platform's core configuration and contact details.</p>
+      </header>
+
+      <section class="card">
+        <h2 class="card-title">Alumni Department Contact</h2>
+        <p class="card-desc">Update the primary contact details for the alumni department.</p>
+
+        <label class="field-label">Email Address</label>
+        <div class="input-wrap">
+          <i class="bi bi-envelope"></i>
+          <input type="email" [(ngModel)]="settings.alumniDepartmentEmail" name="alumniEmail" />
+        </div>
+
+        <label class="field-label">Phone Number</label>
+        <div class="input-wrap">
+          <i class="bi bi-telephone"></i>
+          <input type="text" [(ngModel)]="settings.alumniDepartmentPhone" name="alumniPhone" />
+        </div>
+
+        <div class="card-actions">
+          <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+          <button type="button" class="btn-save" (click)="save()" [disabled]="saving">
+            <i class="bi bi-save"></i> {{ saving ? 'Saving…' : 'Save Changes' }}
+          </button>
+        </div>
+      </section>
+
+      <section class="card card-comm">
+        <div class="card-comm-head">
+          <div>
+            <h2 class="card-title">Communication Preferences</h2>
+            <p class="card-desc card-desc-tight">Configure opt-in settings for different user types.</p>
+          </div>
+          <div class="card-actions-inline">
+            <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+            <button type="button" class="btn-save" (click)="save()" [disabled]="saving">
+              <i class="bi bi-save"></i> {{ saving ? 'Saving…' : 'Save Changes' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="info-banner">
+          <div class="info-icon"><i class="bi bi-info-lg"></i></div>
+          <div class="info-text">
+            <strong>Donation Opt-in Page</strong>
+            <p>Add an additional page to registration for users to opt in to communications and data usage.</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="settings.donationOptInPageEnabled" name="donationOpt" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="comm-matrix-wrap" *ngIf="settings.donationOptInPageEnabled">
+          <div class="comm-row comm-row-head">
+            <div class="comm-corner" aria-hidden="true"></div>
+            <div class="comm-role">Student</div>
+            <div class="comm-role">Alumni</div>
+            <div class="comm-role">Company</div>
+            <div class="comm-role">Teacher/Staff</div>
+          </div>
+          <div class="comm-row">
+            <div class="comm-label">
+              <strong>Invitations to Events</strong>
+              <span>Allow users to receive event notifications</span>
+            </div>
+            <div class="comm-cell"><label class="switch sm"><input type="checkbox" [(ngModel)]="settings.invitationsEventsStudent" name="invSt" /><span class="slider"></span></label></div>
+            <div class="comm-cell"><label class="switch sm"><input type="checkbox" [(ngModel)]="settings.invitationsEventsAlumni" name="invAl" /><span class="slider"></span></label></div>
+            <div class="comm-cell"><label class="switch sm"><input type="checkbox" [(ngModel)]="settings.invitationsEventsCompany" name="invCo" /><span class="slider"></span></label></div>
+            <div class="comm-cell"><label class="switch sm"><input type="checkbox" [(ngModel)]="settings.invitationsEventsTeacherStaff" name="invTf" /><span class="slider"></span></label></div>
+          </div>
+          <div class="comm-row">
+            <div class="comm-label">
+              <strong>University Updates</strong>
+              <span>General news and announcements</span>
+            </div>
+            <div class="comm-cell"><label class="switch sm"><input type="checkbox" [(ngModel)]="settings.universityUpdatesStudent" name="uuSt" /><span class="slider"></span></label></div>
+            <div class="comm-cell"><label class="switch sm"><input type="checkbox" [(ngModel)]="settings.universityUpdatesAlumni" name="uuAl" /><span class="slider"></span></label></div>
+            <div class="comm-cell"><label class="switch sm"><input type="checkbox" [(ngModel)]="settings.universityUpdatesCompany" name="uuCo" /><span class="slider"></span></label></div>
+            <div class="comm-cell"><label class="switch sm"><input type="checkbox" [(ngModel)]="settings.universityUpdatesTeacherStaff" name="uuTf" /><span class="slider"></span></label></div>
+          </div>
+          <div class="comm-row comm-row-last">
+            <div class="comm-label">
+              <strong>Fundraising Emails</strong>
+              <span>Donation campaigns and fundraising initiatives</span>
+            </div>
+            <div class="comm-cell"><label class="switch sm"><input type="checkbox" [(ngModel)]="settings.fundraisingEmailsStudent" name="feSt" /><span class="slider"></span></label></div>
+            <div class="comm-cell"><label class="switch sm"><input type="checkbox" [(ngModel)]="settings.fundraisingEmailsAlumni" name="feAl" /><span class="slider"></span></label></div>
+            <div class="comm-cell"><label class="switch sm"><input type="checkbox" [(ngModel)]="settings.fundraisingEmailsCompany" name="feCo" /><span class="slider"></span></label></div>
+            <div class="comm-cell"><label class="switch sm"><input type="checkbox" [(ngModel)]="settings.fundraisingEmailsTeacherStaff" name="feTf" /><span class="slider"></span></label></div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="admin-layout">
+    <div class="loading-full">Loading settings…</div>
+  </div>
+</ng-template>
