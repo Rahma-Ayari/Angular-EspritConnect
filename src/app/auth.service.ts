@@ -12,8 +12,15 @@ export interface RegisterRequest {
   nom: string;
   email: string;
   password: string;
+  role: string;
   niveau?: string;
   filiere?: string;
+  diplome?: string;
+  photo?: string;
+  anneePromotion?: number;
+  domaine?: string;
+  disponibleMentorat?: boolean;
+  entrepriseActuelle?: string;
 }
 
 export interface AuthResponse {
@@ -29,7 +36,7 @@ export interface AuthResponse {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private readonly API = 'http://localhost:8080/espritconnect/api/auth';
+  private readonly API = 'http://localhost:8088/espritconnect/api/auth';
   private readonly TOKEN_KEY = 'esprit_token';
   private readonly USER_KEY  = 'esprit_user';
 
@@ -84,7 +91,7 @@ export class AuthService {
   redirectAfterLogin(role: string): void {
     switch (role) {
       case 'ADMIN':
-        this.router.navigate(['/admin/dashboard']);
+        this.router.navigate(['/admin/user-management/approval']);
         break;
       case 'ENTREPRISE':
         this.router.navigate(['/entreprise/dashboard']);
