@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import zxcvbn from 'zxcvbn';
 
 @Component({
   selector: 'app-register',
@@ -16,6 +17,9 @@ export class RegisterComponent implements OnInit {
   errorMessage = '';
   showPassword = false;
 
+  passwordStrength = 0;
+  passwordStrengthText = '';
+  passwordStrengthColor = '';
   niveaux = ['DEBUTANT', 'INTERMEDIAIRE', 'EXPERT']; // Based on backend enum
   filieres = ['Informatique', 'Génie Civil', 'Génie Électromécanique', 'Management', 'TIC'];
 
@@ -31,7 +35,10 @@ export class RegisterComponent implements OnInit {
       prenom: ['', Validators.required],
       nom: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [
+        Validators.required, 
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+      ]],
       confirmPassword: ['', Validators.required],
       acceptTerms: [false, Validators.requiredTrue],
       typeUtilisateur: ['ETUDIANT', Validators.required],
@@ -48,6 +55,62 @@ export class RegisterComponent implements OnInit {
       disponibleMentorat: [false],
       entrepriseActuelle: ['']
     }, { validators: this.passwordMatchValidator });
+
+    this.registerForm.get('password')?.valueChanges.subscribe(value => {
+      this.checkPasswordStrength(value || '');
+    });
+  }
+
+  checkPasswordStrength(password: string): void {
+    if (!password) {
+      this.passwordStrength = 0;
+      this.passwordStrengthText = '';
+      this.passwordStrengthColor = '';
+      return;
+    }
+
+    const hasLength = password.length >= 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[@$!%*?&]/.test(password);
+
+    const result = zxcvbn(password);
+    this.passwordStrength = result.score; // 0 to 4
+    
+    let criteriaMet = [hasLength, hasUppercase, hasLowercase, hasNumber, hasSpecial].filter(Boolean).length;
+    
+    // Adjust score based on strict criteria
+    if (criteriaMet < 3) this.passwordStrength = Math.min(this.passwordStrength, 1);
+    else if (criteriaMet < 5) this.passwordStrength = Math.min(this.passwordStrength, 2);
+    else if (criteriaMet === 5 && this.passwordStrength < 3) this.passwordStrength = 3;
+
+    // Use score to define how many segments to light up
+    if (this.passwordStrength === 0) {
+      this.passwordStrength = 1; // At least one segment active if typing
+    }
+
+    switch (this.passwordStrength) {
+      case 1:
+        this.passwordStrengthText = 'Faible';
+        this.passwordStrengthColor = '#ff4d4f'; // red
+        break;
+      case 2:
+        this.passwordStrengthText = 'Moyen';
+        this.passwordStrengthColor = '#faad14'; // orange
+        break;
+      case 3:
+        this.passwordStrengthText = 'Fort';
+        this.passwordStrengthColor = '#52c41a'; // green
+        break;
+      case 4:
+        this.passwordStrengthText = 'Très fort';
+        this.passwordStrengthColor = '#2c7d0a'; // darker green
+        break;
+      default:
+        this.passwordStrengthText = '';
+        this.passwordStrengthColor = '';
+    }
   }
 
   passwordMatchValidator(g: FormGroup) {
