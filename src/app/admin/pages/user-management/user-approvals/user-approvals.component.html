@@ -1,0 +1,529 @@
+<div class="user-approvals">
+  <div class="page-header">
+    <h1>User Approvals</h1>
+    <p class="subtitle">Review and manage pending user registrations.</p>
+  </div>
+
+  <div class="tabs-container">
+    <div class="tabs">
+      <button 
+        class="tab" 
+        [class.active]="activeTab === 'pending'"
+        (click)="onTabChange('pending')"
+      >
+        Pending
+        <span class="tab-badge" *ngIf="stats">{{ stats.pendingCount }}</span>
+      </button>
+      <button 
+        class="tab" 
+        [class.active]="activeTab === 'list-tools'"
+        (click)="onTabChange('list-tools')"
+      >
+        List Tools
+      </button>
+      <button 
+        class="tab" 
+        [class.active]="activeTab === 'settings'"
+        (click)="onTabChange('settings')"
+      >
+        Settings
+      </button>
+    </div>
+  </div>
+
+  <!-- PENDING TAB -->
+  <div class="content-card" *ngIf="activeTab === 'pending'">
+    <div class="toolbar">
+      <div class="search-box">
+        <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input 
+          type="text" 
+          placeholder="Search by name, email, or affiliation..."
+          [(ngModel)]="searchQuery"
+          (input)="onSearchInput()"
+        >
+      </div>
+      
+      <div class="toolbar-actions">
+        <button class="btn-filter">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+          </svg>
+          Filter
+        </button>
+        
+        <button class="btn-export" (click)="exportUsers()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Export
+        </button>
+      </div>
+    </div>
+
+    <div class="table-container" *ngIf="!isLoading && !error">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th class="checkbox-col">
+              <input 
+                type="checkbox" 
+                [checked]="isAllSelected()"
+                (change)="toggleSelectAll($event)"
+              >
+            </th>
+            <th>USER</th>
+            <th>AFFILIATION</th>
+            <th>REGISTRATION DATE</th>
+            <th>STATUS</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers" [class.selected]="isSelected(user.id)">
+            <td class="checkbox-col">
+              <input 
+                type="checkbox"
+                [checked]="isSelected(user.id)"
+                (change)="toggleUserSelection(user.id)"
+              >
+            </td>
+            <td class="user-cell">
+              <div class="user-info">
+                <div 
+                  class="avatar" 
+                  [style.background-color]="user.avatarColor"
+                >
+                  {{ user.avatarInitials }}
+                </div>
+                <div class="user-details">
+                  <span class="user-name">{{ user.nom }}</span>
+                  <span class="user-email">{{ user.email }}</span>
+                </div>
+              </div>
+            </td>
+            <td class="affiliation-cell">
+              <div class="affiliation-badges">
+                <span 
+                  class="badge-type"
+                  [ngClass]="getAffiliationTypeClass(getAffiliationParts(user.affiliation).type)"
+                >
+                  {{ getAffiliationParts(user.affiliation).type }}
+                </span>
+                <span 
+                  class="badge-domain" 
+                  *ngIf="getAffiliationParts(user.affiliation).domain"
+                >
+                  {{ getAffiliationParts(user.affiliation).domain }}
+                </span>
+              </div>
+            </td>
+            <td class="date-cell">{{ formatDate(user.registrationDate) }}</td>
+            <td class="status-cell">
+              <span class="status-badge pending">
+                {{ user.status }}
+              </span>
+            </td>
+            <td class="actions-cell">
+              <button class="action-btn approve" title="Approve" (click)="approveUser(user)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </button>
+              <button class="action-btn decline" title="Decline" (click)="declineUser(user)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+              <button class="action-btn delete" title="Delete" (click)="deleteUser(user)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="empty-state" *ngIf="filteredUsers.length === 0">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+          </svg>
+        </div>
+        <p>No pending users found.</p>
+        <span class="empty-hint">New user registrations will appear here for approval.</span>
+      </div>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading users...</p>
+    </div>
+
+    <div class="error-state" *ngIf="error">
+      <span class="error-icon">⚠️</span>
+      <p>{{ error }}</p>
+      <button class="btn-retry" (click)="loadPendingUsers()">Retry</button>
+    </div>
+
+    <div class="table-footer">
+      <div class="selection-info">
+        <span>{{ selectedUsers.size }} of {{ filteredUsers.length }} selected</span>
+      </div>
+      
+      <div class="bulk-actions">
+        <button 
+          class="btn-approve-selected" 
+          [disabled]="selectedUsers.size === 0"
+          (click)="bulkApprove()"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Approve Selected
+        </button>
+        <button 
+          class="btn-decline-selected" 
+          [disabled]="selectedUsers.size === 0"
+          (click)="bulkDecline()"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          Decline Selected
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIST TOOLS TAB -->
+  <div class="content-card" *ngIf="activeTab === 'list-tools'">
+    <div class="list-tools-header">
+      <h3>Advanced User Management</h3>
+      <p>View, filter, sort and manage all registered users.</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          placeholder="Search users..."
+          [(ngModel)]="searchQuery"
+          (input)="onSearchInput()"
+        >
+      </div>
+      
+      <div class="toolbar-actions">
+        <select class="filter-select" [(ngModel)]="selectedRole" (change)="applyFilters()">
+          <option value="">All Roles</option>
+          <option value="ETUDIANT">Students</option>
+          <option value="ALUMNI">Alumni</option>
+          <option value="ENTREPRISE">Enterprises</option>
+        </select>
+
+        <label class="toggle-label">
+          <input type="checkbox" [(ngModel)]="showApprovedUsers" (change)="applyFilters()">
+          <span>Show All</span>
+        </label>
+        
+        <button class="btn-export" (click)="exportUsers()">
+          <span>📥</span> Export CSV
+        </button>
+      </div>
+    </div>
+
+    <div class="sort-options">
+      <span class="sort-label">Sort by:</span>
+      <button 
+        class="sort-btn" 
+        [class.active]="sortField === 'nom'"
+        (click)="toggleSort('nom')"
+      >
+        Name {{ sortField === 'nom' ? (sortDirection === 'asc' ? '↑' : '↓') : '' }}
+      </button>
+      <button 
+        class="sort-btn" 
+        [class.active]="sortField === 'email'"
+        (click)="toggleSort('email')"
+      >
+        Email {{ sortField === 'email' ? (sortDirection === 'asc' ? '↑' : '↓') : '' }}
+      </button>
+      <button 
+        class="sort-btn" 
+        [class.active]="sortField === 'registrationDate'"
+        (click)="toggleSort('registrationDate')"
+      >
+        Date {{ sortField === 'registrationDate' ? (sortDirection === 'asc' ? '↑' : '↓') : '' }}
+      </button>
+      <button 
+        class="sort-btn" 
+        [class.active]="sortField === 'status'"
+        (click)="toggleSort('status')"
+      >
+        Status {{ sortField === 'status' ? (sortDirection === 'asc' ? '↑' : '↓') : '' }}
+      </button>
+    </div>
+
+    <div class="table-container" *ngIf="!isLoading && !error">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th class="checkbox-col">
+              <input 
+                type="checkbox" 
+                [checked]="isAllSelected()"
+                (change)="toggleSelectAll($event)"
+              >
+            </th>
+            <th>USER</th>
+            <th>ROLE</th>
+            <th>AFFILIATION</th>
+            <th>REGISTRATION DATE</th>
+            <th>STATUS</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers" [class.selected]="isSelected(user.id)">
+            <td class="checkbox-col">
+              <input 
+                type="checkbox"
+                [checked]="isSelected(user.id)"
+                (change)="toggleUserSelection(user.id)"
+              >
+            </td>
+            <td class="user-cell">
+              <div class="user-info">
+                <div 
+                  class="avatar" 
+                  [style.background-color]="user.avatarColor"
+                >
+                  {{ user.avatarInitials }}
+                </div>
+                <div class="user-details">
+                  <span class="user-name">{{ user.nom }}</span>
+                  <span class="user-email">{{ user.email }}</span>
+                </div>
+              </div>
+            </td>
+            <td class="role-cell">
+              <span class="role-badge" [ngClass]="'role-' + user.role.toLowerCase()">
+                {{ user.role }}
+              </span>
+            </td>
+            <td class="affiliation-cell">
+              <div class="affiliation-badges">
+                <span 
+                  class="badge-type"
+                  [ngClass]="getAffiliationTypeClass(getAffiliationParts(user.affiliation).type)"
+                >
+                  {{ getAffiliationParts(user.affiliation).type }}
+                </span>
+                <span 
+                  class="badge-domain" 
+                  *ngIf="getAffiliationParts(user.affiliation).domain"
+                >
+                  {{ getAffiliationParts(user.affiliation).domain }}
+                </span>
+              </div>
+            </td>
+            <td class="date-cell">{{ formatDate(user.registrationDate) }}</td>
+            <td class="status-cell">
+              <span class="status-badge" [ngClass]="user.status.toLowerCase()">
+                {{ user.status }}
+              </span>
+            </td>
+            <td class="actions-cell">
+              <button 
+                class="action-btn approve" 
+                title="Approve" 
+                (click)="approveUser(user)"
+                *ngIf="user.status === 'Pending'"
+              >
+                ✓
+              </button>
+              <button 
+                class="action-btn decline" 
+                title="Decline" 
+                (click)="declineUser(user)"
+                *ngIf="user.status === 'Pending'"
+              >
+                ✕
+              </button>
+              <button class="action-btn delete" title="Delete" (click)="deleteUser(user)">
+                🗑
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="empty-state" *ngIf="filteredUsers.length === 0">
+        <div class="empty-icon">📋</div>
+        <p>No users found matching your criteria.</p>
+      </div>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading users...</p>
+    </div>
+
+    <div class="table-footer">
+      <div class="results-info">
+        <span>Showing {{ filteredUsers.length }} users</span>
+      </div>
+      
+      <div class="bulk-actions">
+        <button 
+          class="btn-approve-selected" 
+          [disabled]="selectedUsers.size === 0"
+          (click)="bulkApprove()"
+        >
+          <span>✓</span> Approve Selected
+        </button>
+        <button 
+          class="btn-decline-selected" 
+          [disabled]="selectedUsers.size === 0"
+          (click)="bulkDecline()"
+        >
+          <span>✕</span> Decline Selected
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div class="content-card settings-card" *ngIf="activeTab === 'settings'">
+    <div class="settings-section">
+      <h3>Approval Settings</h3>
+      <p class="section-desc">Configure how user registrations are handled.</p>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <span class="setting-title">Auto-approve &#64;esprit.tn emails</span>
+          <span class="setting-desc">Automatically approve users with &#64;{{ settings.autoApproveDomain }} email addresses</span>
+        </div>
+        <label class="switch">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="settings.autoApproveEspritEmails"
+            (change)="onSettingChange()"
+          >
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-item" *ngIf="settings.autoApproveEspritEmails">
+        <div class="setting-info">
+          <span class="setting-title">Auto-approve domain</span>
+          <span class="setting-desc">Email domain for automatic approval</span>
+        </div>
+        <input 
+          type="text" 
+          class="domain-input"
+          [(ngModel)]="settings.autoApproveDomain"
+          (change)="onSettingChange()"
+          placeholder="esprit.tn"
+        >
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-info">
+          <span class="setting-title">Email notifications</span>
+          <span class="setting-desc">Send email when new registration requires approval</span>
+        </div>
+        <label class="switch">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="settings.emailNotificationsOnNewRegistration"
+            (change)="onSettingChange()"
+          >
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-info">
+          <span class="setting-title">Require email verification</span>
+          <span class="setting-desc">Users must verify their email before approval</span>
+        </div>
+        <label class="switch">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="settings.requireEmailVerification"
+            (change)="onSettingChange()"
+          >
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3>Notification Settings</h3>
+      <p class="section-desc">Configure notification preferences.</p>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <span class="setting-title">Notify user on approval</span>
+          <span class="setting-desc">Send welcome email when user is approved</span>
+        </div>
+        <label class="switch">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="settings.notifyUserOnApproval"
+            (change)="onSettingChange()"
+          >
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-info">
+          <span class="setting-title">Notify user on decline</span>
+          <span class="setting-desc">Send notification when registration is declined</span>
+        </div>
+        <label class="switch">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="settings.notifyUserOnDecline"
+            (change)="onSettingChange()"
+          >
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-actions">
+      <div class="settings-status" *ngIf="settingsSaved">
+        <span class="success-icon">✓</span>
+        <span>Settings saved successfully!</span>
+      </div>
+      <button 
+        class="btn-save" 
+        (click)="saveSettings()" 
+        [disabled]="settingsLoading"
+      >
+        <span *ngIf="!settingsLoading">Save Settings</span>
+        <span *ngIf="settingsLoading">Saving...</span>
+      </button>
+      <button 
+        class="btn-reset" 
+        (click)="resetSettings()"
+        [disabled]="settingsLoading"
+      >
+        Reset to Defaults
+      </button>
+    </div>
+  </div>
+</div>

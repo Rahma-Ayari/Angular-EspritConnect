@@ -72,6 +72,9 @@
                 <i class="bi bi-person"></i>
                 <input type="text" formControlName="prenom" placeholder="rahma" />
               </div>
+              <span class="error-msg" *ngIf="isFieldInvalid('prenom')">
+                Le prénom est requis.
+              </span>
             </div>
             <div class="field" [class.field-error]="isFieldInvalid('nom')">
               <label>Nom*</label>
@@ -79,6 +82,9 @@
                 <i class="bi bi-person-badge"></i>
                 <input type="text" formControlName="nom" placeholder="Nom" />
               </div>
+              <span class="error-msg" *ngIf="isFieldInvalid('nom')">
+                Le nom est requis.
+              </span>
             </div>
           </div>
 
@@ -102,6 +108,10 @@
               <i class="bi bi-envelope"></i>
               <input type="email" formControlName="email" placeholder="prenom.nom@esprit.tn" />
             </div>
+            <span class="error-msg" *ngIf="isFieldInvalid('email')">
+              <ng-container *ngIf="registerForm.get('email')?.errors?.['required']">L'email est requis.</ng-container>
+              <ng-container *ngIf="registerForm.get('email')?.errors?.['email']">Format email invalide.</ng-container>
+            </span>
           </div>
 
           <div class="row">
@@ -114,6 +124,27 @@
                     <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                 </button>
               </div>
+              
+              <!-- Password Strength Meter -->
+              <div class="password-strength" *ngIf="registerForm.get('password')?.value">
+                <div class="strength-header">
+                  <div class="strength-bars" role="progressbar" [attr.aria-valuenow]="passwordStrength" aria-valuemin="0" aria-valuemax="4">
+                  <div class="strength-segment" [class.active]="passwordStrength >= 1" [style.--segment-color]="passwordStrengthColor"></div>
+                  <div class="strength-segment" [class.active]="passwordStrength >= 2" [style.--segment-color]="passwordStrengthColor"></div>
+                  <div class="strength-segment" [class.active]="passwordStrength >= 3" [style.--segment-color]="passwordStrengthColor"></div>
+                  <div class="strength-segment" [class.active]="passwordStrength >= 4" [style.--segment-color]="passwordStrengthColor"></div>
+                  </div>
+                  <span class="strength-label" *ngIf="passwordStrengthText" [style.color]="passwordStrengthColor">
+                    {{ passwordStrengthText }}
+                  </span>
+                </div>
+              </div>
+
+              <span class="error-msg" *ngIf="isFieldInvalid('password')">
+                <ng-container *ngIf="registerForm.get('password')?.errors?.['required']">
+                  Le mot de passe est requis.
+                </ng-container>
+              </span>
             </div>
             <div class="field" [class.field-error]="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched">
               <label>Confirmer*</label>
@@ -121,6 +152,10 @@
                 <i class="bi bi-shield-lock"></i>
                 <input [type]="showPassword ? 'text' : 'password'" formControlName="confirmPassword" placeholder="••••••••" />
               </div>
+              <span class="error-msg" *ngIf="registerForm.get('confirmPassword')?.touched && (registerForm.get('confirmPassword')?.hasError('required') || registerForm.hasError('mismatch'))">
+                <ng-container *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Veuillez confirmer le mot de passe.</ng-container>
+                <ng-container *ngIf="!registerForm.get('confirmPassword')?.errors?.['required'] && registerForm.hasError('mismatch')">Les mots de passe ne correspondent pas.</ng-container>
+              </span>
             </div>
           </div>
 
@@ -129,6 +164,9 @@
               <input type="checkbox" formControlName="acceptTerms" />
               <span>J'accepte les conditions d'utilisation</span>
             </label>
+            <span class="error-msg" *ngIf="isFieldInvalid('acceptTerms')" style="display:block; margin-top:5px; margin-left: 0;">
+              Vous devez accepter les conditions.
+            </span>
           </div>
 
           <button type="button" class="btn-submit" (click)="nextStep()">
@@ -139,36 +177,98 @@
         <!-- ── STEP 2: PROFILE ── -->
         <div class="step-content" *ngIf="currentStep === 2">
           
-          <div class="field" [class.field-error]="isFieldInvalid('niveau')">
-            <label>Niveau*</label>
-            <div class="input-wrap">
-              <i class="bi bi-bar-chart"></i>
-              <select formControlName="niveau">
-                <option value="DEBUTANT">DEBUTANT</option>
-                <option value="INTERMEDIAIRE">INTERMEDIAIRE</option>
-                <option value="EXPERT">EXPERT</option>
-              </select>
+          <!-- Champs Etudiant -->
+          <ng-container *ngIf="registerForm.get('typeUtilisateur')?.value === 'ETUDIANT'">
+            <div class="field" [class.field-error]="isFieldInvalid('niveau')">
+              <label>Niveau*</label>
+              <div class="input-wrap">
+                <i class="bi bi-bar-chart"></i>
+                <select formControlName="niveau">
+                  <option value="DEBUTANT">DEBUTANT</option>
+                  <option value="INTERMEDIAIRE">INTERMEDIAIRE</option>
+                  <option value="EXPERT">EXPERT</option>
+                </select>
+              </div>
             </div>
-          </div>
 
-          <div class="field" [class.field-error]="isFieldInvalid('filiere')">
-            <label>Filière*</label>
-            <div class="input-wrap">
-              <i class="bi bi-mortarboard"></i>
-              <select formControlName="filiere">
-                <option value="" disabled selected>Choisir une filière</option>
-                <option *ngFor="let f of filieres" [value]="f">{{f}}</option>
-              </select>
+            <div class="field" [class.field-error]="isFieldInvalid('filiere')">
+              <label>Filière*</label>
+              <div class="input-wrap">
+                <i class="bi bi-mortarboard"></i>
+                <select formControlName="filiere">
+                  <option value="" disabled selected>Choisir une filière</option>
+                  <option *ngFor="let f of filieres" [value]="f">{{f}}</option>
+                </select>
+              </div>
             </div>
-          </div>
 
-          <div class="field">
-            <label>Diplôme (Optionnel)</label>
-            <div class="input-wrap">
-              <i class="bi bi-patch-check"></i>
-              <input type="text" formControlName="diplome" placeholder="Diplôme obtenu ou en cours" />
+            <div class="field">
+              <label>Diplôme (Optionnel)</label>
+              <div class="input-wrap">
+                <i class="bi bi-patch-check"></i>
+                <input type="text" formControlName="diplome" placeholder="Diplôme obtenu ou en cours" />
+              </div>
             </div>
-          </div>
+          </ng-container>
+
+          <!-- Champs Alumni -->
+          <ng-container *ngIf="registerForm.get('typeUtilisateur')?.value === 'ALUMNI'">
+            <div class="field">
+              <label>Année de promotion*</label>
+              <div class="input-wrap">
+                <i class="bi bi-calendar"></i>
+                <input type="number" formControlName="anneePromotion" placeholder="Ex: 2023" min="1990" max="2030" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Domaine d'expertise*</label>
+              <div class="input-wrap">
+                <i class="bi bi-briefcase"></i>
+                <input type="text" formControlName="domaine" placeholder="Ex: Développement Web, Data Science..." />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Entreprise actuelle</label>
+              <div class="input-wrap">
+                <i class="bi bi-building"></i>
+                <input type="text" formControlName="entrepriseActuelle" placeholder="Nom de l'entreprise" />
+              </div>
+            </div>
+
+            <div class="form-options">
+              <label class="remember">
+                <input type="checkbox" formControlName="disponibleMentorat" />
+                <span>Disponible pour le mentorat</span>
+              </label>
+            </div>
+          </ng-container>
+
+          <!-- Champs Entreprise -->
+          <ng-container *ngIf="registerForm.get('typeUtilisateur')?.value === 'ENTREPRISE'">
+            <div class="field">
+              <label>Domaine d'activité*</label>
+              <div class="input-wrap">
+                <i class="bi bi-briefcase"></i>
+                <input type="text" formControlName="domaine" placeholder="Ex: Technologies, Finance, Consulting..." />
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Champs Enseignant -->
+          <ng-container *ngIf="registerForm.get('typeUtilisateur')?.value === 'ENSEIGNANT'">
+            <div class="field">
+              <label>Département*</label>
+              <div class="input-wrap">
+                <i class="bi bi-mortarboard"></i>
+                <select formControlName="filiere">
+                  <option value="" disabled selected>Choisir un département</option>
+                  <option *ngFor="let f of filieres" [value]="f">{{f}}</option>
+                </select>
+              </div>
+            </div>
+          </ng-container>
 
           <div class="form-actions-dual">
             <button type="button" class="btn-back" (click)="prevStep()">Retour</button>

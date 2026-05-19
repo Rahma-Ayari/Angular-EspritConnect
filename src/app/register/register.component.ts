@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import zxcvbn from 'zxcvbn';
 
 @Component({
   selector: 'app-register',
@@ -16,6 +17,9 @@ export class RegisterComponent implements OnInit {
   errorMessage = '';
   showPassword = false;
 
+  passwordStrength = 0;
+  passwordStrengthText = '';
+  passwordStrengthColor = '';
   niveaux = ['DEBUTANT', 'INTERMEDIAIRE', 'EXPERT']; // Based on backend enum
   filieres = ['Informatique', 'Génie Civil', 'Génie Électromécanique', 'Management', 'TIC'];
 
@@ -31,17 +35,82 @@ export class RegisterComponent implements OnInit {
       prenom: ['', Validators.required],
       nom: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [
+        Validators.required, 
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+      ]],
       confirmPassword: ['', Validators.required],
       acceptTerms: [false, Validators.requiredTrue],
-      typeUtilisateur: ['ETUDIANT', Validators.required], // Rattachement
+      typeUtilisateur: ['ETUDIANT', Validators.required],
 
-      // Step 2: Profile
-      niveau: ['DEBUTANT', Validators.required],
-      filiere: ['', Validators.required],
+      // Step 2: Profile - Etudiant
+      niveau: ['DEBUTANT'],
+      filiere: [''],
       diplome: [''],
-      photo: ['']
+      photo: [''],
+      
+      // Step 2: Profile - Alumni
+      anneePromotion: [null],
+      domaine: [''],
+      disponibleMentorat: [false],
+      entrepriseActuelle: ['']
     }, { validators: this.passwordMatchValidator });
+
+    this.registerForm.get('password')?.valueChanges.subscribe(value => {
+      this.checkPasswordStrength(value || '');
+    });
+  }
+
+  checkPasswordStrength(password: string): void {
+    if (!password) {
+      this.passwordStrength = 0;
+      this.passwordStrengthText = '';
+      this.passwordStrengthColor = '';
+      return;
+    }
+
+    const hasLength = password.length >= 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[@$!%*?&]/.test(password);
+
+    const result = zxcvbn(password);
+    this.passwordStrength = result.score; // 0 to 4
+    
+    let criteriaMet = [hasLength, hasUppercase, hasLowercase, hasNumber, hasSpecial].filter(Boolean).length;
+    
+    // Adjust score based on strict criteria
+    if (criteriaMet < 3) this.passwordStrength = Math.min(this.passwordStrength, 1);
+    else if (criteriaMet < 5) this.passwordStrength = Math.min(this.passwordStrength, 2);
+    else if (criteriaMet === 5 && this.passwordStrength < 3) this.passwordStrength = 3;
+
+    // Use score to define how many segments to light up
+    if (this.passwordStrength === 0) {
+      this.passwordStrength = 1; // At least one segment active if typing
+    }
+
+    switch (this.passwordStrength) {
+      case 1:
+        this.passwordStrengthText = 'Faible';
+        this.passwordStrengthColor = '#ff4d4f'; // red
+        break;
+      case 2:
+        this.passwordStrengthText = 'Moyen';
+        this.passwordStrengthColor = '#faad14'; // orange
+        break;
+      case 3:
+        this.passwordStrengthText = 'Fort';
+        this.passwordStrengthColor = '#52c41a'; // green
+        break;
+      case 4:
+        this.passwordStrengthText = 'Très fort';
+        this.passwordStrengthColor = '#2c7d0a'; // darker green
+        break;
+      default:
+        this.passwordStrengthText = '';
+        this.passwordStrengthColor = '';
+    }
   }
 
   passwordMatchValidator(g: FormGroup) {
@@ -84,20 +153,28 @@ export class RegisterComponent implements OnInit {
     this.errorMessage = '';
 
     const val = this.registerForm.value;
-    const request = {
-      nom: `${val.prenom} ${val.nom}`, // Combine prenom and nom
+    const request: any = {
+      nom: `${val.prenom} ${val.nom}`,
       email: val.email,
       password: val.password,
-      niveau: val.niveau,
-      filiere: val.filiere,
+      role: val.typeUtilisateur,
       diplome: val.diplome,
       photo: val.photo
     };
 
+    if (val.typeUtilisateur === 'ETUDIANT') {
+      request.niveau = val.niveau;
+      request.filiere = val.filiere;
+    } else if (val.typeUtilisateur === 'ALUMNI') {
+      request.anneePromotion = val.anneePromotion;
+      request.domaine = val.domaine;
+      request.disponibleMentorat = val.disponibleMentorat;
+      request.entrepriseActuelle = val.entrepriseActuelle;
+    }
+
     this.authService.register(request).subscribe({
       next: () => {
         this.isLoading = false;
-        // Navigation vers la page de succès au lieu de changer currentStep
         this.router.navigate(['/register-success'], { 
           queryParams: { email: val.email } 
         });
@@ -105,7 +182,7 @@ export class RegisterComponent implements OnInit {
       error: (err) => {
         this.isLoading = false;
         this.errorMessage = err.error?.message || "Une erreur est survenue lors de l'inscription.";
-        this.currentStep = 1; // Go back to fix errors
+        this.currentStep = 1;
       }
     });
   }
