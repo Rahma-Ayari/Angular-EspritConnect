@@ -1,0 +1,79 @@
+<div class="dashboard-container">
+
+  <!-- HERO -->
+
+  <div class="hero-section">
+
+    <div class="hero-left">
+
+      <p class="welcome-text">
+        Welcome back Admin
+      </p>
+
+      <h1>
+        Manage Events,<br>
+        Create Experiences
+      </h1>
+
+      <p class="hero-description">
+        Create and manage all events dynamically from database.
+      </p>
+
+      <button
+        routerLink="/admin/events/create"
+        class="create-btn"
+      >
+        + Create Event
+      </button>
+
+    </div>
+
+    <div class="hero-right">
+
+      <img  src="event-icon.png">
+
+    </div>
+
+  </div>
+
+  <!-- STATS COMPONENT -->
+
+  <app-event-stats
+    [totalEvents]="totalEvents"
+    [totalCapacity]="totalCapacity"
+    [activeEvents]="activeEvents"
+  >
+  </app-event-stats>
+
+  <!-- MAIN GRID -->
+
+  <div class="bottom-grid">
+
+    <!-- EVENTS -->
+
+    <div class="events-panel">
+
+      <h2>All Events</h2>
+
+      <div class="events-grid">
+
+        <app-event-card
+          *ngFor="let event of events"
+          [event]="event"
+        >
+        </app-event-card>
+
+      </div>
+
+    </div>
+
+    <!-- CALENDAR -->
+
+    <app-event-calendar
+      [events]="events"
+    >
+    </app-event-calendar>
+
+  </div>
+
+</div>

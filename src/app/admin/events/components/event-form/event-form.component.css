@@ -1,0 +1,53 @@
+.form-page {
+  min-height: 100vh;
+  background: #0f172a;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+form {
+  width: 420px;
+
+  background: rgba(255,255,255,0.05);
+
+  padding: 40px;
+
+  border-radius: 20px;
+
+  backdrop-filter: blur(10px);
+}
+
+h1 {
+  color: white;
+  margin-bottom: 20px;
+}
+
+input {
+  width: 100%;
+
+  margin-bottom: 15px;
+
+  padding: 12px;
+
+  border-radius: 10px;
+
+  border: none;
+}
+
+button {
+  width: 100%;
+
+  padding: 12px;
+
+  background: #7b2ff7;
+
+  border: none;
+
+  border-radius: 12px;
+
+  color: white;
+
+  font-weight: bold;
+}

@@ -1,0 +1,34 @@
+<div class="event-card">
+
+  <img
+    [src]="event.imageUrl || 'assets/images/default-event.jpg'"
+    alt=""
+  >
+
+  <div class="event-content">
+
+    <h3>{{ event.titre }}</h3>
+
+    <p class="location">
+      📍 {{ event.lieu }}
+    </p>
+
+    <p class="date">
+      📅 {{ event.dateEvenement | date:'mediumDate' }}
+    </p>
+
+    <div class="bottom-row">
+
+      <span class="status">
+        {{ event.status }}
+      </span>
+
+      <span class="capacity">
+        👥 {{ event.capacite }}
+      </span>
+
+    </div>
+
+  </div>
+
+</div>

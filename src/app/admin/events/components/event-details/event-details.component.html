@@ -1,0 +1,36 @@
+<div
+  class="details-container"
+  *ngIf="event"
+>
+
+  <img
+    [src]="event.imageUrl || 'assets/images/default-event.jpg'"
+  >
+
+  <div class="details-content">
+
+    <h1>{{ event.titre }}</h1>
+
+    <p>
+      📍 {{ event.lieu }}
+    </p>
+
+    <p>
+      📅 {{ event.dateEvenement | date:'fullDate' }}
+    </p>
+
+    <p>
+      👥 Capacity: {{ event.capacite }}
+    </p>
+
+    <p>
+      🏷️ {{ event.type }}
+    </p>
+
+    <span class="status">
+      {{ event.status }}
+    </span>
+
+  </div>
+
+</div>

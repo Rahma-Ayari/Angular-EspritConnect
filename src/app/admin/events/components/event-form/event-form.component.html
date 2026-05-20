@@ -1,0 +1,71 @@
+<div class="event-form-container">
+
+  <h1>
+    {{ isEdit ? 'Edit Event' : 'Create Event' }}
+  </h1>
+
+  <form
+    [formGroup]="eventForm"
+    (ngSubmit)="submit()"
+  >
+
+    <input
+      type="text"
+      placeholder="Title"
+      formControlName="titre"
+    >
+
+    <input
+      type="text"
+      placeholder="Location"
+      formControlName="lieu"
+    >
+
+    <input
+      type="datetime-local"
+      formControlName="dateEvenement"
+    >
+
+    <input
+      type="number"
+      placeholder="Capacity"
+      formControlName="capacite"
+    >
+
+    <input
+      type="text"
+      placeholder="Type"
+      formControlName="type"
+    >
+
+    <input
+      type="text"
+      placeholder="Image URL"
+      formControlName="imageUrl"
+    >
+
+    <select formControlName="status">
+
+      <option value="ACTIVE">
+        ACTIVE
+      </option>
+
+      <option value="UPCOMING">
+        UPCOMING
+      </option>
+
+      <option value="CANCELLED">
+        CANCELLED
+      </option>
+
+    </select>
+
+    <button type="submit">
+
+      {{ isEdit ? 'Update' : 'Create' }}
+
+    </button>
+
+  </form>
+
+</div>

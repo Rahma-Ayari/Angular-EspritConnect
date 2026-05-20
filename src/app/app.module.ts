@@ -5,7 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+// 1. Import provideHttpClient and withFetch instead of HttpClientModule
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -27,11 +28,13 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    HttpClientModule,
+    // 2. Remove HttpClientModule from here
     RouterModule
   ],
   providers: [
     provideClientHydration(),
+    // 3. Add provideHttpClient(withFetch()) to your providers
+    provideHttpClient(withFetch()),
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
