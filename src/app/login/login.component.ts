@@ -65,10 +65,10 @@ export class LoginComponent implements OnInit {
   }
 
   loginWithGoogle(): void {
-    window.location.href = 'http://localhost:8080/espritconnect/oauth2/authorization/google';
+    window.location.href = 'http://localhost:8087/espritconnect/oauth2/authorization/google';
   }
 
   loginWithLinkedIn(): void {
-    window.location.href = 'http://localhost:8080/espritconnect/oauth2/authorization/linkedin';
+    window.location.href = 'http://localhost:8087/espritconnect/oauth2/authorization/linkedin';
   }
 }

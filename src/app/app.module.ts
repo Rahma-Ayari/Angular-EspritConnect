@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RegisterComponent } from './register/register.component';
@@ -25,9 +26,9 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ReactiveFormsModule,  
-    HttpClientModule,  
-    RouterModule  
+    ReactiveFormsModule,
+    HttpClientModule,
+    RouterModule
   ],
   providers: [
     provideClientHydration(),

@@ -11,7 +11,8 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'user-management/approval', component: UserApprovalsComponent }
+      { path: 'user-management/approval', component: UserApprovalsComponent },
+      {path: 'events',loadChildren: () => import('./events/events.module').then(m => m.EventsModule)}
     ]
   }
 ];

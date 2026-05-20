@@ -11,12 +11,27 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'register-success', component: RegisterSuccessComponent },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   {
     path: 'admin',
     loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
     canActivate: [AuthGuard, AdminGuard]
+  },
+  {
+      path: 'dashboard',
+      component: DashboardComponent,
+      canActivate: [AuthGuard]
+    },
+{
+  path: 'events',
+  loadChildren: () =>
+    import('./user-events/user-events.module')
+      .then(m => m.UserEventsModule)
+},
+{
+    path: '**',
+    redirectTo: 'login'
   }
+
 ];
 
 @NgModule({
