@@ -1,32 +1,29 @@
-<div class="calendar-container">
-
-  <h2>Upcoming Events</h2>
-
-  <div
-    class="calendar-event"
-    *ngFor="let event of events"
-  >
-
-    <div class="date-box">
-
-      <span class="day">
-        {{ event.dateEvenement | date:'dd' }}
-      </span>
-
-      <span class="month">
-        {{ event.dateEvenement | date:'MMM' }}
-      </span>
-
+<aside class="calendar-panel">
+  <div class="panel-header">
+    <div>
+      <h2>Upcoming</h2>
+      <p>Next scheduled events</p>
     </div>
-
-    <div class="event-info">
-
-      <h3>{{ event.titre }}</h3>
-
-      <p>{{ event.lieu }}</p>
-
-    </div>
-
+    <i class="bi bi-calendar4-week"></i>
   </div>
 
-</div>
+  <div class="timeline" *ngIf="upcomingEvents.length > 0">
+    <div class="timeline-item" *ngFor="let event of upcomingEvents">
+      <div class="date-box">
+        <span>{{ event.dateEvenement | date:'dd' }}</span>
+        <small>{{ event.dateEvenement | date:'MMM' }}</small>
+      </div>
+
+      <div class="event-info">
+        <h3>{{ event.titre }}</h3>
+        <p>{{ event.lieu }}</p>
+        <span>{{ event.dateEvenement | date:'shortTime' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-calendar" *ngIf="upcomingEvents.length === 0">
+    <i class="bi bi-calendar2-x"></i>
+    <p>No upcoming events</p>
+  </div>
+</aside>

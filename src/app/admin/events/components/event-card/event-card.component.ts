@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Event } from '../../models/event.model';
 
 @Component({
@@ -7,6 +7,27 @@ import { Event } from '../../models/event.model';
   styleUrls: ['./event-card.component.css']
 })
 export class EventCardComponent {
+  @Input({ required: true }) event!: Event;
 
-  @Input() event!: Event;
+  @Output() viewEvent = new EventEmitter<Event>();
+  @Output() editEvent = new EventEmitter<Event>();
+  @Output() deleteEvent = new EventEmitter<Event>();
+
+  imageFailed = false;
+
+  get hasImage(): boolean {
+    return !!this.event.imageUrl && !this.imageFailed;
+  }
+
+  get statusClass(): string {
+    return (this.event.status || 'UPCOMING').toLowerCase();
+  }
+
+  get capacityLabel(): string {
+    return `${this.event.capacite || 0} seats`;
+  }
+
+  onImageError(): void {
+    this.imageFailed = true;
+  }
 }

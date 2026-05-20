@@ -1,71 +1,107 @@
-<div class="event-form-container">
+<div class="event-form-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Events</p>
+      <h1>{{ isEdit ? 'Edit Event' : 'Create Event' }}</h1>
+      <p class="subtitle">Use real event data from the backend. Fields marked with * are required.</p>
+    </div>
 
-  <h1>
-    {{ isEdit ? 'Edit Event' : 'Create Event' }}
-  </h1>
-
-  <form
-    [formGroup]="eventForm"
-    (ngSubmit)="submit()"
-  >
-
-    <input
-      type="text"
-      placeholder="Title"
-      formControlName="titre"
-    >
-
-    <input
-      type="text"
-      placeholder="Location"
-      formControlName="lieu"
-    >
-
-    <input
-      type="datetime-local"
-      formControlName="dateEvenement"
-    >
-
-    <input
-      type="number"
-      placeholder="Capacity"
-      formControlName="capacite"
-    >
-
-    <input
-      type="text"
-      placeholder="Type"
-      formControlName="type"
-    >
-
-    <input
-      type="text"
-      placeholder="Image URL"
-      formControlName="imageUrl"
-    >
-
-    <select formControlName="status">
-
-      <option value="ACTIVE">
-        ACTIVE
-      </option>
-
-      <option value="UPCOMING">
-        UPCOMING
-      </option>
-
-      <option value="CANCELLED">
-        CANCELLED
-      </option>
-
-    </select>
-
-    <button type="submit">
-
-      {{ isEdit ? 'Update' : 'Create' }}
-
+    <button type="button" class="btn-secondary" (click)="cancel()">
+      <i class="bi bi-arrow-left"></i>
+      Back
     </button>
+  </div>
 
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading form data...</p>
+  </div>
+
+  <div class="error-state" *ngIf="!isLoading && error">
+    <i class="bi bi-exclamation-triangle"></i>
+    <p>{{ error }}</p>
+  </div>
+
+  <form class="form-card" [formGroup]="eventForm" (ngSubmit)="submit()" *ngIf="!isLoading">
+    <div class="form-grid">
+      <div class="field full">
+        <label for="titre">Title *</label>
+        <input
+          id="titre"
+          type="text"
+          formControlName="titre"
+          placeholder="Career Fair 2026"
+        >
+        <span class="field-error" *ngIf="isInvalid('titre')">Title is required.</span>
+      </div>
+
+      <div class="field">
+        <label for="lieu">Location *</label>
+        <input
+          id="lieu"
+          type="text"
+          formControlName="lieu"
+          placeholder="Esprit Campus, Ariana"
+        >
+        <span class="field-error" *ngIf="isInvalid('lieu')">Location is required.</span>
+      </div>
+
+      <div class="field">
+        <label for="dateEvenement">Date and time *</label>
+        <input id="dateEvenement" type="datetime-local" formControlName="dateEvenement">
+        <span class="field-error" *ngIf="isInvalid('dateEvenement')">Date and time are required.</span>
+      </div>
+
+      <div class="field">
+        <label for="capacite">Capacity *</label>
+        <input id="capacite" type="number" min="1" formControlName="capacite">
+        <span class="field-error" *ngIf="isInvalid('capacite')">Capacity must be greater than zero.</span>
+      </div>
+
+      <div class="field">
+        <label for="type">Type</label>
+        <input id="type" type="text" list="event-types" formControlName="type" placeholder="Workshop">
+        <datalist id="event-types">
+          <option *ngFor="let type of eventTypes" [value]="type"></option>
+        </datalist>
+      </div>
+
+      <div class="field">
+        <label for="status">Status *</label>
+        <select id="status" formControlName="status">
+          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="entrepriseId">Organizer *</label>
+        <select id="entrepriseId" formControlName="entrepriseId">
+          <option [ngValue]="null">Select an enterprise</option>
+          <option *ngFor="let entreprise of entreprises" [ngValue]="entreprise.idEntreprise">
+            {{ entreprise.nom }}
+          </option>
+        </select>
+        <span class="field-error" *ngIf="isInvalid('entrepriseId')">Organizer is required.</span>
+        <span class="field-hint" *ngIf="entreprises.length === 0">No enterprises are available from the backend.</span>
+      </div>
+
+      <div class="field full">
+        <label for="imageUrl">Image URL</label>
+        <input
+          id="imageUrl"
+          type="url"
+          formControlName="imageUrl"
+          placeholder="https://..."
+        >
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="cancel()">Cancel</button>
+      <button type="submit" class="btn-primary" [disabled]="isSaving">
+        <span *ngIf="!isSaving">{{ isEdit ? 'Update Event' : 'Create Event' }}</span>
+        <span *ngIf="isSaving">Saving...</span>
+      </button>
+    </div>
   </form>
-
 </div>

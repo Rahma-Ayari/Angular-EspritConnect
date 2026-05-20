@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { EventService } from '../../services/event.service';
-import { Event } from '../../models/event.model';
+import { Event, EventStats } from '../../models/event.model';
 
 @Component({
   selector: 'app-event-dashboard',
@@ -8,59 +9,112 @@ import { Event } from '../../models/event.model';
   styleUrls: ['./event-dashboard.component.css']
 })
 export class EventDashboardComponent implements OnInit {
-
   events: Event[] = [];
+  stats: EventStats | null = null;
+  isLoading = false;
+  error: string | null = null;
+  searchQuery = '';
+  selectedStatus = '';
+  selectedType = '';
 
-  totalCapacity = 0;
+  readonly statuses = ['ACTIVE', 'UPCOMING', 'CANCELLED', 'COMPLETED'];
 
-  activeEvents = 0;
-
-  totalEvents = 0;
-
-  constructor(private eventService: EventService) {}
+  constructor(
+    private eventService: EventService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    this.loadDashboard();
+  }
 
+  loadDashboard(): void {
     this.loadEvents();
-
     this.loadStats();
   }
 
   loadEvents(): void {
+    this.isLoading = true;
+    this.error = null;
 
-    this.eventService.getAllEvents().subscribe({
-      next: (data) => {
-        this.events = data;
-
-        this.totalCapacity = data.reduce(
-          (sum, e) => sum + e.capacite,
-          0
-        );
-
-        this.activeEvents = data.filter(
-          e => e.status === 'ACTIVE'
-        ).length;
+    this.eventService.getAllEvents({
+      search: this.searchQuery,
+      status: this.selectedStatus,
+      type: this.selectedType
+    }).subscribe({
+      next: (events) => {
+        this.events = events;
+        this.isLoading = false;
       },
       error: (err) => {
-        console.log(err);
+        console.error('Failed to load events:', err);
+        this.error = 'Unable to load events.';
+        this.isLoading = false;
       }
     });
   }
 
   loadStats(): void {
-
-    this.eventService.getTotalEvents().subscribe({
-      next: (data) => {
-        this.totalEvents = data;
+    this.eventService.getStats().subscribe({
+      next: (stats) => {
+        this.stats = stats;
+      },
+      error: (err) => {
+        console.error('Failed to load event stats:', err);
       }
     });
   }
 
-  deleteEvent(id: number): void {
+  applyFilters(): void {
+    this.loadEvents();
+  }
 
-    this.eventService.deleteEvent(id).subscribe(() => {
-      this.loadEvents();
-      this.loadStats();
+  resetFilters(): void {
+    this.searchQuery = '';
+    this.selectedStatus = '';
+    this.selectedType = '';
+    this.loadEvents();
+  }
+
+  createEvent(): void {
+    this.router.navigate(['/admin/events/create']);
+  }
+
+  openUserView(): void {
+    this.router.navigate(['/events']);
+  }
+
+  viewEvent(event: Event): void {
+    if (!event.idEvenement) return;
+    this.router.navigate(['/admin/events', event.idEvenement]);
+  }
+
+  editEvent(event: Event): void {
+    if (!event.idEvenement) return;
+    this.router.navigate(['/admin/events/edit', event.idEvenement]);
+  }
+
+  deleteEvent(event: Event): void {
+    if (!event.idEvenement) return;
+
+    const canDelete = typeof window === 'undefined'
+      ? true
+      : window.confirm(`Delete "${event.titre}"? This action cannot be undone.`);
+
+    if (!canDelete) return;
+
+    this.eventService.deleteEvent(event.idEvenement).subscribe({
+      next: () => {
+        this.loadDashboard();
+      },
+      error: (err) => {
+        console.error('Failed to delete event:', err);
+        this.error = 'Unable to delete this event.';
+      }
     });
+  }
+
+  get eventTypes(): string[] {
+    return [...new Set(this.events.map(event => event.type).filter((type): type is string => !!type))].sort();
   }
 }

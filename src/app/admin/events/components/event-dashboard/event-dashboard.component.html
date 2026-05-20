@@ -1,79 +1,88 @@
-<div class="dashboard-container">
+<div class="events-admin-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Events</p>
+      <h1>Event Management</h1>
+      <p class="subtitle">Create, monitor, and manage EspritConnect events.</p>
+    </div>
 
-  <!-- HERO -->
-
-  <div class="hero-section">
-
-    <div class="hero-left">
-
-      <p class="welcome-text">
-        Welcome back Admin
-      </p>
-
-      <h1>
-        Manage Events,<br>
-        Create Experiences
-      </h1>
-
-      <p class="hero-description">
-        Create and manage all events dynamically from database.
-      </p>
-
-      <button
-        routerLink="/admin/events/create"
-        class="create-btn"
-      >
-        + Create Event
+    <div class="header-actions">
+      <button type="button" class="btn-secondary" (click)="openUserView()">
+        <i class="bi bi-eye"></i>
+        User View
       </button>
-
+      <button type="button" class="btn-primary" (click)="createEvent()">
+        <i class="bi bi-plus-lg"></i>
+        Create Event
+      </button>
     </div>
-
-    <div class="hero-right">
-
-      <img  src="event-icon.png">
-
-    </div>
-
   </div>
 
-  <!-- STATS COMPONENT -->
+  <app-event-stats [stats]="stats"></app-event-stats>
 
-  <app-event-stats
-    [totalEvents]="totalEvents"
-    [totalCapacity]="totalCapacity"
-    [activeEvents]="activeEvents"
-  >
-  </app-event-stats>
+  <div class="dashboard-grid">
+    <section class="content-card events-card">
+      <div class="card-toolbar">
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+          <input
+            type="text"
+            placeholder="Search by title, location, type, or company..."
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="applyFilters()"
+          >
+        </div>
 
-  <!-- MAIN GRID -->
+        <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
+          <option value="">All statuses</option>
+          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+        </select>
 
-  <div class="bottom-grid">
+        <select [(ngModel)]="selectedType" (change)="applyFilters()">
+          <option value="">All types</option>
+          <option *ngFor="let type of eventTypes" [value]="type">{{ type }}</option>
+        </select>
 
-    <!-- EVENTS -->
+        <button type="button" class="btn-filter" (click)="applyFilters()">
+          <i class="bi bi-funnel"></i>
+          Apply
+        </button>
+        <button type="button" class="btn-clear" (click)="resetFilters()">
+          Reset
+        </button>
+      </div>
 
-    <div class="events-panel">
+      <div class="loading-state" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Loading events...</p>
+      </div>
 
-      <h2>All Events</h2>
+      <div class="error-state" *ngIf="!isLoading && error">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p>{{ error }}</p>
+        <button type="button" (click)="loadDashboard()">Retry</button>
+      </div>
 
-      <div class="events-grid">
-
+      <div class="events-grid" *ngIf="!isLoading && !error && events.length > 0">
         <app-event-card
           *ngFor="let event of events"
           [event]="event"
-        >
-        </app-event-card>
-
+          (viewEvent)="viewEvent($event)"
+          (editEvent)="editEvent($event)"
+          (deleteEvent)="deleteEvent($event)"
+        ></app-event-card>
       </div>
 
-    </div>
+      <div class="empty-state" *ngIf="!isLoading && !error && events.length === 0">
+        <div class="empty-icon">
+          <i class="bi bi-calendar2-x"></i>
+        </div>
+        <h3>No events found</h3>
+        <p>Create your first event or adjust the current filters.</p>
+        <button type="button" class="btn-primary" (click)="createEvent()">Create Event</button>
+      </div>
+    </section>
 
-    <!-- CALENDAR -->
-
-    <app-event-calendar
-      [events]="events"
-    >
-    </app-event-calendar>
-
+    <app-event-calendar [events]="events"></app-event-calendar>
   </div>
-
 </div>

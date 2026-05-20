@@ -1,27 +1,41 @@
 <div class="stats-grid">
-
   <div class="stat-card">
-
-    <h3>Total Events</h3>
-
-    <h1>{{ totalEvents }}</h1>
-
+    <div class="stat-icon total">
+      <i class="bi bi-calendar2-week"></i>
+    </div>
+    <div>
+      <span class="stat-label">Total Events</span>
+      <strong>{{ totalEvents }}</strong>
+    </div>
   </div>
 
   <div class="stat-card">
-
-    <h3>Total Capacity</h3>
-
-    <h1>{{ totalCapacity }}</h1>
-
+    <div class="stat-icon active">
+      <i class="bi bi-broadcast"></i>
+    </div>
+    <div>
+      <span class="stat-label">Active</span>
+      <strong>{{ activeEvents }}</strong>
+    </div>
   </div>
 
   <div class="stat-card">
-
-    <h3>Active Events</h3>
-
-    <h1>{{ activeEvents }}</h1>
-
+    <div class="stat-icon upcoming">
+      <i class="bi bi-clock-history"></i>
+    </div>
+    <div>
+      <span class="stat-label">Upcoming</span>
+      <strong>{{ upcomingEvents }}</strong>
+    </div>
   </div>
 
+  <div class="stat-card">
+    <div class="stat-icon capacity">
+      <i class="bi bi-people"></i>
+    </div>
+    <div>
+      <span class="stat-label">Total Capacity</span>
+      <strong>{{ totalCapacity }}</strong>
+    </div>
+  </div>
 </div>

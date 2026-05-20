@@ -15,12 +15,12 @@ const routes: Routes = [
     component: EventFormComponent
   },
   {
-    path: ':id',
-    component: EventDetailsComponent
-  },
-  {
     path: 'edit/:id',
     component: EventFormComponent
+  },
+  {
+    path: ':id',
+    component: EventDetailsComponent
   }
 ];
 

@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
+import { EntrepriseOption, Event, EventStatus } from '../../models/event.model';
 import { EventService } from '../../services/event.service';
 
 @Component({
@@ -15,12 +12,16 @@ import { EventService } from '../../services/event.service';
   styleUrls: ['./event-form.component.css']
 })
 export class EventFormComponent implements OnInit {
-
   eventForm!: FormGroup;
-
-  eventId!: number;
-
+  eventId: number | null = null;
   isEdit = false;
+  isLoading = false;
+  isSaving = false;
+  error: string | null = null;
+  entreprises: EntrepriseOption[] = [];
+
+  readonly statuses: EventStatus[] = ['UPCOMING', 'ACTIVE', 'COMPLETED', 'CANCELLED'];
+  readonly eventTypes = ['Workshop', 'Career Fair', 'Hackathon', 'Conference', 'Networking', 'Training'];
 
   constructor(
     private fb: FormBuilder,
@@ -30,70 +31,134 @@ export class EventFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.buildForm();
 
-    this.eventForm = this.fb.group({
+    const idParam = this.route.snapshot.paramMap.get('id');
+    this.eventId = idParam ? Number(idParam) : null;
+    this.isEdit = !!this.eventId;
 
-      titre: ['', Validators.required],
+    this.loadInitialData();
+  }
 
-      lieu: ['', Validators.required],
+  submit(): void {
+    if (this.eventForm.invalid) {
+      this.eventForm.markAllAsTouched();
+      return;
+    }
 
-      dateEvenement: ['', Validators.required],
+    const payload = this.buildPayload();
+    this.isSaving = true;
+    this.error = null;
 
-      capacite: ['', Validators.required],
+    const request$ = this.isEdit && this.eventId
+      ? this.eventService.updateEvent(this.eventId, payload)
+      : this.eventService.createEvent(payload);
 
-      type: [''],
-
-      imageUrl: [''],
-
-      status: ['ACTIVE'],
-
-      entrepriseId: [1]
-    });
-
-    this.route.params.subscribe(params => {
-
-      if(params['id']) {
-
-        this.isEdit = true;
-
-        this.eventId = +params['id'];
-
-        this.loadEvent();
+    request$.subscribe({
+      next: () => {
+        this.isSaving = false;
+        this.router.navigate(['/admin/events']);
+      },
+      error: (err) => {
+        console.error('Failed to save event:', err);
+        this.isSaving = false;
+        this.error = 'Unable to save this event. Check required fields and try again.';
       }
     });
   }
 
-  loadEvent(): void {
-
-    this.eventService.getEventById(this.eventId)
-      .subscribe(event => {
-
-        this.eventForm.patchValue(event);
-      });
+  cancel(): void {
+    this.router.navigate(['/admin/events']);
   }
 
-  submit(): void {
+  isInvalid(controlName: string): boolean {
+    const control = this.eventForm.get(controlName);
+    return !!control && control.invalid && (control.dirty || control.touched);
+  }
 
-    if(this.eventForm.invalid) return;
+  private buildForm(): void {
+    this.eventForm = this.fb.group({
+      titre: ['', [Validators.required, Validators.maxLength(120)]],
+      lieu: ['', [Validators.required, Validators.maxLength(160)]],
+      dateEvenement: ['', Validators.required],
+      capacite: [1, [Validators.required, Validators.min(1)]],
+      type: [''],
+      imageUrl: [''],
+      status: ['UPCOMING', Validators.required],
+      entrepriseId: [null, Validators.required]
+    });
+  }
 
-    if(this.isEdit) {
+  private loadInitialData(): void {
+    this.isLoading = true;
+    this.error = null;
 
-      this.eventService.updateEvent(
-        this.eventId,
-        this.eventForm.value
-      ).subscribe(() => {
-
-        this.router.navigate(['/admin/events']);
+    if (this.isEdit && this.eventId) {
+      forkJoin({
+        entreprises: this.eventService.getEntreprises(),
+        event: this.eventService.getEventById(this.eventId)
+      }).subscribe({
+        next: ({ entreprises, event }) => {
+          this.entreprises = entreprises;
+          this.patchEvent(event);
+          this.isLoading = false;
+        },
+        error: (err) => this.handleLoadError(err)
       });
-
-    } else {
-
-      this.eventService.createEvent(
-        this.eventForm.value
-      ).subscribe(() => {
-
-        this.router.navigate(['/admin/events']);
-      });
+      return;
     }
+
+    this.eventService.getEntreprises().subscribe({
+      next: (entreprises) => {
+        this.entreprises = entreprises;
+        this.isLoading = false;
+      },
+      error: (err) => this.handleLoadError(err)
+    });
+  }
+
+  private patchEvent(event: Event): void {
+    this.eventForm.patchValue({
+      titre: event.titre,
+      lieu: event.lieu,
+      dateEvenement: this.toDateTimeLocal(event.dateEvenement),
+      capacite: event.capacite,
+      type: event.type || '',
+      imageUrl: event.imageUrl || '',
+      status: event.status || 'UPCOMING',
+      entrepriseId: event.entrepriseId
+    });
+  }
+
+  private buildPayload(): Event {
+    const raw = this.eventForm.getRawValue();
+
+    return {
+      titre: raw.titre,
+      lieu: raw.lieu,
+      dateEvenement: new Date(raw.dateEvenement).toISOString(),
+      capacite: Number(raw.capacite),
+      type: raw.type || null,
+      imageUrl: raw.imageUrl || null,
+      status: raw.status,
+      entrepriseId: Number(raw.entrepriseId)
+    };
+  }
+
+  private toDateTimeLocal(value: string): string {
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+
+    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    return localDate.toISOString().slice(0, 16);
+  }
+
+  private handleLoadError(err: unknown): void {
+    console.error('Failed to load event form data:', err);
+    this.error = 'Unable to load event form data.';
+    this.isLoading = false;
   }
 }

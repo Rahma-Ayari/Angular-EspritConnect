@@ -7,7 +7,7 @@
     <div class="header">
       <h1>Events Management</h1>
 
-      <button routerLink="/events/create">
+      <button routerLink="/admin/events/create">
         + Create Event
       </button>
     </div>
@@ -26,7 +26,9 @@
         <p>👥 {{ e.capacite }} participants</p>
 
         <div class="bottom">
-          <button class="details">Details</button>
+          <button class="details" [routerLink]="['/admin/events', e.idEvenement]">Details</button>
+
+          <button class="details" [routerLink]="['/admin/events/edit', e.idEvenement]">Edit</button>
 
           <button class="delete"
                   (click)="deleteEvent(e.idEvenement)">
