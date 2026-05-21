@@ -1,0 +1,177 @@
+<!-- ================================================================
+     message-users.component.html — Design professionnel
+     ================================================================ -->
+<div class="mu-page">
+
+  <!-- ── En-tête ── -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Message Users</h1>
+      <p class="page-subtitle">Envoyez une campagne email personnalisée à un groupe d'utilisateurs de la plateforme.</p>
+    </div>
+  </div>
+
+  <!-- ── Alertes ── -->
+  <div class="alert alert--success" *ngIf="successMsg">
+    <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+    {{ successMsg }}
+  </div>
+  <div class="alert alert--error" *ngIf="errorMsg">
+    <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+    {{ errorMsg }}
+  </div>
+
+  <!-- ── Layout ── -->
+  <div class="mu-layout">
+
+    <!-- Formulaire principal -->
+    <div class="mu-form-col">
+
+      <!-- Section Destinataires -->
+      <div class="mu-section card" [class.mu-section--open]="openSection === 'recipients'">
+        <button type="button" class="mu-section__trigger" (click)="openSection = openSection === 'recipients' ? '' : 'recipients'">
+          <div class="mu-section__icon-wrap mu-section__icon-wrap--users">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          </div>
+          <div class="mu-section__meta">
+            <span class="mu-section__name">Destinataires</span>
+            <span class="mu-section__val" *ngIf="selectedRecipients !== 'none'">{{ getRecipientsLabel() }}</span>
+            <span class="mu-section__val mu-section__val--empty" *ngIf="selectedRecipients === 'none'">Choisir les destinataires</span>
+          </div>
+          <svg class="mu-section__arrow" viewBox="0 0 24 24" width="18" height="18">
+            <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+          </svg>
+        </button>
+
+        <div class="mu-section__body" *ngIf="openSection === 'recipients'">
+          <div class="rec-options">
+            <label class="rec-option" *ngFor="let r of recipientOptions">
+              <input type="radio" name="rec" [value]="r.value" [(ngModel)]="selectedRecipients" class="rec-option__input"/>
+              <div class="rec-option__card">
+                <div class="rec-option__radio"></div>
+                <div class="rec-option__info">
+                  <span class="rec-option__label">{{ r.label }}</span>
+                  <span class="rec-option__desc">{{ r.desc }}</span>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Message -->
+      <div class="mu-section card" [class.mu-section--open]="openSection === 'message'">
+        <button type="button" class="mu-section__trigger" (click)="openSection = openSection === 'message' ? '' : 'message'">
+          <div class="mu-section__icon-wrap mu-section__icon-wrap--edit">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          </div>
+          <div class="mu-section__meta">
+            <span class="mu-section__name">Contenu du message</span>
+            <span class="mu-section__val" *ngIf="messageForm.sujet">{{ messageForm.sujet }}</span>
+            <span class="mu-section__val mu-section__val--empty" *ngIf="!messageForm.sujet">Sujet et corps de l'email</span>
+          </div>
+          <svg class="mu-section__arrow" viewBox="0 0 24 24" width="18" height="18">
+            <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+          </svg>
+        </button>
+
+        <div class="mu-section__body" *ngIf="openSection === 'message'">
+          <div class="field">
+            <label class="field__label">Sujet <span class="field__req">*</span></label>
+            <input class="field__input" [(ngModel)]="messageForm.sujet" placeholder="Objet de l'email…" type="text"/>
+          </div>
+          <div class="field">
+            <label class="field__label">Contenu HTML <span class="field__req">*</span></label>
+            <textarea class="field__input field__textarea" [(ngModel)]="messageForm.contenu"
+                      placeholder="Rédigez votre message ici…" rows="7"></textarea>
+            <p class="field__hint">Vous pouvez utiliser des balises HTML basiques pour la mise en forme.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Expéditeur -->
+      <div class="mu-section card" [class.mu-section--open]="openSection === 'from'">
+        <button type="button" class="mu-section__trigger" (click)="openSection = openSection === 'from' ? '' : 'from'">
+          <div class="mu-section__icon-wrap mu-section__icon-wrap--mail">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          </div>
+          <div class="mu-section__meta">
+            <span class="mu-section__name">Expéditeur</span>
+            <span class="mu-section__val">{{ messageForm.from || 'noreply@esprit.tn' }}</span>
+          </div>
+          <svg class="mu-section__arrow" viewBox="0 0 24 24" width="18" height="18">
+            <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+          </svg>
+        </button>
+
+        <div class="mu-section__body" *ngIf="openSection === 'from'">
+          <div class="field">
+            <label class="field__label">Adresse email expéditeur</label>
+            <input class="field__input" [(ngModel)]="messageForm.from" placeholder="noreply@esprit.tn" type="email"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Test -->
+      <div class="mu-section card" [class.mu-section--open]="openSection === 'test'">
+        <button type="button" class="mu-section__trigger" (click)="openSection = openSection === 'test' ? '' : 'test'">
+          <div class="mu-section__icon-wrap mu-section__icon-wrap--test">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M19.428 12.924l-3.928-9a1 1 0 0 0-.928-.628H5.5a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5H7v2.5a.5.5 0 0 0 .5.5H9v2.5a.5.5 0 0 0 .5.5H11v2.5a.5.5 0 0 0 .5.5H13v1a1 1 0 0 0 1 1h1.5a1 1 0 0 0 .928-.628l3-8A1 1 0 0 0 19.428 12.924z"/></svg>
+          </div>
+          <div class="mu-section__meta">
+            <span class="mu-section__name">Email de test</span>
+            <span class="mu-section__val" *ngIf="messageForm.testEmail">{{ messageForm.testEmail }}</span>
+            <span class="mu-section__val mu-section__val--empty" *ngIf="!messageForm.testEmail">Tester avant d'envoyer</span>
+          </div>
+          <svg class="mu-section__arrow" viewBox="0 0 24 24" width="18" height="18">
+            <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+          </svg>
+        </button>
+
+        <div class="mu-section__body" *ngIf="openSection === 'test'">
+          <div class="field">
+            <label class="field__label">Email(s) de test <span class="field__hint">(séparés par des virgules)</span></label>
+            <input class="field__input" [(ngModel)]="messageForm.testEmail" placeholder="admin@esprit.tn, test@esprit.tn" type="text"/>
+          </div>
+          <button class="btn btn--ghost btn--sm" (click)="sendTest()" [disabled]="sending || !messageForm.testEmail">
+            <svg viewBox="0 0 24 24" width="13" height="13"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            Envoyer test
+          </button>
+        </div>
+      </div>
+
+      <!-- Barre d'actions -->
+      <div class="mu-submit-bar">
+        <button class="btn btn--primary" style="flex:1;justify-content:center"
+                (click)="sendMessage()" [disabled]="sending || !messageForm.sujet || !messageForm.contenu || selectedRecipients === 'none'">
+          <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          {{ sending ? 'Envoi en cours…' : 'Envoyer la campagne' }}
+        </button>
+        <button class="btn btn--ghost" (click)="previewMessage()">
+          <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+          Aperçu
+        </button>
+      </div>
+
+    </div><!-- /form -->
+
+    <!-- Aperçu -->
+    <div class="mu-preview-col" *ngIf="showPreview">
+      <div class="card mu-preview-card">
+        <div class="mu-preview-header">
+          <h3 class="mu-preview-title">Aperçu de l'email</h3>
+          <button class="btn btn--ghost btn--sm btn--icon" (click)="showPreview = false">
+            <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          </button>
+        </div>
+        <div class="mu-preview-meta">
+          <span><strong>De :</strong> {{ messageForm.from || 'noreply@esprit.tn' }}</span>
+          <span><strong>À :</strong> {{ getRecipientsLabel() || 'Non défini' }}</span>
+          <span><strong>Sujet :</strong> {{ messageForm.sujet || '(Sans sujet)' }}</span>
+        </div>
+        <div class="mu-preview-body" [innerHTML]="buildPreviewHtml()"></div>
+      </div>
+    </div>
+
+  </div>
+</div>

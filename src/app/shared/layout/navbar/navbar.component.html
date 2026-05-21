@@ -1,0 +1,55 @@
+<!-- ======================================================
+     navbar.component.html — EspritConnect Admin
+     ====================================================== -->
+<header class="navbar" [class.navbar--dark]="variant === 'dark'" [class.navbar--light]="variant === 'light'">
+
+  <!-- Gauche : hamburger + brand -->
+  <div class="navbar__left">
+    <button *ngIf="showMenuToggle" type="button" class="navbar__hamburger" (click)="onToggle()" aria-label="Ouvrir le menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <a class="navbar__brand" href="/">
+      <div class="navbar__logomark">
+        <span>E</span>
+      </div>
+      <div class="navbar__brandtext" *ngIf="!showMenuToggle">
+        <span class="navbar__brandname">ESPRIT<span class="navbar__brandname--accent">Connect</span></span>
+        <span class="navbar__brandsub">Se former autrement</span>
+      </div>
+    </a>
+  </div>
+
+  <!-- Centre : titre de page -->
+  <div class="navbar__center">
+    <h1 class="navbar__title">{{ pageTitle }}</h1>
+  </div>
+
+  <!-- Droite : notifications + utilisateur -->
+  <div class="navbar__right">
+
+    <!-- Bouton notifications -->
+    <button type="button" class="navbar__notif-btn" aria-label="Notifications">
+      <svg viewBox="0 0 24 24" width="20" height="20">
+        <path fill="currentColor" d="M12 22a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2zm6-6V11a6 6 0 1 0-12 0v5l-2 2v1h16v-1l-2-2z"/>
+      </svg>
+      <span class="navbar__notif-badge" *ngIf="notificationCount > 0">{{ notificationCount }}</span>
+    </button>
+
+    <!-- Séparateur -->
+    <div class="navbar__sep"></div>
+
+    <!-- Utilisateur -->
+    <button type="button" class="navbar__user">
+      <div class="navbar__avatar">{{ userName.charAt(0) | uppercase }}</div>
+      <div class="navbar__userinfo" *ngIf="!showMenuToggle">
+        <span class="navbar__username">{{ userName }}</span>
+        <span class="navbar__userrole">{{ userRole }}</span>
+      </div>
+      <svg class="navbar__user-chevron" viewBox="0 0 24 24" width="14" height="14">
+        <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+      </svg>
+    </button>
+
+  </div>
+</header>

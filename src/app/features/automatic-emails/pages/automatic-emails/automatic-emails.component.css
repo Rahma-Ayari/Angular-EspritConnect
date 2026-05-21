@@ -1,0 +1,221 @@
+/* ================================================================
+   automatic-emails.component.css
+   ================================================================ */
+
+.ae-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 6px 0 48px;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ── Layout 2 colonnes ── */
+.ae-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .ae-layout { grid-template-columns: 1fr; }
+}
+
+/* ── Loader ── */
+.ae-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 60px;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+/* ── Carte principale ── */
+.ae-card { overflow: hidden; }
+
+.ae-card__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 22px 24px;
+  border-bottom: 1px solid #f3f4f6;
+  background: linear-gradient(135deg, #fff 0%, #fff5f5 100%);
+}
+
+.ae-card__emoji {
+  font-size: 40px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.ae-card__info { flex: 1; }
+
+.ae-card__title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f0f14;
+  margin: 0 0 6px;
+}
+
+.ae-card__desc {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0 0 10px;
+}
+
+.ae-link-btn {
+  background: none;
+  border: none;
+  color: #d7282f;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  margin-left: 4px;
+}
+
+.ae-last-run {
+  display: inline-block;
+  font-size: 11.5px;
+  color: #9ca3af;
+  margin-left: 10px;
+}
+
+.ae-card__body {
+  padding: 24px;
+}
+
+/* ── Select stylisé ── */
+.ae-select {
+  max-width: 200px;
+}
+
+/* ── Textarea ── */
+.ae-textarea {
+  font-family: 'DM Mono', monospace;
+  font-size: 12.5px;
+  min-height: 120px;
+}
+
+/* ── Code inline ── */
+.ae-code {
+  background: #f3f4f6;
+  color: #d7282f;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+}
+
+/* ── Actions ── */
+.ae-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+/* ── Formulaire test ── */
+.ae-test-form {
+  margin-top: 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+.ae-test-form__inner {
+  background: #f9fafb;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.ae-test-form__actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ── Info card latérale ── */
+.ae-info-card {
+  padding: 20px;
+}
+
+.ae-info-card__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 14px;
+  color: #2563eb;
+}
+
+.ae-info-card__list {
+  padding-left: 18px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ae-info-card__list li {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* ── Modal aperçu ── */
+.ae-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.15s ease;
+}
+
+.ae-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(3px);
+}
+
+.ae-modal__box {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 14px;
+  width: min(660px, 95vw);
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+.ae-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.ae-modal__title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.ae-modal__frame {
+  width: 100%;
+  flex: 1;
+  border: none;
+  min-height: 460px;
+}

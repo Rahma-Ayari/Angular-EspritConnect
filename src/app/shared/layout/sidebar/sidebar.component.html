@@ -1,0 +1,84 @@
+<!-- ======================================================
+     sidebar.component.html — EspritConnect Admin
+     ====================================================== -->
+<aside
+  class="sidebar"
+  [class.sidebar--collapsed]="collapsed"
+  [class.sidebar--mobile-open]="mobileOpen"
+  role="navigation"
+  aria-label="Navigation principale"
+>
+
+  <!-- ── Brand ── -->
+  <div class="sidebar__brand">
+    <div class="sidebar__brand-mark">E</div>
+    <div class="sidebar__brand-text" *ngIf="!collapsed">
+      <span class="sidebar__brand-name">esprit</span>
+      <span class="sidebar__brand-sub">Se former autrement</span>
+      <span class="sidebar__brand-honoris">HONORIS UNITED UNIVERSITIES</span>
+    </div>
+  </div>
+
+  <!-- ── Navigation ── -->
+  <nav class="sidebar__nav">
+    <ng-container *ngFor="let item of items">
+
+      <!-- Groupe avec accentuation rouge (Email Communications) -->
+      <div class="sidebar__item-wrap" [class.sidebar__item-wrap--accent]="item.accent">
+
+        <!-- Bouton principal -->
+        <button
+          type="button"
+          class="sidebar__item"
+          [class.sidebar__item--has-children]="item.children?.length"
+          [class.sidebar__item--expanded]="isExpanded(item)"
+          [attr.aria-expanded]="item.children?.length ? isExpanded(item) : null"
+          (click)="onItemClick(item, $event)"
+          [title]="collapsed ? item.label : ''"
+        >
+          <!-- Icône -->
+          <span class="sidebar__item-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path fill="currentColor" [attr.d]="iconPath(item.icon)" />
+            </svg>
+          </span>
+
+          <!-- Label + chevron -->
+          <ng-container *ngIf="!collapsed">
+            <span class="sidebar__item-label">{{ item.label }}</span>
+            <svg *ngIf="item.children?.length" class="sidebar__chevron" viewBox="0 0 24 24" width="16" height="16">
+              <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+            </svg>
+          </ng-container>
+        </button>
+
+        <!-- Sous-menu -->
+        <div class="sidebar__submenu" *ngIf="item.children?.length && isExpanded(item) && !collapsed">
+          <button
+            type="button"
+            class="sidebar__sub-item"
+            *ngFor="let child of item.children"
+            [class.sidebar__sub-item--active]="child.active"
+            (click)="onItemClick(child, $event)"
+          >
+            <span class="sidebar__sub-dot" [class.sidebar__sub-dot--active]="child.active"></span>
+            <span>{{ child.label }}</span>
+          </button>
+        </div>
+
+      </div>
+    </ng-container>
+  </nav>
+
+  <!-- ── Bouton réduire ── -->
+  <button type="button" class="sidebar__collapse-btn" (click)="toggleCollapse.emit()" [attr.aria-pressed]="collapsed">
+    <svg viewBox="0 0 24 24" width="16" height="16" [class.sidebar__collapse-icon--reversed]="collapsed">
+      <path fill="currentColor" d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/> 
+    </svg>
+    <span *ngIf="!collapsed">Réduire</span>
+  </button>
+
+</aside>
+
+<!-- ── Backdrop mobile ── -->
+<div class="sidebar__backdrop" *ngIf="mobileOpen" (click)="closeMobile.emit()" aria-hidden="true"></div>

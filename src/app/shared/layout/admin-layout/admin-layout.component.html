@@ -1,0 +1,24 @@
+<div class="shell">
+  <app-sidebar
+    [items]="sidebarItems"
+    [collapsed]="sidebarCollapsed"
+    [mobileOpen]="mobileMenuOpen"
+    (toggleCollapse)="toggleSidebarCollapse()"
+    (navigate)="onNavigate($event)"
+    (closeMobile)="closeMobileMenu()"
+  ></app-sidebar>
+
+  <div class="shell__main">
+    <app-navbar
+      [variant]="navbarVariant"
+      [pageTitle]="pageTitle"
+      [showMenuToggle]="isMobile"
+      [notificationCount]="3"
+      (menuToggle)="toggleMobileMenu()"
+    ></app-navbar>
+
+    <main class="shell__content">
+      <ng-content></ng-content>
+    </main>
+  </div>
+</div>

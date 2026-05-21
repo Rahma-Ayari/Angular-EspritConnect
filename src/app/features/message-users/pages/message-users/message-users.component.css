@@ -1,0 +1,214 @@
+/* ================================================================
+   message-users.component.css
+   ================================================================ */
+
+.mu-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 6px 0 48px;
+  animation: fadeIn 0.3s ease;
+}
+
+.mu-layout {
+  display: grid;
+  grid-template-columns: 560px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .mu-layout { grid-template-columns: 1fr; }
+}
+
+/* ── Section accordéon ── */
+.mu-section {
+  border-radius: 12px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: box-shadow 0.15s;
+}
+
+.mu-section--open {
+  box-shadow: 0 4px 16px rgba(215,40,47,0.08);
+  border-color: #fecaca;
+}
+
+.mu-section__trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition: background 0.14s;
+}
+
+.mu-section__trigger:hover { background: #fafafa; }
+.mu-section--open .mu-section__trigger { background: #fafafa; }
+
+.mu-section__icon-wrap {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: background 0.14s;
+}
+
+.mu-section__icon-wrap--users { background: #eff6ff; color: #2563eb; }
+.mu-section__icon-wrap--edit  { background: #fef3c7; color: #d97706; }
+.mu-section__icon-wrap--mail  { background: #f0fdf4; color: #059669; }
+.mu-section__icon-wrap--test  { background: #f5f3ff; color: #7c3aed; }
+.mu-section--open .mu-section__icon-wrap--users { background: #dbeafe; }
+.mu-section--open .mu-section__icon-wrap--edit  { background: #fde68a; }
+.mu-section--open .mu-section__icon-wrap--mail  { background: #d1fae5; }
+.mu-section--open .mu-section__icon-wrap--test  { background: #ede9fe; }
+
+.mu-section__meta { flex: 1; }
+
+.mu-section__name {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f0f14;
+}
+
+.mu-section__val {
+  display: block;
+  font-size: 12.5px;
+  color: #6b7280;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
+}
+
+.mu-section__val--empty { color: #d7282f; }
+
+.mu-section__arrow {
+  color: #9ca3af;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.mu-section--open .mu-section__arrow { transform: rotate(180deg); }
+
+.mu-section__body {
+  padding: 0 20px 20px 74px;
+  animation: fadeIn 0.2s ease;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 18px;
+}
+
+/* ── Options destinataires ── */
+.rec-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rec-option__input { display: none; }
+
+.rec-option__card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.14s;
+  background: #fff;
+}
+
+.rec-option:hover .rec-option__card {
+  border-color: #d7282f;
+  background: #fef2f2;
+}
+
+.rec-option__input:checked + .rec-option__card {
+  border-color: #d7282f;
+  background: #fef2f2;
+}
+
+.rec-option__radio {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  flex-shrink: 0;
+  transition: all 0.14s;
+}
+
+.rec-option__input:checked + .rec-option__card .rec-option__radio {
+  border-color: #d7282f;
+  background: #d7282f;
+  box-shadow: inset 0 0 0 3px #fff;
+}
+
+.rec-option__label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f0f14;
+}
+
+.rec-option__desc {
+  display: block;
+  font-size: 11.5px;
+  color: #9ca3af;
+}
+
+/* ── Barre d'actions ── */
+.mu-submit-bar {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* ── Aperçu ── */
+.mu-preview-card {
+  border-radius: 12px;
+  overflow: hidden;
+  position: sticky;
+  top: 80px;
+}
+
+.mu-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.mu-preview-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f0f14;
+  margin: 0;
+}
+
+.mu-preview-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 20px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 12.5px;
+  color: #374151;
+}
+
+.mu-preview-body {
+  padding: 20px;
+  font-size: 13.5px;
+  color: #374151;
+  line-height: 1.7;
+  max-height: 500px;
+  overflow-y: auto;
+}

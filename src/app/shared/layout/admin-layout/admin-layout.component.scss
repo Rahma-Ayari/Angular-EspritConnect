@@ -1,0 +1,26 @@
+/* admin-layout — fond doux, zone contenu lisible */
+
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #eef1f5 0%, #f6f7f9 38%, #f0f2f6 100%);
+}
+
+.shell__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.shell__content {
+  flex: 1;
+  padding: 28px 32px 40px;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+
+  @media (max-width: 900px) {
+    padding: 16px 14px 28px;
+  }
+}

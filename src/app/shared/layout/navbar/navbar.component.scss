@@ -1,0 +1,257 @@
+/* ================================================================
+   navbar.component.scss — Design raffiné professionnel
+   ================================================================ */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 20px;
+  height: 62px;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+/* ── Variantes ── */
+.navbar--dark {
+  background: #0f0f14;
+  color: #f9fafb;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.navbar--light {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #1a1d26;
+  border-bottom: 1px solid rgba(15, 15, 20, 0.06);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 8px 28px rgba(15, 15, 20, 0.06);
+}
+
+/* ── Gauche ── */
+.navbar__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.navbar__logomark {
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(145deg, #d7282f 0%, #b32027 100%);
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(215, 40, 47, 0.28);
+
+  span {
+    color: #fff;
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+.navbar__brandtext {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.navbar__brandname {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+
+  &--accent { color: #d7282f; }
+}
+
+.navbar--dark .navbar__brandname { color: #fff; }
+.navbar--dark .navbar__brandname--accent { color: #f87171; }
+
+.navbar__brandsub {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: #9ca3af;
+}
+
+/* ── Centre ── */
+.navbar__center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+  padding: 0 16px;
+}
+
+.navbar__title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.85;
+}
+
+/* ── Droite ── */
+.navbar__right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.navbar__sep {
+  width: 1px;
+  height: 22px;
+  background: currentColor;
+  opacity: 0.12;
+  margin: 0 4px;
+}
+
+/* ── Notif ── */
+.navbar__notif-btn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  opacity: 0.75;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.navbar__notif-btn:hover {
+  opacity: 1;
+  background: rgba(128,128,128,0.1);
+}
+
+.navbar__notif-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #d7282f;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  border: 2px solid transparent;
+}
+
+.navbar--dark  .navbar__notif-badge { border-color: #0f0f14; }
+.navbar--light .navbar__notif-badge { border-color: #fff; }
+
+/* ── Utilisateur ── */
+.navbar__user {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 5px 10px 5px 5px;
+  border-radius: 8px;
+  transition: background 0.15s;
+  font: inherit;
+}
+
+.navbar__user:hover {
+  background: rgba(128,128,128,0.1);
+}
+
+.navbar__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #d7282f;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.navbar__userinfo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.navbar__username {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.navbar__userrole {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+.navbar__user-chevron {
+  opacity: 0.5;
+}
+
+/* ── Hamburger ── */
+.navbar__hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  padding: 9px 8px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s;
+
+  span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+}
+
+.navbar__hamburger:hover { background: rgba(128,128,128,0.1); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .navbar__center { display: none; }
+  .navbar__sep { display: none; }
+}
