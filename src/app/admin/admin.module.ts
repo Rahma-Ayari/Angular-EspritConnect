@@ -12,6 +12,7 @@ import { HeaderComponent } from './layout/header/header.component';
 // Page Components
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { UserApprovalsComponent } from './pages/user-management/user-approvals/user-approvals.component';
+import { EnterpriseVerificationComponent } from './pages/enterprise-verification/enterprise-verification.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { UserApprovalsComponent } from './pages/user-management/user-approvals/u
     HeaderComponent,
     // Pages
     DashboardComponent,
-    UserApprovalsComponent
+    UserApprovalsComponent,
+    EnterpriseVerificationComponent
   ],
   imports: [
     CommonModule,

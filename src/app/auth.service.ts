@@ -36,7 +36,7 @@ export interface AuthResponse {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private readonly API = 'http://localhost:8088/espritconnect/api/auth';
+  private readonly API = 'http://localhost:8087/espritconnect/api/auth';
   private readonly TOKEN_KEY = 'esprit_token';
   private readonly USER_KEY  = 'esprit_user';
 

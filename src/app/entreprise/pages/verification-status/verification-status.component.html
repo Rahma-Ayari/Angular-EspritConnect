@@ -1,0 +1,222 @@
+<div class="verification-container">
+  <div class="page-header">
+    <h1>Vérification de votre entreprise</h1>
+    <p>Soumettez vos documents pour faire vérifier votre compte entreprise</p>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-error">
+    <span class="alert-icon">⚠️</span>
+    <span>{{ error }}</span>
+    <button class="alert-close" (click)="error = null">&times;</button>
+  </div>
+
+  <div *ngIf="success" class="alert alert-success">
+    <span class="alert-icon">✓</span>
+    <span>{{ success }}</span>
+    <button class="alert-close" (click)="success = null">&times;</button>
+  </div>
+
+  <div *ngIf="!loading" class="content-grid">
+    <!-- Status Card -->
+    <div class="card status-card">
+      <div class="card-header">
+        <h2>Statut actuel</h2>
+      </div>
+      <div class="card-body">
+        <div class="status-display" *ngIf="verification">
+          <div class="status-badge" [ngClass]="getStatusClass(verification.verificationStatus)">
+            {{ getStatusLabel(verification.verificationStatus) }}
+          </div>
+          
+          <div class="status-details">
+            <div class="detail-item" *ngIf="verification.verificationDocumentName">
+              <span class="detail-label">Document soumis:</span>
+              <span class="detail-value">{{ verification.verificationDocumentName }}</span>
+            </div>
+            <div class="detail-item" *ngIf="verification.verifiedAt">
+              <span class="detail-label">Date de vérification:</span>
+              <span class="detail-value">{{ verification.verifiedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+            <div class="detail-item" *ngIf="verification.verifiedBy">
+              <span class="detail-label">Vérifié par:</span>
+              <span class="detail-value">{{ verification.verifiedBy }}</span>
+            </div>
+          </div>
+
+          <div class="admin-notes" *ngIf="verification.verificationNotes">
+            <h4>Notes de l'administrateur</h4>
+            <p>{{ verification.verificationNotes }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confidence Score Card -->
+    <div class="card score-card" *ngIf="confidenceScore">
+      <div class="card-header">
+        <h2>Score de confiance</h2>
+      </div>
+      <div class="card-body">
+        <div class="score-circle" [ngClass]="getScoreClass(confidenceScore.total)">
+          <span class="score-value">{{ confidenceScore.total }}</span>
+          <span class="score-max">/100</span>
+        </div>
+
+        <div class="score-breakdown">
+          <div class="breakdown-item" *ngFor="let item of confidenceScore.breakdown">
+            <div class="breakdown-header">
+              <span class="breakdown-criteria">{{ item.criteria }}</span>
+              <span class="breakdown-points" [class.passed]="item.passed">
+                {{ item.points }}/{{ item.maxPoints }}
+              </span>
+            </div>
+            <div class="breakdown-bar">
+              <div class="breakdown-fill" 
+                   [style.width.%]="(item.points / item.maxPoints) * 100"
+                   [class.passed]="item.passed">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="recommendation" [ngClass]="getRecommendationClass(confidenceScore.recommendation)">
+          <span class="recommendation-icon">
+            <ng-container [ngSwitch]="confidenceScore.recommendation">
+              <span *ngSwitchCase="'APPROVE'">✓</span>
+              <span *ngSwitchCase="'MANUAL_REVIEW'">⏳</span>
+              <span *ngSwitchCase="'INSUFFICIENT'">!</span>
+            </ng-container>
+          </span>
+          <span class="recommendation-text">{{ confidenceScore.recommendationText }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submission Form -->
+    <div class="card form-card" 
+         *ngIf="verification?.verificationStatus === 'NOT_SUBMITTED' || verification?.verificationStatus === 'REJECTED'">
+      <div class="card-header">
+        <h2>Soumettre votre vérification</h2>
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="submitVerification()" class="verification-form">
+          <!-- Document Upload -->
+          <div class="form-group">
+            <label for="document">Document justificatif *</label>
+            <div class="file-upload">
+              <input type="file" 
+                     id="document" 
+                     (change)="onFileSelected($event)"
+                     accept=".pdf,.jpg,.jpeg,.png">
+              <div class="file-upload-label">
+                <span class="upload-icon">📄</span>
+                <span *ngIf="!selectedFile">Cliquez pour sélectionner un fichier</span>
+                <span *ngIf="selectedFile">{{ selectedFile.name }}</span>
+              </div>
+            </div>
+            <span class="form-hint">Formats acceptés: PDF, JPG, PNG (max 10 Mo)</span>
+          </div>
+
+          <!-- Business Registration Number -->
+          <div class="form-group">
+            <label for="rcNumber">Numéro d'immatriculation (RC/MF) *</label>
+            <input type="text" 
+                   id="rcNumber" 
+                   [(ngModel)]="businessRegistrationNumber"
+                   name="businessRegistrationNumber"
+                   (ngModelChange)="onRcNumberChange()"
+                   placeholder="Ex: B1234567890 ou 1234567/A/M/000"
+                   [class.invalid]="!rcValidation.isValid && businessRegistrationNumber">
+            <span class="form-feedback" [class.error]="!rcValidation.isValid" *ngIf="businessRegistrationNumber">
+              {{ rcValidation.message }}
+            </span>
+          </div>
+
+          <!-- Company Sector -->
+          <div class="form-group">
+            <label for="sector">Secteur d'activité</label>
+            <select id="sector" 
+                    [(ngModel)]="companySector"
+                    name="companySector"
+                    (ngModelChange)="onSectorChange()">
+              <option value="">Sélectionnez un secteur</option>
+              <option *ngFor="let sector of sectors" [value]="sector">{{ sector }}</option>
+            </select>
+          </div>
+
+          <!-- Company Website -->
+          <div class="form-group">
+            <label for="website">Site web de l'entreprise</label>
+            <input type="url" 
+                   id="website" 
+                   [(ngModel)]="companyWebsite"
+                   name="companyWebsite"
+                   (ngModelChange)="onWebsiteChange()"
+                   placeholder="https://www.exemple.com"
+                   [class.invalid]="!websiteValidation.isValid && companyWebsite">
+            <span class="form-feedback" [class.error]="!websiteValidation.isValid" *ngIf="companyWebsite">
+              {{ websiteValidation.message }}
+            </span>
+          </div>
+
+          <!-- Company Description -->
+          <div class="form-group">
+            <label for="description">Description de l'entreprise</label>
+            <textarea id="description" 
+                      [(ngModel)]="companyDescription"
+                      name="companyDescription"
+                      (ngModelChange)="onDescriptionChange()"
+                      placeholder="Décrivez brièvement votre entreprise..."
+                      rows="4"></textarea>
+            <span class="form-feedback" 
+                  [class.error]="!descriptionValidation.isValid" 
+                  *ngIf="companyDescription">
+              {{ descriptionValidation.message }}
+            </span>
+            <span class="char-count">{{ companyDescription.length }}/50 caractères minimum</span>
+          </div>
+
+          <button type="submit" 
+                  class="btn btn-primary" 
+                  [disabled]="!canSubmit() || submitting">
+            <span *ngIf="!submitting">Soumettre pour vérification</span>
+            <span *ngIf="submitting">Envoi en cours...</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Pending Info -->
+    <div class="card info-card" *ngIf="verification?.verificationStatus === 'PENDING'">
+      <div class="card-header">
+        <h2>En attente de vérification</h2>
+      </div>
+      <div class="card-body">
+        <div class="pending-info">
+          <div class="pending-icon">⏳</div>
+          <p>Votre demande de vérification est en cours d'examen par notre équipe.</p>
+          <p>Vous serez notifié dès que la vérification sera terminée.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Verified Info -->
+    <div class="card success-card" *ngIf="verification?.verificationStatus === 'VERIFIED'">
+      <div class="card-header">
+        <h2>Compte vérifié</h2>
+      </div>
+      <div class="card-body">
+        <div class="verified-info">
+          <div class="verified-icon">✓</div>
+          <p>Félicitations ! Votre compte entreprise a été vérifié avec succès.</p>
+          <p>Vous avez maintenant accès à toutes les fonctionnalités de la plateforme.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
