@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { 
   EnterpriseVerificationService, 
   EnterpriseVerification, 
@@ -28,6 +30,14 @@ export class EnterpriseVerificationComponent implements OnInit {
   searchTerm = '';
   statusFilter: VerificationStatus | '' = '';
 
+  // Pagination
+  currentPage = 1;
+  itemsPerPage = 10;
+  itemsPerPageOptions = [5, 10, 25, 50];
+
+  // Search debounce
+  private searchSubject = new Subject<string>();
+
   showVerifyModal = false;
   showAutoVerifyModal = false;
   showResubmitModal = false;
@@ -43,6 +53,14 @@ export class EnterpriseVerificationComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+    
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.currentPage = 1;
+      this.applyFilters();
+    });
   }
 
   loadData(): void {
@@ -68,6 +86,7 @@ export class EnterpriseVerificationComponent implements OnInit {
 
   switchTab(tab: 'pending' | 'all'): void {
     this.activeTab = tab;
+    this.currentPage = 1;
     this.applyFilters();
   }
 
@@ -91,11 +110,76 @@ export class EnterpriseVerificationComponent implements OnInit {
   }
 
   onSearchChange(): void {
-    this.applyFilters();
+    this.searchSubject.next(this.searchTerm);
   }
 
   onStatusFilterChange(): void {
+    this.currentPage = 1;
     this.applyFilters();
+  }
+
+  // Pagination methods
+  get totalPages(): number {
+    return Math.ceil(this.filteredEnterprises.length / this.itemsPerPage);
+  }
+
+  get paginatedEnterprises(): EnterpriseVerification[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredEnterprises.slice(start, start + this.itemsPerPage);
+  }
+
+  get startIndex(): number {
+    return (this.currentPage - 1) * this.itemsPerPage + 1;
+  }
+
+  get endIndex(): number {
+    return Math.min(this.currentPage * this.itemsPerPage, this.filteredEnterprises.length);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  onItemsPerPageChange(): void {
+    this.currentPage = 1;
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+    
+    if (this.totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      let start = Math.max(1, this.currentPage - 2);
+      let end = Math.min(this.totalPages, start + maxVisiblePages - 1);
+      
+      if (end - start < maxVisiblePages - 1) {
+        start = Math.max(1, end - maxVisiblePages + 1);
+      }
+      
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+    }
+    
+    return pages;
   }
 
   viewDocument(enterprise: EnterpriseVerification): void {

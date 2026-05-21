@@ -104,7 +104,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let enterprise of filteredEnterprises">
+          <tr *ngFor="let enterprise of paginatedEnterprises">
             <td>
               <div class="enterprise-info">
                 <span class="enterprise-name">{{ enterprise.nom }}</span>
@@ -170,6 +170,54 @@
       <div class="empty-state" *ngIf="filteredEnterprises.length === 0">
         <div class="empty-icon">📭</div>
         <p>Aucune entreprise trouvée</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="filteredEnterprises.length > 0">
+      <div class="pagination-info">
+        <span>Affichage {{ startIndex }} - {{ endIndex }} sur {{ filteredEnterprises.length }} entreprises</span>
+        <div class="items-per-page">
+          <label>Par page:</label>
+          <select [(ngModel)]="itemsPerPage" (ngModelChange)="onItemsPerPageChange()">
+            <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="pagination-controls" *ngIf="totalPages > 1">
+        <button class="pagination-btn" 
+                (click)="goToPage(1)" 
+                [disabled]="currentPage === 1"
+                title="Première page">
+          «
+        </button>
+        <button class="pagination-btn" 
+                (click)="previousPage()" 
+                [disabled]="currentPage === 1"
+                title="Page précédente">
+          ‹
+        </button>
+        
+        <button *ngFor="let page of getPageNumbers()" 
+                class="pagination-btn" 
+                [class.active]="page === currentPage"
+                (click)="goToPage(page)">
+          {{ page }}
+        </button>
+        
+        <button class="pagination-btn" 
+                (click)="nextPage()" 
+                [disabled]="currentPage === totalPages"
+                title="Page suivante">
+          ›
+        </button>
+        <button class="pagination-btn" 
+                (click)="goToPage(totalPages)" 
+                [disabled]="currentPage === totalPages"
+                title="Dernière page">
+          »
+        </button>
       </div>
     </div>
   </div>
