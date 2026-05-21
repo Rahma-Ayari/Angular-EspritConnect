@@ -1,29 +1,54 @@
 <aside class="calendar-panel">
   <div class="panel-header">
     <div>
-      <h2>Upcoming</h2>
-      <p>Next scheduled events</p>
+      <h2>{{ monthLabel }}</h2>
+      <p>Event calendar</p>
     </div>
-    <i class="bi bi-calendar4-week"></i>
-  </div>
-
-  <div class="timeline" *ngIf="upcomingEvents.length > 0">
-    <div class="timeline-item" *ngFor="let event of upcomingEvents">
-      <div class="date-box">
-        <span>{{ event.dateEvenement | date:'dd' }}</span>
-        <small>{{ event.dateEvenement | date:'MMM' }}</small>
-      </div>
-
-      <div class="event-info">
-        <h3>{{ event.titre }}</h3>
-        <p>{{ event.lieu }}</p>
-        <span>{{ event.dateEvenement | date:'shortTime' }}</span>
-      </div>
+    <div class="calendar-actions">
+      <button type="button" (click)="previousMonth()" aria-label="Previous month">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <button type="button" (click)="nextMonth()" aria-label="Next month">
+        <i class="bi bi-chevron-right"></i>
+      </button>
     </div>
   </div>
 
-  <div class="empty-calendar" *ngIf="upcomingEvents.length === 0">
-    <i class="bi bi-calendar2-x"></i>
-    <p>No upcoming events</p>
+  <div class="calendar-grid">
+    <span class="weekday" *ngFor="let day of weekDays">{{ day }}</span>
+    <button
+      type="button"
+      class="day-cell"
+      *ngFor="let day of days"
+      [class.outside]="!day.inMonth"
+      [class.today]="day.today"
+      [class.has-events]="day.events.length > 0"
+      [class.selected]="selectedDay === day"
+      (click)="selectDay(day)"
+    >
+      <span>{{ day.day }}</span>
+      <small *ngIf="day.events.length">{{ day.events.length }}</small>
+    </button>
+  </div>
+
+  <div class="selected-events" *ngIf="selectedDay">
+    <h3>{{ selectedDay.date | date:'mediumDate' }}</h3>
+    <div class="timeline" *ngIf="selectedDay.events.length > 0">
+      <div class="timeline-item" *ngFor="let event of selectedDay.events">
+        <div class="date-box">
+          <span>{{ event.heureDebut || '--:--' }}</span>
+          <small>{{ event.status }}</small>
+        </div>
+        <div class="event-info">
+          <h3>{{ event.titre }}</h3>
+          <p>{{ event.lieu }}</p>
+          <span>{{ event.type }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="empty-calendar" *ngIf="selectedDay.events.length === 0">
+      <i class="bi bi-calendar2-x"></i>
+      <p>No events this day</p>
+    </div>
   </div>
 </aside>

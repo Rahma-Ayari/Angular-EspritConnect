@@ -5,6 +5,7 @@ import { AuthGuard, AdminGuard } from './guards/auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RegisterComponent } from './register/register.component';
 import { RegisterSuccessComponent } from './register/register-success.component';
+import { UserLayoutComponent } from './user/layout/user-layout/user-layout.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -21,12 +22,18 @@ const routes: Routes = [
       component: DashboardComponent,
       canActivate: [AuthGuard]
     },
-{
-  path: 'events',
-  loadChildren: () =>
-    import('./user-events/user-events.module')
-      .then(m => m.UserEventsModule)
-},
+  {
+    path: '',
+    component: UserLayoutComponent,
+    children: [
+      {
+        path: 'events',
+        loadChildren: () =>
+          import('./user/user-events/user-events.module')
+            .then(m => m.UserEventsModule)
+      }
+    ]
+  },
 {
     path: '**',
     redirectTo: 'login'

@@ -16,6 +16,7 @@ export class EventDashboardComponent implements OnInit {
   searchQuery = '';
   selectedStatus = '';
   selectedType = '';
+  eventTypes: string[] = [];
 
   readonly statuses = ['ACTIVE', 'UPCOMING', 'CANCELLED', 'COMPLETED'];
 
@@ -31,6 +32,7 @@ export class EventDashboardComponent implements OnInit {
   loadDashboard(): void {
     this.loadEvents();
     this.loadStats();
+    this.loadEventTypes();
   }
 
   loadEvents(): void {
@@ -80,6 +82,10 @@ export class EventDashboardComponent implements OnInit {
     this.router.navigate(['/admin/events/create']);
   }
 
+  manageTypes(): void {
+    this.router.navigate(['/admin/events/types']);
+  }
+
   openUserView(): void {
     this.router.navigate(['/events']);
   }
@@ -114,7 +120,12 @@ export class EventDashboardComponent implements OnInit {
     });
   }
 
-  get eventTypes(): string[] {
-    return [...new Set(this.events.map(event => event.type).filter((type): type is string => !!type))].sort();
+  loadEventTypes(): void {
+    this.eventService.getEventTypes(true).subscribe({
+      next: (types) => {
+        this.eventTypes = types.map(type => type.nom);
+      },
+      error: (err) => console.error('Failed to load event types:', err)
+    });
   }
 }

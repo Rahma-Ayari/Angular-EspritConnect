@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from '../environments/environment';
 
 export interface LoginRequest {
   email: string;
@@ -36,9 +37,10 @@ export interface AuthResponse {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private readonly API = 'http://localhost:8088/espritconnect/api/auth';
+  private readonly API = `${environment.apiUrl}/auth`;
   private readonly TOKEN_KEY = 'esprit_token';
   private readonly USER_KEY  = 'esprit_user';
+  private readonly REMEMBER_KEY = 'esprit_remember';
 
   private currentUserSubject = new BehaviorSubject<AuthResponse | null>(this.storedUser());
   currentUser$ = this.currentUserSubject.asObservable();
@@ -46,9 +48,9 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
   // ── Login ──────────────────────────────────────────────────────────────────
-  login(req: LoginRequest): Observable<AuthResponse> {
+  login(req: LoginRequest, rememberMe = false): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.API}/login`, req).pipe(
-      tap(res => this.storeSession(res))
+      tap(res => this.storeSession(res, rememberMe))
     );
   }
 
@@ -62,6 +64,9 @@ export class AuthService {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.USER_KEY);
+      localStorage.removeItem(this.REMEMBER_KEY);
+      sessionStorage.removeItem(this.TOKEN_KEY);
+      sessionStorage.removeItem(this.USER_KEY);
     }
     this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
@@ -70,7 +75,8 @@ export class AuthService {
   // ── Helpers ────────────────────────────────────────────────────────────────
   getToken(): string | null {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem(this.TOKEN_KEY);
+      const remembered = localStorage.getItem(this.REMEMBER_KEY) === 'true';
+      return sessionStorage.getItem(this.TOKEN_KEY) || (remembered ? localStorage.getItem(this.TOKEN_KEY) : null);
     }
     return null;
   }
@@ -102,17 +108,25 @@ export class AuthService {
     }
   }
 
-  private storeSession(res: AuthResponse): void {
+  private storeSession(res: AuthResponse, rememberMe: boolean): void {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(this.TOKEN_KEY, res.token);
-      localStorage.setItem(this.USER_KEY, JSON.stringify(res));
+      const storage = rememberMe ? localStorage : sessionStorage;
+      const otherStorage = rememberMe ? sessionStorage : localStorage;
+
+      storage.setItem(this.TOKEN_KEY, res.token);
+      storage.setItem(this.USER_KEY, JSON.stringify(res));
+      localStorage.setItem(this.REMEMBER_KEY, String(rememberMe));
+
+      otherStorage.removeItem(this.TOKEN_KEY);
+      otherStorage.removeItem(this.USER_KEY);
     }
     this.currentUserSubject.next(res);
   }
 
   private storedUser(): AuthResponse | null {
     if (typeof window !== 'undefined') {
-      const raw = localStorage.getItem(this.USER_KEY);
+      const remembered = localStorage.getItem(this.REMEMBER_KEY) === 'true';
+      const raw = sessionStorage.getItem(this.USER_KEY) || (remembered ? localStorage.getItem(this.USER_KEY) : null);
       return raw ? JSON.parse(raw) : null;
     }
     return null;

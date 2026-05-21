@@ -1,4 +1,4 @@
-<div class="events-admin-page">
+<div class="events-admin-page event-background-page event-bg-admin">
   <div class="page-header">
     <div>
       <p class="eyebrow">Events</p>
@@ -10,6 +10,10 @@
       <button type="button" class="btn-secondary" (click)="openUserView()">
         <i class="bi bi-eye"></i>
         User View
+      </button>
+      <button type="button" class="btn-secondary" (click)="manageTypes()">
+        <i class="bi bi-tags"></i>
+        Types
       </button>
       <button type="button" class="btn-primary" (click)="createEvent()">
         <i class="bi bi-plus-lg"></i>
@@ -29,7 +33,7 @@
             type="text"
             placeholder="Search by title, location, type, or company..."
             [(ngModel)]="searchQuery"
-            (keyup.enter)="applyFilters()"
+            (ngModelChange)="applyFilters()"
           >
         </div>
 
@@ -43,12 +47,8 @@
           <option *ngFor="let type of eventTypes" [value]="type">{{ type }}</option>
         </select>
 
-        <button type="button" class="btn-filter" (click)="applyFilters()">
-          <i class="bi bi-funnel"></i>
-          Apply
-        </button>
-        <button type="button" class="btn-clear" (click)="resetFilters()">
-          Reset
+        <button type="button" class="btn-clear" *ngIf="searchQuery || selectedStatus || selectedType" (click)="resetFilters()">
+          Clear filters
         </button>
       </div>
 

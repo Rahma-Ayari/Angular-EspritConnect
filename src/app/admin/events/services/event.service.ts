@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { EntrepriseOption, Event, EventFilters, EventStats } from '../models/event.model';
+import { EntrepriseOption, Event, EventFilters, EventStats, EventType } from '../models/event.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventService {
-  private readonly apiRoot = 'http://localhost:8087/espritconnect/api';
+  private readonly apiRoot = environment.apiUrl;
   private readonly apiUrl = `${this.apiRoot}/evenements`;
+  private readonly typesUrl = `${this.apiRoot}/evenement-types`;
 
   constructor(private http: HttpClient) {}
 
@@ -27,10 +29,6 @@ export class EventService {
 
   getEventById(id: number): Observable<Event> {
     return this.http.get<Event>(`${this.apiUrl}/${id}`);
-  }
-
-  getPublicEventById(id: number): Observable<Event> {
-    return this.http.get<Event>(`${this.apiUrl}/public/${id}`);
   }
 
   createEvent(event: Event): Observable<Event> {
@@ -55,6 +53,35 @@ export class EventService {
 
   getEntreprises(): Observable<EntrepriseOption[]> {
     return this.http.get<EntrepriseOption[]>(`${this.apiRoot}/entreprises`);
+  }
+
+  getEventTypes(activeOnly = false): Observable<EventType[]> {
+    return this.http.get<EventType[]>(activeOnly ? `${this.typesUrl}/active` : this.typesUrl);
+  }
+
+  getEventTypeById(id: number): Observable<EventType> {
+    return this.http.get<EventType>(`${this.typesUrl}/${id}`);
+  }
+
+  createEventType(type: EventType): Observable<EventType> {
+    return this.http.post<EventType>(this.typesUrl, type);
+  }
+
+  updateEventType(id: number, type: EventType): Observable<EventType> {
+    return this.http.put<EventType>(`${this.typesUrl}/${id}`, type);
+  }
+
+  deleteEventType(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.typesUrl}/${id}`);
+  }
+
+  uploadEventImage(file: File): Observable<HttpEvent<{ imageUrl: string }>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ imageUrl: string }>(`${this.apiUrl}/images`, formData, {
+      observe: 'events',
+      reportProgress: true
+    });
   }
 
   private buildParams(filters: EventFilters | Pick<EventFilters, 'search' | 'type'>): HttpParams {

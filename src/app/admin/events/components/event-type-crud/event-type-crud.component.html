@@ -1,0 +1,63 @@
+<div class="event-types-page event-background-page event-bg-types">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Events</p>
+      <h1>Event Types</h1>
+      <p class="subtitle">Create and manage the database values used in event forms.</p>
+    </div>
+    <button type="button" class="btn-secondary" routerLink="/admin/events">
+      <i class="bi bi-arrow-left"></i>
+      Back
+    </button>
+  </div>
+
+  <div class="error-state" *ngIf="error">{{ error }}</div>
+
+  <form class="form-card" [formGroup]="form" (ngSubmit)="save()">
+    <div class="form-grid">
+      <label>
+        Name *
+        <input type="text" formControlName="nom" placeholder="Workshop">
+      </label>
+      <label>
+        Description
+        <input type="text" formControlName="description" placeholder="Optional description">
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" formControlName="actif">
+        Active
+      </label>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="reset()">Reset</button>
+      <button type="submit" class="btn-primary" [disabled]="saving">
+        {{ editingId ? 'Update Type' : 'Create Type' }}
+      </button>
+    </div>
+  </form>
+
+  <section class="content-card">
+    <div class="loading-state" *ngIf="loading">Loading event types...</div>
+    <table *ngIf="!loading">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let type of types">
+          <td>{{ type.nom }}</td>
+          <td>{{ type.description || '-' }}</td>
+          <td><span class="badge" [class.inactive]="!type.actif">{{ type.actif ? 'Active' : 'Inactive' }}</span></td>
+          <td class="actions">
+            <button type="button" (click)="edit(type)"><i class="bi bi-pencil"></i></button>
+            <button type="button" (click)="delete(type)"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</div>

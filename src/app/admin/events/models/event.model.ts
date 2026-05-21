@@ -1,16 +1,36 @@
 export type EventStatus = 'ACTIVE' | 'UPCOMING' | 'CANCELLED' | 'COMPLETED';
 
+export interface EventType {
+  idTypeEvenement?: number;
+  nom: string;
+  description?: string | null;
+  actif?: boolean;
+}
+
 export interface Event {
   idEvenement?: number;
   titre: string;
   lieu: string;
-  dateEvenement: string;
-  capacite: number;
+  dateEvenement?: string;
+  dateDebut: string;
+  dateFin: string;
+  heureDebut: string;
+  heureFin: string;
+  dureeMinutes?: number;
+  capacite?: number | null;
+  unlimitedParticipants: boolean;
+  nombreParticipants?: number;
+  placesRestantes?: number | null;
+  typeEvenementId: number;
   type?: string | null;
-  entrepriseId: number;
+  entrepriseId?: number | null;
   entrepriseNom?: string | null;
   imageUrl?: string | null;
   status: EventStatus;
+  participated?: boolean;
+  ownedByCurrentUser?: boolean;
+  ownerId?: string;
+  ownerNom?: string | null;
 }
 
 export interface EventStats {
@@ -20,6 +40,8 @@ export interface EventStats {
   cancelledEvents: number;
   completedEvents: number;
   totalCapacity: number;
+  totalParticipants: number;
+  participationRate: number;
 }
 
 export interface EventFilters {

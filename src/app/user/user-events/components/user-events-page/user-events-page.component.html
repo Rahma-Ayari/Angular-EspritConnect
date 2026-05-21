@@ -21,15 +21,14 @@
       </div>
     </div>
 
-    <div class="featured-panel" *ngIf="featuredEvent">
-      <span class="featured-label">Featured</span>
-      <h2>{{ featuredEvent.titre }}</h2>
-      <p>{{ featuredEvent.lieu }}</p>
+    <div class="featured-panel" *ngIf="featuredEvent as featured">      <span class="featured-label">Featured</span>
+      <h2>{{ featured.titre }}</h2>
+      <p>{{ featured.lieu }}</p>
       <div class="featured-meta">
-        <span>{{ featuredEvent.dateEvenement | date:'mediumDate' }}</span>
-        <span>{{ featuredEvent.capacite }} seats</span>
+        <span>{{ featured.dateEvenement | date:'mediumDate' }}</span>
+        <span>{{ featured.capacite }} seats</span>
       </div>
-      <button type="button" (click)="openDetails(featuredEvent)">View details</button>
+      <button type="button" (click)="openDetails(featured)">View details</button>
     </div>
   </section>
 

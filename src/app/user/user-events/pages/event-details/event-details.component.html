@@ -1,0 +1,40 @@
+<div class="state" *ngIf="loading">Loading event...</div>
+<div class="state error" *ngIf="!loading && error">{{ error }}</div>
+
+<div *ngIf="!loading && event" class="event-details-page event-background-page event-bg-details">
+  <button class="back-btn" (click)="goBack()">
+    <i class="bi bi-arrow-left"></i>
+    Back
+  </button>
+
+  <img
+    class="hero-image"
+    [src]="event.imageUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1200&auto=format&fit=crop'"
+    alt="event"
+  />
+
+  <div class="event-details-card">
+    <div>
+      <span class="event-status">{{ event.status }}</span>
+      <span class="event-status joined" *ngIf="event.participated">Participating</span>
+    </div>
+
+    <h1>{{ event.titre }}</h1>
+    <p>{{ event.lieu }}</p>
+    <p>{{ event.dateDebut | date:'fullDate' }} · {{ event.heureDebut }} - {{ event.heureFin }}</p>
+    <p>{{ event.unlimitedParticipants ? 'Unlimited participants' : ((event.nombreParticipants || 0) + ' / ' + event.capacite + ' participants') }}</p>
+    <p *ngIf="event.entrepriseNom">Organizer: {{ event.entrepriseNom }}</p>
+
+    <div class="actions">
+      <button type="button" class="primary" *ngIf="!event.participated" [disabled]="actionLoading" (click)="participate()">
+        Participate
+      </button>
+      <button type="button" *ngIf="event.participated" [disabled]="actionLoading" (click)="cancelParticipation()">
+        Cancel participation
+      </button>
+      <button type="button" *ngIf="event.ownedByCurrentUser" [routerLink]="['/events/edit', event.idEvenement]">
+        Edit
+      </button>
+    </div>
+  </div>
+</div>

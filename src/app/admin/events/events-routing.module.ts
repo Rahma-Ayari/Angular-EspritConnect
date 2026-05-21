@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { EventDashboardComponent } from './components/event-dashboard/event-dashboard.component';
 import { EventFormComponent } from './components/event-form/event-form.component';
 import { EventDetailsComponent } from './components/event-details/event-details.component';
+import { EventTypeCrudComponent } from './components/event-type-crud/event-type-crud.component';
 
 const routes: Routes = [
   {
@@ -13,6 +14,10 @@ const routes: Routes = [
   {
     path: 'create',
     component: EventFormComponent
+  },
+  {
+    path: 'types',
+    component: EventTypeCrudComponent
   },
   {
     path: 'edit/:id',

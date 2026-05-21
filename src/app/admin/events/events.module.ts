@@ -15,6 +15,7 @@ import { EventDetailsComponent } from './components/event-details/event-details.
 import { EventDashboardComponent } from './components/event-dashboard/event-dashboard.component';
 import { EventFormComponent } from './components/event-form/event-form.component';
 import { EventListComponent } from './components/event-list/event-list.component';
+import { EventTypeCrudComponent } from './components/event-type-crud/event-type-crud.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { EventListComponent } from './components/event-list/event-list.component
     EventDetailsComponent,
     EventCalendarComponent,
     EventCardComponent,
-    EventStatsComponent
+    EventStatsComponent,
+    EventTypeCrudComponent
   ],
   imports: [
     CommonModule,

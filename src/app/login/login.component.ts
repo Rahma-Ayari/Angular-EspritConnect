@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { environment } from '../../environments/environment';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -13,19 +13,14 @@ export class LoginComponent implements OnInit {
   isLoading   = false;
   showPassword = false;
   errorMessage = '';
+  private readonly oauthBaseUrl = environment.apiUrl.replace(/\/api$/, '');
 
   constructor(
     private fb: FormBuilder,
-    private router: Router,
     private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    // Redirect if already logged in
-    if (this.authService.isLoggedIn()) {
-      this.authService.redirectAfterLogin(this.authService.getRole()!);
-    }
-
     this.loginForm = this.fb.group({
       email:      ['', [Validators.required, Validators.email]],
       password:   ['', [Validators.required, Validators.minLength(6)]],
@@ -50,9 +45,9 @@ export class LoginComponent implements OnInit {
     this.isLoading    = true;
     this.errorMessage = '';
 
-    const { email, password } = this.loginForm.value;
+    const { email, password, rememberMe } = this.loginForm.value;
 
-    this.authService.login({ email, password }).subscribe({
+    this.authService.login({ email, password }, !!rememberMe).subscribe({
       next: (res) => {
         this.isLoading = false;
         this.authService.redirectAfterLogin(res.role);
@@ -65,10 +60,10 @@ export class LoginComponent implements OnInit {
   }
 
   loginWithGoogle(): void {
-    window.location.href = 'http://localhost:8087/espritconnect/oauth2/authorization/google';
+    window.location.href = `${this.oauthBaseUrl}/oauth2/authorization/google`;
   }
 
   loginWithLinkedIn(): void {
-    window.location.href = 'http://localhost:8087/espritconnect/oauth2/authorization/linkedin';
+    window.location.href = `${this.oauthBaseUrl}/oauth2/authorization/linkedin`;
   }
 }

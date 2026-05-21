@@ -24,7 +24,10 @@ export class EventCardComponent {
   }
 
   get capacityLabel(): string {
-    return `${this.event.capacite || 0} seats`;
+    if (this.event.unlimitedParticipants) {
+      return `${this.event.nombreParticipants || 0} / Unlimited`;
+    }
+    return `${this.event.nombreParticipants || 0} / ${this.event.capacite || 0}`;
   }
 
   onImageError(): void {

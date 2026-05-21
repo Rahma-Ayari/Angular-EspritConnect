@@ -24,4 +24,20 @@ export class EventStatsComponent {
   get totalCapacity(): number {
     return this.stats?.totalCapacity ?? 0;
   }
+
+  get cancelledEvents(): number {
+    return this.stats?.cancelledEvents ?? 0;
+  }
+
+  get completedEvents(): number {
+    return this.stats?.completedEvents ?? 0;
+  }
+
+  get totalParticipants(): number {
+    return this.stats?.totalParticipants ?? 0;
+  }
+
+  get participationRate(): number {
+    return this.stats?.participationRate ?? 0;
+  }
 }
