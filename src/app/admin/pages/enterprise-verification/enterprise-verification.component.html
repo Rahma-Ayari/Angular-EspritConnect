@@ -137,30 +137,47 @@
             </td>
             <td>
               <div class="actions">
-                <button class="btn-action btn-auto" 
-                        (click)="openAutoVerifyModal(enterprise)"
-                        title="Vérification automatique"
-                        *ngIf="enterprise.verificationStatus === 'PENDING'">
-                  🤖
-                </button>
-                <button class="btn-action btn-approve" 
-                        (click)="openVerifyModal(enterprise, 'approve')"
-                        title="Approuver"
-                        *ngIf="enterprise.verificationStatus === 'PENDING'">
-                  ✓
-                </button>
-                <button class="btn-action btn-reject" 
-                        (click)="openVerifyModal(enterprise, 'reject')"
-                        title="Refuser"
-                        *ngIf="enterprise.verificationStatus === 'PENDING'">
-                  ✗
-                </button>
+                <!-- Actions pour les entreprises en attente (PENDING) -->
+                <ng-container *ngIf="enterprise.verificationStatus === 'PENDING'">
+                  <button class="btn-action btn-auto" 
+                          (click)="openAutoVerifyModal(enterprise)"
+                          title="Vérification automatique">
+                    🛡️
+                  </button>
+                  <button class="btn-action btn-approve" 
+                          (click)="openVerifyModal(enterprise, 'approve')"
+                          title="Approuver">
+                    ✓
+                  </button>
+                  <button class="btn-action btn-reject" 
+                          (click)="openVerifyModal(enterprise, 'reject')"
+                          title="Refuser">
+                    ✗
+                  </button>
+                </ng-container>
+
+                <!-- Bouton re-soumission pour les entreprises déjà traitées -->
                 <button class="btn-action btn-resubmit" 
                         (click)="openResubmitModal(enterprise)"
                         title="Demander re-soumission"
-                        *ngIf="enterprise.verificationStatus !== 'NOT_SUBMITTED'">
+                        *ngIf="enterprise.verificationStatus === 'VERIFIED' || enterprise.verificationStatus === 'REJECTED'">
                   ↻
                 </button>
+
+                <!-- Message pour les entreprises non soumises -->
+                <span class="no-action-text" *ngIf="enterprise.verificationStatus === 'NOT_SUBMITTED'">
+                  En attente de soumission
+                </span>
+
+                <!-- Badge pour les entreprises vérifiées -->
+                <span class="verified-badge" *ngIf="enterprise.verificationStatus === 'VERIFIED'">
+                  ✅ Vérifié
+                </span>
+
+                <!-- Badge pour les entreprises refusées -->
+                <span class="rejected-badge" *ngIf="enterprise.verificationStatus === 'REJECTED'">
+                  ❌ Refusé
+                </span>
               </div>
             </td>
           </tr>

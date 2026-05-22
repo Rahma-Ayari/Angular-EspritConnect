@@ -143,7 +143,7 @@ export class VerificationStatusComponent implements OnInit {
 
   canSubmit(): boolean {
     return (
-      (this.selectedFile !== null || (this.verification?.verificationStatus === 'NOT_SUBMITTED')) &&
+      this.selectedFile !== null &&
       this.businessRegistrationNumber.trim() !== '' &&
       this.rcValidation.isValid &&
       (this.companyWebsite === '' || this.websiteValidation.isValid)

@@ -308,11 +308,6 @@
   color: #dc2626;
 }
 
-.actions {
-  display: flex;
-  gap: 8px;
-}
-
 .btn-action {
   width: 32px;
   height: 32px;
@@ -345,6 +340,46 @@
 
 .btn-action:hover {
   transform: scale(1.1);
+}
+
+.no-action-text {
+  font-size: 12px;
+  color: #9ca3af;
+  font-style: italic;
+  white-space: nowrap;
+}
+
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #d1fae5;
+  color: #059669;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.rejected-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .empty-state {
