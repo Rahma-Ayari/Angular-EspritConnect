@@ -6,10 +6,8 @@ export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(): boolean | UrlTree {
-    // DEV: bypass login while building dashboards
-    return true;
-    // if (this.authService.isLoggedIn()) return true;
-    // return this.router.createUrlTree(['/login']);
+    if (this.authService.isLoggedIn()) return true;
+    return this.router.createUrlTree(['/login']);
   }
 }
 
@@ -18,9 +16,7 @@ export class AdminGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(): boolean | UrlTree {
-    // DEV: bypass admin role check
-    return true;
-    // if (this.authService.getRole() === 'ADMIN') return true;
-    // return this.router.createUrlTree(['/dashboard']);
+    if (this.authService.getRole() === 'ADMIN') return true;
+    return this.router.createUrlTree(['/dashboard']);
   }
 }

@@ -2,6 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthResponse, AuthService } from '../auth.service';
+import { EntrepriseJobDashboardService } from '../services/entreprise-job-dashboard.service';
+import { JobsBackofficeService } from '../services/jobs-backoffice.service';
+import { OffreType } from '../models/offre.model';
 
 export interface StatCard {
   icon: string;
@@ -44,6 +47,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
   currentTime = '';
   sidebarOpen = true;
   activeNav = 'dashboard';
+  readonly devEntrepriseId = 1;
+  isEntreprise = false;
+  jobsLoading = false;
+  jobsError = '';
+  jobsSuccess = '';
+  myOffers: any[] = [];
+
+  aiPrompt = '';
+  aiGenerating = false;
+  aiSuggestion = '';
+
+  offerDraft = {
+    titre: '',
+    typeOffre: 'STAGE' as OffreType,
+    domaine: '',
+    localisation: '',
+    description: '',
+    competences: ''
+  };
+
+  employmentTypes: string[] = ['Full-time', 'Part-time', 'Internship'];
 
   readinessScore = 72;
   readinessTasks = [
@@ -94,7 +118,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   navItems = [
     { id: 'dashboard',     label: 'Dashboard',   icon: 'bi-house' },
-    { id: 'opportunities', label: 'Opportunités', icon: 'bi-briefcase' },
+    { id: 'jobs-dashboard', label: 'Jobs Dashboard', icon: 'bi-briefcase' },
+    { id: 'opportunities', label: 'Opportunités', icon: 'bi-compass' },
     { id: 'network',       label: 'Réseau',       icon: 'bi-people' },
     { id: 'mentorship',    label: 'Mentoring',    icon: 'bi-mortarboard' },
     { id: 'events',        label: 'Événements',   icon: 'bi-calendar-event' },
@@ -102,13 +127,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
     { id: 'profile',       label: 'Profil',       icon: 'bi-person' }
   ];
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private entrepriseJobs: EntrepriseJobDashboardService,
+    private jobsBackoffice: JobsBackofficeService
+  ) {}
 
   ngOnInit(): void {
     this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
       this.user = user;
       if (user) this.readinessScore = user.scoreReadiness || 72;
+      this.isEntreprise = user?.role === 'ENTREPRISE';
+      if (this.isEntreprise) {
+        this.loadEntrepriseJobs();
+      }
     });
+    const settings = this.jobsBackoffice.loadSettings();
+    this.employmentTypes = settings.employmentTypes.length
+      ? settings.employmentTypes
+      : this.employmentTypes;
     this.setGreeting();
     this.updateTime();
     setInterval(() => this.updateTime(), 60_000);
@@ -140,6 +178,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   setNav(id: string): void { this.activeNav = id; }
 
+  get visibleNavItems() {
+    return this.navItems.filter(item => this.isEntreprise || item.id !== 'jobs-dashboard');
+  }
+
   logout(): void { this.authService.logout(); }
 
   get userInitials(): string {
@@ -151,5 +193,97 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (score >= 90) return '#059669';
     if (score >= 75) return '#D97706';
     return '#CC0000';
+  }
+
+  loadEntrepriseJobs(): void {
+    this.jobsLoading = true;
+    this.jobsError = '';
+    this.entrepriseJobs.listOffers(this.devEntrepriseId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (offers) => {
+          this.myOffers = offers;
+          this.jobsLoading = false;
+        },
+        error: () => {
+          this.jobsError = 'Impossible de charger vos offres.';
+          this.jobsLoading = false;
+        }
+      });
+  }
+
+  generateAiDescription(): void {
+    if (!this.offerDraft.titre || !this.offerDraft.domaine) {
+      this.jobsError = 'Renseignez au moins le titre et le domaine.';
+      return;
+    }
+    this.aiGenerating = true;
+    this.jobsError = '';
+    this.entrepriseJobs.aiSuggest({
+      titre: this.offerDraft.titre,
+      typeOffre: this.offerDraft.typeOffre,
+      domaine: this.offerDraft.domaine,
+      localisation: this.offerDraft.localisation,
+      briefNotes: this.aiPrompt
+    }).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res) => {
+        this.aiSuggestion = res.suggestedDescription;
+        this.offerDraft.description = res.suggestedDescription;
+        this.offerDraft.competences = res.suggestedSkills.join(', ');
+        this.aiGenerating = false;
+      },
+      error: () => {
+        this.jobsError = 'Assistant IA indisponible.';
+        this.aiGenerating = false;
+      }
+    });
+  }
+
+  publishOffer(): void {
+    if (!this.offerDraft.titre || !this.offerDraft.description || !this.offerDraft.domaine) {
+      this.jobsError = 'Titre, domaine et description sont requis.';
+      return;
+    }
+    this.jobsError = '';
+    this.jobsSuccess = '';
+    const skills = this.offerDraft.competences
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    this.entrepriseJobs.createOffer({
+      titre: this.offerDraft.titre,
+      description: this.offerDraft.description,
+      typeOffre: this.offerDraft.typeOffre,
+      domaine: this.offerDraft.domaine,
+      localisation: this.offerDraft.localisation || undefined,
+      competencesRequises: skills,
+      entrepriseId: this.devEntrepriseId
+    }).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        this.jobsSuccess = 'Offre publiée avec succès.';
+        this.offerDraft = {
+          titre: '',
+          typeOffre: 'STAGE',
+          domaine: '',
+          localisation: '',
+          description: '',
+          competences: ''
+        };
+        this.aiPrompt = '';
+        this.aiSuggestion = '';
+        this.loadEntrepriseJobs();
+      },
+      error: (err) => {
+        this.jobsError = err.error?.message || 'Publication impossible.';
+      }
+    });
+  }
+
+  toOffreType(label: string): OffreType {
+    const key = label.toLowerCase();
+    if (key.includes('part') || key.includes('full') || key.includes('job')) return 'EMPLOI';
+    if (key.includes('intern') || key.includes('stage')) return 'STAGE';
+    return 'APPRENTISSAGE';
   }
 }

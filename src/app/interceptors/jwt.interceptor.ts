@@ -21,10 +21,9 @@ export class JwtInterceptor implements HttpInterceptor {
 
     return next.handle(authReq).pipe(
       catchError((err: HttpErrorResponse) => {
-        // DEV: do not force logout on 401 while auth is bypassed
-        // if (err.status === 401) {
-        //   this.authService.logout();
-        // }
+        if (err.status === 401) {
+          this.authService.logout();
+        }
         return throwError(() => err);
       })
     );

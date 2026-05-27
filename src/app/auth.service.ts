@@ -95,7 +95,7 @@ export class AuthService {
         this.router.navigate(['/admin/user-management/approval']);
         break;
       case 'ENTREPRISE':
-        this.router.navigate(['/entreprise/dashboard']);
+        this.router.navigate(['/dashboard']);
         break;
       case 'ETUDIANT':
       default:
