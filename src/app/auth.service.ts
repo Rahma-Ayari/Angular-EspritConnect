@@ -36,7 +36,8 @@ export interface AuthResponse {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private readonly API = 'http://localhost:8088/espritconnect/api/auth';
+  /** Relative URL → Angular dev-server proxy → http://127.0.0.1:8087 */
+  private readonly API = '/espritconnect/api/auth';
   private readonly TOKEN_KEY = 'esprit_token';
   private readonly USER_KEY  = 'esprit_user';
 

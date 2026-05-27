@@ -1,0 +1,29 @@
+<div class="job-search-page">
+  <header class="search-hero">
+    <h1>Offres stages & emplois</h1>
+    <p>Trouvez une opportunité — filtrez par domaine, lieu et type.</p>
+  </header>
+
+  <div class="filters-card">
+    <form [formGroup]="filterForm" class="filters">
+      <input type="text" formControlName="domaine" placeholder="Domaine (ex. Informatique)" />
+      <input type="text" formControlName="localisation" placeholder="Lieu (ex. Tunis)" />
+      <select formControlName="typeOffre">
+        <option *ngFor="let t of types" [value]="t.value">{{ t.label }}</option>
+      </select>
+    </form>
+  </div>
+
+  <div class="results">
+    <p class="loading" *ngIf="loading">Recherche...</p>
+    <article class="result-card" *ngFor="let o of offers">
+      <div>
+        <span class="chip">{{ o.typeOffre }}</span>
+        <h3>{{ o.titre }}</h3>
+        <p>{{ o.entrepriseNom }} · {{ o.domaine }} · {{ o.localisation || '—' }}</p>
+      </div>
+      <a [routerLink]="['/jobs', o.idOffre]" class="btn-view">Voir l'offre</a>
+    </article>
+    <p class="empty" *ngIf="!loading && !offers.length">Aucune offre ne correspond à vos filtres.</p>
+  </div>
+</div>

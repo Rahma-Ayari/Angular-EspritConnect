@@ -10,25 +10,24 @@ import { RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RegisterComponent } from './register/register.component';
 import { RegisterSuccessComponent } from './register/register-success.component';
-import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
-import { AdminGeneralSettingsComponent } from './admin-general-settings/admin-general-settings.component';
-import { AdminRegionalSettingsComponent } from './admin-regional-settings/admin-regional-settings.component';
-import { AdminRegistrationSettingsComponent } from './admin-registration-settings/admin-registration-settings.component';
+import { JobSearchComponent } from './jobs/job-search/job-search.component';
+import { JobOfferDetailComponent } from './jobs/job-offer-detail/job-offer-detail.component';
 
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { JwtInterceptor } from './interceptors/jwt.interceptor';
+// Admin + settings components live in AdminModule (see admin.module.ts)
+
+// DEV: JWT interceptor disabled — avoids 401 → logout while APIs are open
+// import { HTTP_INTERCEPTORS } from '@angular/common/http';
+// import { JwtInterceptor } from './interceptors/jwt.interceptor';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     DashboardComponent,
-    AdminDashboardComponent,
-    AdminGeneralSettingsComponent,
-    AdminRegionalSettingsComponent,
-    AdminRegistrationSettingsComponent,
     RegisterComponent,
-    RegisterSuccessComponent
+    RegisterSuccessComponent,
+    JobSearchComponent,
+    JobOfferDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -39,8 +38,9 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     RouterModule  
   ],
   providers: [
-    provideClientHydration(),
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+    provideClientHydration()
+    // DEV: re-enable when login is required again
+    // { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

@@ -1,64 +1,9 @@
-<div class="admin-layout" *ngIf="!loading && settings; else loadingTpl">
-  <aside class="sidebar">
-    <div class="brand">
-      <span class="brand-badge">E</span>
-      <span class="brand-text"><span class="brand-esprit">ESPRIT</span> Connect</span>
-    </div>
+<div class="admin-page" *ngIf="loading">
+  <div class="loading-full">Loading settings…</div>
+</div>
 
-    <nav class="menu">
-      <a class="menu-item" routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-        <i class="bi bi-grid"></i> Dashboard
-      </a>
-      <a class="menu-item settings-toggle" (click)="toggleSettings()">
-        <span><i class="bi bi-gear"></i> Settings</span>
-        <i class="bi" [class.bi-chevron-down]="settingsExpanded" [class.bi-chevron-right]="!settingsExpanded"></i>
-      </a>
-      <ng-container *ngIf="settingsExpanded">
-        <a class="menu-sub" routerLink="/admin/settings/general" routerLinkActive="active">General</a>
-        <a class="menu-sub" routerLink="/admin/settings/regional" routerLinkActive="active">Regional</a>
-        <a class="menu-sub" routerLink="/admin/settings/registration" routerLinkActive="active">Registration</a>
-        <a class="menu-sub">Homepage</a>
-      </ng-container>
-      <a class="menu-item user-mgmt-toggle" (click)="toggleUserMgmt()">
-        <span><i class="bi bi-people"></i> User Management</span>
-        <i class="bi" [class.bi-chevron-down]="userMgmtExpanded" [class.bi-chevron-right]="!userMgmtExpanded"></i>
-      </a>
-      <ng-container *ngIf="userMgmtExpanded">
-        <a class="menu-sub" routerLink="/admin/dashboard">Approval</a>
-        <a class="menu-sub">Affiliations</a>
-        <a class="menu-sub">Profile Attributes</a>
-      </ng-container>
-      <a class="menu-item"><i class="bi bi-briefcase"></i> Jobs</a>
-      <a class="menu-item"><i class="bi bi-envelope"></i> Communications</a>
-    </nav>
-
-    <div class="profile-mini">
-      <div class="mini-avatar">AD</div>
-      <div>
-        <p class="mini-name">{{ adminName }}</p>
-        <p class="mini-mail">admin&#64;esprit.tn</p>
-      </div>
-    </div>
-  </aside>
-
-  <main class="content">
-    <header class="topbar">
-      <div class="search-wrap">
-        <i class="bi bi-search"></i>
-        <input type="text" placeholder="Search settings, users, or content..." />
-      </div>
-      <div class="top-actions">
-        <button type="button" class="icon-btn" aria-label="Messages"><i class="bi bi-chat-dots"></i></button>
-        <button type="button" class="icon-btn icon-btn-notify" aria-label="Notifications">
-          <i class="bi bi-bell"></i>
-        </button>
-        <button type="button" class="admin-pill">ADMIN VIEW</button>
-        <button type="button" class="link-switch">Switch to User <i class="bi bi-chevron-down"></i></button>
-        <button type="button" class="logout-btn" (click)="logout()">Logout</button>
-      </div>
-    </header>
-
-    <section class="body settings-body">
+<div class="admin-page" *ngIf="!loading && settings">
+  <section class="body settings-body">
       <div *ngIf="error" class="banner-error">{{ error }}</div>
       <div *ngIf="saveOk" class="banner-ok">Changes saved successfully.</div>
 
@@ -157,12 +102,12 @@
           </div>
         </div>
       </section>
-    </section>
-  </main>
+  </section>
 </div>
 
-<ng-template #loadingTpl>
-  <div class="admin-layout">
-    <div class="loading-full">Loading settings…</div>
-  </div>
-</ng-template>
+<div class="admin-page" *ngIf="!loading && !settings">
+  <section class="body settings-body load-error-panel">
+    <div class="banner-error">{{ error || 'Unable to load general settings.' }}</div>
+    <button type="button" class="btn-save" (click)="load()">Retry</button>
+  </section>
+</div>

@@ -14,7 +14,8 @@ export class SidebarComponent implements OnInit {
   private isBrowser: boolean;
   expandedMenus: { [key: string]: boolean } = {
     users: false,
-    settings: false
+    settings: false,
+    jobs: false
   };
 
   constructor(
@@ -33,6 +34,9 @@ export class SidebarComponent implements OnInit {
       }
       if (url.includes('/admin/settings')) {
         this.expandedMenus['settings'] = true;
+      }
+      if (url.includes('/admin/jobs')) {
+        this.expandedMenus['jobs'] = true;
       }
     }
   }

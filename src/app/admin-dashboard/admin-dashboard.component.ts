@@ -25,8 +25,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   dashboardData: AdminDashboardResponse | null = null;
   statCards: AdminStatCard[] = [];
-  settingsExpanded = true;
-  userMgmtExpanded = true;
   showingAllApprovals = false;
 
   constructor(
@@ -68,10 +66,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           this.loading = false;
         }
       });
-  }
-
-  logout(): void {
-    this.authService.logout();
   }
 
   approvalInitials(name: string): string {
@@ -121,14 +115,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         this.error = 'Impossible de refuser cet élément.';
       }
     });
-  }
-
-  toggleSettings(): void {
-    this.settingsExpanded = !this.settingsExpanded;
-  }
-
-  toggleUserMgmt(): void {
-    this.userMgmtExpanded = !this.userMgmtExpanded;
   }
 
   toggleApprovalsView(): void {

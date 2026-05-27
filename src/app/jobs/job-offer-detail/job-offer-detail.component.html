@@ -1,0 +1,46 @@
+<div class="student-offer-page" *ngIf="!loading && offer; else stateTpl">
+  <header class="offer-hero">
+    <a routerLink="/jobs" class="back-link"><i class="bi bi-arrow-left"></i> Retour aux offres</a>
+    <div class="hero-content">
+      <span class="type-pill">{{ typeLabel(offer.typeOffre) }}</span>
+      <h1>{{ offer.titre }}</h1>
+      <p class="company">{{ offer.entrepriseNom }}</p>
+      <div class="meta-row">
+        <span *ngIf="offer.domaine"><i class="bi bi-briefcase"></i> {{ offer.domaine }}</span>
+        <span *ngIf="offer.localisation"><i class="bi bi-geo-alt"></i> {{ offer.localisation }}</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="offer-grid">
+    <section class="description-card">
+      <h2>Description du poste</h2>
+      <div class="description-text">{{ offer.description }}</div>
+      <div class="skills" *ngIf="offer.competencesRequises?.length">
+        <h3>Compétences recherchées</h3>
+        <span class="skill" *ngFor="let s of offer.competencesRequises">{{ s }}</span>
+      </div>
+    </section>
+
+    <aside class="apply-card">
+      <h2>Postuler</h2>
+      <p class="hint">Lettre de motivation analysée par l'IA avec votre CV pour le classement entreprise.</p>
+      <div class="alert error" *ngIf="error">{{ error }}</div>
+      <div class="alert success" *ngIf="success">{{ success }}</div>
+      <form [formGroup]="applyForm" (ngSubmit)="submitApplication()">
+        <label>Lettre de motivation</label>
+        <textarea rows="8" formControlName="lettreMotivation" placeholder="Expliquez votre motivation et vos compétences..."></textarea>
+        <button type="submit" class="btn-apply" [disabled]="applying || applyForm.disabled">
+          {{ applying ? 'Envoi...' : 'Envoyer ma candidature' }}
+        </button>
+      </form>
+    </aside>
+  </div>
+</div>
+
+<ng-template #stateTpl>
+  <div class="student-offer-page state">
+    <p *ngIf="loading">Chargement de l'offre...</p>
+    <p *ngIf="!loading && error">{{ error }}</p>
+  </div>
+</ng-template>
