@@ -113,6 +113,7 @@ export class UserApprovalsComponent implements OnInit {
   }
 
   onFilterChange(): void {
+    this.currentPage = 1;
     if (this.activeTab === 'pending') {
       this.applyPendingFilters();
     } else if (this.activeTab === 'list-tools') {
@@ -125,6 +126,7 @@ export class UserApprovalsComponent implements OnInit {
     this.selectedUsers.clear();
     this.searchQuery = '';
     this.selectedRole = '';
+    this.currentPage = 1;
     
     if (tab === 'pending') {
       this.loadPendingUsers();
@@ -384,6 +386,8 @@ export class UserApprovalsComponent implements OnInit {
     }
   }
 
+  itemsPerPageOptions = [5, 10, 25, 50];
+
   get totalPages(): number {
     return Math.ceil(this.filteredUsers.length / this.itemsPerPage);
   }
@@ -391,6 +395,60 @@ export class UserApprovalsComponent implements OnInit {
   get paginatedUsers(): User[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredUsers.slice(start, start + this.itemsPerPage);
+  }
+
+  get startIndex(): number {
+    return (this.currentPage - 1) * this.itemsPerPage + 1;
+  }
+
+  get endIndex(): number {
+    return Math.min(this.currentPage * this.itemsPerPage, this.filteredUsers.length);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  onItemsPerPageChange(): void {
+    this.currentPage = 1;
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+    
+    if (this.totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      let start = Math.max(1, this.currentPage - 2);
+      let end = Math.min(this.totalPages, start + maxVisiblePages - 1);
+      
+      if (end - start < maxVisiblePages - 1) {
+        start = Math.max(1, end - maxVisiblePages + 1);
+      }
+      
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+    }
+    
+    return pages;
   }
 
   loadSettings(): void {
