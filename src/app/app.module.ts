@@ -12,6 +12,7 @@ import { RegisterComponent } from './register/register.component';
 import { RegisterSuccessComponent } from './register/register-success.component';
 import { JobSearchComponent } from './jobs/job-search/job-search.component';
 import { JobOfferDetailComponent } from './jobs/job-offer-detail/job-offer-detail.component';
+import { HomepageComponent } from './homepage/homepage.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 
@@ -25,7 +26,8 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     RegisterComponent,
     RegisterSuccessComponent,
     JobSearchComponent,
-    JobOfferDetailComponent
+    JobOfferDetailComponent,
+    HomepageComponent
   ],
   imports: [
     BrowserModule,

@@ -7,9 +7,11 @@ import { RegisterComponent } from './register/register.component';
 import { RegisterSuccessComponent } from './register/register-success.component';
 import { JobSearchComponent } from './jobs/job-search/job-search.component';
 import { JobOfferDetailComponent } from './jobs/job-offer-detail/job-offer-detail.component';
+import { HomepageComponent } from './homepage/homepage.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', component: HomepageComponent },
+  { path: 'home', component: HomepageComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'register-success', component: RegisterSuccessComponent },

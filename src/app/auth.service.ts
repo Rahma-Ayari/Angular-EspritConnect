@@ -65,7 +65,7 @@ export class AuthService {
       localStorage.removeItem(this.USER_KEY);
     }
     this.currentUserSubject.next(null);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
