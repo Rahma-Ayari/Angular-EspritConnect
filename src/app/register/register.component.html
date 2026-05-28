@@ -215,6 +215,14 @@
             <!-- Champs Entreprise -->
             <ng-container *ngIf="registerForm.get('typeUtilisateur')?.value === 'ENTREPRISE'">
               <div class="field">
+                <label>Nom de l'entreprise*</label>
+                <div class="input-wrap">
+                  <i class="bi bi-building"></i>
+                  <input type="text" formControlName="nomEntreprise" placeholder="Ex: Acme Technologies" />
+                </div>
+              </div>
+
+              <div class="field">
                 <label>Numéro d'immatriculation / Registre de Commerce*</label>
                 <div class="input-wrap">
                   <i class="bi bi-file-earmark-text"></i>

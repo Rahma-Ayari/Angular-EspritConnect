@@ -59,6 +59,7 @@ export class RegisterComponent implements OnInit {
       entrepriseActuelle: [''],
 
       // Step 2: Profile - Entreprise
+      nomEntreprise: [''],
       registreCommerce: [''],
       secteurActivite: [''],
       siteWeb: [''],
@@ -181,6 +182,7 @@ export class RegisterComponent implements OnInit {
       request.disponibleMentorat = val.disponibleMentorat;
       request.entrepriseActuelle = val.entrepriseActuelle;
     } else if (val.typeUtilisateur === 'ENTREPRISE') {
+      request.nomEntreprise = val.nomEntreprise;
       request.registreCommerce = val.registreCommerce;
       request.secteurActivite = val.secteurActivite;
       request.siteWeb = val.siteWeb;
