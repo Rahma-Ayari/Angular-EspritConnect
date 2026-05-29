@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AdminRoutingModule } from './admin-routing.module';
+import { SharedLayoutModule } from '../shared/shared-layout.module';
 
 // Layout Components
 import { AdminLayoutComponent } from './layout/admin-layout/admin-layout.component';
-import { SidebarComponent } from './layout/sidebar/sidebar.component';
-import { HeaderComponent } from './layout/header/header.component';
 
 // Page Components
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
@@ -18,8 +17,6 @@ import { EnterpriseVerificationComponent } from './pages/enterprise-verification
   declarations: [
     // Layout
     AdminLayoutComponent,
-    SidebarComponent,
-    HeaderComponent,
     // Pages
     DashboardComponent,
     UserApprovalsComponent,
@@ -29,7 +26,8 @@ import { EnterpriseVerificationComponent } from './pages/enterprise-verification
     CommonModule,
     FormsModule,
     RouterModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    SharedLayoutModule
   ]
 })
 export class AdminModule { }

@@ -1,5 +1,5 @@
 <div class="entreprise-layout" [class.sidebar-collapsed]="sidebarCollapsed">
-  <app-entreprise-sidebar [collapsed]="sidebarCollapsed"></app-entreprise-sidebar>
+  <app-sidebar [collapsed]="sidebarCollapsed"></app-sidebar>
   
   <button class="sidebar-toggle" (click)="toggleSidebar()" [class.collapsed]="sidebarCollapsed">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -9,7 +9,7 @@
   </button>
   
   <div class="main-content">
-    <app-entreprise-header></app-entreprise-header>
+    <app-header></app-header>
     <div class="content-area">
       <router-outlet></router-outlet>
     </div>
