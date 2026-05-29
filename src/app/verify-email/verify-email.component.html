@@ -1,0 +1,30 @@
+<div class="verify-page">
+  <div class="verify-card">
+    <img src="https://esprit.tn/assets/images/esprit-logo.png" alt="Esprit" class="logo" />
+
+    <div *ngIf="state === 'loading'" class="status-box loading">
+      <div class="spinner"></div>
+      <p>Vérification de votre email en cours…</p>
+    </div>
+
+    <div *ngIf="state === 'success'" class="status-box success">
+      <i class="bi bi-check-circle-fill"></i>
+      <h1>{{ message }}</h1>
+      <p>Vous pouvez maintenant vous connecter une fois votre compte approuvé par l'administrateur.</p>
+      <button type="button" class="btn-primary" (click)="goToLogin()">Se connecter</button>
+    </div>
+
+    <div *ngIf="state === 'expired'" class="status-box error">
+      <i class="bi bi-clock-history"></i>
+      <h1>{{ message }}</h1>
+      <p>Demandez un nouvel email depuis la page d'inscription ou contactez le support.</p>
+      <button type="button" class="btn-secondary" (click)="goToLogin()">Retour à la connexion</button>
+    </div>
+
+    <div *ngIf="state === 'invalid' || state === 'missing'" class="status-box error">
+      <i class="bi bi-x-circle-fill"></i>
+      <h1>{{ message }}</h1>
+      <button type="button" class="btn-secondary" (click)="goToLogin()">Retour à la connexion</button>
+    </div>
+  </div>
+</div>

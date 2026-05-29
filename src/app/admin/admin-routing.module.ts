@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AdminLayoutComponent } from './layout/admin-layout/admin-layout.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { UserApprovalsComponent } from './pages/user-management/user-approvals/user-approvals.component';
+import { EnterpriseVerificationComponent } from './pages/enterprise-verification/enterprise-verification.component';
 
 const routes: Routes = [
   {
@@ -11,7 +12,8 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'user-management/approval', component: UserApprovalsComponent }
+      { path: 'user-management/approval', component: UserApprovalsComponent },
+      { path: 'user-management/enterprise-verification', component: EnterpriseVerificationComponent }
     ]
   }
 ];

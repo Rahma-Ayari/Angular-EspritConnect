@@ -215,11 +215,71 @@
             <!-- Champs Entreprise -->
             <ng-container *ngIf="registerForm.get('typeUtilisateur')?.value === 'ENTREPRISE'">
               <div class="field">
-                <label>Domaine d'activité*</label>
+                <label>Nom de l'entreprise*</label>
+                <div class="input-wrap">
+                  <i class="bi bi-building"></i>
+                  <input type="text" formControlName="nomEntreprise" placeholder="Ex: Acme Technologies" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Numéro d'immatriculation / Registre de Commerce*</label>
+                <div class="input-wrap">
+                  <i class="bi bi-file-earmark-text"></i>
+                  <input type="text" formControlName="registreCommerce" placeholder="Ex: B1234567890" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Secteur d'activité*</label>
                 <div class="input-wrap">
                   <i class="bi bi-briefcase"></i>
-                  <input type="text" formControlName="domaine" placeholder="Ex: Technologies, Finance, Consulting..." />
+                  <input type="text" formControlName="secteurActivite" placeholder="Ex: Technologies, Finance, Consulting..." />
                 </div>
+              </div>
+
+              <div class="field">
+                <label>Site web (optionnel)</label>
+                <div class="input-wrap">
+                  <i class="bi bi-globe"></i>
+                  <input type="url" formControlName="siteWeb" placeholder="https://www.exemple.tn" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Description de l'entreprise</label>
+                <div class="input-wrap textarea-wrap">
+                  <i class="bi bi-card-text"></i>
+                  <textarea formControlName="descriptionEntreprise" rows="4" placeholder="Décrivez votre entreprise en quelques lignes..." maxlength="500"></textarea>
+                </div>
+                <span class="char-count" *ngIf="registerForm.get('descriptionEntreprise')?.value">
+                  {{ registerForm.get('descriptionEntreprise')?.value.length }}/500 caractères
+                </span>
+              </div>
+
+              <div class="field">
+                <label>Document justificatif*</label>
+                <p class="field-hint">Registre de commerce, patente ou tout document officiel attestant l'existence légale de l'entreprise</p>
+                <div class="file-upload-zone" [class.has-file]="documentFileName" [class.has-error]="documentFileError">
+                  <input type="file" (change)="onDocumentSelected($event)" accept=".pdf,.jpg,.jpeg,.png" #documentInput hidden>
+                  
+                  <div class="upload-content" *ngIf="!documentFileName" (click)="documentInput.click()">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                    <span class="upload-text">Cliquez pour téléverser</span>
+                    <span class="upload-hint">PDF, JPG ou PNG (max. 5 Mo)</span>
+                  </div>
+                  
+                  <div class="file-info" *ngIf="documentFileName">
+                    <i class="bi bi-file-earmark-check"></i>
+                    <span class="file-name">{{ documentFileName }}</span>
+                    <button type="button" class="btn-remove-file" (click)="removeDocument()">
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </div>
+                </div>
+                <span class="error-msg" *ngIf="documentFileError">
+                  <i class="bi bi-exclamation-circle"></i> {{ documentFileError }}
+                </span>
               </div>
             </ng-container>
 
