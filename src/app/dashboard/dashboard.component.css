@@ -824,3 +824,33 @@
   .readiness-body { flex-direction: column; }
   .content-area { padding: 16px; }
 }
+
+/* ══ 2FA & SECURITY UI STYLING ══════════════════════════════════════════════ */
+.badge-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.status-success {
+  background-color: #ecfdf5 !important;
+  color: #059669 !important;
+  border: 1px solid #a7f3d0;
+}
+.status-warning {
+  background-color: #fffbeb !important;
+  color: #d97706 !important;
+  border: 1px solid #fde68a;
+}
+.status-error {
+  background-color: #fef2f2 !important;
+  color: #dc2626 !important;
+  border: 1px solid #fecaca;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

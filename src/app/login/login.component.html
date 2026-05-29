@@ -46,8 +46,10 @@
       <div class="form-card">
 
         <header class="form-header">
-          <h1>Connexion</h1>
-          <p>Accédez à votre espace étudiant</p>
+          <h1 *ngIf="!isMfaRequired">Connexion</h1>
+          <p *ngIf="!isMfaRequired">Accédez à votre espace étudiant</p>
+          <h1 *ngIf="isMfaRequired">Double Authentification</h1>
+          <p *ngIf="isMfaRequired">Entrez le code de vérification pour continuer</p>
         </header>
 
         <div class="alert-error" *ngIf="errorMessage" role="alert">
@@ -55,7 +57,8 @@
           {{ errorMessage }}
         </div>
 
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+        <!-- ── FORMULAIRE 1 : EMAIL + PASSWORD ── -->
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate *ngIf="!isMfaRequired">
 
           <div class="field" [class.field-error]="isFieldInvalid('email')">
             <label for="email">Email</label>
@@ -115,9 +118,53 @@
 
         </form>
 
-        <div class="social-divider" role="separator"><span>ou continuer avec</span></div>
+        <!-- ── FORMULAIRE 2 : MFA / 2FA TOTP CODE ── -->
+        <form [formGroup]="mfaForm" (ngSubmit)="onMfaSubmit()" novalidate *ngIf="isMfaRequired">
+          
+          <div class="mfa-instructions" style="margin-bottom: 20px; font-size: 0.9rem; color: #666; line-height: 1.4;">
+            Saisissez le code à 6 chiffres généré par votre application TOTP (Google Authenticator) ou un code de secours à 8 caractères.
+          </div>
 
-        <div class="social-btns">
+          <div class="field" [class.field-error]="mfaForm.get('code')?.invalid && (mfaForm.get('code')?.dirty || mfaForm.get('code')?.touched)">
+            <label for="mfaCode">Code de sécurité / Code de secours</label>
+            <div class="input-wrap">
+              <i class="bi bi-shield-lock" aria-hidden="true"></i>
+              <input
+                id="mfaCode"
+                type="text"
+                formControlName="code"
+                placeholder="123456 ou ABCD-1234"
+                autocomplete="one-time-code"
+                style="letter-spacing: 2px; font-weight: 600;"
+              />
+            </div>
+            <span class="error-msg" *ngIf="mfaForm.get('code')?.invalid && (mfaForm.get('code')?.dirty || mfaForm.get('code')?.touched)">
+              Le code est requis (6 chiffres ou format ABCD-1234).
+            </span>
+          </div>
+
+          <div class="form-options" style="margin-top: 15px;">
+            <label class="remember">
+              <input type="checkbox" formControlName="rememberDevice" />
+              <span>Ne plus demander sur cet appareil pendant 30 jours</span>
+            </label>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 25px;">
+            <button type="button" class="btn-submit" style="background-color: #6c757d; flex: 1;" (click)="cancelMfa()">
+              Retour
+            </button>
+            <button type="submit" class="btn-submit" style="flex: 2;" [disabled]="isLoading" [attr.aria-busy]="isLoading">
+              <span *ngIf="!isLoading">Valider</span>
+              <span *ngIf="isLoading" class="spinner" aria-label="Validation en cours"></span>
+            </button>
+          </div>
+
+        </form>
+
+        <div class="social-divider" role="separator" *ngIf="!isMfaRequired"><span>ou continuer avec</span></div>
+
+        <div class="social-btns" *ngIf="!isMfaRequired">
           <button class="social-btn" type="button" (click)="loginWithGoogle()" aria-label="Continuer avec Google">
             <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -135,7 +182,7 @@
           </button>
         </div>
 
-        <p class="signup-row">
+        <p class="signup-row" *ngIf="!isMfaRequired">
           Pas encore de compte ?
           <a routerLink="/register">S'inscrire gratuitement</a>
         </p>

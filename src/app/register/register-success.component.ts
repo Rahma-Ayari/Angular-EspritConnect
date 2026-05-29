@@ -10,6 +10,10 @@ import { AuthService } from '../auth.service';
 export class RegisterSuccessComponent implements OnInit {
 
   email: string = '';
+  verificationUrl: string | null = null;
+  resendMessage = '';
+  resendError = '';
+  isResending = false;
 
   constructor(
     private route: ActivatedRoute, 
@@ -19,10 +23,30 @@ export class RegisterSuccessComponent implements OnInit {
 
   ngOnInit(): void {
     this.email = this.route.snapshot.queryParamMap.get('email') || 'votre email';
+    this.verificationUrl = this.route.snapshot.queryParamMap.get('verificationUrl');
+  }
+
+  resendEmail(): void {
+    if (!this.email || this.email === 'votre email') {
+      return;
+    }
+    this.isResending = true;
+    this.resendMessage = '';
+    this.resendError = '';
+    this.authService.resendVerificationEmail(this.email).subscribe({
+      next: (res) => {
+        this.isResending = false;
+        this.resendMessage = res.message;
+      },
+      error: (err) => {
+        this.isResending = false;
+        this.resendError = err.error?.message || 'Impossible d\'envoyer l\'email.';
+      }
+    });
   }
 
   goToLogin(): void {
-    this.authService.logout(); // Nettoyer toute session ancienne/automatique
+    this.authService.logout();
     this.router.navigate(['/login']);
   }
 }

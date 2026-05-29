@@ -191,10 +191,13 @@ export class RegisterComponent implements OnInit {
     }
 
     this.authService.register(request).subscribe({
-      next: () => {
+      next: (res) => {
         this.isLoading = false;
         this.router.navigate(['/register-success'], { 
-          queryParams: { email: val.email } 
+          queryParams: { 
+            email: val.email,
+            verificationUrl: res.verificationUrl ?? null
+          } 
         });
       },
       error: (err) => {
