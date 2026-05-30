@@ -1,77 +1,87 @@
 <!-- ================================================================
      email-history.component.html — Bouton "voir" fonctionnel
      ================================================================ -->
-<div class="eh-wrap">
+<div class="digest-page">
 
-  <!-- ── En-tête ── -->
   <div class="page-header">
-    <div>
-      <h1 class="page-title">Historique & Statistiques</h1>
+    <div class="header-main-info">
+      <div class="digest-title-row">
+        <h1 class="page-title">Historique & Statistiques</h1>
+      </div>
       <p class="page-subtitle">Consultez tous les emails envoyés depuis la plateforme.</p>
+      <p class="digest-last-sent" *ngIf="q || typeFilter">
+        <svg viewBox="0 0 24 24" width="14" height="14" class="inline-icon"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+        Filtre actif : {{ q ? ('email contient “' + q + '”') : '' }}{{ (q && typeFilter) ? ' — ' : '' }}{{ typeFilter ? typeFilter : '' }}
+      </p>
     </div>
-    <button class="btn btn--ghost" (click)="exportCSV()">
+    <button class="btn btn--ghost btn--sm" type="button" (click)="exportCSV()">
       <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
       Exporter CSV
     </button>
   </div>
 
-  <!-- ── Statistiques ── -->
-  <div class="eh-stats">
-    <div class="eh-stat">
-      <div class="eh-stat__icon eh-stat__icon--red">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-      </div>
-      <div>
-        <div class="eh-stat__value">{{ total }}</div>
-        <div class="eh-stat__label">Total envois</div>
+  <!-- Stats (même style cards) -->
+  <div class="digest-layout digest-layout--single">
+    <div class="dcard">
+      <div class="stats-grid">
+        <div class="stat-tile">
+          <div class="stat-icon stat-icon--red">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </div>
+          <div>
+            <div class="stat-value">{{ stats.totalRecipients || total }}</div>
+            <div class="stat-label">Total destinataires</div>
+          </div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-icon stat-icon--green">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+          </div>
+          <div>
+            <div class="stat-value">{{ stats.totalSent }}</div>
+            <div class="stat-label">Succès (global)</div>
+          </div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-icon stat-icon--amber">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          </div>
+          <div>
+            <div class="stat-value">{{ stats.totalFailed }}</div>
+            <div class="stat-label">Échecs (global)</div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="eh-stat">
-      <div class="eh-stat__icon eh-stat__icon--green">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+  </div>
+
+  <!-- Filtres -->
+  <div class="dcard">
+    <div class="filters-grid">
+      <div class="field" style="margin-bottom:0">
+        <label class="field__label">Rechercher par email</label>
+        <input class="field__input" type="text" [(ngModel)]="q" (input)="onSearch()"
+               placeholder="Ex: user@esprit.tn"/>
       </div>
-      <div>
-        <div class="eh-stat__value">{{ stats.totalSent }}</div>
-        <div class="eh-stat__label">Succès (page)</div>
-      </div>
-    </div>
-    <div class="eh-stat">
-      <div class="eh-stat__icon eh-stat__icon--amber">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-      </div>
-      <div>
-        <div class="eh-stat__value">{{ stats.totalFailed }}</div>
-        <div class="eh-stat__label">Échecs (page)</div>
+      <div class="field" style="margin-bottom:0">
+        <label class="field__label">Type</label>
+        <select class="field__select" [(ngModel)]="typeFilter" (change)="onTypeChange()">
+          <option *ngFor="let t of typeOptions" [value]="t.value">{{ t.label }}</option>
+        </select>
       </div>
     </div>
   </div>
 
-  <!-- ── Filtres ── -->
-  <div class="card eh-filters">
-    <div class="eh-filters__inner">
-      <div class="eh-search-wrap">
-        <svg class="eh-search-icon" viewBox="0 0 24 24" width="16" height="16">
-          <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-        </svg>
-        <input class="eh-search" type="text" [(ngModel)]="q" (input)="onSearch()"
-               placeholder="Rechercher par email…"/>
-      </div>
-      <select class="field__input eh-type-select" [(ngModel)]="typeFilter" (change)="onTypeChange()">
-        <option *ngFor="let t of typeOptions" [value]="t.value">{{ t.label }}</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- ── Loader ── -->
-  <div class="eh-loader" *ngIf="loading">
-    <div class="spinner"></div>
+  <div class="preview-loading" *ngIf="loading">
+    <div class="loading-spinner"></div>
     <p>Chargement…</p>
   </div>
 
-  <!-- ── Table ── -->
-  <div class="card" style="overflow:hidden" *ngIf="!loading">
+  <!-- Table -->
+  <div class="dcard" style="padding:0; overflow:hidden" *ngIf="!loading">
     <div class="eh-table-header">
       <span class="eh-table-count">{{ total }} entrée(s)</span>
+      <span class="eh-table-count">Page {{ page + 1 }} / {{ totalPages || 1 }}</span>
     </div>
 
     <div class="table-wrap">
@@ -123,11 +133,11 @@
 
     <!-- Pagination -->
     <div class="eh-pagination" *ngIf="totalPages > 1">
-      <button class="btn btn--ghost btn--sm" (click)="prevPage()" [disabled]="page === 0">
+      <button class="btn btn--ghost btn--sm" type="button" (click)="prevPage()" [disabled]="page === 0">
         <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
       </button>
       <span class="eh-page-info">Page {{ page + 1 }} / {{ totalPages }}</span>
-      <button class="btn btn--ghost btn--sm" (click)="nextPage()" [disabled]="(page + 1) >= totalPages">
+      <button class="btn btn--ghost btn--sm" type="button" (click)="nextPage()" [disabled]="(page + 1) >= totalPages">
         <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
       </button>
     </div>
@@ -144,7 +154,6 @@
         </button>
       </div>
       <div class="eh-modal__body">
-        <div class="eh-detail-row"><span>ID</span><strong>#{{ selectedItem.id }}</strong></div>
         <div class="eh-detail-row"><span>Type</span><strong>{{ typeLabel(selectedItem.type) }}</strong></div>
         <div class="eh-detail-row"><span>Destinataire</span><strong>{{ selectedItem.toEmail }}</strong></div>
         <div class="eh-detail-row"><span>Sujet</span><strong>{{ selectedItem.subject }}</strong></div>

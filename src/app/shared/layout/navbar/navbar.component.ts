@@ -1,6 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-
-export type NavbarVariant = 'dark' | 'light';
+import { Component, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-navbar',
@@ -8,22 +6,32 @@ export type NavbarVariant = 'dark' | 'light';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent {
-  /** dark = fond gris foncé (dashboard), light = fond blanc (Email Communications) */
-  @Input() variant: NavbarVariant = 'dark';
+  searchQuery: string = '';
+  showDropdown: boolean = false;
 
-  @Input() pageTitle = 'Administration ESPRIT Connect';
+  // Mock currentUser car AuthService n'est pas présent dans le projet
+  currentUser = {
+    nom: 'Admin Esprit',
+    email: 'admin.connect@esprit.tn'
+  };
 
-  @Input() notificationCount = 0;
+  onSearch(): void {
+    console.log('Search:', this.searchQuery);
+  }
 
-  @Input() userName = 'Admin';
-  @Input() userRole = 'Super Admin';
+  toggleDropdown(): void {
+    this.showDropdown = !this.showDropdown;
+  }
 
-  /** true = petit écran, affiche hamburger */
-  @Input() showMenuToggle = false;
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.user-menu')) {
+      this.showDropdown = false;
+    }
+  }
 
-  @Output() menuToggle = new EventEmitter<void>();
-
-  onToggle(): void {
-    this.menuToggle.emit();
+  logout(): void {
+    console.log('Déconnexion de l\'administrateur');
   }
 }

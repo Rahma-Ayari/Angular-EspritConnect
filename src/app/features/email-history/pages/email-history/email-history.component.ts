@@ -72,14 +72,14 @@ export class EmailHistoryComponent implements OnInit {
       next: (res) => {
         this.items = res.content;
         this.total = res.totalElements;
-        this.computeStats();
+        this.loadStats();
         this.loading = false;
       },
       error: () => {
         // Mock si backend absent
         this.items = this.mockData();
         this.total = this.items.length;
-        this.computeStats();
+        this.computeStatsFromPage();
         this.loading = false;
       }
     });
@@ -101,9 +101,27 @@ export class EmailHistoryComponent implements OnInit {
 
   get totalPages(): number { return Math.ceil(this.total / this.pageSize); }
 
-  computeStats(): void {
+  private loadStats(): void {
+    let params = new HttpParams();
+    if (this.q.trim()) params = params.set('q', this.q.trim());
+    if (this.typeFilter) params = params.set('type', this.typeFilter);
+
+    this.http.get<{ success: number; failed: number; total: number }>(
+      `${this.base}/api/email-communications/history/stats`,
+      { params }
+    ).subscribe({
+      next: (s) => {
+        this.stats.totalRecipients = s.total ?? this.total;
+        this.stats.totalSent = s.success ?? 0;
+        this.stats.totalFailed = s.failed ?? 0;
+      },
+      error: () => this.computeStatsFromPage()
+    });
+  }
+
+  private computeStatsFromPage(): void {
     this.stats.totalRecipients = this.total;
-    this.stats.totalSent   = this.items.filter(i => i.deliveryStatus === 'SUCCESS').length;
+    this.stats.totalSent = this.items.filter(i => i.deliveryStatus === 'SUCCESS').length;
     this.stats.totalFailed = this.items.filter(i => i.deliveryStatus === 'FAILED').length;
   }
 

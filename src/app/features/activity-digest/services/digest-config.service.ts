@@ -42,4 +42,8 @@ export class DigestConfigService {
   sendDigestNow(): Observable<void> {
     return this.http.post<void>(`${this.base}/api/activity-digest/send`, {});
   }
+
+  getMailingLists(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/api/email-communications/mailing-lists`);
+  }
 }

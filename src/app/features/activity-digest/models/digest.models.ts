@@ -17,6 +17,7 @@ export interface DigestConfigRequestDTO {
   templateHtml?: string;
   sections?: DigestSectionsDTO;
   frontendBaseUrl?: string;
+  mailingListId?: number;
 }
 
 export interface DigestConfigResponseDTO extends DigestConfigRequestDTO {

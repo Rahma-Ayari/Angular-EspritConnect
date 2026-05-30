@@ -10,11 +10,10 @@ import {
   DigestSectionsDTO
 } from '../../models/digest.models';
 
-// ── Interface pour les sections affichées dans les checkboxes ──
 interface SectionDef {
-  key: keyof DigestSectionsDTO; // clé dans le DTO
-  label: string;                 // libellé affiché
-  desc: string;                  // description courte
+  key: keyof DigestSectionsDTO;
+  label: string;
+  desc: string;
 }
 
 @Component({
@@ -39,8 +38,12 @@ export class ActivityDigestComponent implements OnInit {
       latestJobPosts: true,
       includePlatformContact: true
     },
-    frontendBaseUrl: 'http://localhost:4200'
+    frontendBaseUrl: 'http://localhost:4200',
+    mailingListId: undefined
   };
+
+  // ── Listes de diffusion ──
+  mailingLists: any[] = [];
 
   // ── Définition des sections (pour la liste de checkboxes) ──
   sectionsList: SectionDef[] = [
@@ -63,13 +66,28 @@ export class ActivityDigestComponent implements OnInit {
 
   constructor(private digestService: DigestConfigService) {}
 
-  // ── Au chargement du composant → on lit la config depuis l'API ──
   ngOnInit(): void {
+    // 1. Lire la config
     this.digestService.getConfig().subscribe({
       next: (dto: DigestConfigResponseDTO) => this.applyDTO(dto),
       error: (err) => {
         console.warn('Config non trouvée, utilisation des valeurs par défaut', err);
-        // Si pas de config en BDD → on laisse les valeurs par défaut
+      }
+    });
+
+    // 2. Récupérer les listes de diffusion
+    this.digestService.getMailingLists().subscribe({
+      next: (lists) => {
+        this.mailingLists = lists;
+      },
+      error: (err) => {
+        console.warn('Impossible de charger les listes de diffusion. Mode démo activé.', err);
+        this.mailingLists = [
+          { id: 1, name: 'Students Group' },
+          { id: 2, name: 'Teacher/Staff Group' },
+          { id: 3, name: 'All Alumni' },
+          { id: 4, name: 'All Users' }
+        ];
       }
     });
   }
@@ -84,6 +102,7 @@ export class ActivityDigestComponent implements OnInit {
       actif:          dto.actif,
       templateHtml:   dto.templateHtml || '',
       frontendBaseUrl: dto.frontendBaseUrl || 'http://localhost:4200',
+      mailingListId:  dto.mailingListId,
       sections:       dto.sections || {
         businessDirectoryPosts: false,
         recentlyJoinedMembers: true,
@@ -96,7 +115,6 @@ export class ActivityDigestComponent implements OnInit {
     };
   }
 
-  // ── Getter/Setter pour les checkboxes de sections ──
   getSectionValue(key: keyof DigestSectionsDTO): boolean {
     return this.config.sections?.[key] ?? false;
   }
@@ -120,7 +138,6 @@ export class ActivityDigestComponent implements OnInit {
     this.saving = true;
     this.clearMessages();
 
-    // Construction du DTO à envoyer
     const dto: DigestConfigRequestDTO = {
       sujet:          this.config.sujet,
       bannerUrl:      this.config.bannerUrl,
@@ -128,7 +145,8 @@ export class ActivityDigestComponent implements OnInit {
       actif:          this.config.actif,
       templateHtml:   this.config.templateHtml,
       sections:       this.config.sections,
-      frontendBaseUrl: this.config.frontendBaseUrl
+      frontendBaseUrl: this.config.frontendBaseUrl,
+      mailingListId:  this.config.mailingListId ? Number(this.config.mailingListId) : undefined
     };
 
     this.digestService.updateConfig(dto).subscribe({
@@ -147,26 +165,59 @@ export class ActivityDigestComponent implements OnInit {
 
   // ── Envoyer le digest immédiatement ──
   sendNow(): void {
-    if (!confirm('Envoyer le digest maintenant à tous les utilisateurs actifs ?')) return;
+    if (!this.config.mailingListId) {
+      this.showError("Veuillez d'abord sélectionner une liste de diffusion destinataire.");
+      return;
+    }
+
+    const selectedListName = this.mailingLists.find(l => l.id == this.config.mailingListId)?.name || 'la liste sélectionnée';
+
+    if (!confirm(`Envoyer le digest maintenant aux membres de "${selectedListName}" ?`)) return;
+    
     this.sending = true;
     this.clearMessages();
 
-    this.digestService.sendDigestNow().subscribe({
-      next: () => {
-        this.sending = false;
-        this.showSuccess('Digest envoyé avec succès à tous les utilisateurs !');
-        // Recharger la config pour avoir le lastSentAt mis à jour
-        this.digestService.getConfig().subscribe(dto => this.applyDTO(dto));
+    // 1. Sauvegarder d'abord la configuration actuelle pour s'assurer que le backend utilise la bonne liste de diffusion
+    const dto: DigestConfigRequestDTO = {
+      sujet:          this.config.sujet,
+      bannerUrl:      this.config.bannerUrl,
+      frequence:      this.config.frequence,
+      actif:          this.config.actif,
+      templateHtml:   this.config.templateHtml,
+      sections:       this.config.sections,
+      frontendBaseUrl: this.config.frontendBaseUrl,
+      mailingListId:  this.config.mailingListId ? Number(this.config.mailingListId) : undefined
+    };
+
+    this.digestService.updateConfig(dto).subscribe({
+      next: (res) => {
+        this.applyDTO(res);
+        
+        // 2. Lancer l'envoi du digest
+        this.digestService.sendDigestNow().subscribe({
+          next: () => {
+            this.sending = false;
+            this.showSuccess(`Digest envoyé avec succès aux membres de "${selectedListName}" !`);
+            this.digestService.getConfig().subscribe(dto => this.applyDTO(dto));
+          },
+          error: (err) => {
+            console.error(err);
+            this.sending = false;
+            // Récupère le message d'erreur du serveur s'il existe
+            const serverError = err.error?.message || err.error || "";
+            this.showError("Erreur lors de l'envoi : " + (serverError ? serverError : "Veuillez vérifier votre configuration de serveur SMTP (Gmail App Password) dans application.properties."));
+          }
+        });
       },
       error: (err) => {
         console.error(err);
         this.sending = false;
-        this.showError('Erreur lors de l\'envoi. Vérifiez la configuration email (SMTP).');
+        this.showError("Erreur lors de l'enregistrement automatique de la configuration avant l'envoi.");
       }
     });
   }
 
-  // ── Réinitialiser le template aux valeurs par défaut ──
+  // ── Réinitialiser le template ──
   resetTemplate(): void {
     if (!confirm('Réinitialiser la configuration aux valeurs par défaut ?')) return;
     this.digestService.resetTemplate().subscribe({
@@ -186,13 +237,14 @@ export class ActivityDigestComponent implements OnInit {
         this.config.templateHtml = '';
         this.config.sujet = '';
         this.config.bannerUrl = '';
+        this.config.mailingListId = undefined;
         this.showSuccess('Template vidé.');
       },
       error: () => this.showError('Erreur lors du vidage.')
     });
   }
 
-  // ── Charger l'aperçu de l'email ──
+  // ── Charger l'aperçu ──
   loadPreview(): void {
     this.loadingPreview = true;
     this.previewHtml = '';
@@ -205,12 +257,20 @@ export class ActivityDigestComponent implements OnInit {
       error: (err) => {
         console.error(err);
         this.loadingPreview = false;
-        this.showError('Impossible de générer l\'aperçu. Vérifiez que le backend est lancé.');
+        const backendMessage =
+          err?.error?.message ||
+          err?.error?.error ||
+          (typeof err?.error === 'string' ? err.error : '');
+        this.showError(
+          backendMessage
+            ? `Impossible de générer l'aperçu : ${backendMessage}`
+            : "Impossible de générer l'aperçu. Vérifiez les logs backend."
+        );
       }
     });
   }
 
-  // ── Upload de la bannière ──
+  // ── Upload bannière ──
   onBannerSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
@@ -226,7 +286,6 @@ export class ActivityDigestComponent implements OnInit {
   }
 
   private uploadBanner(file: File): void {
-    // Validation : max 5 Mo
     if (file.size > 5 * 1024 * 1024) {
       this.showError('Fichier trop lourd (max 5 Mo).');
       return;
@@ -235,20 +294,20 @@ export class ActivityDigestComponent implements OnInit {
     this.digestService.uploadBanner(file).subscribe({
       next: (res) => {
         this.config.bannerUrl = res.url;
-        this.showSuccess('Bannière uploadée !');
+        this.showSuccess('Bannière uploadée avec succès !');
       },
       error: () => {
-        // En cas d'erreur upload → on affiche une prévisualisation locale
+        // Fallback local preview if upload fails
         const reader = new FileReader();
         reader.onload = (e) => {
           this.config.bannerUrl = e.target?.result as string;
         };
         reader.readAsDataURL(file);
+        this.showSuccess('Bannière chargée en local (mode démo).');
       }
     });
   }
 
-  // ── Helpers messages ──
   private showSuccess(msg: string): void {
     this.successMsg = msg;
     this.errorMsg   = '';
@@ -264,5 +323,34 @@ export class ActivityDigestComponent implements OnInit {
   private clearMessages(): void {
     this.successMsg = '';
     this.errorMsg   = '';
+  }
+
+  setDevice(device: 'desktop' | 'mobile'): void {
+    this.previewDevice = device;
+    this.adjustIframeHeight();
+  }
+
+  adjustIframeHeight(): void {
+    setTimeout(() => {
+      const iframe = document.querySelector('.preview-frame') as HTMLIFrameElement;
+      if (iframe && iframe.contentWindow) {
+        try {
+          const doc = iframe.contentWindow.document;
+          if (this.previewDevice === 'desktop') {
+            const height = Math.max(
+              doc.body.scrollHeight,
+              doc.documentElement.scrollHeight,
+              doc.body.offsetHeight,
+              doc.documentElement.offsetHeight
+            );
+            iframe.style.height = (height + 20) + 'px';
+          } else {
+            iframe.style.height = '667px'; // Mobile viewport height
+          }
+        } catch (e) {
+          console.warn('Erreur lors de l\'ajustement de la hauteur de l\'iframe :', e);
+        }
+      }
+    }, 50);
   }
 }
