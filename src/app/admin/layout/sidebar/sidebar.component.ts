@@ -1,6 +1,7 @@
-import { Component, Inject, PLATFORM_ID, OnInit, Input } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, OnDestroy, OnInit, Input } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
 import { AuthService } from '../../../auth.service';
 
 @Component({
@@ -8,10 +9,11 @@ import { AuthService } from '../../../auth.service';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
   @Input() collapsed = false;
   
   private isBrowser: boolean;
+  private routerEventsSubscription?: Subscription;
   expandedMenus: { [key: string]: boolean } = {
     users: false,
     settings: false
@@ -27,14 +29,15 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.isBrowser) {
-      const url = this.router.url;
-      if (url.includes('/admin/user-management')) {
-        this.expandedMenus['users'] = true;
-      }
-      if (url.includes('/admin/settings')) {
-        this.expandedMenus['settings'] = true;
-      }
+      this.syncExpandedMenus(this.router.url);
+      this.routerEventsSubscription = this.router.events
+        .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+        .subscribe(event => this.syncExpandedMenus(event.urlAfterRedirects));
     }
+  }
+
+  ngOnDestroy(): void {
+    this.routerEventsSubscription?.unsubscribe();
   }
 
   get currentUser() {
@@ -47,5 +50,14 @@ export class SidebarComponent implements OnInit {
       event.stopPropagation();
     }
     this.expandedMenus[menu] = !this.expandedMenus[menu];
+  }
+
+  isActive(path: string): boolean {
+    return this.router.url.startsWith(path);
+  }
+
+  private syncExpandedMenus(url: string): void {
+    this.expandedMenus['users'] = url.startsWith('/admin/user-management');
+    this.expandedMenus['settings'] = url.startsWith('/admin/settings');
   }
 }

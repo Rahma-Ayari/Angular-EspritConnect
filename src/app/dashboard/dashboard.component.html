@@ -1,47 +1,5 @@
-<div class="app-shell" [class.sidebar-collapsed]="!sidebarOpen">
-
-  <!-- ══ SIDEBAR ══ -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <div class="brand-mark">
-        <span class="brand-logo-text">esprit</span>
-        <span class="brand-logo-mini">e</span>
-      </div>
-      <button class="toggle-btn" (click)="toggleSidebar()">
-        <i class="bi" [class.bi-layout-sidebar]="sidebarOpen"
-           [class.bi-layout-sidebar-inset]="!sidebarOpen"></i>
-      </button>
-    </div>
-
-    <nav class="sidebar-nav">
-      <ul>
-        <li *ngFor="let item of navItems">
-          <a class="nav-link" [class.active]="activeNav === item.id"
-             (click)="setNav(item.id)" [title]="!sidebarOpen ? item.label : ''">
-            <span class="nav-icon"><i class="bi" [class]="'bi ' + item.icon"></i></span>
-            <span class="nav-label">{{ item.label }}</span>
-            <span class="nav-indicator" *ngIf="activeNav === item.id"></span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="user-mini">
-        <div class="avatar-sm">{{ userInitials }}</div>
-        <div class="user-meta" *ngIf="sidebarOpen">
-          <p class="user-name-sm">{{ user?.nom }}</p>
-          <p class="user-role-sm">Étudiant</p>
-        </div>
-        <button class="logout-btn" (click)="logout()" title="Déconnexion">
-          <i class="bi bi-box-arrow-right"></i>
-        </button>
-      </div>
-    </div>
-  </aside>
-
-  <!-- ══ MAIN ══ -->
-  <main class="main-content">
+<div class="dashboard-page">
+  <main class="dashboard-main">
 
     <!-- Top bar -->
     <header class="topbar">

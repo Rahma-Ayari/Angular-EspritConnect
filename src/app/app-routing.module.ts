@@ -18,14 +18,11 @@ const routes: Routes = [
     canActivate: [AuthGuard, AdminGuard]
   },
   {
-      path: 'dashboard',
-      component: DashboardComponent,
-      canActivate: [AuthGuard]
-    },
-  {
     path: '',
     component: UserLayoutComponent,
+    canActivate: [AuthGuard],
     children: [
+      { path: 'dashboard', component: DashboardComponent },
       {
         path: 'events',
         loadChildren: () =>
@@ -34,11 +31,10 @@ const routes: Routes = [
       }
     ]
   },
-{
+  {
     path: '**',
     redirectTo: 'login'
   }
-
 ];
 
 @NgModule({
