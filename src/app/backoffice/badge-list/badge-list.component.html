@@ -1,0 +1,199 @@
+<div class="admin-badges-page">
+
+  <!-- Toast -->
+  <div class="toast" *ngIf="toast" [class.toast-success]="toast.type === 'success'" [class.toast-error]="toast.type === 'error'">
+    <i class="fa-solid" [class.fa-circle-check]="toast.type === 'success'" [class.fa-circle-xmark]="toast.type === 'error'"></i>
+    {{ toast.message }}
+  </div>
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon-bg blue-bg"><i class="fa-solid fa-award blue-text"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">Total Badges</span>
+        <h2 class="stat-value">{{ badges.length }}</h2>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-bg green-bg"><i class="fa-solid fa-toggle-on green-text"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">Active Badges</span>
+        <h2 class="stat-value">{{ enabledCount }}</h2>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-bg orange-bg"><i class="fa-solid fa-hourglass-half orange-text"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">Pending Requests</span>
+        <h2 class="stat-value">{{ pendingCount }}</h2>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-bg purple-bg"><i class="fa-solid fa-users purple-text"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">Total Assignments</span>
+        <h2 class="stat-value">{{ totalAssignments }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Card with Tabs -->
+  <div class="main-card">
+    <div class="card-top-bar">
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn" [class.active]="activeTab === 'badges'" (click)="activeTab = 'badges'">
+          <i class="fa-solid fa-award"></i> Manage Badges
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'requests'" (click)="activeTab = 'requests'">
+          <i class="fa-solid fa-inbox"></i> Pending Requests
+          <span class="badge-count" *ngIf="pendingCount > 0">{{ pendingCount }}</span>
+        </button>
+      </div>
+
+      <!-- Action -->
+      <div class="header-actions" *ngIf="activeTab === 'badges'">
+        <button class="btn-outline" (click)="toggleAll(true)" [disabled]="badges.length === 0">
+          <i class="fa-solid fa-eye"></i> Enable All
+        </button>
+        <button class="btn-outline danger-text" (click)="toggleAll(false)" [disabled]="badges.length === 0">
+          <i class="fa-solid fa-eye-slash"></i> Disable All
+        </button>
+        <button class="btn-create" (click)="createBadge()">
+          <i class="fa-solid fa-plus"></i> Create Badge
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+
+    <!-- ===== TAB: MANAGE BADGES ===== -->
+    <div *ngIf="!loading && activeTab === 'badges'">
+      <div class="badge-list-items">
+        <div class="badge-row" *ngFor="let badge of badges" [class.disabled]="!badge.enabled">
+          <div class="badge-row-left">
+            <div class="badge-icon-wrap" [class.blue-bg]="badge.enabled" [class.grey-bg]="!badge.enabled">
+              <i class="fa-solid fa-shield" [class.blue-text]="badge.enabled"></i>
+            </div>
+            <div class="badge-row-info">
+              <span class="badge-row-name">{{ badge.name }}</span>
+              <span class="badge-row-meta">
+                <i class="fa-solid fa-users"></i> {{ badge.userCount || 0 }} users
+                &nbsp;·&nbsp;
+                <i class="fa-solid fa-tag"></i> {{ badge.badgeType === 'AUTOMATICALLY_EARNED' ? 'Auto' : 'Manual' }}
+                &nbsp;·&nbsp; {{ badge.criteria }}
+              </span>
+            </div>
+          </div>
+          <div class="badge-row-right">
+            <label class="toggle">
+              <input type="checkbox" [checked]="badge.enabled" (change)="toggleBadge(badge)">
+              <span class="slider"></span>
+            </label>
+            <button class="icon-btn" (click)="editBadge(badge.id!)" title="Edit">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button class="icon-btn danger" (click)="deleteBadge(badge.id!)" title="Delete">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="badges.length === 0">
+        <i class="fa-solid fa-award"></i>
+        <p>No badges yet. Create your first one!</p>
+        <button class="btn-create" (click)="createBadge()">
+          <i class="fa-solid fa-plus"></i> Create Badge
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== TAB: PENDING REQUESTS ===== -->
+    <div *ngIf="!loading && activeTab === 'requests'">
+      
+      <!-- PENDING -->
+      <div class="requests-section" *ngIf="getRequestsByStatus(RequestStatus.PENDING).length > 0">
+        <div class="requests-section-label">
+          <i class="fa-solid fa-hourglass-half"></i> Awaiting Review
+        </div>
+        <div class="request-card" *ngFor="let req of getRequestsByStatus(RequestStatus.PENDING)">
+          <div class="request-card-left">
+            <div class="request-avatar">{{ req.userName.charAt(0).toUpperCase() }}</div>
+            <div class="request-info">
+              <div class="request-top">
+                <span class="request-user">{{ req.userName }}</span>
+                <span class="request-separator">requested</span>
+                <span class="request-badge-name">{{ req.badgeName }}</span>
+              </div>
+              <p class="request-motivation">"{{ req.motivation }}"</p>
+              <span class="request-date">{{ getTimeAgo(req.requestedAt!) }}</span>
+            </div>
+          </div>
+          <div class="request-card-right">
+            <button class="btn-approve" (click)="approveRequest(req)">
+              <i class="fa-solid fa-check"></i> Approve
+            </button>
+            <button class="btn-reject" (click)="rejectRequest(req)">
+              <i class="fa-solid fa-xmark"></i> Reject
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- APPROVED (history) -->
+      <div class="requests-section" *ngIf="getRequestsByStatus(RequestStatus.APPROVED).length > 0">
+        <div class="requests-section-label success-text">
+          <i class="fa-solid fa-circle-check"></i> Approved
+        </div>
+        <div class="request-card resolved" *ngFor="let req of getRequestsByStatus(RequestStatus.APPROVED)">
+          <div class="request-card-left">
+            <div class="request-avatar approved-avatar">{{ req.userName.charAt(0).toUpperCase() }}</div>
+            <div class="request-info">
+              <div class="request-top">
+                <span class="request-user">{{ req.userName }}</span>
+                <span class="request-separator">was awarded</span>
+                <span class="request-badge-name">{{ req.badgeName }}</span>
+              </div>
+              <span class="request-date">{{ getTimeAgo(req.requestedAt!) }}</span>
+            </div>
+          </div>
+          <span class="status-pill approved">Approved</span>
+        </div>
+      </div>
+
+      <!-- REJECTED (history) -->
+      <div class="requests-section" *ngIf="getRequestsByStatus(RequestStatus.REJECTED).length > 0">
+        <div class="requests-section-label error-text">
+          <i class="fa-solid fa-circle-xmark"></i> Rejected
+        </div>
+        <div class="request-card resolved" *ngFor="let req of getRequestsByStatus(RequestStatus.REJECTED)">
+          <div class="request-card-left">
+            <div class="request-avatar rejected-avatar">{{ req.userName.charAt(0).toUpperCase() }}</div>
+            <div class="request-info">
+              <div class="request-top">
+                <span class="request-user">{{ req.userName }}</span>
+                <span class="request-separator">·</span>
+                <span class="request-badge-name">{{ req.badgeName }}</span>
+              </div>
+              <span class="request-date">{{ getTimeAgo(req.requestedAt!) }}</span>
+            </div>
+          </div>
+          <span class="status-pill rejected">Rejected</span>
+        </div>
+      </div>
+
+      <!-- EMPTY -->
+      <div class="empty-state" *ngIf="requests.length === 0">
+        <i class="fa-solid fa-inbox"></i>
+        <p>No badge requests yet.</p>
+      </div>
+
+    </div>
+  </div>
+</div>

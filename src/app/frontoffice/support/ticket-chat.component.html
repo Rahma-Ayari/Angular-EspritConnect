@@ -1,0 +1,192 @@
+<div class="chat-simple-container" *ngIf="ticket">
+  
+  <div class="chat-simple-header">
+    <div class="header-left">
+      <button class="btn-back-simple" routerLink="/support">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <div class="header-info">
+        <h1>{{ ticket.title }}</h1>
+        <span class="header-meta">
+          #{{ ticket.id }} &bull; {{ ticket.categoryName }} &bull; 
+          <span class="priority-text" [ngClass]="ticket.priority.toLowerCase()" style="font-weight: 700;">{{ ticket.priority }} Priority</span>
+        </span>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="status-pill" [ngClass]="ticket.status.toLowerCase().replace('_', '-')">
+        {{ ticket.status }}
+      </span>
+    </div>
+  </div>
+
+  <div class="chat-simple-body">
+    <div class="chat-simple-body-grid">
+      
+      <!-- CHAT MAIN PANEL -->
+      <div class="chat-main-area">
+        <div class="messages-simple">
+          
+          <!-- Ticket Details Card -->
+          <div class="ticket-details-card">
+            <h3 style="font-size: 16px; font-weight: 750; color: var(--text-main); margin-bottom: 8px;">Description</h3>
+            <p style="font-size: 14px; line-height: 1.5; color: var(--text-secondary); margin-bottom: 16px; white-space: pre-wrap;">{{ ticket.description }}</p>
+            
+            <!-- Tags if any -->
+            <div class="ticket-tags-display" *ngIf="ticket.tags && ticket.tags.length > 0" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
+              <span class="tag-pill" *ngFor="let tag of ticket.tags" style="background: var(--bg-main); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--text-secondary);">
+                #{{ tag }}
+              </span>
+            </div>
+
+            <!-- Ticket Attachment if any -->
+            <div class="ticket-attachment-display" *ngIf="ticket.attachmentUrl" style="border-top: 1px solid var(--border); padding-top: 16px;">
+              <strong style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 8px;">Attachment:</strong>
+              <a [href]="BASE_URL + ticket.attachmentUrl" target="_blank" class="btn-attachment-link">
+                <i class="fa-solid fa-paperclip"></i> View Screenshot/File
+              </a>
+              <div *ngIf="isImageUrl(ticket.attachmentUrl)" class="attachment-img-preview">
+                <img [src]="BASE_URL + ticket.attachmentUrl" alt="Screenshot">
+              </div>
+            </div>
+          </div>
+
+          <!-- Messages Thread -->
+          <div class="message-row" *ngFor="let msg of messages" 
+               [ngClass]="{'msg-me': msg.senderName === ticket.creatorName, 'msg-staff': msg.senderName !== ticket.creatorName}">
+            <div class="msg-bubble">
+              <div class="msg-sender" *ngIf="msg.senderName !== ticket.creatorName">{{ msg.senderName }}</div>
+              
+              <!-- Message text (only if non-empty) -->
+              <div class="msg-content" *ngIf="msg.content">{{ msg.content }}</div>
+
+              <!-- Message attachment -->
+              <div class="msg-attachment" *ngIf="msg.attachmentUrl">
+                <ng-container *ngIf="isImageUrl(msg.attachmentUrl); else fileLink">
+                  <a [href]="BASE_URL + msg.attachmentUrl" target="_blank">
+                    <img [src]="BASE_URL + msg.attachmentUrl" alt="attachment" class="msg-attachment-img">
+                  </a>
+                </ng-container>
+                <ng-template #fileLink>
+                  <a [href]="BASE_URL + msg.attachmentUrl" target="_blank" class="msg-file-link">
+                    <i class="fa-solid fa-file-arrow-down"></i>
+                    <span>Download file</span>
+                  </a>
+                </ng-template>
+              </div>
+
+              <div class="msg-time">{{ msg.createdAt | date:'shortTime' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ======= INPUT AREA ======= -->
+        <div class="input-area-wrapper" *ngIf="ticket.status !== 'CLOSED'">
+
+          <!-- Attachment preview strip -->
+          <div class="attachment-preview-strip" *ngIf="selectedFile">
+            <div class="preview-chip">
+              <!-- Spinner while uploading -->
+              <i class="fa-solid fa-spinner fa-spin" *ngIf="isUploading" style="color: var(--primary);"></i>
+              <!-- Image thumbnail -->
+              <img *ngIf="attachmentPreviewUrl && !isUploading" [src]="attachmentPreviewUrl" class="preview-thumb" alt="preview">
+              <!-- File icon for non-images -->
+              <i *ngIf="!attachmentPreviewUrl && !isUploading" class="fa-solid fa-file-lines" style="color: var(--primary); font-size: 18px;"></i>
+              <span class="preview-name">{{ selectedFile.name }}</span>
+              <!-- Upload error badge -->
+              <span class="upload-error-badge" *ngIf="uploadError">
+                <i class="fa-solid fa-triangle-exclamation"></i> {{ uploadError }}
+              </span>
+              <!-- Ready badge -->
+              <span class="upload-ready-badge" *ngIf="uploadedAttachmentUrl && !isUploading">
+                <i class="fa-solid fa-check-circle"></i> Ready
+              </span>
+              <button class="btn-remove-attachment" (click)="clearAttachment()" title="Remove attachment">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Input row -->
+          <div class="input-simple">
+            <!-- Hidden file input -->
+            <input #fileInput type="file" style="display:none"
+                   accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar"
+                   (change)="onFileSelected($event)">
+
+            <!-- Attach button -->
+            <button class="btn-attach" (click)="triggerFileInput()" title="Attach file or screenshot"
+                    [class.has-file]="!!selectedFile">
+              <i class="fa-solid fa-paperclip"></i>
+            </button>
+
+            <textarea [(ngModel)]="newMessage" (keydown.enter)="$event.preventDefault(); sendMessage()"
+                      placeholder="Write a reply... (press Enter to send)"></textarea>
+
+            <button class="btn-send-simple" (click)="sendMessage()" [disabled]="!canSend()">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="closed-notice" *ngIf="ticket.status === 'CLOSED'">
+          <i class="fa-solid fa-lock"></i>
+          This ticket is closed.
+        </div>
+      </div>
+
+      <!-- CHAT SIDEBAR (SLA + TIMELINE + ACTIONS) -->
+      <div class="chat-sidebar-area">
+        
+        <!-- SLA Response Status -->
+        <div class="sidebar-card sla-timer" *ngIf="ticket.slaMessage" style="border-left: 4px solid var(--primary);">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <div class="sla-info">
+            <span class="label">SLA Tracker</span>
+            <span class="value">{{ ticket.slaMessage }}</span>
+          </div>
+        </div>
+
+        <!-- Ticket Action Panel -->
+        <div class="sidebar-card actions">
+          <h3>Ticket Options</h3>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="btn-sidebar-secondary" (click)="downloadHistory()">
+              <i class="fa-solid fa-download"></i> Export History
+            </button>
+            <button class="btn-sidebar-primary" *ngIf="ticket.status === 'RESOLVED' || ticket.status === 'CLOSED'" (click)="reopenTicket()">
+              <i class="fa-solid fa-rotate-right"></i> Reopen Ticket
+            </button>
+          </div>
+        </div>
+
+        <!-- Chronological Visual Timeline -->
+        <div class="sidebar-card timeline" *ngIf="ticket.timeline && ticket.timeline.length > 0">
+          <h3>Ticket Timeline</h3>
+          <div class="timeline-steps">
+            <div class="timeline-step" *ngFor="let step of ticket.timeline">
+              <div class="step-icon" [ngClass]="step.eventType.toLowerCase()">
+                <i class="fa-solid" [ngClass]="{
+                  'fa-circle-plus': step.eventType === 'CREATED',
+                  'fa-user-pen': step.eventType === 'ASSIGNED',
+                  'fa-circle-notch': step.eventType === 'STATUS_CHANGED',
+                  'fa-reply': step.eventType === 'ADMIN_REPLY',
+                  'fa-user': step.eventType === 'USER_REPLY',
+                  'fa-circle-check': step.eventType === 'RESOLVED',
+                  'fa-rotate-right': step.eventType === 'REOPENED'
+                }"></i>
+              </div>
+              <div class="step-content">
+                <span class="step-desc">{{ step.description }}</span>
+                <span class="step-time">{{ step.timestamp | date:'short' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>

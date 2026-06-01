@@ -1,0 +1,212 @@
+<div class="faq-kb-page">
+
+  <!-- ===== HERO SECTION ===== -->
+  <div class="faq-hero">
+    <div class="faq-hero-content">
+      <div class="faq-hero-icon">
+        <i class="bi bi-chat-square-text"></i>
+      </div>
+      <h1>Frequent Q&amp;A</h1>
+      <p>Find instant answers. No ticket needed.</p>
+
+      <div class="faq-search-bar">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input
+          type="text"
+          id="faq-search-input"
+          [(ngModel)]="searchQuery"
+          (input)="onSearchInput($any($event.target).value)"
+          placeholder="Search questions, keywords, topics..."
+          autocomplete="off"
+        />
+        <button class="search-clear-btn" *ngIf="searchQuery" (click)="clearSearch()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <span class="search-spinner" *ngIf="searchLoading">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+        </span>
+      </div>
+
+      <div class="faq-stats" *ngIf="!loading">
+        <span><strong>{{ allFaqs.length }}</strong> articles</span>
+        <span class="stat-dot">·</span>
+        <span><strong>{{ categories.length }}</strong> categories</span>
+        <span class="stat-dot">·</span>
+        <span>Updated daily</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="faq-main">
+
+    <!-- SIDEBAR -->
+    <aside class="faq-sidebar">
+
+      <!-- Filters -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Browse</h3>
+        <button class="filter-btn" [class.active]="activeFilter === 'all' && !selectedCategoryId && !searchQuery"
+                (click)="setFilter('all')">
+          <i class="fa-solid fa-list"></i> All Articles
+          <span class="filter-count">{{ allFaqs.length }}</span>
+        </button>
+        <button class="filter-btn" [class.active]="activeFilter === 'important'"
+                (click)="setFilter('important')">
+          <i class="fa-solid fa-star"></i> Pinned FAQs
+        </button>
+        <button class="filter-btn" [class.active]="activeFilter === 'popular'"
+                (click)="setFilter('popular')">
+          <i class="fa-solid fa-fire"></i> Most Viewed
+        </button>
+      </div>
+
+      <!-- Categories -->
+      <div class="sidebar-section" *ngIf="categories.length > 0">
+        <h3 class="sidebar-title">Categories</h3>
+        <button class="category-btn" *ngFor="let cat of categories"
+                [class.active]="selectedCategoryId === cat.id"
+                (click)="selectCategory(cat.id)"
+                [title]="cat.name">
+          <i class="fa-solid {{ getCategoryIcon(cat.name) }}"></i>
+          <span class="cat-name">{{ cat.name }}</span>
+          <span class="cat-count">{{ getCategoryFaqCount(cat.id) }}</span>
+        </button>
+      </div>
+
+      <!-- Popular FAQs mini list -->
+      <div class="sidebar-section" *ngIf="popularFaqs.length > 0 && !searchQuery">
+        <h3 class="sidebar-title"><i class="fa-solid fa-fire-flame-curved"></i> Trending</h3>
+        <div class="trending-item" *ngFor="let faq of popularFaqs.slice(0, 3)" (click)="toggleFaq(faq)">
+          <i class="fa-solid fa-chevron-right"></i>
+          <span>{{ faq.question | slice:0:60 }}{{ faq.question.length > 60 ? '...' : '' }}</span>
+          <small class="view-count">{{ faq.viewCount }} views</small>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="sidebar-cta">
+        <i class="fa-solid fa-headset"></i>
+        <p>Can't find what you need?</p>
+        <a routerLink="/support/new" class="cta-btn">
+          <i class="fa-solid fa-ticket"></i> Open a Ticket
+        </a>
+      </div>
+
+    </aside>
+
+    <!-- FAQ CONTENT AREA -->
+    <div class="faq-content-area">
+
+      <!-- Active filter label -->
+      <div class="content-header">
+        <div class="content-title">
+          <span *ngIf="searchQuery">
+            Search results for "<strong>{{ searchQuery }}</strong>"
+          </span>
+          <span *ngIf="!searchQuery && activeFilter === 'all' && !selectedCategoryId">All Articles</span>
+          <span *ngIf="activeFilter === 'important'">
+            <i class="fa-solid fa-star"></i> Pinned FAQs
+          </span>
+          <span *ngIf="activeFilter === 'popular'">
+            <i class="fa-solid fa-fire"></i> Most Viewed
+          </span>
+          <span *ngIf="selectedCategoryId">
+            <i class="fa-solid fa-tag"></i>
+            {{ getSelectedCategoryName() }}
+          </span>
+        </div>
+        <span class="result-count">{{ filteredFaqs.length }} result{{ filteredFaqs.length !== 1 ? 's' : '' }}</span>
+      </div>
+
+      <!-- Loading State -->
+      <div class="faq-loading" *ngIf="loading">
+        <div class="skeleton-card" *ngFor="let i of [1,2,3,4]"></div>
+      </div>
+
+      <!-- Error State -->
+      <div class="faq-empty" *ngIf="!loading && errorMessage">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <h3>Unable to load FAQs</h3>
+        <p>{{ errorMessage }}</p>
+        <button class="cta-btn" style="margin-top:12px" (click)="loadData()">
+          <i class="fa-solid fa-rotate-right"></i> Retry
+        </button>
+      </div>
+
+      <!-- Empty State -->
+      <div class="faq-empty" *ngIf="!loading && !errorMessage && filteredFaqs.length === 0">
+        <i class="fa-solid fa-magnifying-glass-minus"></i>
+        <h3>No results found</h3>
+        <p>Try different keywords or <a (click)="clearSearch()" class="link-reset">browse all articles</a>.</p>
+      </div>
+
+
+      <!-- FAQ Accordion List -->
+      <div class="faq-list" *ngIf="!loading && !errorMessage && filteredFaqs.length > 0">
+        <div
+          class="faq-card"
+          *ngFor="let faq of filteredFaqs; trackBy: trackByFaqId"
+          [class.expanded]="expandedFaqId === faq.id"
+          [class.important]="faq.isImportant"
+        >
+          <!-- Question Header -->
+          <div class="faq-question" (click)="toggleFaq(faq)" [id]="'faq-' + faq.id">
+            <div class="faq-question-left">
+              <span class="faq-pin" *ngIf="faq.isImportant" title="Pinned FAQ">
+                <i class="fa-solid fa-thumbtack"></i>
+              </span>
+              <span class="faq-q-text">{{ faq.question }}</span>
+            </div>
+            <div class="faq-question-right">
+              <span class="faq-category-tag" *ngIf="faq.categoryName">
+                {{ faq.categoryName }}
+              </span>
+              <span class="faq-views" title="Views">
+                <i class="fa-solid fa-eye"></i> {{ faq.viewCount }}
+              </span>
+              <i class="fa-solid fa-chevron-down faq-chevron" [class.rotated]="expandedFaqId === faq.id"></i>
+            </div>
+          </div>
+
+          <!-- Answer Body -->
+          <div class="faq-answer" [class.visible]="expandedFaqId === faq.id">
+            <div class="faq-answer-content">
+              <p>{{ faq.answer }}</p>
+
+              <!-- Helpful Voting -->
+              <div class="faq-vote-section">
+                <span class="vote-label">Was this helpful?</span>
+
+                <div class="vote-buttons" *ngIf="!hasVoted(faq.id)">
+                  <button class="vote-btn yes" (click)="vote(faq.id, true, $event)" id="vote-yes-{{ faq.id }}">
+                    <i class="fa-solid fa-thumbs-up"></i> Yes
+                  </button>
+                  <button class="vote-btn no" (click)="vote(faq.id, false, $event)" id="vote-no-{{ faq.id }}">
+                    <i class="fa-solid fa-thumbs-down"></i> No
+                  </button>
+                </div>
+
+                <div class="vote-result" *ngIf="hasVoted(faq.id)">
+                  <i class="fa-solid fa-circle-check"></i>
+                  <span>Thank you for your feedback!</span>
+                </div>
+
+                <!-- Helpful progress bar -->
+                <div class="helpful-bar" *ngIf="faq.helpfulCount + faq.notHelpfulCount > 0">
+                  <div class="helpful-bar-fill" [style.width.%]="getHelpfulPercent(faq)"></div>
+                  <span class="helpful-label">
+                    {{ getHelpfulPercent(faq) }}% found this helpful
+                    ({{ faq.helpfulCount + faq.notHelpfulCount }} votes)
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
