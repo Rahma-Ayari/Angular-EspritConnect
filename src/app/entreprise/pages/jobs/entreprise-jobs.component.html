@@ -1,350 +1,237 @@
-<div class="job-dash" *ngIf="!loading; else loadingTpl">
-  <div class="page-header">
-    <h1>Job Dashboard</h1>
-    <p class="subtitle">Vue entreprise — gérez vos offres d'emploi et découvrez les meilleurs profils étudiants avec l'aide de notre assistant IA.</p>
+<div class="jobs-dashboard">
+  <!-- Success Message -->
+  <div class="alert alert-success" *ngIf="showSuccessMessage">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    Offre publiée avec succès !
   </div>
 
-  <div class="alert error" *ngIf="error">{{ error }}</div>
-  <div class="alert success" *ngIf="success">{{ success }}</div>
+  <!-- Error Message -->
+  <div class="alert alert-error" *ngIf="errorMessage">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="15" y1="9" x2="9" y2="15"></line>
+      <line x1="9" y1="9" x2="15" y2="15"></line>
+    </svg>
+    {{ errorMessage }}
+  </div>
 
-  <!-- Verification Alert Banner at the top of Dashboard -->
-  <div class="info-banner" *ngIf="verification && !canPostOffers">
-    <i class="bi bi-shield-exclamation"></i>
+  <!-- Header -->
+  <div class="dashboard-header">
     <div>
-      <strong>Vérification requise</strong>
-      <p>Pour pouvoir publier des offres et recevoir des candidatures, vous devez soumettre vos documents de vérification légale dans votre profil.</p>
+      <h1>Gestion des Offres d'Emploi</h1>
+      <p class="subtitle">Publiez et gérez vos offres d'emploi</p>
     </div>
-    <button type="button" class="btn-primary" (click)="goToProfileVerification()">
-      <i class="bi bi-shield-check"></i> Compléter dans le Profil
+    <button class="btn btn-primary" (click)="togglePostForm()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      {{ showPostForm ? 'Annuler' : 'Nouvelle Offre' }}
     </button>
   </div>
 
-  <div class="stats-row" *ngIf="overview">
-    <div class="stat-card">
-      <span class="stat-label">Offres actives</span>
-      <strong>{{ overview.activeOffers }}</strong>
-    </div>
-    <div class="stat-card">
-      <span class="stat-label">Candidatures</span>
-      <strong>{{ overview.totalApplications }}</strong>
-    </div>
-    <div class="stat-card">
-      <span class="stat-label">En attente</span>
-      <strong>{{ overview.pendingApplications }}</strong>
-    </div>
-    <div class="stat-card accent">
-      <span class="stat-label">Statut entreprise</span>
-      <span class="pill" [ngClass]="verificationClass(verification?.verificationStatus)">
-        {{ verificationLabel(verification?.verificationStatus) }}
-      </span>
-    </div>
-  </div>
-
-  <div class="tabs-container">
-    <div class="tabs">
-      <button type="button" class="tab" [class.active]="activeTab === 'overview'" (click)="setTab('overview')">Vue d'ensemble</button>
-      <button type="button" class="tab" [class.active]="activeTab === 'offers'" (click)="setTab('offers')">
-        Mes offres
-      </button>
-    </div>
-  </div>
-
-  <div class="content-card">
-    <!-- OVERVIEW -->
-    <section *ngIf="activeTab === 'overview'" class="panel-body">
-      <div class="split-grid" *ngIf="jobs.length">
-        <div class="offers-mini-list">
-          <h3>Dernières offres</h3>
-          <button type="button" class="offer-row" *ngFor="let job of jobs | slice:0:5" (click)="selectJob(job); setTab('offers')">
-            <div>
-              <strong>{{ job.titre }}</strong>
-              <span>{{ typeLabel(job.typeOffre) }} · {{ job.applicationsCount || 0 }} candidature(s)</span>
-            </div>
-            <i class="bi bi-chevron-right"></i>
-          </button>
+  <!-- Post Form -->
+  <div class="post-form-card" *ngIf="showPostForm">
+    <h2>Publier une Nouvelle Offre</h2>
+    
+    <form [formGroup]="jobForm" (ngSubmit)="submitOffer()">
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="titre">Titre du poste *</label>
+          <input
+            type="text"
+            id="titre"
+            formControlName="titre"
+            placeholder="Ex: Développeur Full Stack Senior"
+          >
+          <span class="error-text" *ngIf="jobForm.get('titre')?.touched && jobForm.get('titre')?.errors?.['required']">
+            Le titre est requis
+          </span>
         </div>
-        <div class="candidates-panel" *ngIf="selectedJob">
-          <h3>Top candidats — {{ selectedJob.titre }}</h3>
-          <p class="hint">Classement IA (compétences, lettre de motivation, profil)</p>
-          <div class="loading-inline" *ngIf="candidatesLoading">Analyse en cours...</div>
-          <div class="candidate-card" *ngFor="let c of candidates; let i = index">
-            <div class="rank">#{{ i + 1 }}</div>
-            <div class="candidate-main">
-              <strong>{{ c.etudiantNom }}</strong>
-              <span>{{ c.filiere }} · {{ c.etudiantEmail }}</span>
-              <p class="motivation">{{ c.lettreMotivationExcerpt }}</p>
-              <div class="skill-tags">
-                <span *ngFor="let s of c.skillsMatched">{{ s }}</span>
-              </div>
-            </div>
-            <div class="score-badge" [class]="scoreColor(c.scoreCompatibilite)">{{ c.scoreCompatibilite | number:'1.0-0' }}%</div>
+
+        <div class="form-group">
+          <label for="typeOffre">Type d'offre *</label>
+          <select id="typeOffre" formControlName="typeOffre">
+            <option *ngFor="let type of offerTypes" [value]="type.value">
+              {{ type.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="domaine">Domaine *</label>
+          <input
+            type="text"
+            id="domaine"
+            formControlName="domaine"
+            placeholder="Ex: Développement Web"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="localisation">Localisation</label>
+          <input
+            type="text"
+            id="localisation"
+            formControlName="localisation"
+            placeholder="Ex: Tunis, Tunisie"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="salaire">Salaire (optionnel)</label>
+          <input
+            type="text"
+            id="salaire"
+            formControlName="salaire"
+            placeholder="Ex: 2000-3000 TND/mois"
+          >
+        </div>
+
+        <div class="form-group full-width">
+          <label for="competences">Compétences requises (séparées par des virgules)</label>
+          <input
+            type="text"
+            id="competences"
+            formControlName="competencesRequises"
+            placeholder="Ex: Angular, Spring Boot, MySQL"
+          >
+        </div>
+      </div>
+
+      <!-- AI Assistant Section -->
+      <div class="ai-assistant-section">
+        <div class="ai-header">
+          <div class="ai-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              <path d="M2 17l10 5 10-5"></path>
+              <path d="M2 12l10 5 10-5"></path>
+            </svg>
           </div>
-          <p class="empty-hint" *ngIf="!candidatesLoading && !candidates.length">Aucune candidature pour cette offre.</p>
+          <div>
+            <h3>Assistant IA - Génération de Description</h3>
+            <p>Laissez l'IA générer une description professionnelle basée sur vos informations</p>
+          </div>
         </div>
-      </div>
-      <p class="empty-hint" *ngIf="!jobs.length && canPostOffers">Publiez votre première offre dans l'onglet « Mes offres ».</p>
-      <div class="verification-helper-card" *ngIf="!canPostOffers">
-        <i class="bi bi-building-lock"></i>
-        <p>Le dépôt d'offres d'emploi et l'accès à la recherche de profils étudiants d'ESPRIT requièrent un profil entreprise validé.</p>
-        <button type="button" class="btn-secondary" (click)="goToProfileVerification()">Accéder au profil entreprise</button>
-      </div>
-    </section>
 
-    <!-- OFFERS -->
-    <section *ngIf="activeTab === 'offers'" class="panel-body">
-      <div class="offers-toolbar">
-        <h2>Mes offres</h2>
-        <button type="button" class="btn-primary" (click)="openCreateOffer()">
-          <i class="bi bi-plus-lg"></i> Nouvelle offre
+        <div class="form-group">
+          <label for="aiPrompt">Instructions supplémentaires pour l'IA (optionnel)</label>
+          <textarea
+            id="aiPrompt"
+            [(ngModel)]="aiPrompt"
+            [ngModelOptions]="{standalone: true}"
+            rows="3"
+            placeholder="Ex: Mettez l'accent sur le travail en équipe et les opportunités de formation..."
+          ></textarea>
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-ai"
+          (click)="generateDescription()"
+          [disabled]="isGeneratingDescription"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+          {{ isGeneratingDescription ? 'Génération en cours...' : 'Générer la Description avec IA' }}
         </button>
       </div>
 
-      <!-- 2-COLUMN SPLIT FORM FOR CREATING/EDITING OFFER -->
-      <div class="offer-form-card" *ngIf="showOfferForm">
-        <div class="form-head">
-          <h3>{{ editingId ? 'Modifier l\'offre' : 'Créer une offre' }}</h3>
-          <button type="button" class="btn-ghost" (click)="cancelOfferForm()"><i class="bi bi-x-lg"></i> Fermer</button>
-        </div>
-
-        <div class="form-split-layout">
-          <!-- LEFT COLUMN: Standard Form -->
-          <form [formGroup]="jobForm" (ngSubmit)="saveOffer()" class="form-left-col">
-            <div class="form-grid">
-              <div class="field">
-                <label>Titre du poste</label>
-                <input type="text" formControlName="titre" placeholder="Ex. Développeur Full Stack" />
-              </div>
-              <div class="field">
-                <label>Type d'offre</label>
-                <select formControlName="typeOffre">
-                  <option *ngFor="let t of typeOptions" [value]="t.value">{{ t.label }}</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Domaine d'activité</label>
-                <input type="text" formControlName="domaine" placeholder="Ex. Informatique, Marketing..." />
-              </div>
-              <div class="field">
-                <label>Localisation</label>
-                <input type="text" formControlName="localisation" placeholder="Ex. Tunis, Hybride..." />
-              </div>
-            </div>
-
-            <div class="field">
-              <label>Notes contextuelles pour l'IA (optionnel)</label>
-              <input type="text" formControlName="briefNotes" placeholder="Ex. Stack: Angular/SpringBoot, Stage PFE de 6 mois..." />
-            </div>
-
-            <div class="field">
-              <label>Description du poste</label>
-              <textarea rows="10" formControlName="description" placeholder="Saisissez ou générez avec l'IA la description détaillée des missions..."></textarea>
-            </div>
-
-            <div class="field">
-              <label>Compétences requises (séparées par des virgules)</label>
-              <input type="text" [(ngModel)]="skillsInput" [ngModelOptions]="{standalone: true}" placeholder="TypeScript, Angular, Java, REST..." />
-            </div>
-
-            <div class="form-actions">
-              <button type="submit" class="btn-primary" [disabled]="saving || jobForm.invalid">
-                <i class="bi bi-check2-circle"></i> {{ saving ? 'Enregistrement...' : (editingId ? 'Mettre à jour' : 'Publier l\'offre') }}
-              </button>
-              <button type="button" class="btn-secondary" (click)="cancelOfferForm()">Annuler</button>
-            </div>
-          </form>
-
-          <!-- RIGHT COLUMN: AI Agent Sidebar -->
-          <div class="ai-agent-sidebar">
-            <div class="ai-agent-header">
-              <div class="ai-avatar-wrapper">
-                <div class="ai-avatar-glow"></div>
-                <div class="ai-avatar">
-                  <i class="bi bi-robot"></i>
-                </div>
-              </div>
-              <div class="ai-agent-meta">
-                <h4>Assistant Recrutement IA</h4>
-                <span class="ai-status"><span class="dot-online"></span> En ligne</span>
-              </div>
-            </div>
-
-            <!-- Speech Bubble -->
-            <div class="ai-speech-bubble">
-              <div class="bubble-arrow"></div>
-              <p>{{ aiAgentBubbleText }}</p>
-            </div>
-
-            <!-- Interactive Actions Tabs -->
-            <div class="ai-interaction-tabs">
-              <button type="button" class="ai-tab-btn" [class.active]="aiAgentActiveTab === 'chat'" (click)="setAiTab('chat')">
-                <i class="bi bi-chat-dots-fill"></i> Rédaction
-              </button>
-              <button type="button" class="ai-tab-btn" [class.active]="aiAgentActiveTab === 'titles'" (click)="setAiTab('titles')">
-                <i class="bi bi-type-strikethrough"></i> Titres
-              </button>
-              <button type="button" class="ai-tab-btn" [class.active]="aiAgentActiveTab === 'questions'" (click)="setAiTab('questions')">
-                <i class="bi bi-patch-question-fill"></i> Questions
-              </button>
-              <button type="button" class="ai-tab-btn" [class.active]="aiAgentActiveTab === 'filieres'" (click)="setAiTab('filieres')">
-                <i class="bi bi-mortarboard-fill"></i> Filières
-              </button>
-            </div>
-
-            <!-- Tab Contents -->
-            <div class="ai-tab-content">
-              <!-- CHAT / AUTO-GENERATOR -->
-              <div *ngIf="aiAgentActiveTab === 'chat'" class="ai-content-panel animate-fade-in">
-                <div class="ai-action-suggestion" *ngIf="!aiSuggestion">
-                  <p class="section-desc">Générez une fiche de poste et extrayez des compétences adaptées en fonction des champs saisis (Titre, Domaine, Notes).</p>
-                  <button type="button" class="btn-ai-action" (click)="runAiAssist()" [disabled]="aiLoading">
-                    <i class="bi bi-stars" *ngIf="!aiLoading"></i>
-                    <span class="spinner-border spinner-border-sm" role="status" *ngIf="aiLoading"></span>
-                    {{ aiLoading ? 'Rédaction en cours...' : 'Générer description & compétences' }}
-                  </button>
-                </div>
-
-                <div class="ai-suggestion-box" *ngIf="aiSuggestion">
-                  <div class="suggestion-header">
-                    <h5>Proposition rédigée</h5>
-                    <span class="ai-badge">Généré par IA</span>
-                  </div>
-                  <div class="preview-description">
-                    <p>{{ aiSuggestion.suggestedDescription }}</p>
-                  </div>
-                  <div class="suggestion-skills">
-                    <h6>Compétences extraites :</h6>
-                    <div class="skill-pills">
-                      <span class="skill-pill" *ngFor="let s of aiSuggestion.suggestedSkills">{{ s }}</span>
-                    </div>
-                  </div>
-                  <p class="disclaimer-text">{{ aiSuggestion.aiDisclaimer }}</p>
-                  <div class="suggestion-actions">
-                    <button type="button" class="btn-primary sm" (click)="applyAiSuggestion()">
-                      <i class="bi bi-check-lg"></i> Appliquer à l'offre
-                    </button>
-                    <button type="button" class="btn-ghost sm danger-text" (click)="clearAiSuggestion()">
-                      Ignorer
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- TITLES OPTIMIZER -->
-              <div *ngIf="aiAgentActiveTab === 'titles'" class="ai-content-panel animate-fade-in">
-                <div class="ai-action-suggestion" *ngIf="aiTitleSuggestions.length === 0">
-                  <p class="section-desc">Obtenez des suggestions de titres plus professionnels et attractifs pour notre portail étudiant.</p>
-                  <button type="button" class="btn-ai-action" (click)="runAiTitleOptimizer()">
-                    <i class="bi bi-magic"></i> Suggérer des titres
-                  </button>
-                </div>
-
-                <div class="ai-list-options" *ngIf="aiTitleSuggestions.length > 0">
-                  <h5>Titres recommandés :</h5>
-                  <p class="panel-hint">Sélectionnez une option pour remplacer votre titre actuel.</p>
-                  <div class="title-option-list">
-                    <button type="button" class="option-card" *ngFor="let title of aiTitleSuggestions" (click)="applyTitleSuggestion(title)">
-                      <span>{{ title }}</span>
-                      <i class="bi bi-plus-circle"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- INTERVIEW QUESTIONS -->
-              <div *ngIf="aiAgentActiveTab === 'questions'" class="ai-content-panel animate-fade-in">
-                <div class="ai-action-suggestion" *ngIf="aiInterviewQuestions.length === 0">
-                  <p class="section-desc">Générez une liste de questions techniques pertinentes pour évaluer les candidats pendant l'entretien.</p>
-                  <button type="button" class="btn-ai-action" (click)="runAiInterviewQuestions()">
-                    <i class="bi bi-journal-check"></i> Proposer des questions
-                  </button>
-                </div>
-
-                <div class="ai-list-options" *ngIf="aiInterviewQuestions.length > 0">
-                  <h5>Questions d'évaluation :</h5>
-                  <p class="panel-hint">Vous pouvez copier ces questions pour préparer vos sessions d'entretien.</p>
-                  <div class="question-list">
-                    <div class="question-card" *ngFor="let q of aiInterviewQuestions">
-                      <p class="question-text">{{ q }}</p>
-                      <button type="button" class="btn-copy" (click)="copyToClipboard(q)">
-                        <i class="bi bi-clipboard"></i> Copier
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ESPRIT FILIERES MATCHING -->
-              <div *ngIf="aiAgentActiveTab === 'filieres'" class="ai-content-panel animate-fade-in">
-                <div class="ai-action-suggestion" *ngIf="aiFiliereRecommendations.length === 0">
-                  <p class="section-desc">Analysez les compétences requises pour identifier les programmes et filières d'études cibles à ESPRIT.</p>
-                  <button type="button" class="btn-ai-action" (click)="runAiFiliereRecommendations()">
-                    <i class="bi bi-mortarboard-fill"></i> Analyser les correspondances
-                  </button>
-                </div>
-
-                <div class="ai-list-options" *ngIf="aiFiliereRecommendations.length > 0">
-                  <h5>Filières recommandées :</h5>
-                  <p class="panel-hint">Programmes de formation ESPRIT alignés avec cette fiche de poste :</p>
-                  <div class="filiere-list">
-                    <div class="filiere-card" *ngFor="let f of aiFiliereRecommendations">
-                      <div class="filiere-header">
-                        <span class="filiere-code">{{ f.code }}</span>
-                        <strong class="filiere-label">{{ f.label }}</strong>
-                      </div>
-                      <p class="filiere-reason">{{ f.reason }}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <!-- Description Field -->
+      <div class="form-group full-width">
+        <label for="description">Description du poste *</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          rows="8"
+          placeholder="Décrivez le poste, les responsabilités, les qualifications requises..."
+        ></textarea>
+        <span class="error-text" *ngIf="jobForm.get('description')?.touched && jobForm.get('description')?.errors?.['required']">
+          La description est requise
+        </span>
+        <span class="error-text" *ngIf="jobForm.get('description')?.touched && jobForm.get('description')?.errors?.['minlength']">
+          La description doit contenir au moins 50 caractères
+        </span>
       </div>
 
-      <!-- OFFERS LIST VIEW -->
-      <div class="offers-layout" *ngIf="!showOfferForm">
-        <div class="offers-list">
-          <article class="offer-card" *ngFor="let job of jobs" [class.selected]="selectedJob?.idOffre === job.idOffre" (click)="selectJob(job)">
-            <div class="offer-card-top">
-              <span class="type-chip">{{ typeLabel(job.typeOffre) }}</span>
-              <span class="apps">{{ job.applicationsCount || 0 }} candidat(s)</span>
-            </div>
-            <h4>{{ job.titre }}</h4>
-            <p>{{ job.domaine }} · {{ job.localisation || '—' }}</p>
-            <div class="offer-card-actions" (click)="$event.stopPropagation()">
-              <button type="button" class="btn-ghost sm" (click)="openStudentView(job)"><i class="bi bi-box-arrow-up-right"></i> Vue étudiant</button>
-              <button type="button" class="btn-ghost sm" (click)="openEditOffer(job)"><i class="bi bi-pencil"></i> Modifier</button>
-              <button type="button" class="btn-ghost sm danger-text" (click)="deleteOffer(job)"><i class="bi bi-trash"></i> Supprimer</button>
-            </div>
-          </article>
-          <p class="empty-hint" *ngIf="!jobs.length">Aucune offre publiée pour le moment.</p>
-        </div>
-
-        <aside class="candidates-side" *ngIf="selectedJob">
-          <h3>Top candidats (Analyse IA)</h3>
-          <p class="hint">Classement basé sur le titre et la description de : {{ selectedJob.titre }}</p>
-          <div class="loading-inline" *ngIf="candidatesLoading">Analyse CV + lettre de motivation...</div>
-          <div class="candidate-card compact" *ngFor="let c of candidates; let i = index">
-            <div class="rank">#{{ i + 1 }}</div>
-            <div class="candidate-main">
-              <strong>{{ c.etudiantNom }}</strong>
-              <span>{{ c.filiere }} · Compatibilité {{ c.scoreCompatibilite | number:'1.0-0' }}%</span>
-              <p class="motivation">{{ c.lettreMotivationExcerpt }}</p>
-              <span class="resume-tag" [class.ok]="c.hasResume">
-                <i class="bi bi-file-earmark-person"></i> {{ c.hasResume ? 'CV joint' : 'Sans CV' }}
-              </span>
-            </div>
-          </div>
-          <p class="empty-hint" *ngIf="!candidatesLoading && !candidates.length">Pas encore de candidatures reçues.</p>
-        </aside>
+      <!-- Submit Button -->
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-large" [disabled]="isSubmitting">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 2L11 13"></path>
+            <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
+          </svg>
+          {{ isSubmitting ? 'Publication en cours...' : 'Publier l\'Offre' }}
+        </button>
       </div>
-    </section>
+    </form>
+  </div>
+
+  <!-- My Offers List -->
+  <div class="offers-section">
+    <h2>Mes Offres Publiées</h2>
+    
+    <div class="offers-grid" *ngIf="myOffers.length > 0; else noOffers">
+      <div class="offer-card" *ngFor="let offer of myOffers">
+        <div class="offer-header">
+          <div>
+            <h3>{{ offer.titre }}</h3>
+            <span class="offer-type">{{ offer.typeOffre }}</span>
+          </div>
+          <button class="btn-icon-danger" (click)="deleteOffer(offer.idOffre!)" title="Supprimer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="offer-meta">
+          <span *ngIf="offer.domaine">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            {{ offer.domaine }}
+          </span>
+          <span *ngIf="offer.localisation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            {{ offer.localisation }}
+          </span>
+        </div>
+        
+        <p class="offer-description">{{ offer.description | slice:0:150 }}{{ offer.description.length > 150 ? '...' : '' }}</p>
+        
+        <div class="offer-skills" *ngIf="offer.competencesRequises && offer.competencesRequises.length > 0">
+          <span class="skill-tag" *ngFor="let skill of offer.competencesRequises.slice(0, 5)">
+            {{ skill }}
+          </span>
+          <span class="skill-tag more" *ngIf="offer.competencesRequises.length > 5">
+            +{{ offer.competencesRequises.length - 5 }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noOffers>
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+        </svg>
+        <h3>Aucune offre publiée</h3>
+        <p>Commencez par publier votre première offre d'emploi</p>
+      </div>
+    </ng-template>
   </div>
 </div>
-
-<ng-template #loadingTpl>
-  <div class="job-dash loading-state">
-    <div class="spinner-border text-danger" role="status"></div>
-    <p>Chargement du tableau de bord...</p>
-  </div>
-</ng-template>

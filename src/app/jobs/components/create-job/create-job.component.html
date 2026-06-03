@@ -1,0 +1,333 @@
+<div class="create-job-container">
+  <!-- Header -->
+  <div class="page-header">
+    <button class="btn-back" (click)="cancel()">
+      <i class="bi bi-arrow-left"></i>
+    </button>
+    <div class="header-title">
+      <h1>{{ isEditMode ? 'Edit' : 'Create' }} Job Offer</h1>
+      <p>Fill in the details to post a new job opportunity</p>
+    </div>
+    <button class="btn-ai" (click)="toggleAIAssistant()">
+      <i class="bi bi-stars"></i>
+      AI Assistant
+    </button>
+  </div>
+
+  <!-- Progress Steps -->
+  <div class="steps-container">
+    <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+      <div class="step-number">
+        <span *ngIf="currentStep <= 1">1</span>
+        <i *ngIf="currentStep > 1" class="bi bi-check-lg"></i>
+      </div>
+      <div class="step-info">
+        <h3>Basic Info</h3>
+        <p>Job title and contract details</p>
+      </div>
+    </div>
+
+    <div class="step-line" [class.completed]="currentStep > 1"></div>
+
+    <div class="step" [class.active]="currentStep === 2" [class.completed]="currentStep > 2">
+      <div class="step-number">
+        <span *ngIf="currentStep <= 2">2</span>
+        <i *ngIf="currentStep > 2" class="bi bi-check-lg"></i>
+      </div>
+      <div class="step-info">
+        <h3>Work Info</h3>
+        <p>Location, salary, and schedule</p>
+      </div>
+    </div>
+
+    <div class="step-line" [class.completed]="currentStep > 2"></div>
+
+    <div class="step" [class.active]="currentStep === 3" [class.completed]="currentStep > 3">
+      <div class="step-number">
+        <span *ngIf="currentStep <= 3">3</span>
+        <i *ngIf="currentStep > 3" class="bi bi-check-lg"></i>
+      </div>
+      <div class="step-info">
+        <h3>Skills</h3>
+        <p>Required skills and technologies</p>
+      </div>
+    </div>
+
+    <div class="step-line" [class.completed]="currentStep > 3"></div>
+
+    <div class="step" [class.active]="currentStep === 4" [class.completed]="currentStep > 4">
+      <div class="step-number">
+        <span>4</span>
+      </div>
+      <div class="step-info">
+        <h3>Job Content</h3>
+        <p>Description and requirements</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="alert alert-error">
+    <i class="bi bi-exclamation-triangle"></i>
+    {{ error }}
+  </div>
+
+  <!-- Form Content -->
+  <div class="form-content">
+    <!-- Step 1: Basic Info -->
+    <form *ngIf="currentStep === 1" [formGroup]="step1Form" class="form-step">
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label>Job Title <span class="required">*</span></label>
+          <input
+            type="text"
+            formControlName="title"
+            placeholder="e.g., Senior Frontend Developer"
+            class="form-control"
+          />
+          <div *ngIf="step1Form.get('title')?.invalid && step1Form.get('title')?.touched" class="error-text">
+            Job title is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Contract Type <span class="required">*</span></label>
+          <select formControlName="contractType" class="form-control">
+            <option value="">Select type</option>
+            <option *ngFor="let type of contractTypes" [value]="type">
+              {{ contractTypeLabels[type] }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Department <span class="required">*</span></label>
+          <input
+            type="text"
+            formControlName="department"
+            placeholder="Select department"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Experience Level <span class="required">*</span></label>
+          <select formControlName="experienceLevel" class="form-control">
+            <option value="">Select level</option>
+            <option *ngFor="let level of experienceLevels" [value]="level">
+              {{ experienceLevelLabels[level] }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Number of Positions <span class="required">*</span></label>
+          <input
+            type="number"
+            formControlName="numberOfPositions"
+            min="1"
+            placeholder="1"
+            class="form-control"
+          />
+        </div>
+      </div>
+    </form>
+
+    <!-- Step 2: Work Info -->
+    <form *ngIf="currentStep === 2" [formGroup]="step2Form" class="form-step">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Work Mode <span class="required">*</span></label>
+          <select formControlName="workMode" class="form-control">
+            <option value="">Select mode</option>
+            <option *ngFor="let mode of workModes" [value]="mode">
+              {{ workModeLabels[mode] }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Location <span class="required">*</span></label>
+          <input
+            type="text"
+            formControlName="location"
+            placeholder="e.g., Tunis, Tunisia"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Salary Range (TND/month)</label>
+          <div class="input-group">
+            <input
+              type="number"
+              formControlName="salaryMin"
+              placeholder="Minimum"
+              class="form-control"
+            />
+            <span class="input-separator">-</span>
+            <input
+              type="number"
+              formControlName="salaryMax"
+              placeholder="Maximum"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Contract Duration</label>
+          <input
+            type="text"
+            formControlName="duration"
+            placeholder="e.g., 12 months, Permanent"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group full-width">
+          <label>Application Deadline <span class="required">*</span></label>
+          <input
+            type="date"
+            formControlName="deadline"
+            class="form-control"
+          />
+        </div>
+      </div>
+    </form>
+
+    <!-- Step 3: Skills -->
+    <form *ngIf="currentStep === 3" [formGroup]="step3Form" class="form-step">
+      <div class="form-group full-width">
+        <label>Required Skills <span class="required">*</span></label>
+        <app-skill-tags-input
+          formControlName="requiredSkills"
+          placeholder="Type a skill and press Enter"
+          [suggestions]="skillsSuggestions">
+        </app-skill-tags-input>
+        <p class="help-text">e.g., React, TypeScript, Node.js</p>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Technologies</label>
+        <app-skill-tags-input
+          formControlName="technologies"
+          placeholder="Type a technology and press Enter"
+          [suggestions]="techSuggestions">
+        </app-skill-tags-input>
+        <p class="help-text">e.g., Git, Docker, AWS</p>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Languages</label>
+        <app-skill-tags-input
+          formControlName="languages"
+          placeholder="Type a language and press Enter"
+          [suggestions]="languageSuggestions">
+        </app-skill-tags-input>
+        <p class="help-text">e.g., English, French, Arabic</p>
+      </div>
+    </form>
+
+    <!-- Step 4: Job Content -->
+    <form *ngIf="currentStep === 4" [formGroup]="step4Form" class="form-step">
+      <div class="form-group full-width">
+        <div class="label-with-action">
+          <label>Job Description <span class="required">*</span></label>
+          <button type="button" class="btn-generate-ai" (click)="openAIGenerator('description')">
+            <i class="bi bi-stars"></i>
+            Generate with AI
+          </button>
+        </div>
+        <textarea
+          formControlName="description"
+          rows="6"
+          placeholder="Describe the role and what the candidate will be doing..."
+          class="form-control"
+        ></textarea>
+        <div *ngIf="step4Form.get('description')?.invalid && step4Form.get('description')?.touched" class="error-text">
+          Description must be at least 50 characters
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Responsibilities <span class="required">*</span></label>
+        <textarea
+          formControlName="responsibilities"
+          rows="5"
+          placeholder="List key responsibilities..."
+          class="form-control"
+        ></textarea>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Requirements <span class="required">*</span></label>
+        <textarea
+          formControlName="requirements"
+          rows="5"
+          placeholder="List required qualifications and experience..."
+          class="form-control"
+        ></textarea>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Benefits</label>
+        <textarea
+          formControlName="benefits"
+          rows="4"
+          placeholder="List benefits and perks..."
+          class="form-control"
+        ></textarea>
+      </div>
+    </form>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div class="form-actions">
+    <button
+      *ngIf="currentStep > 1"
+      type="button"
+      class="btn-secondary"
+      (click)="previousStep()">
+      <i class="bi bi-arrow-left"></i>
+      Previous
+    </button>
+    
+    <div class="spacer"></div>
+
+    <button
+      *ngIf="currentStep < 4"
+      type="button"
+      class="btn-primary"
+      [disabled]="!isCurrentStepValid()"
+      (click)="nextStep()">
+      Next
+      <i class="bi bi-arrow-right"></i>
+    </button>
+
+    <button
+      *ngIf="currentStep === 4"
+      type="button"
+      class="btn-primary"
+      [disabled]="!isAllFormsValid() || isSubmitting"
+      (click)="publish()">
+      <span *ngIf="!isSubmitting">
+        <i class="bi bi-check-lg"></i>
+        Create Job Offer
+      </span>
+      <span *ngIf="isSubmitting">
+        <span class="spinner-small"></span>
+        Publishing...
+      </span>
+    </button>
+  </div>
+
+  <!-- AI Assistant Panel -->
+  <div class="ai-panel" [class.open]="showAIPanel">
+    <app-ai-assistant-panel
+      [jobInfo]="getJobInfoForAI()"
+      (close)="toggleAIAssistant()"
+      (contentGenerated)="handleAIContent($event)">
+    </app-ai-assistant-panel>
+  </div>
+</div>

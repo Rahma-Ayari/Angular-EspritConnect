@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { Subject, takeUntil, filter } from 'rxjs';
 import { AuthResponse, AuthService } from '../auth.service';
 import { EntrepriseJobDashboardService } from '../services/entreprise-job-dashboard.service';
 import { JobsBackofficeService } from '../services/jobs-backoffice.service';
@@ -45,7 +45,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   user: AuthResponse | null = null;
   greeting = '';
   currentTime = '';
-  sidebarOpen = true;
   activeNav = 'dashboard';
   readonly devEntrepriseId = 1;
   isEntreprise = false;
@@ -71,60 +70,60 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   readinessScore = 72;
   readinessTasks = [
-    { label: 'Ajouter vos projets portfolio',  gain: 12, done: false },
-    { label: 'Compléter évaluation de compétences', gain: 8,  done: false },
-    { label: 'Obtenir 2 recommandations de plus', gain: 6,  done: false }
+    { label: 'Add portfolio projects', gain: 12, done: false },
+    { label: 'Complete skills assessment', gain: 8, done: false },
+    { label: 'Get 2 more recommendations', gain: 6, done: false }
   ];
 
   stats: StatCard[] = [
-    { icon: 'bi-briefcase',    label: 'Candidatures',  value: '8',   delta: '+2 ce mois', trend: 'up',     color: '#CC0000' },
-    { icon: 'bi-eye',          label: 'Vues profil',   value: '134', delta: '+18%',        trend: 'up',     color: '#7C3AED' },
-    { icon: 'bi-patch-check',  label: 'Compétences',   value: '12',  delta: '+3 nouvelles', trend: 'up',   color: '#059669' },
-    { icon: 'bi-people',       label: 'Connexions',    value: '47',  delta: '+5 semaine',  trend: 'up',     color: '#D97706' }
+    { icon: 'bi-briefcase',    label: 'Applications', value: '8',   delta: '+2 this month', trend: 'up', color: '#CC0000' },
+    { icon: 'bi-eye',          label: 'Profile views', value: '134', delta: '+18%',       trend: 'up', color: '#7C3AED' },
+    { icon: 'bi-patch-check',  label: 'Skills',        value: '12',  delta: '+3 new',      trend: 'up', color: '#059669' },
+    { icon: 'bi-people',       label: 'Connections',   value: '47',  delta: '+5 this week', trend: 'up', color: '#D97706' }
   ];
 
   opportunities: Opportunity[] = [
     {
-      company: 'TechCorp', role: 'Full Stack Developer', type: 'Emploi',
+      company: 'TechCorp', role: 'Full Stack Developer', type: 'Full-time',
       location: 'Tunis', match: 92,
-      logo: 'TC', posted: 'Il y a 2j',
+      logo: 'TC', posted: '2 days ago',
       tags: ['React', 'Spring Boot', 'AWS']
     },
     {
-      company: 'StartupX', role: 'UX Designer Intern', type: 'Stage',
+      company: 'StartupX', role: 'UX Designer Intern', type: 'Internship',
       location: 'Lac I', match: 85,
-      logo: 'SX', posted: 'Il y a 1j',
+      logo: 'SX', posted: '1 day ago',
       tags: ['Figma', 'UX Research']
     },
     {
-      company: 'AI Labs', role: 'Data Scientist', type: 'Emploi',
+      company: 'AI Labs', role: 'Data Scientist', type: 'Full-time',
       location: 'Remote', match: 78,
-      logo: 'AI', posted: 'Aujourd\'hui',
+      logo: 'AI', posted: 'Today',
       tags: ['Python', 'TensorFlow', 'SQL']
     },
     {
-      company: 'Sofrecom', role: 'DevOps Engineer', type: 'Stage',
+      company: 'Sofrecom', role: 'DevOps Engineer', type: 'Internship',
       location: 'Ariana', match: 74,
-      logo: 'SF', posted: 'Il y a 3j',
+      logo: 'SF', posted: '3 days ago',
       tags: ['Docker', 'Kubernetes', 'CI/CD']
     }
   ];
 
   upcomingEvents: Event[] = [
-    { title: 'Career Fair 2026',  date: 'Mai 5',  type: 'CAREER_FAIR', icon: 'bi-building' },
-    { title: 'Tech Workshop',     date: 'Mai 8',  type: 'WORKSHOP',    icon: 'bi-laptop' },
-    { title: 'Hackathon Esprit',  date: 'Mai 15', type: 'HACKATHON',   icon: 'bi-code-slash' }
+    { title: 'Career Fair 2026',  date: 'May 5',  type: 'CAREER_FAIR', icon: 'bi-building' },
+    { title: 'Tech Workshop',     date: 'May 8',  type: 'WORKSHOP',    icon: 'bi-laptop' },
+    { title: 'Hackathon Esprit',  date: 'May 15', type: 'HACKATHON',   icon: 'bi-code-slash' }
   ];
 
   navItems = [
     { id: 'dashboard',     label: 'Dashboard',   icon: 'bi-house' },
-    { id: 'jobs-dashboard', label: 'Jobs Dashboard', icon: 'bi-briefcase' },
-    { id: 'opportunities', label: 'Opportunités', icon: 'bi-compass' },
-    { id: 'network',       label: 'Réseau',       icon: 'bi-people' },
+    { id: 'opportunities', label: 'Opportunities', icon: 'bi-compass' },
+    { id: 'jobs-dashboard', label: 'Jobs', icon: 'bi-briefcase' },
+    { id: 'network',       label: 'Network',       icon: 'bi-people' },
     { id: 'mentorship',    label: 'Mentoring',    icon: 'bi-mortarboard' },
-    { id: 'events',        label: 'Événements',   icon: 'bi-calendar-event' },
+    { id: 'events',        label: 'Events',   icon: 'bi-calendar-event' },
     { id: 'messages',      label: 'Messages',     icon: 'bi-chat' },
-    { id: 'profile',       label: 'Profil',       icon: 'bi-person' }
+    { id: 'profile',       label: 'Profile',       icon: 'bi-person' }
   ];
 
   constructor(
@@ -143,6 +142,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.loadEntrepriseJobs();
       }
     });
+    
+    this.syncActiveNavFromUrl();
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      takeUntil(this.destroy$)
+    ).subscribe(() => this.syncActiveNavFromUrl());
+    
     const settings = this.jobsBackoffice.loadSettings();
     this.employmentTypes = settings.employmentTypes.length
       ? settings.employmentTypes
@@ -159,7 +165,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private setGreeting(): void {
     const h = new Date().getHours();
-    this.greeting = h < 12 ? 'Bonjour' : h < 18 ? 'Bon après-midi' : 'Bonsoir';
+    this.greeting = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
   }
 
   private updateTime(): void {
@@ -174,12 +180,41 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.circumference - (this.readinessScore / 100) * this.circumference;
   }
 
-  toggleSidebar(): void { this.sidebarOpen = !this.sidebarOpen; }
+  get isJobsRoute(): boolean {
+    return this.router.url.includes('/dashboard/jobs');
+  }
 
-  setNav(id: string): void { this.activeNav = id; }
+  private syncActiveNavFromUrl(): void {
+    const url = this.router.url.split('?')[0];
+    if (url.includes('/dashboard/jobs')) {
+      this.activeNav = 'jobs-dashboard';
+    } else if (url === '/dashboard' || url.endsWith('/dashboard')) {
+      this.activeNav = 'dashboard';
+    }
+  }
+
+  setNav(id: string): void {
+    if (id === 'jobs-dashboard') {
+      // Navigate to jobs within dashboard
+      this.activeNav = 'jobs-dashboard';
+      this.router.navigate(['/dashboard/jobs']);
+      return;
+    }
+    
+    if (id === 'dashboard') {
+      // Navigate back to main dashboard (clear child routes)
+      this.activeNav = 'dashboard';
+      this.router.navigate(['/dashboard']);
+      return;
+    }
+    
+    // For other navigation items, just set active state for now
+    this.activeNav = id;
+  }
 
   get visibleNavItems() {
-    return this.navItems.filter(item => this.isEntreprise || item.id !== 'jobs-dashboard');
+    // Show all nav items - Jobs will be available to all users for now
+    return this.navItems;
   }
 
   logout(): void { this.authService.logout(); }
@@ -206,7 +241,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.jobsLoading = false;
         },
         error: () => {
-          this.jobsError = 'Impossible de charger vos offres.';
+          this.jobsError = 'Unable to load your job offers.';
           this.jobsLoading = false;
         }
       });
@@ -233,7 +268,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.aiGenerating = false;
       },
       error: () => {
-        this.jobsError = 'Assistant IA indisponible.';
+        this.jobsError = 'AI assistant unavailable.';
         this.aiGenerating = false;
       }
     });
@@ -241,7 +276,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   publishOffer(): void {
     if (!this.offerDraft.titre || !this.offerDraft.description || !this.offerDraft.domaine) {
-      this.jobsError = 'Titre, domaine et description sont requis.';
+      this.jobsError = 'Title, department, and description are required.';
       return;
     }
     this.jobsError = '';
@@ -261,7 +296,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       entrepriseId: this.devEntrepriseId
     }).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
-        this.jobsSuccess = 'Offre publiée avec succès.';
+        this.jobsSuccess = 'Job offer published successfully.';
         this.offerDraft = {
           titre: '',
           typeOffre: 'STAGE',

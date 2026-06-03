@@ -1,0 +1,26 @@
+.rich-text-editor {
+  width: 100%;
+}
+
+.editor-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.6;
+  color: #1D1D1B;
+  resize: vertical;
+  transition: all 0.2s ease;
+}
+
+.editor-textarea:focus {
+  outline: none;
+  border-color: #C90C0F;
+  box-shadow: 0 0 0 3px rgba(201, 12, 15, 0.1);
+}
+
+.editor-textarea::placeholder {
+  color: #9ca3af;
+}

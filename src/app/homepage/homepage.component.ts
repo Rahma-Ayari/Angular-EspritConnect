@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, PLATFORM_ID, QueryList, ViewChildren } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../auth.service';
 import {
   FEATURE_ICONS,
@@ -53,21 +54,26 @@ export class HomepageComponent implements OnInit, AfterViewInit, OnDestroy {
   private observer?: IntersectionObserver;
   private animated = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   get t(): HomepageCopy {
     return HOMEPAGE_I18N[this.lang];
   }
 
   ngOnInit(): void {
-    const saved = localStorage.getItem('esprit-lang') as HomepageLang | null;
-    if (saved === 'en' || saved === 'fr') {
-      this.lang = saved;
-    }
-    document.documentElement.lang = this.lang;
+    if (isPlatformBrowser(this.platformId)) {
+      const saved = localStorage.getItem('esprit-lang') as HomepageLang | null;
+      if (saved === 'en' || saved === 'fr') {
+        this.lang = saved;
+      }
+      document.documentElement.lang = this.lang;
 
-    if (this.authService.isLoggedIn()) {
-      this.authService.redirectAfterLogin(this.authService.getRole()!);
+      if (this.authService.isLoggedIn()) {
+        this.authService.redirectAfterLogin(this.authService.getRole()!);
+      }
     }
   }
 
@@ -76,11 +82,17 @@ export class HomepageComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.lang = lang;
-    localStorage.setItem('esprit-lang', lang);
-    document.documentElement.lang = lang;
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('esprit-lang', lang);
+      document.documentElement.lang = lang;
+    }
   }
 
   ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     const section = document.getElementById('numbers');
     if (!section) {
       return;

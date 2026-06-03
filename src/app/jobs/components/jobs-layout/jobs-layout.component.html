@@ -1,0 +1,54 @@
+<div class="jobs-layout">
+  <ng-container *ngIf="showOverview">
+    <div class="page-header">
+      <h1>Job Offers</h1>
+      <p>Manage and track all your job postings and applications</p>
+    </div>
+
+    <div class="action-cards">
+      <button type="button" class="action-card" (click)="navigateTo('/dashboard/jobs/create')">
+        <span class="card-icon create">
+          <i class="bi bi-plus-lg"></i>
+        </span>
+        <span class="card-text">
+          <span class="card-title">Create Offer</span>
+          <span class="card-subtitle">New job posting</span>
+        </span>
+      </button>
+
+      <button type="button" class="action-card" (click)="navigateTo('/dashboard/jobs/ai-generator')">
+        <span class="card-icon ai">
+          <i class="bi bi-stars"></i>
+        </span>
+        <span class="card-text">
+          <span class="card-title">AI Generator</span>
+          <span class="card-subtitle">Generate with AI</span>
+        </span>
+      </button>
+
+      <button type="button" class="action-card" (click)="navigateTo('/dashboard/jobs/import')">
+        <span class="card-icon import">
+          <i class="bi bi-upload"></i>
+        </span>
+        <span class="card-text">
+          <span class="card-title">Import Offer</span>
+          <span class="card-subtitle">From URL or file</span>
+        </span>
+      </button>
+
+      <button type="button" class="action-card" (click)="navigateTo('/dashboard/jobs/archived')">
+        <span class="card-icon archived">
+          <i class="bi bi-archive"></i>
+        </span>
+        <span class="card-text">
+          <span class="card-title">Archived</span>
+          <span class="card-subtitle">View archived</span>
+        </span>
+      </button>
+    </div>
+  </ng-container>
+
+  <div class="jobs-content" [class.jobs-content--child]="!showOverview">
+    <router-outlet></router-outlet>
+  </div>
+</div>

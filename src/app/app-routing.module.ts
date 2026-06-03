@@ -15,15 +15,25 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'register-success', component: RegisterSuccessComponent },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'jobs',
+        loadChildren: () => import('./jobs/jobs.module').then(m => m.JobsModule)
+      }
+    ]
+  },
   {
     path: 'admin',
     loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
     canActivate: [AuthGuard, AdminGuard]
   },
-  { path: 'entreprise', redirectTo: 'dashboard', pathMatch: 'prefix' },
-  { path: 'jobs', component: JobSearchComponent },
-  { path: 'jobs/:id', component: JobOfferDetailComponent }
+  { path: 'job-search', component: JobSearchComponent },
+  { path: 'job-detail/:id', component: JobOfferDetailComponent },
+  { path: '**', redirectTo: 'home' }
 ];
 
 @NgModule({

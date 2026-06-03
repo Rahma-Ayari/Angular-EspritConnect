@@ -1,0 +1,38 @@
+<div class="skill-tags-input">
+  <div class="tags-container">
+    <!-- Existing Tags -->
+    <div class="tag" *ngFor="let tag of tags; let i = index">
+      <span class="tag-text">{{ tag }}</span>
+      <button type="button" class="tag-remove" (click)="removeTag(i)">
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+
+    <!-- Input Field -->
+    <input
+      type="text"
+      class="tag-input"
+      [(ngModel)]="inputValue"
+      (input)="onInputChange()"
+      (keydown)="onInputKeydown($event)"
+      (blur)="onBlur()"
+      [placeholder]="tags.length === 0 ? placeholder : ''"
+      [disabled]="tags.length >= maxTags"
+    />
+  </div>
+
+  <!-- Suggestions Dropdown -->
+  <div class="suggestions" *ngIf="showSuggestions">
+    <div
+      class="suggestion-item"
+      *ngFor="let suggestion of filteredSuggestions"
+      (mousedown)="selectSuggestion(suggestion)">
+      {{ suggestion }}
+    </div>
+  </div>
+
+  <!-- Tag Count -->
+  <div class="tag-count" *ngIf="tags.length > 0">
+    {{ tags.length }} / {{ maxTags }}
+  </div>
+</div>

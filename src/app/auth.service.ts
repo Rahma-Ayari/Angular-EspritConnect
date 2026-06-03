@@ -90,16 +90,11 @@ export class AuthService {
 
   // ── Redirect after login ───────────────────────────────────────────────────
   redirectAfterLogin(role: string): void {
-    switch (role) {
-      case 'ADMIN':
-        this.router.navigate(['/admin/user-management/approval']);
-        break;
-      case 'ENTREPRISE':
-        this.router.navigate(['/dashboard']);
-        break;
-      case 'ETUDIANT':
-      default:
-        this.router.navigate(['/dashboard']);
+    if (role === 'ADMIN') {
+      this.router.navigate(['/admin/dashboard']);
+    } else {
+      // All non-admin users go to frontoffice dashboard
+      this.router.navigate(['/dashboard']);
     }
   }
 
