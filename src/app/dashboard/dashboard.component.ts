@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Router, NavigationEnd } from '@angular/router';
+import { Subject, takeUntil, filter } from 'rxjs';
 import { AuthResponse, AuthService } from '../auth.service';
 
 export interface StatCard {
@@ -44,24 +44,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   currentTime = '';
   sidebarOpen = true;
   activeNav = 'dashboard';
-
-  // 2FA Properties
-  mfaStatus: {twoFactorEnabled: boolean, backupCodesCount: number, mfaApplicable: boolean} | null = null;
-  setupData: {secret: string, qrCode: string} | null = null;
-  setupCode = '';
-  setupError = '';
-  backupCodes: string[] = [];
-  showBackupCodesModal = false;
-  mfaApplicable = false;
-
-  // Disabling 2FA
-  showDisableForm = false;
-  disablePassword = '';
-  disableCode = '';
-  disableError = '';
-
-  // Connections History
-  loginHistory: any[] = [];
 
   readinessScore = 72;
   readinessTasks = [
@@ -123,133 +105,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
+    if (this.router.url.includes('/profile')) {
+      this.activeNav = 'profile';
+    }
+    
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      takeUntil(this.destroy$)
+    ).subscribe((event: any) => {
+      if (event.urlAfterRedirects.includes('/profile')) {
+        this.activeNav = 'profile';
+      } else if (event.urlAfterRedirects.includes('/dashboard') && this.activeNav === 'profile') {
+        this.activeNav = 'dashboard';
+      }
+    });
+    
     this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
       this.user = user;
       if (user) {
         this.readinessScore = user.scoreReadiness || 72;
-        this.loadMfaStatus();
       }
     });
     this.setGreeting();
     this.updateTime();
     setInterval(() => this.updateTime(), 60_000);
-  }
-
-  // ── 2FA METHODS ──
-  loadMfaStatus(): void {
-    this.authService.get2faStatus().subscribe({
-      next: (status) => {
-        this.mfaStatus = status;
-        this.mfaApplicable = status.mfaApplicable;
-        if (status.mfaApplicable && status.twoFactorEnabled) {
-          this.loadLoginHistory();
-        }
-      },
-      error: (err) => {
-        console.error("Erreur de chargement du statut 2FA", err);
-      }
-    });
-  }
-
-  initiate2faSetup(): void {
-    this.setupError = '';
-    this.setupData = null;
-    this.authService.setup2fa().subscribe({
-      next: (data) => {
-        this.setupData = data;
-      },
-      error: (err) => {
-        this.setupError = "Impossible d'initier l'activation 2FA. Veuillez réessayer.";
-      }
-    });
-  }
-
-  verifyAndEnableMfa(): void {
-    if (!this.setupCode) return;
-    this.setupError = '';
-    this.authService.verifyAndEnable2fa(this.setupCode).subscribe({
-      next: (res) => {
-        this.backupCodes = res.backupCodes;
-        this.showBackupCodesModal = true;
-        this.setupData = null;
-        this.setupCode = '';
-        this.loadMfaStatus();
-      },
-      error: (err) => {
-        this.setupError = err.error?.message || "Code incorrect. Veuillez réessayer.";
-      }
-    });
-  }
-
-  downloadBackupCodes(): void {
-    const content = "CODES DE SECOURS ESPRITCONNECT\n" +
-                    "Conservez ces codes en lieu sûr. Chaque code ne peut être utilisé qu'une seule fois.\n\n" +
-                    this.backupCodes.join("\n") + "\n\nGénéré le : " + new Date().toLocaleString();
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'espritconnect-codes-secours.txt';
-    a.click();
-    window.URL.revokeObjectURL(url);
-  }
-
-  closeBackupModal(): void {
-    this.showBackupCodesModal = false;
-    this.backupCodes = [];
-  }
-
-  toggleDisableForm(): void {
-    this.showDisableForm = !this.showDisableForm;
-    this.disablePassword = '';
-    this.disableCode = '';
-    this.disableError = '';
-  }
-
-  disableMfa(): void {
-    if (!this.disablePassword || !this.disableCode) return;
-    this.disableError = '';
-    this.authService.disable2fa(this.disablePassword, this.disableCode).subscribe({
-      next: () => {
-        this.showDisableForm = false;
-        this.disablePassword = '';
-        this.disableCode = '';
-        this.loadMfaStatus();
-        this.loginHistory = [];
-      },
-      error: (err) => {
-        this.disableError = err.error?.message || "Mot de passe ou code incorrect.";
-      }
-    });
-  }
-
-  loadLoginHistory(): void {
-    this.authService.getLoginHistory().subscribe({
-      next: (history) => {
-        this.loginHistory = history;
-      },
-      error: (err) => {
-        console.error("Erreur de chargement de l'historique de connexions", err);
-      }
-    });
-  }
-
-  getStatusLabel(status: string): string {
-    switch (status) {
-      case 'SUCCESS': return 'Succès';
-      case 'SUCCESS_BACKUP': return 'Succès (Secours)';
-      case 'PENDING_2FA': return '2FA Requis';
-      case 'FAILED_2FA': return 'Échec 2FA';
-      case 'FAILED_PASSWORD': return 'Mot de passe erroné';
-      case 'FAILED_DISABLED': return 'Compte désactivé';
-      default: return status;
-    }
-  }
-
-  getStatusClass(status: string): string {
-    if (status.startsWith('SUCCESS')) return 'status-success';
-    if (status === 'PENDING_2FA') return 'status-warning';
-    return 'status-error';
   }
 
   ngOnDestroy(): void {

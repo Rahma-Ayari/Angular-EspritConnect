@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
 .user-header {
   height: 64px;
   background: #ffffff;

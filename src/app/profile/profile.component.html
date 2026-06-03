@@ -1,0 +1,315 @@
+<div class="profile-container">
+  <!-- Header -->
+  <div class="profile-header-premium">
+    <div class="header-titles">
+      <h1 class="profile-title">Mon Profil & Sécurité</h1>
+      <p class="profile-subtitle">Gérez vos informations personnelles et sécurisez votre compte</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-edit" (click)="toggleEdit()" *ngIf="!isEditing">
+        <i class="bi bi-pencil"></i> Modifier le profil
+      </button>
+      <div class="edit-actions" *ngIf="isEditing">
+        <button class="btn-cancel" (click)="toggleEdit()">
+          <i class="bi bi-x"></i> Annuler
+        </button>
+        <button class="btn-save" (click)="saveProfile()" [disabled]="isLoading">
+          <i class="bi bi-check2"></i> Enregistrer les modifications
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save Message -->
+  <div class="save-message" *ngIf="saveMessage" [class.success]="saveMessageType === 'success'" [class.error]="saveMessageType === 'error'">
+    <i class="bi" [class.bi-check-circle-fill]="saveMessageType === 'success'" [class.bi-exclamation-circle-fill]="saveMessageType === 'error'"></i>
+    {{ saveMessage }}
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement en cours...</p>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="profile-grid" *ngIf="!isLoading">
+    
+    <!-- LEFT COLUMN: Profile Details -->
+    <div class="profile-col-main">
+      
+      <!-- Profile Photo Section -->
+      <div class="premium-card photo-card">
+        <div class="photo-container">
+          <div class="photo-wrapper" [class.editable]="isEditing" (click)="isEditing ? fileInput.click() : null">
+            <img [src]="profile.photo || getPlaceholderImage()" alt="Photo de profil" class="profile-photo" (error)="onImageError($event)">
+            <div class="photo-overlay" *ngIf="isEditing">
+              <i class="bi bi-camera"></i>
+              <span>Changer</span>
+            </div>
+          </div>
+          <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" style="display: none;">
+        </div>
+        <div class="photo-info">
+          <h2>{{ profile.prenom }} {{ profile.nomProprietaire }}</h2>
+          <p class="user-role">{{ profile.userId }}</p>
+        </div>
+      </div>
+
+      <!-- Personal Information -->
+      <div class="premium-card">
+        <h2 class="card-title">
+          <div class="icon-wrapper primary"><i class="bi bi-person"></i></div>
+          Informations Personnelles
+        </h2>
+        
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Email</label>
+            <input type="email" [value]="profile.userId" disabled class="form-control disabled">
+          </div>
+          <div class="form-group">
+            <label>Nom</label>
+            <input type="text" [(ngModel)]="profile.nomProprietaire" [disabled]="!isEditing" class="form-control" placeholder="Votre nom">
+          </div>
+          <div class="form-group">
+            <label>Prénom</label>
+            <input type="text" [(ngModel)]="profile.prenom" [disabled]="!isEditing" class="form-control" placeholder="Votre prénom">
+          </div>
+          <div class="form-group">
+            <label>Téléphone</label>
+            <input type="tel" [(ngModel)]="profile.telephone" [disabled]="!isEditing" class="form-control" placeholder="+216 XX XXX XXX">
+          </div>
+          <div class="form-group">
+            <label>Date de Naissance</label>
+            <input type="date" [(ngModel)]="profile.dateNaissance" [disabled]="!isEditing" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Genre</label>
+            <select [(ngModel)]="profile.genre" [disabled]="!isEditing" class="form-control">
+              <option value="">Sélectionner</option>
+              <option value="HOMME">Homme</option>
+              <option value="FEMME">Femme</option>
+              <option value="AUTRE">Autre</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Address Information -->
+      <div class="premium-card">
+        <h2 class="card-title">
+          <div class="icon-wrapper secondary"><i class="bi bi-geo-alt"></i></div>
+          Adresse
+        </h2>
+        
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Adresse complète</label>
+            <input type="text" [(ngModel)]="profile.adresse" [disabled]="!isEditing" class="form-control" placeholder="Rue, numéro...">
+          </div>
+          <div class="form-group">
+            <label>Ville</label>
+            <input type="text" [(ngModel)]="profile.ville" [disabled]="!isEditing" class="form-control" placeholder="Votre ville">
+          </div>
+          <div class="form-group">
+            <label>Code Postal</label>
+            <input type="text" [(ngModel)]="profile.codePostal" [disabled]="!isEditing" class="form-control" placeholder="XXXX">
+          </div>
+          <div class="form-group full-width">
+            <label>Pays</label>
+            <input type="text" [(ngModel)]="profile.pays" [disabled]="!isEditing" class="form-control" placeholder="Votre pays">
+          </div>
+        </div>
+      </div>
+
+      <!-- Professional Information -->
+      <div class="premium-card">
+        <h2 class="card-title">
+          <div class="icon-wrapper accent"><i class="bi bi-briefcase"></i></div>
+          Profil Professionnel
+        </h2>
+        
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Biographie</label>
+            <textarea [(ngModel)]="profile.bio" [disabled]="!isEditing" class="form-control textarea" rows="4" placeholder="Parlez-nous de vous, de vos objectifs..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>LinkedIn</label>
+            <div class="input-with-icon">
+              <i class="bi bi-linkedin"></i>
+              <input type="url" [(ngModel)]="profile.lienLinkedIn" [disabled]="!isEditing" class="form-control" placeholder="Lien LinkedIn">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>GitHub</label>
+            <div class="input-with-icon">
+              <i class="bi bi-github"></i>
+              <input type="url" [(ngModel)]="profile.lienGitHub" [disabled]="!isEditing" class="form-control" placeholder="Lien GitHub">
+            </div>
+          </div>
+          <div class="form-group full-width">
+            <label>Site Web / Portfolio</label>
+            <div class="input-with-icon">
+              <i class="bi bi-globe"></i>
+              <input type="url" [(ngModel)]="profile.siteWeb" [disabled]="!isEditing" class="form-control" placeholder="https://votre-site.com">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: Security & 2FA -->
+    <div class="profile-col-side">
+      
+      <!-- 2FA Card -->
+      <div class="premium-card security-card">
+        <div class="card-header-flex">
+          <h2 class="card-title">
+            <div class="icon-wrapper success"><i class="bi bi-shield-check"></i></div>
+            Double Auth (2FA)
+          </h2>
+          <span *ngIf="mfaApplicable && mfaStatus?.twoFactorEnabled" class="status-badge success">Activé</span>
+          <span *ngIf="mfaApplicable && !mfaStatus?.twoFactorEnabled" class="status-badge error">Désactivé</span>
+        </div>
+
+        <div *ngIf="!mfaApplicable" class="info-alert">
+          <i class="bi bi-info-circle-fill"></i> La double authentification est réservée aux utilisateurs standard. Non disponible pour les administrateurs/entreprises.
+        </div>
+
+        <div *ngIf="mfaApplicable && mfaStatus" class="mfa-content">
+          
+          <!-- Disabled State -->
+          <div *ngIf="!mfaStatus.twoFactorEnabled && !setupData" class="mfa-disabled-state">
+            <p>Ajoutez une couche de sécurité supplémentaire à votre compte à l'aide d'une application comme Google Authenticator.</p>
+            <button class="btn-activate" (click)="initiate2faSetup()">
+              <i class="bi bi-qr-code"></i> Activer la 2FA
+            </button>
+          </div>
+
+          <!-- Setup Wizard -->
+          <div *ngIf="setupData" class="mfa-setup-wizard">
+            <div class="wizard-step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h4>Scanner le code QR</h4>
+                <p>Ouvrez votre application d'authentification et scannez ce code.</p>
+                <div class="qr-container">
+                  <img [src]="setupData.qrCode" alt="QR Code">
+                </div>
+                <div class="manual-key">
+                  <span>Clé manuelle :</span>
+                  <code>{{ setupData.secret }}</code>
+                </div>
+              </div>
+            </div>
+
+            <div class="wizard-step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h4>Saisir le code de validation</h4>
+                <p>Entrez le code à 6 chiffres généré par l'application.</p>
+                <div class="alert-error" *ngIf="setupError">{{ setupError }}</div>
+                <div class="code-input-group">
+                  <input type="text" [(ngModel)]="setupCode" placeholder="000000" maxlength="6" class="code-input">
+                  <button class="btn-verify" (click)="verifyAndEnableMfa()" [disabled]="setupCode.length !== 6">Vérifier</button>
+                </div>
+              </div>
+            </div>
+            
+            <button class="btn-cancel-mfa" (click)="setupData = null; setupError = ''; setupCode = ''">Annuler la configuration</button>
+          </div>
+
+          <!-- Enabled State -->
+          <div *ngIf="mfaStatus.twoFactorEnabled" class="mfa-enabled-state">
+            <div class="success-banner">
+              <i class="bi bi-shield-fill-check"></i>
+              <div class="banner-text">
+                <strong>2FA Active</strong>
+                <span>Votre compte est hautement sécurisé.</span>
+              </div>
+            </div>
+
+            <div class="backup-codes-info">
+              <h4>Codes de secours</h4>
+              <p>Il vous reste <strong>{{ mfaStatus.backupCodesCount }}</strong> code(s).</p>
+              <button class="btn-disable" (click)="toggleDisableForm()">
+                <i class="bi bi-shield-x"></i> Désactiver la 2FA
+              </button>
+            </div>
+
+            <!-- Disable Form -->
+            <div *ngIf="showDisableForm" class="disable-form">
+              <h4>Désactiver la sécurité</h4>
+              <p>Confirmez votre identité pour désactiver.</p>
+              <div class="alert-error" *ngIf="disableError">{{ disableError }}</div>
+              
+              <div class="form-group">
+                <input type="password" [(ngModel)]="disablePassword" placeholder="Mot de passe actuel" class="form-control">
+              </div>
+              <div class="form-group">
+                <input type="text" [(ngModel)]="disableCode" placeholder="Code TOTP à 6 chiffres" maxlength="6" class="form-control code-input-small">
+              </div>
+              <div class="form-actions">
+                <button class="btn-ghost" (click)="toggleDisableForm()">Annuler</button>
+                <button class="btn-danger" (click)="disableMfa()" [disabled]="!disablePassword || disableCode.length !== 6">Confirmer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connections History -->
+      <div class="premium-card history-card" *ngIf="mfaApplicable && mfaStatus?.twoFactorEnabled">
+        <h2 class="card-title">
+          <div class="icon-wrapper info"><i class="bi bi-clock-history"></i></div>
+          Activité récente
+        </h2>
+        
+        <div class="history-list">
+          <div class="history-item" *ngFor="let h of loginHistory">
+            <div class="history-header">
+              <span class="device">{{ h.browser }} ({{ h.os }})</span>
+              <span class="history-badge" [class]="getStatusClass(h.status)">{{ getStatusLabel(h.status) }}</span>
+            </div>
+            <div class="history-meta">
+              <span>{{ h.ipAddress }}</span> • <span>{{ h.location }}</span>
+            </div>
+            <div class="history-time">{{ h.loginTime | date: 'dd MMM yyyy, HH:mm' }}</div>
+          </div>
+
+          <div class="empty-state" *ngIf="loginHistory.length === 0">
+            <i class="bi bi-clock"></i>
+            <p>Aucune activité récente.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Backup Codes Modal -->
+  <div class="modal-overlay" *ngIf="showBackupCodesModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-icon warning"><i class="bi bi-exclamation-triangle-fill"></i></div>
+        <h2>Codes de secours</h2>
+      </div>
+      <p class="modal-text">Conservez ces codes précieusement. Ils vous permettront de vous connecter en cas de perte de votre téléphone.</p>
+      
+      <div class="codes-grid">
+        <div class="code-item" *ngFor="let code of backupCodes">{{ code }}</div>
+      </div>
+      
+      <div class="modal-actions">
+        <button class="btn-download" (click)="downloadBackupCodes()">
+          <i class="bi bi-download"></i> Télécharger (.txt)
+        </button>
+        <button class="btn-done" (click)="closeBackupModal()">J'ai sauvegardé</button>
+      </div>
+    </div>
+  </div>
+
+</div>
