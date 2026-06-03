@@ -12,6 +12,7 @@ import { RegisterComponent } from './register/register.component';
 import { RegisterSuccessComponent } from './register/register-success.component';
 import { VerifyEmailComponent } from './verify-email/verify-email.component';
 import { SharedLayoutModule } from './shared/shared-layout.module';
+import { ProfileComponent } from './profile/profile.component';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
@@ -23,7 +24,8 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     DashboardComponent,
     RegisterComponent,
     RegisterSuccessComponent,
-    VerifyEmailComponent
+    VerifyEmailComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,

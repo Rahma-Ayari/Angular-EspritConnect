@@ -1,0 +1,269 @@
+import { Component, OnInit } from '@angular/core';
+import { ProfileService, Profile } from '../services/profile.service';
+import { AuthService } from '../auth.service';
+
+@Component({
+  selector: 'app-profile',
+  templateUrl: './profile.component.html',
+  styleUrls: ['./profile.component.css']
+})
+export class ProfileComponent implements OnInit {
+  profile: Profile = {};
+  isEditing = false;
+  isLoading = false;
+  saveMessage = '';
+  saveMessageType = '';
+
+  // 2FA Properties
+  mfaStatus: {twoFactorEnabled: boolean, backupCodesCount: number, mfaApplicable: boolean} | null = null;
+  setupData: {secret: string, qrCode: string} | null = null;
+  setupCode = '';
+  setupError = '';
+  backupCodes: string[] = [];
+  showBackupCodesModal = false;
+  mfaApplicable = false;
+
+  // Disabling 2FA
+  showDisableForm = false;
+  disablePassword = '';
+  disableCode = '';
+  disableError = '';
+
+  // Connections History
+  loginHistory: any[] = [];
+
+  constructor(
+    private profileService: ProfileService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadProfile();
+    this.loadMfaStatus();
+  }
+
+  loadProfile(): void {
+    this.isLoading = true;
+    this.profileService.getCurrentUserProfile().subscribe({
+      next: (data) => {
+        this.profile = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement du profil', err);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  toggleEdit(): void {
+    this.isEditing = !this.isEditing;
+    if (!this.isEditing) {
+      this.loadProfile(); // Recharger si on annule
+    }
+  }
+
+  saveProfile(): void {
+    this.isLoading = true;
+    console.log('Saving profile:', this.profile);
+    
+    if (this.profile.idProfil) {
+      // Update existing profile
+      console.log('Updating existing profile with ID:', this.profile.idProfil);
+      this.profileService.updateProfile(this.profile.idProfil, this.profile).subscribe({
+        next: (data) => {
+          console.log('Profile updated successfully:', data);
+          this.profile = data;
+          this.isEditing = false;
+          this.isLoading = false;
+          this.showSaveMessage('Profil mis à jour avec succès!', 'success');
+          // Recharger les données pour s'assurer qu'elles sont à jour
+          setTimeout(() => this.loadProfile(), 500);
+        },
+        error: (err) => {
+          console.error('Erreur lors de la mise à jour du profil', err);
+          this.isLoading = false;
+          this.showSaveMessage('Erreur lors de la mise à jour du profil', 'error');
+        }
+      });
+    } else {
+      // Create new profile
+      this.profile.userId = this.authService.getCurrentUser()?.email;
+      console.log('Creating new profile for user:', this.profile.userId);
+      this.profileService.createProfile(this.profile).subscribe({
+        next: (data) => {
+          console.log('Profile created successfully:', data);
+          this.profile = data;
+          this.isEditing = false;
+          this.isLoading = false;
+          this.showSaveMessage('Profil créé avec succès!', 'success');
+          // Recharger les données pour s'assurer qu'elles sont à jour
+          setTimeout(() => this.loadProfile(), 500);
+        },
+        error: (err) => {
+          console.error('Erreur lors de la création du profil', err);
+          this.isLoading = false;
+          this.showSaveMessage('Erreur lors de la création du profil', 'error');
+        }
+      });
+    }
+  }
+
+  showSaveMessage(message: string, type: string): void {
+    this.saveMessage = message;
+    this.saveMessageType = type;
+    setTimeout(() => {
+      this.saveMessage = '';
+    }, 3000);
+  }
+
+  get userInitials(): string {
+    const user = this.authService.getCurrentUser();
+    if (!user?.nom) return 'U';
+    return user.nom.substring(0, 2).toUpperCase();
+  }
+
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      // TODO: Implement file upload
+      console.log('File selected:', file.name);
+      // For now, just set a placeholder
+      this.profile.photo = URL.createObjectURL(file);
+    }
+  }
+
+  getPlaceholderImage(): string {
+    // Use initials as a fallback
+    const initials = this.userInitials;
+    return `data:image/svg+xml;base64,${btoa(`<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150">
+      <rect width="150" height="150" fill="#CC0000"/>
+      <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="60" fill="white">${initials}</text>
+    </svg>`)}`;
+  }
+
+  onImageError(event: any): void {
+    // Fallback if image fails to load
+    console.log('Image failed to load, using fallback');
+    if (event && event.target) {
+      event.target.src = this.getPlaceholderImage();
+    }
+  }
+
+  // ── 2FA METHODS ──
+  loadMfaStatus(): void {
+    this.authService.get2faStatus().subscribe({
+      next: (status) => {
+        this.mfaStatus = status;
+        this.mfaApplicable = status.mfaApplicable;
+        if (status.mfaApplicable && status.twoFactorEnabled) {
+          this.loadLoginHistory();
+        }
+      },
+      error: (err) => {
+        console.error("Erreur de chargement du statut 2FA", err);
+      }
+    });
+  }
+
+  initiate2faSetup(): void {
+    this.setupError = '';
+    this.setupData = null;
+    this.authService.setup2fa().subscribe({
+      next: (data) => {
+        this.setupData = data;
+      },
+      error: (err) => {
+        this.setupError = "Impossible d'initier l'activation 2FA. Veuillez réessayer.";
+      }
+    });
+  }
+
+  verifyAndEnableMfa(): void {
+    if (!this.setupCode) return;
+    this.setupError = '';
+    this.authService.verifyAndEnable2fa(this.setupCode).subscribe({
+      next: (res) => {
+        this.backupCodes = res.backupCodes;
+        this.showBackupCodesModal = true;
+        this.setupData = null;
+        this.setupCode = '';
+        this.loadMfaStatus();
+      },
+      error: (err) => {
+        this.setupError = err.error?.message || "Code incorrect. Veuillez réessayer.";
+      }
+    });
+  }
+
+  downloadBackupCodes(): void {
+    const content = "CODES DE SECOURS ESPRITCONNECT\n" +
+                    "Conservez ces codes en lieu sûr. Chaque code ne peut être utilisé qu'une seule fois.\n\n" +
+                    this.backupCodes.join("\n") + "\n\nGénéré le : " + new Date().toLocaleString();
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'espritconnect-codes-secours.txt';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  closeBackupModal(): void {
+    this.showBackupCodesModal = false;
+    this.backupCodes = [];
+  }
+
+  toggleDisableForm(): void {
+    this.showDisableForm = !this.showDisableForm;
+    this.disablePassword = '';
+    this.disableCode = '';
+    this.disableError = '';
+  }
+
+  disableMfa(): void {
+    if (!this.disablePassword || !this.disableCode) return;
+    this.disableError = '';
+    this.authService.disable2fa(this.disablePassword, this.disableCode).subscribe({
+      next: () => {
+        this.showDisableForm = false;
+        this.disablePassword = '';
+        this.disableCode = '';
+        this.loadMfaStatus();
+        this.loginHistory = [];
+      },
+      error: (err) => {
+        this.disableError = err.error?.message || "Mot de passe ou code incorrect.";
+      }
+    });
+  }
+
+  loadLoginHistory(): void {
+    this.authService.getLoginHistory().subscribe({
+      next: (history) => {
+        this.loginHistory = history;
+      },
+      error: (err) => {
+        console.error("Erreur de chargement de l'historique de connexions", err);
+      }
+    });
+  }
+
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'SUCCESS': return 'Succès';
+      case 'SUCCESS_BACKUP': return 'Succès (Secours)';
+      case 'PENDING_2FA': return '2FA Requis';
+      case 'FAILED_2FA': return 'Échec 2FA';
+      case 'FAILED_PASSWORD': return 'Mot de passe erroné';
+      case 'FAILED_DISABLED': return 'Compte désactivé';
+      default: return status;
+    }
+  }
+
+  getStatusClass(status: string): string {
+    if (status.startsWith('SUCCESS')) return 'status-success';
+    if (status === 'PENDING_2FA') return 'status-warning';
+    return 'status-error';
+  }
+}

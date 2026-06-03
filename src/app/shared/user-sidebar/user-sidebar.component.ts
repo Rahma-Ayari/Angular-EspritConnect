@@ -11,13 +11,14 @@ export class UserSidebarComponent implements OnInit {
   @Input() collapsed = false;
   @Input() activeNav: string = 'dashboard';
   @Output() navChange = new EventEmitter<string>();
+  @Output() toggleSidebar = new EventEmitter<void>();
   navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'bi-grid' },
-    { id: 'profile', label: 'Mon Profil', icon: 'bi-person' },
-    { id: 'opportunities', label: 'Opportunités', icon: 'bi-briefcase' },
-    { id: 'events', label: 'Événements', icon: 'bi-calendar-event' },
-    { id: 'messages', label: 'Messages', icon: 'bi-chat-dots' },
-    { id: 'settings', label: 'Paramètres', icon: 'bi-gear' }
+    { id: 'dashboard', label: 'Dashboard', icon: 'bi-grid', route: '/dashboard' },
+    { id: 'profile', label: 'Mon Profil', icon: 'bi-person', route: '/profile' },
+    { id: 'opportunities', label: 'Opportunités', icon: 'bi-briefcase', route: '/opportunities' },
+    { id: 'events', label: 'Événements', icon: 'bi-calendar-event', route: '/events' },
+    { id: 'messages', label: 'Messages', icon: 'bi-chat-dots', route: '/messages' },
+    { id: 'settings', label: 'Paramètres', icon: 'bi-gear', route: '/settings' }
   ];
 
   constructor(
@@ -42,6 +43,12 @@ export class UserSidebarComponent implements OnInit {
   setNav(navId: string): void {
     this.activeNav = navId;
     this.navChange.emit(navId);
+    
+    // Navigate to the route
+    const navItem = this.navItems.find(item => item.id === navId);
+    if (navItem && navItem.route) {
+      this.router.navigate([navItem.route]);
+    }
   }
 
   updateActiveNav(url: string): void {
@@ -62,5 +69,10 @@ export class UserSidebarComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  onToggle(): void {
+    this.collapsed = !this.collapsed;
+    this.toggleSidebar.emit();
   }
 }
