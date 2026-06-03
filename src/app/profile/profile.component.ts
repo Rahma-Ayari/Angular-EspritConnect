@@ -47,6 +47,9 @@ export class ProfileComponent implements OnInit {
     this.profileService.getCurrentUserProfile().subscribe({
       next: (data) => {
         this.profile = data;
+        if (this.profile.photo && this.profile.photo.startsWith('blob:')) {
+          this.profile.photo = '';
+        }
         this.isLoading = false;
       },
       error: (err) => {
@@ -70,6 +73,7 @@ export class ProfileComponent implements OnInit {
     if (this.profile.idProfil) {
       // Update existing profile
       console.log('Updating existing profile with ID:', this.profile.idProfil);
+      console.log('Payload avant mise à jour:', JSON.stringify(this.profile));
       this.profileService.updateProfile(this.profile.idProfil, this.profile).subscribe({
         next: (data) => {
           console.log('Profile updated successfully:', data);
@@ -126,10 +130,13 @@ export class ProfileComponent implements OnInit {
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
     if (file) {
-      // TODO: Implement file upload
       console.log('File selected:', file.name);
-      // For now, just set a placeholder
-      this.profile.photo = URL.createObjectURL(file);
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        // Enregistrer l'image en tant que chaîne Base64 pour qu'elle soit persistante
+        this.profile.photo = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
@@ -145,6 +152,7 @@ export class ProfileComponent implements OnInit {
   onImageError(event: any): void {
     // Fallback if image fails to load
     console.log('Image failed to load, using fallback');
+    this.profile.photo = '';
     if (event && event.target) {
       event.target.src = this.getPlaceholderImage();
     }

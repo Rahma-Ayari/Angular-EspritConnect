@@ -52,7 +52,25 @@ export class ProfileService {
   }
 
   updateProfile(profileId: number, profile: Profile): Observable<Profile> {
-    return this.http.put<Profile>(`${this.apiUrl}/${profileId}`, profile, {
+    // Only send fields that exist in the backend's ProfilRequestDTO
+    const payload: any = {
+      userId: profile.userId,
+      photo: profile.photo || null,
+      lienLinkedIn: profile.lienLinkedIn || null,
+      bio: profile.bio || null,
+      lienGitHub: profile.lienGitHub || null,
+      prenom: profile.prenom || null,
+      telephone: profile.telephone || null,
+      adresse: profile.adresse || null,
+      ville: profile.ville || null,
+      pays: profile.pays || null,
+      codePostal: profile.codePostal || null,
+      siteWeb: profile.siteWeb || null,
+      dateNaissance: profile.dateNaissance || null,
+      genre: profile.genre || null,
+      nomProprietaire: profile.nomProprietaire || null
+    };
+    return this.http.put<Profile>(`${this.apiUrl}/${profileId}`, payload, {
       headers: this.getAuthHeaders()
     });
   }
