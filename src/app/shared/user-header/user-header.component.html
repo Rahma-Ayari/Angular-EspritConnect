@@ -1,0 +1,50 @@
+<header class="user-header">
+  <div class="header-left">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Rechercher emplois, personnes, posts…" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" />
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="icon-btn" title="Notifications">
+      <i class="bi bi-bell"></i>
+      <span class="badge">{{ notifications.length }}</span>
+    </button>
+    <button class="icon-btn" title="Messages">
+      <i class="bi bi-chat"></i>
+      <span class="badge">1</span>
+    </button>
+    <div class="user-menu">
+      <button class="user-avatar-btn" (click)="toggleDropdown()">
+        {{ userInitials }}
+      </button>
+      <div class="dropdown" *ngIf="showDropdown">
+        <div class="dropdown-header">
+          <div class="dropdown-avatar">{{ userInitials }}</div>
+          <div class="dropdown-user-info">
+            <p class="dropdown-user-name">{{ currentUser?.nom }}</p>
+            <p class="dropdown-user-email">{{ currentUser?.email }}</p>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item">
+          <i class="bi bi-person"></i>
+          Mon Profil
+        </a>
+        <a class="dropdown-item">
+          <i class="bi bi-gear"></i>
+          Paramètres
+        </a>
+        <a class="dropdown-item">
+          <i class="bi bi-bell"></i>
+          Notifications
+        </a>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item logout" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i>
+          Déconnexion
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

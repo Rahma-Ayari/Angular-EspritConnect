@@ -1,0 +1,38 @@
+<aside class="user-sidebar" [class.collapsed]="collapsed">
+  <div class="sidebar-header">
+    <div class="brand-mark">
+      <span class="brand-logo-text">esprit</span>
+      <span class="brand-logo-mini">e</span>
+    </div>
+    <button class="toggle-btn" (click)="collapsed = !collapsed">
+      <i class="bi" [class.bi-layout-sidebar]="!collapsed"
+         [class.bi-layout-sidebar-inset]="collapsed"></i>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul>
+      <li *ngFor="let item of navItems">
+        <a class="nav-link" [class.active]="activeNav === item.id"
+           (click)="setNav(item.id)" [title]="!collapsed ? item.label : ''">
+          <span class="nav-icon"><i class="bi" [class]="'bi ' + item.icon"></i></span>
+          <span class="nav-label">{{ item.label }}</span>
+          <span class="nav-indicator" *ngIf="activeNav === item.id"></span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-mini">
+      <div class="avatar-sm">{{ userInitials }}</div>
+      <div class="user-meta" *ngIf="!collapsed">
+        <p class="user-name-sm">{{ currentUser?.nom }}</p>
+        <p class="user-role-sm">Étudiant</p>
+      </div>
+      <button class="logout-btn" (click)="logout()" title="Déconnexion">
+        <i class="bi bi-box-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+</aside>

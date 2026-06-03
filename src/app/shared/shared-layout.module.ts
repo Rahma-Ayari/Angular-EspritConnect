@@ -4,11 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from './header/header.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { UserHeaderComponent } from './user-header/user-header.component';
+import { UserSidebarComponent } from './user-sidebar/user-sidebar.component';
 
 @NgModule({
   declarations: [
     HeaderComponent,
-    SidebarComponent
+    SidebarComponent,
+    UserHeaderComponent,
+    UserSidebarComponent
   ],
   imports: [
     CommonModule,
@@ -17,7 +21,9 @@ import { SidebarComponent } from './sidebar/sidebar.component';
   ],
   exports: [
     HeaderComponent,
-    SidebarComponent
+    SidebarComponent,
+    UserHeaderComponent,
+    UserSidebarComponent
   ]
 })
 export class SharedLayoutModule { }
