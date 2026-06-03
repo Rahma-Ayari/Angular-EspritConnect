@@ -1,0 +1,98 @@
+<div *ngIf="event as eventData">
+  <main class="event-details-page">
+  <header class="topbar">
+    <a routerLink="/events" class="brand-link">
+      <span class="brand-mark">E</span>
+      <span>EspritConnect Events</span>
+    </a>
+
+    <button type="button" class="btn-secondary" (click)="backToEvents()">
+      <i class="bi bi-arrow-left"></i>
+      All events
+    </button>
+  </header>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading event...</p>
+  </div>
+
+  <div class="error-state" *ngIf="!isLoading && error">
+    <i class="bi bi-exclamation-triangle"></i>
+    <p>{{ error }}</p>
+    <button type="button" (click)="backToEvents()">Back to events</button>
+  </div>
+
+  <article class="details-shell" *ngIf="!isLoading && !error && event">
+    <section class="event-hero">
+      <img
+        *ngIf="hasImage"
+        [src]="eventData.imageUrl || ''"
+        [alt]="eventData.titre"
+        (error)="onImageError()"
+      >
+      <div class="image-placeholder" *ngIf="!hasImage">
+        <i class="bi bi-calendar-event"></i>
+      </div>
+    </section>
+
+    <section class="event-content">
+      <div class="title-block">
+        <span class="status">{{ eventData.status }}</span>
+        <h1>{{ eventData.titre }}</h1>
+        <p *ngIf="eventData.type">{{ eventData.type }}</p>
+      </div>
+
+      <div class="details-grid">
+        <div class="detail-item">
+          <i class="bi bi-calendar3"></i>
+          <div>
+            <span>Date</span>
+            <strong>{{ eventData.dateEvenement | date:'fullDate' }}</strong>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <i class="bi bi-clock"></i>
+          <div>
+            <span>Time</span>
+            <strong>{{ eventData.dateEvenement | date:'shortTime' }}</strong>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <i class="bi bi-geo-alt"></i>
+          <div>
+            <span>Location</span>
+            <strong>{{ eventData.lieu }}</strong>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <i class="bi bi-building"></i>
+          <div>
+            <span>Organizer</span>
+            <strong>{{ eventData.entrepriseNom || 'EspritConnect partner' }}</strong>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <i class="bi bi-people"></i>
+          <div>
+            <span>Capacity</span>
+            <strong>{{ eventData.capacite }} seats</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="reservation-panel">
+        <div>
+          <h2>Reservations</h2>
+          <p>Reservations are not open for this eventData.</p>
+        </div>
+        <button type="button" disabled>Unavailable</button>
+      </div>
+    </section>
+  </article>
+</main>
+</div>

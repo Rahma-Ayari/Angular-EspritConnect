@@ -25,6 +25,10 @@ const routes: Routes = [
     path: 'entreprise',
     loadChildren: () => import('./entreprise/entreprise.module').then(m => m.EntrepriseModule),
     canActivate: [AuthGuard, EntrepriseGuard]
+  },
+  {
+    path: 'events',
+    loadChildren: () => import('./user/user-events/user-events.module').then(m => m.UserEventsModule)
   }
 ];
 

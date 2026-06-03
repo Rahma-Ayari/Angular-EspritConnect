@@ -1,0 +1,117 @@
+<div class="event-form-page event-background-page event-bg-form">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Events</p>
+      <h1>{{ isEdit ? 'Edit Event' : 'Create Event' }}</h1>
+      <p class="subtitle">Database-backed event types, image upload, dates, and capacity rules.</p>
+    </div>
+
+    <button type="button" class="btn-secondary" (click)="cancel()">
+      <i class="bi bi-arrow-left"></i>
+      Back
+    </button>
+  </div>
+
+
+
+  <form class="form-card" [formGroup]="eventForm" (ngSubmit)="submit()" *ngIf="!isLoading">
+    <div class="form-grid">
+      <div class="field full">
+        <label for="titre">Title *</label>
+        <input id="titre" type="text" formControlName="titre" placeholder="Career Fair 2026">
+        <span class="field-error" *ngIf="isInvalid('titre')">Title is required.</span>
+      </div>
+
+      <div class="field">
+        <label for="lieu">Location *</label>
+        <input id="lieu" type="text" formControlName="lieu" placeholder="Esprit Campus, Ariana">
+        <span class="field-error" *ngIf="isInvalid('lieu')">Location is required.</span>
+      </div>
+
+      <div class="field">
+        <label for="typeEvenementId">Event type *</label>
+        <select id="typeEvenementId" formControlName="typeEvenementId">
+          <option [ngValue]="null">Select type</option>
+          <option *ngFor="let type of eventTypes" [ngValue]="type.idTypeEvenement">
+            {{ type.nom }}
+          </option>
+        </select>
+        <span class="field-error" *ngIf="isInvalid('typeEvenementId')">Event type is required.</span>
+      </div>
+
+      <div class="field">
+        <label for="dateDebut">Start date *</label>
+        <input id="dateDebut" type="date" formControlName="dateDebut">
+      </div>
+
+      <div class="field">
+        <label for="heureDebut">Start time *</label>
+        <input id="heureDebut" type="time" formControlName="heureDebut">
+      </div>
+
+      <div class="field">
+        <label for="dateFin">End date *</label>
+        <input id="dateFin" type="date" formControlName="dateFin">
+      </div>
+
+      <div class="field">
+        <label for="heureFin">End time *</label>
+        <input id="heureFin" type="time" formControlName="heureFin">
+      </div>
+
+      <div class="field full" *ngIf="eventForm.hasError('invalidEventRange')">
+        <span class="field-error">End date and time must be after start date and time.</span>
+      </div>
+
+      <div class="field checkbox-field">
+        <label>
+          <input type="checkbox" formControlName="unlimitedParticipants">
+          Unlimited participants
+        </label>
+      </div>
+
+      <div class="field" *ngIf="!eventForm.get('unlimitedParticipants')?.value">
+        <label for="capacite">Max participants *</label>
+        <input id="capacite" type="number" min="1" formControlName="capacite">
+        <span class="field-error" *ngIf="isInvalid('capacite')">Max participants must be greater than zero.</span>
+      </div>
+
+      <div class="field">
+        <label for="status">Status *</label>
+        <select id="status" formControlName="status">
+          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="entrepriseId">Organizer</label>
+        <select id="entrepriseId" formControlName="entrepriseId">
+          <option [ngValue]="null">No enterprise organizer</option>
+          <option *ngFor="let entreprise of entreprises" [ngValue]="entreprise.idEntreprise">
+            {{ entreprise.nom }}
+          </option>
+        </select>
+        <span class="field-hint" *ngIf="entreprises.length === 0">Enterprise list unavailable or not authorized.</span>
+      </div>
+
+      <div class="field full">
+        <label for="imageFile">Event image</label>
+        <input id="imageFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" (change)="onImageSelected($event)">
+        <span class="field-hint" *ngIf="isUploading">Uploading... {{ uploadProgress }}%</span>
+        <input type="hidden" formControlName="imageUrl">
+      </div>
+
+      <div class="image-preview full" *ngIf="imagePreview">
+        <img [src]="imagePreview" alt="Event image preview">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="cancel()">Cancel</button>
+      <button type="submit" class="btn-primary" [disabled]="isSaving || isUploading">
+        <span *ngIf="!isSaving">{{ isEdit ? 'Update Event' : 'Create Event' }}</span>
+        <span *ngIf="isSaving">Saving...</span>
+      </button>
+    </div>
+  </form>
+</div>
