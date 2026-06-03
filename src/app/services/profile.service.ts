@@ -21,6 +21,17 @@ export interface Profile {
   genre?: string;
   nomProprietaire?: string;
   typeProprietaire?: string;
+
+  // Fields from registration
+  niveau?: string;
+  filiere?: string;
+  anneePromotion?: number;
+  domaine?: string;
+  disponibleMentorat?: boolean;
+  entrepriseActuelle?: string;
+  registreCommerce?: string;
+  secteurActivite?: string;
+  descriptionEntreprise?: string;
 }
 
 @Injectable({
@@ -68,7 +79,16 @@ export class ProfileService {
       siteWeb: profile.siteWeb || null,
       dateNaissance: profile.dateNaissance || null,
       genre: profile.genre || null,
-      nomProprietaire: profile.nomProprietaire || null
+      nomProprietaire: profile.nomProprietaire || null,
+      niveau: profile.niveau || null,
+      filiere: profile.filiere || null,
+      anneePromotion: profile.anneePromotion || null,
+      domaine: profile.domaine || null,
+      disponibleMentorat: profile.disponibleMentorat !== undefined ? profile.disponibleMentorat : null,
+      entrepriseActuelle: profile.entrepriseActuelle || null,
+      registreCommerce: profile.registreCommerce || null,
+      secteurActivite: profile.secteurActivite || null,
+      descriptionEntreprise: profile.descriptionEntreprise || null
     };
     return this.http.put<Profile>(`${this.apiUrl}/${profileId}`, payload, {
       headers: this.getAuthHeaders()

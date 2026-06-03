@@ -31,6 +31,7 @@ export class ProfileComponent implements OnInit {
 
   // Connections History
   loginHistory: any[] = [];
+  showAllHistory = false;
 
   constructor(
     private profileService: ProfileService,
@@ -273,5 +274,33 @@ export class ProfileComponent implements OnInit {
     if (status.startsWith('SUCCESS')) return 'status-success';
     if (status === 'PENDING_2FA') return 'status-warning';
     return 'status-error';
+  }
+
+  get displayedLoginHistory(): any[] {
+    return this.showAllHistory ? this.loginHistory : this.loginHistory.slice(0, 4);
+  }
+
+  getHumanReadableActivity(h: any): string {
+    const browser = h.browser || 'un navigateur inconnu';
+    const os = h.os || 'un système inconnu';
+    const location = h.location && h.location !== 'Unknown' && h.location !== 'Localhost' ? ` à ${h.location}` : '';
+    const ip = h.ipAddress ? ` (IP : ${h.ipAddress})` : '';
+
+    switch (h.status) {
+      case 'SUCCESS':
+        return `Connexion réussie depuis ${browser} sur ${os}${location}${ip}.`;
+      case 'SUCCESS_BACKUP':
+        return `Connexion réussie via code de secours depuis ${browser} sur ${os}${location}${ip}.`;
+      case 'PENDING_2FA':
+        return `Tentative de connexion en attente de validation double facteur (2FA) depuis ${browser} sur ${os}${location}${ip}.`;
+      case 'FAILED_2FA':
+        return `Échec de la validation double facteur (2FA) depuis ${browser} sur ${os}${location}${ip}.`;
+      case 'FAILED_PASSWORD':
+        return `Échec de connexion : mot de passe incorrect saisi depuis ${browser} sur ${os}${location}${ip}.`;
+      case 'FAILED_DISABLED':
+        return `Tentative de connexion bloquée : le compte est désactivé.${ip}`;
+      default:
+        return `Activité de connexion (${h.status}) détectée depuis ${browser} sur ${os}${location}${ip}.`;
+    }
   }
 }

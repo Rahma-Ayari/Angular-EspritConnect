@@ -34,6 +34,18 @@ export class UserSidebarComponent implements OnInit {
     return this.authService.getCurrentUser();
   }
 
+  get userRoleLabel(): string {
+    const role = this.currentUser?.role;
+    if (!role) return '';
+    switch (role.toUpperCase()) {
+      case 'ALUMNI': return 'Alumni';
+      case 'ETUDIANT': return 'Étudiant';
+      case 'ADMIN': return 'Administrateur';
+      case 'ENTREPRISE': return 'Entreprise';
+      default: return role;
+    }
+  }
+
   get userInitials(): string {
     const user = this.currentUser;
     if (!user?.nom) return 'U';
