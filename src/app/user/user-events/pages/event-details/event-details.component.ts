@@ -1,7 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserEvent } from '../../models/user-event.model';
 import { UserEventsService } from '../../services/user-events.service';
 
@@ -17,9 +16,13 @@ export class EventDetailsComponent implements OnInit {
   actionLoading = false;
   error: string | null = null;
 
+  sidebarOpen = true;
+  activeNav = 'events';
+
   constructor(
     private route: ActivatedRoute,
     private location: Location,
+    private router: Router,
     private eventsService: UserEventsService
   ) {}
 
@@ -77,5 +80,24 @@ export class EventDetailsComponent implements OnInit {
       },
       error: () => this.actionLoading = false
     });
+  }
+
+  setNav(navId: string): void {
+    this.activeNav = navId;
+    const routes: { [key: string]: string } = {
+      dashboard: '/dashboard',
+      profile: '/profile',
+      opportunities: '/opportunities',
+      events: '/events',
+      messages: '/messages',
+      settings: '/settings'
+    };
+    if (routes[navId]) {
+      this.router.navigate([routes[navId]]);
+    }
+  }
+
+  toggleSidebar(): void {
+    this.sidebarOpen = !this.sidebarOpen;
   }
 }

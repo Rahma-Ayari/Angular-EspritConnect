@@ -1,20 +1,28 @@
-<section class="user-events-page event-background-page event-bg-admin">
-  <div class="page-header">
-    <div>
-      <p class="eyebrow">Events</p>
-      <h1>My Created Events</h1>
-    </div>
-    <div class="actions">
-      <button type="button" class="btn-secondary" routerLink="/events">Back</button>
-      <button type="button" class="btn-primary" routerLink="/events/create">Create Event</button>
-    </div>
-  </div>
+<div class="app-shell" [class.sidebar-collapsed]="!sidebarOpen">
+  <app-user-sidebar [collapsed]="!sidebarOpen" [activeNav]="activeNav" (navChange)="setNav($event)" (toggleSidebar)="toggleSidebar()"></app-user-sidebar>
+  <main class="main-content">
+    <app-user-header></app-user-header>
+    <div class="content-area">
+      <section class="user-events-page event-background-page event-bg-admin">
+        <div class="page-header">
+          <div>
+            <p class="eyebrow">Events</p>
+            <h1>My Created Events</h1>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn-secondary" routerLink="/events">Back</button>
+            <button type="button" class="btn-primary" routerLink="/events/create">Create Event</button>
+          </div>
+        </div>
 
-  <div class="state" *ngIf="loading">Loading events...</div>
-  <div class="state error" *ngIf="!loading && error">{{ error }}</div>
-  <div class="state" *ngIf="!loading && !error && events.length === 0">You have not created events yet.</div>
+        <div class="state" *ngIf="loading">Loading events...</div>
+        <div class="state error" *ngIf="!loading && error">{{ error }}</div>
+        <div class="state" *ngIf="!loading && !error && events.length === 0">You have not created events yet.</div>
 
-  <div class="events-grid" *ngIf="!loading && !error">
-    <app-user-event-card *ngFor="let event of events" [event]="event"></app-user-event-card>
-  </div>
-</section>
+        <div class="events-grid" *ngIf="!loading && !error">
+          <app-user-event-card *ngFor="let event of events" [event]="event"></app-user-event-card>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>

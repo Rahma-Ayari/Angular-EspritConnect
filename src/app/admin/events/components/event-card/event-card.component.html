@@ -10,6 +10,7 @@
       <i class="bi bi-calendar-event"></i>
     </div>
     <span class="status-badge" [ngClass]="statusClass">{{ event.status }}</span>
+    <span class="approval-badge" *ngIf="showApprovalBadge" [ngClass]="approvalStatusClass">{{ event.approvalStatus }}</span>
   </div>
 
   <div class="event-content">
@@ -46,6 +47,12 @@
       </button>
       <button type="button" class="action-btn delete" title="Delete event" (click)="deleteEvent.emit(event); $event.stopPropagation()">
         <i class="bi bi-trash"></i>
+      </button>
+      <button type="button" class="action-btn approve" title="Approve event" *ngIf="event.approvalStatus === 'PENDING'" (click)="approveEvent.emit(event); $event.stopPropagation()">
+        <i class="bi bi-check-lg"></i>
+      </button>
+      <button type="button" class="action-btn reject" title="Reject event" *ngIf="event.approvalStatus === 'PENDING'" (click)="rejectEvent.emit(event); $event.stopPropagation()">
+        <i class="bi bi-x-lg"></i>
       </button>
     </div>
   </div>

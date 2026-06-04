@@ -41,9 +41,24 @@
 }
 
 .event-status.joined {
-  background: #dcfce7;
-  color: #166534;
-}
+   background: #dcfce7;
+   color: #166534;
+ }
+
+ .event-status.approval-pending {
+   background: #fef9c3;
+   color: #ca8a04;
+ }
+
+ .event-status.approval-approved {
+   background: #dcfce7;
+   color: #166534;
+ }
+
+ .event-status.approval-rejected {
+   background: #fee2e2;
+   color: #b91c1c;
+ }
 
 .event-card h3 {
   margin: 14px 0 8px;

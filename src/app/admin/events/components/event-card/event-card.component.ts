@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Event } from '../../models/event.model';
+import { Event, EventApprovalStatus } from '../../models/event.model';
 
 @Component({
   selector: 'app-event-card',
@@ -12,6 +12,8 @@ export class EventCardComponent {
   @Output() viewEvent = new EventEmitter<Event>();
   @Output() editEvent = new EventEmitter<Event>();
   @Output() deleteEvent = new EventEmitter<Event>();
+  @Output() approveEvent = new EventEmitter<Event>();
+  @Output() rejectEvent = new EventEmitter<Event>();
 
   imageFailed = false;
 
@@ -21,6 +23,16 @@ export class EventCardComponent {
 
   get statusClass(): string {
     return (this.event.status || 'UPCOMING').toLowerCase();
+  }
+
+  get approvalStatusClass(): string {
+    const status = this.event.approvalStatus as EventApprovalStatus;
+    if (!status) return '';
+    return `approval-${status.toLowerCase()}`;
+  }
+
+  get showApprovalBadge(): boolean {
+    return !!this.event.approvalStatus;
   }
 
   get capacityLabel(): string {

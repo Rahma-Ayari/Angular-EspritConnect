@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { EventService } from '../../services/event.service';
-import { Event, EventStats } from '../../models/event.model';
+import { Event, EventStats, EventApprovalStatus } from '../../models/event.model';
 
 @Component({
   selector: 'app-event-dashboard',
@@ -16,9 +16,11 @@ export class EventDashboardComponent implements OnInit {
   searchQuery = '';
   selectedStatus = '';
   selectedType = '';
+  selectedApprovalStatus: EventApprovalStatus | null = null;
   eventTypes: string[] = [];
 
   readonly statuses = ['ACTIVE', 'UPCOMING', 'CANCELLED', 'COMPLETED'];
+  readonly approvalStatuses: EventApprovalStatus[] = ['PENDING', 'APPROVED', 'REJECTED'];
 
   constructor(
     private eventService: EventService,
@@ -39,11 +41,17 @@ export class EventDashboardComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
 
-    this.eventService.getAllEvents({
+    const filters: any = {
       search: this.searchQuery,
       status: this.selectedStatus,
       type: this.selectedType
-    }).subscribe({
+    };
+    
+    const obs = this.selectedApprovalStatus
+      ? this.eventService.getEventsByApprovalStatus(this.selectedApprovalStatus)
+      : this.eventService.getAllEvents(filters);
+
+    obs.subscribe({
       next: (events) => {
         this.events = events;
         this.isLoading = false;
@@ -75,6 +83,12 @@ export class EventDashboardComponent implements OnInit {
     this.searchQuery = '';
     this.selectedStatus = '';
     this.selectedType = '';
+    this.selectedApprovalStatus = null;
+    this.loadEvents();
+  }
+
+  filterByApproval(status: EventApprovalStatus | null) {
+    this.selectedApprovalStatus = status;
     this.loadEvents();
   }
 
@@ -118,6 +132,25 @@ export class EventDashboardComponent implements OnInit {
         this.error = 'Unable to delete this event.';
       }
     });
+  }
+
+  approveEvent(event: Event): void {
+    if (!event.idEvenement) return;
+    this.eventService.approveEvent(event.idEvenement).subscribe({
+      next: () => this.loadDashboard(),
+      error: (err) => this.error = 'Unable to approve event.'
+    });
+  }
+
+  rejectEvent(event: Event): void {
+    if (!event.idEvenement) return;
+    const reason = prompt('Enter rejection reason:', '');
+    if (reason !== null) {
+      this.eventService.rejectEvent(event.idEvenement, reason).subscribe({
+        next: () => this.loadDashboard(),
+        error: (err) => this.error = 'Unable to reject event.'
+      });
+    }
   }
 
   loadEventTypes(): void {

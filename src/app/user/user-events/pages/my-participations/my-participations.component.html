@@ -1,29 +1,37 @@
-<section class="user-events-page event-background-page event-bg-list">
-  <div class="page-header">
-    <div>
-      <p class="eyebrow">Events</p>
-      <h1>My Participations</h1>
+<div class="app-shell" [class.sidebar-collapsed]="!sidebarOpen">
+  <app-user-sidebar [collapsed]="!sidebarOpen" [activeNav]="activeNav" (navChange)="setNav($event)" (toggleSidebar)="toggleSidebar()"></app-user-sidebar>
+  <main class="main-content">
+    <app-user-header></app-user-header>
+    <div class="content-area">
+      <section class="user-events-page event-background-page event-bg-list">
+        <div class="page-header">
+          <div>
+            <p class="eyebrow">Events</p>
+            <h1>My Participations</h1>
+          </div>
+          <button type="button" class="btn-secondary" routerLink="/events">
+            <i class="bi bi-arrow-left"></i>
+            Back
+          </button>
+        </div>
+
+        <div class="state" *ngIf="loading">Loading participations...</div>
+        <div class="state error" *ngIf="!loading && error">{{ error }}</div>
+        <div class="state" *ngIf="!loading && !error && participations.length === 0">You have not joined any events yet.</div>
+
+        <div class="events-grid" *ngIf="!loading && !error">
+          <article class="event-card" *ngFor="let item of participations">
+            <img [src]="item.evenement.imageUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1200&auto=format&fit=crop'" alt="">
+            <div>
+              <span class="badge">{{ item.evenement.status }}</span>
+              <h3>{{ item.evenement.titre }}</h3>
+              <p>{{ item.evenement.dateDebut | date:'mediumDate' }} · {{ item.evenement.heureDebut }}</p>
+              <p>{{ item.evenement.lieu }}</p>
+              <button type="button" class="btn-secondary" (click)="cancel(item.evenement.idEvenement)">Cancel participation</button>
+            </div>
+          </article>
+        </div>
+      </section>
     </div>
-    <button type="button" class="btn-secondary" routerLink="/events">
-      <i class="bi bi-arrow-left"></i>
-      Back
-    </button>
-  </div>
-
-  <div class="state" *ngIf="loading">Loading participations...</div>
-  <div class="state error" *ngIf="!loading && error">{{ error }}</div>
-  <div class="state" *ngIf="!loading && !error && participations.length === 0">You have not joined any events yet.</div>
-
-  <div class="events-grid" *ngIf="!loading && !error">
-    <article class="event-card" *ngFor="let item of participations">
-      <img [src]="item.evenement.imageUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1200&auto=format&fit=crop'" alt="">
-      <div>
-        <span class="badge">{{ item.evenement.status }}</span>
-        <h3>{{ item.evenement.titre }}</h3>
-        <p>{{ item.evenement.dateDebut | date:'mediumDate' }} · {{ item.evenement.heureDebut }}</p>
-        <p>{{ item.evenement.lieu }}</p>
-        <button type="button" class="btn-secondary" (click)="cancel(item.evenement.idEvenement)">Cancel participation</button>
-      </div>
-    </article>
-  </div>
-</section>
+  </main>
+</div>

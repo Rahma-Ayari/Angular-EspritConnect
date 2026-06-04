@@ -20,6 +20,9 @@ export class UserEventFormComponent implements OnInit {
   imagePreview: string | null = null;
   error: string | null = null;
 
+  sidebarOpen = true;
+  activeNav = 'events';
+
   constructor(
     private fb: FormBuilder,
     private service: UserEventsService,
@@ -130,5 +133,24 @@ export class UserEventFormComponent implements OnInit {
     console.error('Failed to load event form:', err);
     this.error = 'Unable to load event form data.';
     this.loading = false;
+  }
+
+  setNav(navId: string): void {
+    this.activeNav = navId;
+    const routes: { [key: string]: string } = {
+      dashboard: '/dashboard',
+      profile: '/profile',
+      opportunities: '/opportunities',
+      events: '/events',
+      messages: '/messages',
+      settings: '/settings'
+    };
+    if (routes[navId]) {
+      this.router.navigate([routes[navId]]);
+    }
+  }
+
+  toggleSidebar(): void {
+    this.sidebarOpen = !this.sidebarOpen;
   }
 }

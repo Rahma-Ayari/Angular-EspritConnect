@@ -6,8 +6,9 @@
 
   <div class="event-card-content">
     <div class="badges">
-      <span class="event-status">{{ event.status }}</span>
-      <span class="event-status joined" *ngIf="event.participated">Joined</span>
+      <span class="event-status" [ngClass]="approvalStatusClass" *ngIf="event.approvalStatus">{{ event.approvalStatus }}</span>
+      <span class="event-status" *ngIf="!event.approvalStatus">{{ event.status }}</span>
+      <span class="event-status joined" *ngIf="event.participated && event.approvalStatus === 'APPROVED'">Joined</span>
     </div>
 
     <h3>{{ event.titre }}</h3>

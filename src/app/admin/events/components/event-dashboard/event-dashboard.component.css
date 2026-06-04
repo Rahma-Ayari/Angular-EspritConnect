@@ -112,14 +112,14 @@ button {
 }
 
 .card-toolbar {
-  display: grid;
-  grid-template-columns: minmax(260px, 1fr) 160px 150px auto auto;
-  gap: 10px;
-  align-items: center;
-  padding: 16px;
-  border-bottom: 1px solid #f3f4f6;
-  background: #ffffff;
-}
+   display: grid;
+   grid-template-columns: minmax(260px, 1fr) 160px 150px 180px auto;
+   gap: 10px;
+   align-items: center;
+   padding: 16px;
+   border-bottom: 1px solid #f3f4f6;
+   background: #ffffff;
+ }
 
 .search-box {
   display: flex;
@@ -230,19 +230,19 @@ select {
 }
 
 @media (max-width: 820px) {
-  .page-header {
-    flex-direction: column;
-  }
+   .page-header {
+     flex-direction: column;
+   }
 
-  .header-actions {
-    width: 100%;
-  }
+   .header-actions {
+     width: 100%;
+   }
 
-  .header-actions button {
-    flex: 1;
-  }
+   .header-actions button {
+     flex: 1;
+   }
 
-  .card-toolbar {
-    grid-template-columns: 1fr;
-  }
-}
+   .card-toolbar {
+     grid-template-columns: 1fr 1fr;
+   }
+ }

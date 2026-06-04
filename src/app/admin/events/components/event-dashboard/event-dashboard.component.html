@@ -47,7 +47,12 @@
           <option *ngFor="let type of eventTypes" [value]="type">{{ type }}</option>
         </select>
 
-        <button type="button" class="btn-clear" *ngIf="searchQuery || selectedStatus || selectedType" (click)="resetFilters()">
+        <select [(ngModel)]="selectedApprovalStatus" (change)="applyFilters()">
+          <option [ngValue]="null">All approval statuses</option>
+          <option *ngFor="let status of approvalStatuses" [value]="status">{{ status }}</option>
+        </select>
+
+        <button type="button" class="btn-clear" *ngIf="searchQuery || selectedStatus || selectedType || selectedApprovalStatus" (click)="resetFilters()">
           Clear filters
         </button>
       </div>
@@ -70,6 +75,8 @@
           (viewEvent)="viewEvent($event)"
           (editEvent)="editEvent($event)"
           (deleteEvent)="deleteEvent($event)"
+          (approveEvent)="approveEvent($event)"
+          (rejectEvent)="rejectEvent($event)"
         ></app-event-card>
       </div>
 

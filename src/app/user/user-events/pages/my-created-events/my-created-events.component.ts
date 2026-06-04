@@ -13,6 +13,9 @@ export class MyCreatedEventsComponent implements OnInit {
   loading = false;
   error: string | null = null;
 
+  sidebarOpen = true;
+  activeNav = 'events';
+
   constructor(private eventsService: UserEventsService, private router: Router) {}
 
   ngOnInit(): void {
@@ -40,11 +43,30 @@ export class MyCreatedEventsComponent implements OnInit {
 
   delete(event: UserEvent): void {
     if (!event.idEvenement) return;
-    const confirmed = typeof window === 'undefined' || window.confirm(`Delete "${event.titre}"?`);
+    const confirmed = typeof window !== 'undefined' && window.confirm(`Delete "${event.titre}"?`);
     if (!confirmed) return;
     this.eventsService.deleteEvent(event.idEvenement).subscribe({
       next: () => this.load(),
       error: (err) => this.error = err?.error?.error || 'Unable to delete event.'
     });
+  }
+
+  setNav(navId: string): void {
+    this.activeNav = navId;
+    const routes: { [key: string]: string } = {
+      dashboard: '/dashboard',
+      profile: '/profile',
+      opportunities: '/opportunities',
+      events: '/events',
+      messages: '/messages',
+      settings: '/settings'
+    };
+    if (routes[navId]) {
+      this.router.navigate([routes[navId]]);
+    }
+  }
+
+  toggleSidebar(): void {
+    this.sidebarOpen = !this.sidebarOpen;
   }
 }

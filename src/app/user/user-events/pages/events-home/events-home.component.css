@@ -1,3 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:host {
+  display: block;
+  width: 100%;
+  --red: #CC0000;
+  --red-dark: #AA0000;
+  --red-light: rgba(204,0,0,0.08);
+  --red-glow: rgba(204,0,0,0.2);
+  --sidebar-w: 260px;
+  --sidebar-c: 72px;
+  --topbar-h: 64px;
+  --text: #111111;
+  --text-2: #666666;
+  --text-3: #999999;
+  --border: #EBEBEB;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --bg: #F5F5F7;
+  --card-bg: #FFFFFF;
+  --shadow: 0 2px 20px rgba(0,0,0,0.06);
+  font-family: 'Outfit', sans-serif;
+}
+
+.app-shell {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg);
+  transition: all 0.3s ease;
+  overflow-x: hidden;
+}
+
+.main-content {
+  flex: 1;
+  width: calc(100% - var(--sidebar-w));
+  margin-left: var(--sidebar-w);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.app-shell.sidebar-collapsed .main-content {
+  margin-left: var(--sidebar-c);
+  width: calc(100% - var(--sidebar-c));
+}
+
+.content-area {
+  padding: 28px;
+  flex: 1;
+}
+
 .events-home-page {
   animation: fadeIn 0.2s ease;
 }

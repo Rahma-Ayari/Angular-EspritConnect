@@ -1,32 +1,40 @@
-<section class="events-home-page event-background-page event-bg-home">
-  <div class="events-toolbar">
-    <div>
-      <p class="eyebrow">Events</p>
-      <h1>Events</h1>
+<div class="app-shell" [class.sidebar-collapsed]="!sidebarOpen">
+  <app-user-sidebar [collapsed]="!sidebarOpen" [activeNav]="activeNav" (navChange)="setNav($event)" (toggleSidebar)="toggleSidebar()"></app-user-sidebar>
+  <main class="main-content">
+    <app-user-header></app-user-header>
+    <div class="content-area">
+      <section class="events-home-page event-background-page event-bg-home">
+        <div class="events-toolbar">
+          <div>
+            <p class="eyebrow">Events</p>
+            <h1>Events</h1>
+          </div>
+          <div class="toolbar-actions">
+            <button type="button" routerLink="/events/participations">My Participations</button>
+            <button type="button" routerLink="/events/mine">My Created Events</button>
+            <button type="button" class="primary" routerLink="/events/create">Create Event</button>
+          </div>
+        </div>
+
+        <div class="filters">
+          <input type="text" placeholder="Search events..." [(ngModel)]="search" (ngModelChange)="applyFilters()">
+          <select [(ngModel)]="selectedType" (change)="applyFilters()">
+            <option value="">All types</option>
+            <option *ngFor="let type of eventTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+
+        <div class="state" *ngIf="loading">Loading events...</div>
+        <div class="state error" *ngIf="!loading && error">{{ error }}</div>
+        <div class="state" *ngIf="!loading && !error && events.length === 0">No events available.</div>
+
+        <div class="events-grid" *ngIf="!loading && !error">
+          <app-user-event-card
+            *ngFor="let event of events"
+            [event]="event">
+          </app-user-event-card>
+        </div>
+      </section>
     </div>
-    <div class="toolbar-actions">
-      <button type="button" routerLink="/events/participations">My Participations</button>
-      <button type="button" routerLink="/events/mine">My Created Events</button>
-      <button type="button" class="primary" routerLink="/events/create">Create Event</button>
-    </div>
-  </div>
-
-  <div class="filters">
-    <input type="text" placeholder="Search events..." [(ngModel)]="search" (ngModelChange)="applyFilters()">
-    <select [(ngModel)]="selectedType" (change)="applyFilters()">
-      <option value="">All types</option>
-      <option *ngFor="let type of eventTypes" [value]="type">{{ type }}</option>
-    </select>
-  </div>
-
-  <div class="state" *ngIf="loading">Loading events...</div>
-  <div class="state error" *ngIf="!loading && error">{{ error }}</div>
-  <div class="state" *ngIf="!loading && !error && events.length === 0">No events available.</div>
-
-  <div class="events-grid" *ngIf="!loading && !error">
-    <app-user-event-card
-      *ngFor="let event of events"
-      [event]="event">
-    </app-user-event-card>
-  </div>
-</section>
+  </main>
+</div>

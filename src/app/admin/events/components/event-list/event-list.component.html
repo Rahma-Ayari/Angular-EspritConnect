@@ -12,31 +12,26 @@
       </button>
     </div>
 
+    <div class="filters">
+      <button (click)="filterByStatus(null)" [class.active]="!selectedApprovalStatus">All Events</button>
+      <button (click)="filterPending()" [class.active]="selectedApprovalStatus === 'PENDING'">Pending Approval</button>
+      <button (click)="filterByStatus('APPROVED')" [class.active]="selectedApprovalStatus === 'APPROVED'">Approved</button>
+      <button (click)="filterByStatus('REJECTED')" [class.active]="selectedApprovalStatus === 'REJECTED'">Rejected</button>
+    </div>
+
     <div class="cards">
 
-      <div class="event-card" *ngFor="let e of events">
-
-        <div class="top">
-          <h2>{{ e.titre }}</h2>
-          <span>{{ e.type }}</span>
-        </div>
-
-        <p>📍 {{ e.lieu }}</p>
-        <p>📅 {{ e.dateEvenement | date:'mediumDate' }}</p>
-        <p>👥 {{ e.capacite }} participants</p>
-
-        <div class="bottom">
-          <button class="details" [routerLink]="['/admin/events', e.idEvenement]">Details</button>
-
-          <button class="details" [routerLink]="['/admin/events/edit', e.idEvenement]">Edit</button>
-
-          <button class="delete"
-                  (click)="deleteEvent(e.idEvenement)">
-            Delete
-          </button>
-        </div>
-
-      </div>
+      <app-event-card
+        *ngFor="let e of events"
+        [event]="e"
+        (viewEvent)="viewEvent($event)"
+        (editEvent)="editEvent($event)"
+        (deleteEvent)="deleteEvent(e.idEvenement)"
+        (approveEvent)="approveEvent($event)"
+        (rejectEvent)="rejectEvent($event)"
+        class="event-card"
+      >
+      </app-event-card>
 
     </div>
 

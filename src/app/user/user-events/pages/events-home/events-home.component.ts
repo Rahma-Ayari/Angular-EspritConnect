@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { Router } from '@angular/router';
 import { UserEvent } from '../../models/user-event.model';
 import { UserEventsService } from '../../services/user-events.service';
 
@@ -9,14 +9,19 @@ import { UserEventsService } from '../../services/user-events.service';
   styleUrls: ['./events-home.component.css']
 })
 export class EventsHomeComponent implements OnInit {
-
   events: UserEvent[] = [];
   loading = false;
   error: string | null = null;
   search = '';
   selectedType = '';
 
-  constructor(private eventsService: UserEventsService) {}
+  sidebarOpen = true;
+  activeNav = 'events';
+
+  constructor(
+    private eventsService: UserEventsService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.fetchEvents();
@@ -53,5 +58,24 @@ export class EventsHomeComponent implements OnInit {
 
   get eventTypes(): string[] {
     return [...new Set(this.events.map(event => event.type).filter((type): type is string => !!type))].sort();
+  }
+
+  setNav(navId: string): void {
+    this.activeNav = navId;
+    const routes: { [key: string]: string } = {
+      dashboard: '/dashboard',
+      profile: '/profile',
+      opportunities: '/opportunities',
+      events: '/events',
+      messages: '/messages',
+      settings: '/settings'
+    };
+    if (routes[navId]) {
+      this.router.navigate([routes[navId]]);
+    }
+  }
+
+  toggleSidebar(): void {
+    this.sidebarOpen = !this.sidebarOpen;
   }
 }

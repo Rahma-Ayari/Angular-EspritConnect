@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { UserParticipation } from '../../models/user-event.model';
 import { UserEventsService } from '../../services/user-events.service';
 
@@ -12,7 +13,10 @@ export class MyParticipationsComponent implements OnInit {
   loading = false;
   error: string | null = null;
 
-  constructor(private eventsService: UserEventsService) {}
+  sidebarOpen = true;
+  activeNav = 'events';
+
+  constructor(private eventsService: UserEventsService, private router: Router) {}
 
   ngOnInit(): void {
     this.load();
@@ -39,5 +43,24 @@ export class MyParticipationsComponent implements OnInit {
       next: () => this.load(),
       error: (err) => this.error = err?.error?.error || 'Unable to cancel participation.'
     });
+  }
+
+  setNav(navId: string): void {
+    this.activeNav = navId;
+    const routes: { [key: string]: string } = {
+      dashboard: '/dashboard',
+      profile: '/profile',
+      opportunities: '/opportunities',
+      events: '/events',
+      messages: '/messages',
+      settings: '/settings'
+    };
+    if (routes[navId]) {
+      this.router.navigate([routes[navId]]);
+    }
+  }
+
+  toggleSidebar(): void {
+    this.sidebarOpen = !this.sidebarOpen;
   }
 }

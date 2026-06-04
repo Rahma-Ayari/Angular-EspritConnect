@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { UserEventsRoutingModule } from './user-events-routing.module';
+import { SharedLayoutModule } from '../../shared/shared-layout.module';
 
 import { UserEventDetailsComponent } from './components/user-event-details/user-event-details.component';
 import { UserEventsPageComponent } from './components/user-events-page/user-events-page.component';
@@ -30,7 +31,8 @@ import { UserEventFormComponent } from './pages/user-event-form/user-event-form.
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    UserEventsRoutingModule
+    UserEventsRoutingModule,
+    SharedLayoutModule
   ]
 })
 export class UserEventsModule { }

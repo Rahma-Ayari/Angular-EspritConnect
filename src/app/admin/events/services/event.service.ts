@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { EntrepriseOption, Event, EventFilters, EventStats, EventType } from '../models/event.model';
+import { EntrepriseOption, Event, EventFilters, EventStats, EventType, EventApprovalStatus } from '../models/event.model';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({
@@ -82,6 +82,22 @@ export class EventService {
       observe: 'events',
       reportProgress: true
     });
+  }
+
+  getPendingEvents(): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.apiUrl}/admin/pending`);
+  }
+
+  getEventsByApprovalStatus(status: EventApprovalStatus): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.apiUrl}/admin/approval-status/${status}`);
+  }
+
+  approveEvent(id: number): Observable<Event> {
+    return this.http.post<Event>(`${this.apiUrl}/admin/${id}/approve`, {});
+  }
+
+  rejectEvent(id: number, reason: string): Observable<Event> {
+    return this.http.post<Event>(`${this.apiUrl}/admin/${id}/reject`, { reason });
   }
 
   private buildParams(filters: EventFilters | Pick<EventFilters, 'search' | 'type'>): HttpParams {
