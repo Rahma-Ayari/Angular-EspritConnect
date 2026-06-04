@@ -208,12 +208,14 @@
 }
 
 .entreprise-header {
-  background: white;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  height: 68px;
+  background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px 0 56px;
+  transition: padding-left 0.3s ease;
 }
 
 .entreprise-header .header-left,
@@ -248,10 +250,10 @@
 }
 
 .user-avatar {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  border-radius: 8px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -259,6 +261,7 @@
   font-weight: 600;
   font-size: 14px;
 }
+
 
 @media (max-width: 1024px) {
   .admin-header {

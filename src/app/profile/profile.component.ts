@@ -45,19 +45,19 @@ export class ProfileComponent implements OnInit {
 
   loadProfile(): void {
     this.isLoading = true;
-    this.profileService.getCurrentUserProfile().subscribe({
-      next: (data) => {
-        this.profile = data;
-        if (this.profile.photo && this.profile.photo.startsWith('blob:')) {
-          this.profile.photo = '';
-        }
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Erreur lors du chargement du profil', err);
-        this.isLoading = false;
-      }
-    });
+        this.profileService.getCurrentUserProfile().subscribe({
+          next: (data: Profile) => {
+            this.profile = data;
+            if (this.profile.photo && this.profile.photo.startsWith('blob:')) {
+              this.profile.photo = '';
+            }
+            this.isLoading = false;
+          },
+          error: (err: any) => {
+            console.error('Erreur lors du chargement du profil', err);
+            this.isLoading = false;
+          }
+        });
   }
 
   toggleEdit(): void {
@@ -70,47 +70,81 @@ export class ProfileComponent implements OnInit {
   saveProfile(): void {
     this.isLoading = true;
     console.log('Saving profile:', this.profile);
-    
+
+    const hasPhotoDataUrl = this.profile.photo && this.profile.photo.startsWith('data:image');
+
     if (this.profile.idProfil) {
       // Update existing profile
-      console.log('Updating existing profile with ID:', this.profile.idProfil);
-      console.log('Payload avant mise à jour:', JSON.stringify(this.profile));
-      this.profileService.updateProfile(this.profile.idProfil, this.profile).subscribe({
-        next: (data) => {
-          console.log('Profile updated successfully:', data);
-          this.profile = data;
-          this.isEditing = false;
-          this.isLoading = false;
-          this.showSaveMessage('Profil mis à jour avec succès!', 'success');
-          // Recharger les données pour s'assurer qu'elles sont à jour
-          setTimeout(() => this.loadProfile(), 500);
-        },
-        error: (err) => {
-          console.error('Erreur lors de la mise à jour du profil', err);
-          this.isLoading = false;
-          this.showSaveMessage('Erreur lors de la mise à jour du profil', 'error');
-        }
-      });
+      if (hasPhotoDataUrl) {
+        this.profileService.updateProfileFormData(this.profile.idProfil, this.profile).subscribe({
+          next: (data: Profile) => {
+            console.log('Profile updated (with photo) successfully:', data);
+            this.profile = data;
+            this.isEditing = false;
+            this.isLoading = false;
+            this.showSaveMessage('Profil mis à jour avec succès!', 'success');
+            setTimeout(() => this.loadProfile(), 500);
+          },
+          error: (err: any) => {
+            console.error('Erreur lors de la mise à jour du profil avec photo', err);
+            this.isLoading = false;
+            this.showSaveMessage('Erreur lors de la mise à jour du profil', 'error');
+          }
+        });
+      } else {
+        this.profileService.updateProfile(this.profile.idProfil, this.profile).subscribe({
+          next: (data: Profile) => {
+            console.log('Profile updated successfully:', data);
+            this.profile = data;
+            this.isEditing = false;
+            this.isLoading = false;
+            this.showSaveMessage('Profil mis à jour avec succès!', 'success');
+            setTimeout(() => this.loadProfile(), 500);
+          },
+          error: (err: any) => {
+            console.error('Erreur lors de la mise à jour du profil', err);
+            this.isLoading = false;
+            this.showSaveMessage('Erreur lors de la mise à jour du profil', 'error');
+          }
+        });
+      }
     } else {
       // Create new profile
       this.profile.userId = this.authService.getCurrentUser()?.email;
       console.log('Creating new profile for user:', this.profile.userId);
-      this.profileService.createProfile(this.profile).subscribe({
-        next: (data) => {
-          console.log('Profile created successfully:', data);
-          this.profile = data;
-          this.isEditing = false;
-          this.isLoading = false;
-          this.showSaveMessage('Profil créé avec succès!', 'success');
-          // Recharger les données pour s'assurer qu'elles sont à jour
-          setTimeout(() => this.loadProfile(), 500);
-        },
-        error: (err) => {
-          console.error('Erreur lors de la création du profil', err);
-          this.isLoading = false;
-          this.showSaveMessage('Erreur lors de la création du profil', 'error');
-        }
-      });
+      if (hasPhotoDataUrl) {
+        this.profileService.createProfileFormData(this.profile).subscribe({
+          next: (data: Profile) => {
+            console.log('Profile created (with photo) successfully:', data);
+            this.profile = data;
+            this.isEditing = false;
+            this.isLoading = false;
+            this.showSaveMessage('Profil créé avec succès!', 'success');
+            setTimeout(() => this.loadProfile(), 500);
+          },
+          error: (err: any) => {
+            console.error('Erreur lors de la création du profil avec photo', err);
+            this.isLoading = false;
+            this.showSaveMessage('Erreur lors de la création du profil', 'error');
+          }
+        });
+      } else {
+        this.profileService.createProfile(this.profile).subscribe({
+          next: (data: Profile) => {
+            console.log('Profile created successfully:', data);
+            this.profile = data;
+            this.isEditing = false;
+            this.isLoading = false;
+            this.showSaveMessage('Profil créé avec succès!', 'success');
+            setTimeout(() => this.loadProfile(), 500);
+          },
+          error: (err: any) => {
+            console.error('Erreur lors de la création du profil', err);
+            this.isLoading = false;
+            this.showSaveMessage('Erreur lors de la création du profil', 'error');
+          }
+        });
+      }
     }
   }
 
