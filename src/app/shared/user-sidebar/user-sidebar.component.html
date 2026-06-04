@@ -28,7 +28,7 @@
       <div class="avatar-sm">{{ userInitials }}</div>
       <div class="user-meta" *ngIf="!collapsed">
         <p class="user-name-sm">{{ currentUser?.nom }}</p>
-        <p class="user-role-sm">Étudiant</p>
+        <p class="user-role-sm">{{ userRoleLabel }}</p>
       </div>
       <button class="logout-btn" (click)="logout()" title="Déconnexion">
         <i class="bi bi-box-arrow-right"></i>

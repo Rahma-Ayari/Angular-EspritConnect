@@ -123,6 +123,69 @@
         </div>
       </div>
 
+      <!-- Registration Information (Dynamic based on role) -->
+      <div class="premium-card" *ngIf="profile.typeProprietaire">
+        <h2 class="card-title">
+          <div class="icon-wrapper accent"><i class="bi bi-card-list"></i></div>
+          Informations d'inscription ({{ profile.typeProprietaire === 'ETUDIANT' ? 'Étudiant' : profile.typeProprietaire === 'ALUMNI' ? 'Alumni' : profile.typeProprietaire === 'ENTREPRISE' ? 'Entreprise' : profile.typeProprietaire }})
+        </h2>
+        
+        <!-- ETUDIANT FIELDS -->
+        <div class="form-grid" *ngIf="profile.typeProprietaire === 'ETUDIANT'">
+          <div class="form-group">
+            <label>Filière</label>
+            <input type="text" [(ngModel)]="profile.filiere" [disabled]="!isEditing" class="form-control" placeholder="Votre filière">
+          </div>
+          <div class="form-group">
+            <label>Niveau</label>
+            <select [(ngModel)]="profile.niveau" [disabled]="!isEditing" class="form-control">
+              <option value="DEBUTANT">Débutant</option>
+              <option value="INTERMEDIAIRE">Intermédiaire</option>
+              <option value="EXPERT">Expert</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- ALUMNI FIELDS -->
+        <div class="form-grid" *ngIf="profile.typeProprietaire === 'ALUMNI'">
+          <div class="form-group">
+            <label>Année de promotion</label>
+            <input type="number" [(ngModel)]="profile.anneePromotion" [disabled]="!isEditing" class="form-control" placeholder="Ex: 2024">
+          </div>
+          <div class="form-group">
+            <label>Domaine</label>
+            <input type="text" [(ngModel)]="profile.domaine" [disabled]="!isEditing" class="form-control" placeholder="Votre domaine">
+          </div>
+          <div class="form-group">
+            <label>Entreprise actuelle</label>
+            <input type="text" [(ngModel)]="profile.entrepriseActuelle" [disabled]="!isEditing" class="form-control" placeholder="Votre entreprise actuelle">
+          </div>
+          <div class="form-group full-width checkbox-group-premium">
+            <label class="checkbox-container">
+              <input type="checkbox" [(ngModel)]="profile.disponibleMentorat" [disabled]="!isEditing">
+              <span class="checkmark"></span>
+              Disponible pour le mentorat
+            </label>
+          </div>
+        </div>
+
+        <!-- ENTREPRISE FIELDS -->
+        <div class="form-grid" *ngIf="profile.typeProprietaire === 'ENTREPRISE'">
+          <div class="form-group">
+            <label>Registre de Commerce</label>
+            <input type="text" [(ngModel)]="profile.registreCommerce" [disabled]="!isEditing" class="form-control" placeholder="Numéro de registre">
+          </div>
+          <div class="form-group">
+            <label>Secteur d'activité</label>
+            <input type="text" [(ngModel)]="profile.secteurActivite" [disabled]="!isEditing" class="form-control" placeholder="Ex: IT, Finance...">
+          </div>
+          <div class="form-group full-width">
+            <label>Description de l'entreprise</label>
+            <textarea [(ngModel)]="profile.descriptionEntreprise" [disabled]="!isEditing" class="form-control textarea" rows="3" placeholder="Présentation de l'entreprise..."></textarea>
+          </div>
+        </div>
+      </div>
+
       <!-- Professional Information -->
       <div class="premium-card">
         <h2 class="card-title">
@@ -269,13 +332,10 @@
         </h2>
         
         <div class="history-list">
-          <div class="history-item" *ngFor="let h of loginHistory">
-            <div class="history-header">
-              <span class="device">{{ h.browser }} ({{ h.os }})</span>
-              <span class="history-badge" [class]="getStatusClass(h.status)">{{ getStatusLabel(h.status) }}</span>
-            </div>
-            <div class="history-meta">
-              <span>{{ h.ipAddress }}</span> • <span>{{ h.location }}</span>
+          <div class="history-item" *ngFor="let h of displayedLoginHistory">
+            <div class="history-item-body">
+              <span class="status-indicator" [class]="getStatusClass(h.status)"></span>
+              <p class="history-text">{{ getHumanReadableActivity(h) }}</p>
             </div>
             <div class="history-time">{{ h.loginTime | date: 'dd MMM yyyy, HH:mm' }}</div>
           </div>
@@ -284,6 +344,11 @@
             <i class="bi bi-clock"></i>
             <p>Aucune activité récente.</p>
           </div>
+
+          <button class="btn-show-more" (click)="showAllHistory = !showAllHistory" *ngIf="loginHistory.length > 4">
+            <span>{{ showAllHistory ? 'Afficher moins' : 'Afficher plus' }}</span>
+            <i class="bi" [class.bi-chevron-up]="showAllHistory" [class.bi-chevron-down]="!showAllHistory"></i>
+          </button>
         </div>
       </div>
 

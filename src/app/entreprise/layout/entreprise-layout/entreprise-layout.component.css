@@ -1,36 +1,36 @@
 .entreprise-layout {
   display: flex;
   min-height: 100vh;
-  background: #f3f4f6;
+  background: #f9fafb;
   position: relative;
 }
 
 .main-content {
   flex: 1;
   margin-left: 260px;
-  transition: margin-left 0.3s ease;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-width: 0;
+  transition: margin-left 0.3s ease;
 }
 
 .entreprise-layout.sidebar-collapsed .main-content {
-  margin-left: 70px;
+  margin-left: 0;
 }
 
 .content-area {
+  padding: 24px 32px;
   flex: 1;
-  padding: 24px;
-  overflow-y: auto;
 }
 
+/* Toggle Button */
 .sidebar-toggle {
   position: fixed;
   left: 248px;
-  top: 24px;
-  z-index: 1001;
-  width: 24px;
-  height: 24px;
+  top: 22px;
+  z-index: 200;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: white;
   border: 1px solid #e5e7eb;
@@ -39,34 +39,68 @@
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .sidebar-toggle:hover {
   background: #f9fafb;
-  border-color: #d1d5db;
+  border-color: #dc2626;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
 }
 
-.sidebar-toggle.collapsed {
-  left: 58px;
+.sidebar-toggle:hover svg {
+  color: #dc2626;
 }
 
 .sidebar-toggle svg {
   width: 14px;
   height: 14px;
   color: #6b7280;
+  transition: color 0.15s ease;
 }
 
-@media (max-width: 768px) {
+.sidebar-toggle.collapsed {
+  left: 16px;
+  background: #dc2626;
+  border-color: #dc2626;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.sidebar-toggle.collapsed svg {
+  color: white;
+}
+
+.sidebar-toggle.collapsed:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.sidebar-toggle.collapsed:hover svg {
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 1280px) {
+  .content-area {
+    padding: 20px 24px;
+  }
+}
+
+@media (max-width: 1024px) {
   .main-content {
     margin-left: 0;
   }
   
-  .entreprise-layout.sidebar-collapsed .main-content {
-    margin-left: 0;
+  .sidebar-toggle {
+    left: 16px;
   }
   
-  .sidebar-toggle {
-    display: none;
+  .sidebar-toggle:not(.collapsed) {
+    left: 248px;
+  }
+  
+  .content-area {
+    padding: 16px 20px;
   }
 }
+

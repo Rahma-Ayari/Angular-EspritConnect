@@ -10,40 +10,28 @@
   overflow: hidden;
 }
 
-.admin-sidebar {
+.admin-sidebar,
+.entreprise-sidebar {
   width: 260px;
   height: 100vh;
   background: #ffffff;
   border-right: 1px solid #e5e7eb;
 }
 
-.admin-sidebar.collapsed {
+.admin-sidebar.collapsed,
+.entreprise-sidebar.collapsed {
   width: 0;
   border-right: none;
 }
 
 .admin-sidebar.collapsed .logo,
 .admin-sidebar.collapsed .nav-menu,
-.admin-sidebar.collapsed .sidebar-footer {
+.admin-sidebar.collapsed .sidebar-footer,
+.entreprise-sidebar.collapsed .logo,
+.entreprise-sidebar.collapsed .nav-menu,
+.entreprise-sidebar.collapsed .sidebar-footer {
   opacity: 0;
   visibility: hidden;
-}
-
-.entreprise-sidebar {
-  width: 260px;
-  background: linear-gradient(180deg, #1e3a5f 0%, #0f2744 100%);
-  color: white;
-}
-
-.entreprise-sidebar.collapsed {
-  width: 70px;
-}
-
-.entreprise-sidebar.collapsed .logo-text,
-.entreprise-sidebar.collapsed .label,
-.entreprise-sidebar.collapsed .user-details {
-  opacity: 0;
-  width: 0;
 }
 
 .logo {
@@ -51,12 +39,8 @@
   align-items: center;
   padding: 18px 20px;
   gap: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  transition: opacity 0.2s ease, visibility 0.2s ease;
-}
-
-.admin-sidebar .logo {
   border-bottom: 1px solid #f3f4f6;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
 .logo-icon {
@@ -84,20 +68,12 @@
 .logo-title {
   font-weight: 700;
   font-size: 16px;
-  color: #ffffff;
-  letter-spacing: 0.5px;
-}
-
-.admin-sidebar .logo-title {
   color: #111827;
+  letter-spacing: 0.5px;
 }
 
 .logo-subtitle {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.admin-sidebar .logo-subtitle {
   color: #9ca3af;
   font-weight: 500;
 }
@@ -108,7 +84,8 @@
   padding: 16px 14px;
 }
 
-.admin-sidebar .nav-menu {
+.admin-sidebar .nav-menu,
+.entreprise-sidebar .nav-menu {
   transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
@@ -143,31 +120,23 @@
   border-radius: 8px;
   position: relative;
   user-select: none;
-}
-
-.admin-sidebar .nav-menu a {
   color: #4b5563;
-}
-
-.entreprise-sidebar .nav-menu a {
-  color: rgba(255, 255, 255, 0.7);
 }
 
 .admin-sidebar .nav-menu a:hover,
 .entreprise-sidebar .nav-menu a:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.admin-sidebar .nav-menu a:hover {
+  background: #f9fafb;
   color: #111827;
 }
 
-.admin-sidebar .nav-menu > ul > li > a.active:not(.menu-toggle) {
+.admin-sidebar .nav-menu > ul > li > a.active:not(.menu-toggle),
+.entreprise-sidebar .nav-menu > ul > li > a.active:not(.menu-toggle) {
   background: #fef2f2;
   color: #dc2626;
 }
 
-.admin-sidebar .nav-menu > ul > li > a.active:not(.menu-toggle)::before {
+.admin-sidebar .nav-menu > ul > li > a.active:not(.menu-toggle)::before,
+.entreprise-sidebar .nav-menu > ul > li > a.active:not(.menu-toggle)::before {
   content: '';
   position: absolute;
   left: -14px;
@@ -177,12 +146,6 @@
   height: 24px;
   background: #dc2626;
   border-radius: 0 3px 3px 0;
-}
-
-.entreprise-sidebar .nav-menu > ul > li > a.active {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  border-left-color: #e63946;
 }
 
 .label {
@@ -239,18 +202,17 @@
   font-weight: 500;
   border-radius: 6px;
   margin-left: 4px;
-}
-
-.admin-sidebar .submenu li a {
   color: #6b7280;
 }
 
-.admin-sidebar .submenu li a:hover {
+.admin-sidebar .submenu li a:hover,
+.entreprise-sidebar .submenu li a:hover {
   color: #111827;
   background: #f9fafb;
 }
 
-.admin-sidebar .submenu li a.active {
+.admin-sidebar .submenu li a.active,
+.entreprise-sidebar .submenu li a.active {
   color: #dc2626;
   background: #fef2f2;
   font-weight: 600;
@@ -267,19 +229,18 @@
   transition: all 0.15s ease;
 }
 
-.admin-sidebar .submenu li a:hover .submenu-dot {
+.admin-sidebar .submenu li a:hover .submenu-dot,
+.entreprise-sidebar .submenu li a:hover .submenu-dot {
   background: #9ca3af;
 }
 
-.admin-sidebar .submenu li a.active .submenu-dot {
+.admin-sidebar .submenu li a.active .submenu-dot,
+.entreprise-sidebar .submenu li a.active .submenu-dot {
   background: #dc2626;
 }
 
 .sidebar-footer {
   padding: 16px 18px;
-}
-
-.admin-sidebar .sidebar-footer {
   border-top: 1px solid #f3f4f6;
   background: #fafafa;
   transition: opacity 0.2s ease, visibility 0.2s ease;
@@ -290,16 +251,14 @@
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.admin-info {
   padding: 6px;
   border-radius: 10px;
   transition: background 0.15s ease;
   cursor: pointer;
 }
 
-.admin-info:hover {
+.admin-info:hover,
+.user-info:hover {
   background: white;
 }
 
@@ -318,11 +277,8 @@
   flex-shrink: 0;
 }
 
-.entreprise-sidebar .user-avatar {
-  width: 36px;
-  height: 36px;
+.user-avatar {
   background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  border-radius: 8px;
 }
 
 .admin-details,
@@ -333,35 +289,23 @@
   transition: opacity 0.3s ease;
 }
 
-.admin-sidebar .user-details {
-  display: block;
-}
-
-.user-name {
-  font-size: 14px;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.user-email {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.75);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
+.user-name,
 .admin-name {
   font-size: 14px;
   font-weight: 500;
   color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+.user-email,
 .admin-email {
   font-size: 12px;
   color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .logout-btn {
@@ -369,24 +313,21 @@
   border: none;
   padding: 8px;
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.7);
+  color: #6b7280;
   border-radius: 8px;
   transition: all 0.2s;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .logout-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: #f3f4f6;
+  color: #dc2626;
 }
 
 .logout-btn svg {
   width: 20px;
   height: 20px;
-}
-
-.entreprise-sidebar.collapsed .logout-btn {
-  display: none;
 }
 
 @media (max-width: 768px) {
@@ -397,3 +338,4 @@
     transform: translateX(0);
   }
 }
+

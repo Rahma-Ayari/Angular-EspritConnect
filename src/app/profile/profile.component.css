@@ -411,14 +411,64 @@
   padding-bottom: 15px; border-bottom: 1px solid var(--border);
 }
 .history-item:last-child { border-bottom: none; padding-bottom: 0; }
-.history-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
-.history-header .device { font-weight: 600; font-size: 0.95rem; }
-.history-badge { font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
-.history-badge.status-success { background: var(--success-light); color: var(--success); }
-.history-badge.status-warning { background: var(--warning-light); color: var(--warning); }
-.history-badge.status-error { background: var(--error-light); color: var(--error); }
-.history-meta { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; }
-.history-time { font-size: 0.75rem; color: #94a3b8; }
+.history-item-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+.status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+.status-indicator.status-success {
+  background-color: var(--success);
+  box-shadow: 0 0 8px var(--success);
+}
+.status-indicator.status-warning {
+  background-color: var(--warning);
+  box-shadow: 0 0 8px var(--warning);
+}
+.status-indicator.status-error {
+  background-color: var(--error);
+  box-shadow: 0 0 8px var(--error);
+}
+.history-text {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--text-main);
+}
+.history-time { font-size: 0.75rem; color: #94a3b8; padding-left: 18px; }
+
+.btn-show-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.btn-show-more:hover {
+  background: #f8fafc;
+  color: var(--text-main);
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
 
 .empty-state { text-align: center; padding: 30px 0; color: #94a3b8; }
 .empty-state i { font-size: 2rem; margin-bottom: 10px; display: block; }
@@ -457,4 +507,25 @@
 }
 .btn-done {
   background: var(--text-main); color: white; border: none; padding: 10px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; font-family: 'Outfit';
+}
+
+/* Checkbox Premium */
+.checkbox-group-premium {
+  margin-top: 15px;
+}
+.checkbox-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  user-select: none;
+}
+.checkbox-container input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--primary);
+  cursor: pointer;
 }
