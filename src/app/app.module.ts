@@ -10,13 +10,12 @@ import { RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RegisterComponent } from './register/register.component';
 import { RegisterSuccessComponent } from './register/register-success.component';
-import { JobSearchComponent } from './jobs/job-search/job-search.component';
-import { JobOfferDetailComponent } from './jobs/job-offer-detail/job-offer-detail.component';
-import { HomepageComponent } from './homepage/homepage.component';
+import { VerifyEmailComponent } from './verify-email/verify-email.component';
+import { SharedLayoutModule } from './shared/shared-layout.module';
+import { ProfileComponent } from './profile/profile.component';
+
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
-
-// Admin + settings components live in AdminModule (see admin.module.ts)
 
 @NgModule({
   declarations: [
@@ -25,17 +24,17 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     DashboardComponent,
     RegisterComponent,
     RegisterSuccessComponent,
-    JobSearchComponent,
-    JobOfferDetailComponent,
-    HomepageComponent
+    VerifyEmailComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ReactiveFormsModule,
     FormsModule,
+    ReactiveFormsModule,  
     HttpClientModule,  
-    RouterModule  
+    RouterModule,
+    SharedLayoutModule
   ],
   providers: [
     provideClientHydration(),

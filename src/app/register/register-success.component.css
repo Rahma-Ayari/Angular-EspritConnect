@@ -138,8 +138,22 @@ h1 {
   text-decoration: underline;
   font-weight: 600;
   display: block;
-  margin-bottom: 30px;
+  margin-bottom: 12px;
+  cursor: pointer;
 }
+
+.resend-link.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.resend-feedback {
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.resend-feedback.success { color: #16a34a; }
+.resend-feedback.error { color: #dc2626; }
 
 .footer-note {
   font-size: 14px;

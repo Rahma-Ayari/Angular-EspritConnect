@@ -1,143 +1,195 @@
 <div class="login-page">
 
-  <!-- ══ PANEL GAUCHE ══ -->
-  <div class="left-panel">
-    <div class="left-content">
+  <div class="login-shell">
 
-      <div class="brand">
-        <div class="brand-logo"><span>esprit</span></div>
-        <p class="brand-tagline">Se former autrement</p>
-      </div>
+    <!-- Panneau branding Esprit -->
+    <aside class="left-panel">
+      <div class="left-content">
 
-      <div class="hero-text">
-        <h1>Welcome to<br><span>Esprit Connect</span></h1>
-        <div class="divider-line"></div>
-        <p>Votre portail étudiant tout-en-un</p>
-      </div>
-
-      <ul class="features">
-        <li>
-          <div class="feature-icon"><i class="bi bi-briefcase"></i></div>
-          <span>Offres de stages &amp; emplois</span>
-        </li>
-        <li>
-          <div class="feature-icon"><i class="bi bi-people"></i></div>
-          <span>Réseau étudiant &amp; mentoring</span>
-        </li>
-        <li>
-          <div class="feature-icon"><i class="bi bi-patch-check"></i></div>
-          <span>Compétences &amp; certifications</span>
-        </li>
-        <li>
-          <div class="feature-icon"><i class="bi bi-calendar-event"></i></div>
-          <span>Événements &amp; hackathons</span>
-        </li>
-      </ul>
-
-    </div>
-    <div class="circle circle-top"></div>
-    <div class="circle circle-bottom"></div>
-  </div>
-
-  <!-- ══ PANEL DROIT ══ -->
-  <div class="right-panel">
-    <div class="form-card">
-
-      <div class="form-header">
-        <h2>Connexion</h2>
-        <p>Accédez à votre espace étudiant</p>
-      </div>
-
-      <div class="alert-error" *ngIf="errorMessage">
-        <i class="bi bi-exclamation-circle"></i>
-        {{ errorMessage }}
-      </div>
-
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-
-        <!-- Email -->
-        <div class="field" [class.field-error]="isFieldInvalid('email')">
-          <label for="email">Email</label>
-          <div class="input-wrap">
-            <i class="bi bi-envelope"></i>
-            <input id="email" type="email" formControlName="email" placeholder="prenom.nom@esprit.tn"
-              autocomplete="email" />
-          </div>
-          <span class="error-msg" *ngIf="isFieldInvalid('email')">
-            <ng-container *ngIf="loginForm.get('email')?.errors?.['required']">L'email est requis.</ng-container>
-            <ng-container *ngIf="loginForm.get('email')?.errors?.['email']">Format email invalide.</ng-container>
-          </span>
+        <div class="brand">
+          <div class="brand-logo"><span>esprit</span></div>
+          <p class="brand-tagline">Se former autrement</p>
         </div>
 
-        <!-- Mot de passe -->
-        <div class="field" [class.field-error]="isFieldInvalid('password')">
-          <label for="password">Mot de passe</label>
-          <div class="input-wrap">
-            <i class="bi bi-lock"></i>
-            <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
-              placeholder="••••••••" autocomplete="current-password" />
-            <!-- ✅ Bouton œil correctement positionné DANS l'input-wrap -->
-            <button type="button" class="toggle-pwd" (click)="togglePassword()"
-              [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'" tabindex="-1">
-              <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+        <div class="hero-text">
+          <h1>Welcome to<br><span>Esprit Connect</span></h1>
+          <div class="divider-line" aria-hidden="true"></div>
+          <p>Votre portail étudiant tout-en-un</p>
+        </div>
+
+        <ul class="features" aria-label="Fonctionnalités">
+          <li>
+            <div class="feature-icon"><i class="bi bi-briefcase" aria-hidden="true"></i></div>
+            <span>Offres de stages &amp; emplois</span>
+          </li>
+          <li>
+            <div class="feature-icon"><i class="bi bi-people" aria-hidden="true"></i></div>
+            <span>Réseau étudiant &amp; mentoring</span>
+          </li>
+          <li>
+            <div class="feature-icon"><i class="bi bi-patch-check" aria-hidden="true"></i></div>
+            <span>Compétences &amp; certifications</span>
+          </li>
+          <li>
+            <div class="feature-icon"><i class="bi bi-calendar-event" aria-hidden="true"></i></div>
+            <span>Événements &amp; hackathons</span>
+          </li>
+        </ul>
+
+      </div>
+      <div class="circle circle-top" aria-hidden="true"></div>
+      <div class="circle circle-bottom" aria-hidden="true"></div>
+    </aside>
+
+    <!-- Zone formulaire -->
+    <main class="right-panel">
+      <div class="form-card">
+
+        <header class="form-header">
+          <h1 *ngIf="!isMfaRequired">Connexion</h1>
+          <p *ngIf="!isMfaRequired">Accédez à votre espace étudiant</p>
+          <h1 *ngIf="isMfaRequired">Double Authentification</h1>
+          <p *ngIf="isMfaRequired">Entrez le code de vérification pour continuer</p>
+        </header>
+
+        <div class="alert-error" *ngIf="errorMessage" role="alert">
+          <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+          {{ errorMessage }}
+        </div>
+
+        <!-- ── FORMULAIRE 1 : EMAIL + PASSWORD ── -->
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate *ngIf="!isMfaRequired">
+
+          <div class="field" [class.field-error]="isFieldInvalid('email')">
+            <label for="email">Email</label>
+            <div class="input-wrap">
+              <i class="bi bi-envelope" aria-hidden="true"></i>
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                placeholder="prenom.nom@esprit.tn"
+                autocomplete="email"
+              />
+            </div>
+            <span class="error-msg" *ngIf="isFieldInvalid('email')">
+              <ng-container *ngIf="loginForm.get('email')?.errors?.['required']">L'email est requis.</ng-container>
+              <ng-container *ngIf="loginForm.get('email')?.errors?.['email']">Format email invalide.</ng-container>
+            </span>
+          </div>
+
+          <div class="field" [class.field-error]="isFieldInvalid('password')">
+            <label for="password">Mot de passe</label>
+            <div class="input-wrap">
+              <i class="bi bi-lock" aria-hidden="true"></i>
+              <input
+                id="password"
+                [type]="showPassword ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                class="toggle-pwd"
+                (click)="togglePassword()"
+                [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+                tabindex="-1">
+                <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'" aria-hidden="true"></i>
+              </button>
+            </div>
+            <span class="error-msg" *ngIf="isFieldInvalid('password')">
+              Le mot de passe est requis (min. 6 caractères).
+            </span>
+          </div>
+
+          <div class="form-options">
+            <label class="remember">
+              <input type="checkbox" formControlName="rememberMe" />
+              <span>Se souvenir de moi</span>
+            </label>
+            <a class="forgot-link" routerLink="/forgot-password">Mot de passe oublié ?</a>
+          </div>
+
+          <button type="submit" class="btn-submit" [disabled]="isLoading" [attr.aria-busy]="isLoading">
+            <span *ngIf="!isLoading">Se connecter</span>
+            <span *ngIf="isLoading" class="spinner" aria-label="Connexion en cours"></span>
+          </button>
+
+        </form>
+
+        <!-- ── FORMULAIRE 2 : MFA / 2FA TOTP CODE ── -->
+        <form [formGroup]="mfaForm" (ngSubmit)="onMfaSubmit()" novalidate *ngIf="isMfaRequired">
+          
+          <div class="mfa-instructions" style="margin-bottom: 20px; font-size: 0.9rem; color: #666; line-height: 1.4;">
+            Saisissez le code à 6 chiffres généré par votre application TOTP (Google Authenticator) ou un code de secours à 8 caractères.
+          </div>
+
+          <div class="field" [class.field-error]="mfaForm.get('code')?.invalid && (mfaForm.get('code')?.dirty || mfaForm.get('code')?.touched)">
+            <label for="mfaCode">Code de sécurité / Code de secours</label>
+            <div class="input-wrap">
+              <i class="bi bi-shield-lock" aria-hidden="true"></i>
+              <input
+                id="mfaCode"
+                type="text"
+                formControlName="code"
+                placeholder="123456 ou ABCD-1234"
+                autocomplete="one-time-code"
+                style="letter-spacing: 2px; font-weight: 600;"
+              />
+            </div>
+            <span class="error-msg" *ngIf="mfaForm.get('code')?.invalid && (mfaForm.get('code')?.dirty || mfaForm.get('code')?.touched)">
+              Le code est requis (6 chiffres ou format ABCD-1234).
+            </span>
+          </div>
+
+          <div class="form-options" style="margin-top: 15px;">
+            <label class="remember">
+              <input type="checkbox" formControlName="rememberDevice" />
+              <span>Ne plus demander sur cet appareil pendant 30 jours</span>
+            </label>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 25px;">
+            <button type="button" class="btn-submit" style="background-color: #6c757d; flex: 1;" (click)="cancelMfa()">
+              Retour
+            </button>
+            <button type="submit" class="btn-submit" style="flex: 2;" [disabled]="isLoading" [attr.aria-busy]="isLoading">
+              <span *ngIf="!isLoading">Valider</span>
+              <span *ngIf="isLoading" class="spinner" aria-label="Validation en cours"></span>
             </button>
           </div>
-          <span class="error-msg" *ngIf="isFieldInvalid('password')">
-            Le mot de passe est requis (min. 6 caractères).
-          </span>
+
+        </form>
+
+        <div class="social-divider" role="separator" *ngIf="!isMfaRequired"><span>ou continuer avec</span></div>
+
+        <div class="social-btns" *ngIf="!isMfaRequired">
+          <button class="social-btn" type="button" (click)="loginWithGoogle()" aria-label="Continuer avec Google">
+            <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            Google
+          </button>
+          <button class="social-btn" type="button" (click)="loginWithLinkedIn()" aria-label="Continuer avec LinkedIn">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="#0077B5" aria-hidden="true">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+            LinkedIn
+          </button>
         </div>
 
-        <!-- Options -->
-        <div class="form-options">
-          <label class="remember">
-            <input type="checkbox" formControlName="rememberMe" />
-            <span>Se souvenir de moi</span>
-          </label>
-          <a class="forgot-link" routerLink="/forgot-password">Mot de passe oublié ?</a>
-        </div>
+        <p class="signup-row" *ngIf="!isMfaRequired">
+          Pas encore de compte ?
+          <a routerLink="/register">S'inscrire gratuitement</a>
+        </p>
 
-        <!-- Bouton submit -->
-        <button type="submit" class="btn-submit" [disabled]="isLoading">
-          <span *ngIf="!isLoading">Se connecter</span>
-          <span *ngIf="isLoading" class="spinner"></span>
-        </button>
-
-      </form>
-
-      <div class="social-divider"><span>ou continuer avec</span></div>
-
-      <div class="social-btns">
-        <button class="social-btn" type="button" (click)="loginWithGoogle()">
-          <svg viewBox="0 0 24 24" width="17" height="17">
-            <path
-              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-              fill="#4285F4" />
-            <path
-              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-              fill="#34A853" />
-            <path
-              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-              fill="#FBBC05" />
-            <path
-              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-              fill="#EA4335" />
-          </svg>
-          Google
-        </button>
-        <button class="social-btn" type="button" (click)="loginWithLinkedIn()">
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="#0077B5">
-            <path
-              d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-          </svg>
-          LinkedIn
-        </button>
       </div>
+    </main>
 
-      <p class="signup-row">
-        Pas encore de compte ? <a routerLink="/register">S'inscrire gratuitement</a>
-      </p>
-
-    </div>
   </div>
 
 </div>

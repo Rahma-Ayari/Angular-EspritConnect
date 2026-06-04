@@ -1,16 +1,33 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { EntrepriseRoutingModule } from './entreprise-routing.module';
-import { EntrepriseJobsComponent } from './pages/jobs/entreprise-jobs.component';
+import { SharedLayoutModule } from '../shared/shared-layout.module';
+
+// Layout Components
+import { EntrepriseLayoutComponent } from './layout/entreprise-layout/entreprise-layout.component';
+
+// Page Components
+import { EntrepriseDashboardComponent } from './pages/dashboard/entreprise-dashboard.component';
+import { VerificationStatusComponent } from './pages/verification-status/verification-status.component';
+import { EntrepriseProfilComponent } from './pages/profil/entreprise-profil.component';
 
 @NgModule({
-  declarations: [EntrepriseJobsComponent],
+  declarations: [
+    // Layout
+    EntrepriseLayoutComponent,
+    // Pages
+    EntrepriseDashboardComponent,
+    VerificationStatusComponent,
+    EntrepriseProfilComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule,
-    EntrepriseRoutingModule
+    RouterModule,
+    EntrepriseRoutingModule,
+    SharedLayoutModule
   ]
 })
-export class EntrepriseModule {}
+export class EntrepriseModule { }

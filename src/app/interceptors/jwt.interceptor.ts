@@ -21,7 +21,15 @@ export class JwtInterceptor implements HttpInterceptor {
 
     return next.handle(authReq).pipe(
       catchError((err: HttpErrorResponse) => {
-        if (err.status === 401) {
+        const url = req.url;
+        const isPublicAuthCall =
+          url.includes('/api/auth/login') ||
+          url.includes('/api/auth/register') ||
+          url.includes('/api/auth/verify-2fa-login') ||
+          url.includes('/api/auth/verify-email') ||
+          url.includes('/api/auth/resend-verification-email');
+
+        if (err.status === 401 && !isPublicAuthCall) {
           this.authService.logout();
         }
         return throwError(() => err);

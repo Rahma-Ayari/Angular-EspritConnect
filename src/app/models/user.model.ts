@@ -29,3 +29,31 @@ export interface ApprovalSettings {
   notifyUserOnDecline: boolean;
   autoApproveDomain: string;
 }
+
+export interface NewUserRequest {
+  nom: string;
+  email: string;
+  role: 'ETUDIANT' | 'ALUMNI' | 'ENTREPRISE' | 'ENSEIGNANT' | 'ADMIN';
+  affiliation: string;
+}
+
+export interface BulkAddUsersResponse {
+  successCount: number;
+  failedCount: number;
+  errors?: string[];
+  users?: User[];
+}
+
+export type NotificationMode = 'IMMEDIATE' | 'BATCHED' | 'HOURLY_DIGEST' | 'DAILY_DIGEST' | 'SMART';
+
+export interface SmartMailingSettings {
+  enabled: boolean;
+  batchThreshold: number;
+  batchWindowMinutes: number;
+  notificationMode: NotificationMode;
+  dailyDigestHour: number;
+  prioritizeEnterprise: boolean;
+  prioritizeAlumni: boolean;
+  smartThresholdPerHour: number;
+  dashboardNotificationsEnabled: boolean;
+}

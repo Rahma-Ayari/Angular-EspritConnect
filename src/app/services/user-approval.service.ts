@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { User, UserApprovalStats, BulkApprovalRequest, ApprovalSettings } from '../models/user.model';
+import { User, UserApprovalStats, BulkApprovalRequest, ApprovalSettings, NewUserRequest, BulkAddUsersResponse, SmartMailingSettings } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -67,5 +67,30 @@ export class UserApprovalService {
 
   resetSettings(): Observable<ApprovalSettings> {
     return this.http.post<ApprovalSettings>(`${this.apiUrl}/settings/reset`, {});
+  }
+
+  addUser(user: NewUserRequest): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/add`, user);
+  }
+
+  bulkAddUsers(users: NewUserRequest[]): Observable<BulkAddUsersResponse> {
+    return this.http.post<BulkAddUsersResponse>(`${this.apiUrl}/bulk-add`, { users });
+  }
+
+  // Smart Mailing Settings
+  getSmartMailingSettings(): Observable<SmartMailingSettings> {
+    return this.http.get<SmartMailingSettings>(`${this.apiUrl}/smart-mailing/settings`);
+  }
+
+  updateSmartMailingSettings(settings: SmartMailingSettings): Observable<SmartMailingSettings> {
+    return this.http.put<SmartMailingSettings>(`${this.apiUrl}/smart-mailing/settings`, settings);
+  }
+
+  getPendingNotificationsCount(): Observable<{ count: number }> {
+    return this.http.get<{ count: number }>(`${this.apiUrl}/smart-mailing/pending-count`);
+  }
+
+  processNotificationsNow(): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/smart-mailing/process-now`, {});
   }
 }

@@ -22,6 +22,9 @@ export class RegisterComponent implements OnInit {
   passwordStrengthColor = '';
   niveaux = ['DEBUTANT', 'INTERMEDIAIRE', 'EXPERT']; // Based on backend enum
   filieres = ['Informatique', 'Génie Civil', 'Génie Électromécanique', 'Management', 'TIC'];
+  
+  documentFileName = '';
+  documentFileError = '';
 
   constructor(
     private fb: FormBuilder,
@@ -37,7 +40,7 @@ export class RegisterComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [
         Validators.required, 
-        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/)
       ]],
       confirmPassword: ['', Validators.required],
       acceptTerms: [false, Validators.requiredTrue],
@@ -53,7 +56,15 @@ export class RegisterComponent implements OnInit {
       anneePromotion: [null],
       domaine: [''],
       disponibleMentorat: [false],
-      entrepriseActuelle: ['']
+      entrepriseActuelle: [''],
+
+      // Step 2: Profile - Entreprise
+      nomEntreprise: [''],
+      registreCommerce: [''],
+      secteurActivite: [''],
+      siteWeb: [''],
+      descriptionEntreprise: [''],
+      documentJustificatif: ['']
     }, { validators: this.passwordMatchValidator });
 
     this.registerForm.get('password')?.valueChanges.subscribe(value => {
@@ -170,13 +181,23 @@ export class RegisterComponent implements OnInit {
       request.domaine = val.domaine;
       request.disponibleMentorat = val.disponibleMentorat;
       request.entrepriseActuelle = val.entrepriseActuelle;
+    } else if (val.typeUtilisateur === 'ENTREPRISE') {
+      request.nomEntreprise = val.nomEntreprise;
+      request.registreCommerce = val.registreCommerce;
+      request.secteurActivite = val.secteurActivite;
+      request.siteWeb = val.siteWeb;
+      request.descriptionEntreprise = val.descriptionEntreprise;
+      request.documentJustificatif = val.documentJustificatif;
     }
 
     this.authService.register(request).subscribe({
-      next: () => {
+      next: (res) => {
         this.isLoading = false;
         this.router.navigate(['/register-success'], { 
-          queryParams: { email: val.email } 
+          queryParams: { 
+            email: val.email,
+            verificationUrl: res.verificationUrl ?? null
+          } 
         });
       },
       error: (err) => {
@@ -204,5 +225,42 @@ export class RegisterComponent implements OnInit {
 
   goToLogin(): void {
     this.router.navigate(['/login']);
+  }
+
+  onDocumentSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+
+      if (!allowedTypes.includes(file.type)) {
+        this.documentFileError = 'Format non supporté. Utilisez PDF, JPG ou PNG.';
+        this.documentFileName = '';
+        this.registerForm.patchValue({ documentJustificatif: '' });
+        return;
+      }
+
+      if (file.size > maxSize) {
+        this.documentFileError = 'Le fichier ne doit pas dépasser 5 Mo.';
+        this.documentFileName = '';
+        this.registerForm.patchValue({ documentJustificatif: '' });
+        return;
+      }
+
+      this.documentFileError = '';
+      this.documentFileName = file.name;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.registerForm.patchValue({ documentJustificatif: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeDocument(): void {
+    this.documentFileName = '';
+    this.documentFileError = '';
+    this.registerForm.patchValue({ documentJustificatif: '' });
   }
 }

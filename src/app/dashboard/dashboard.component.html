@@ -1,309 +1,207 @@
-<div class="app-shell">
+<div class="app-shell" [class.sidebar-collapsed]="!sidebarOpen">
 
   <!-- ══ SIDEBAR ══ -->
-  <aside class="sidebar">
-    <div class="logo">
-      <div class="logo-icon">E</div>
-      <div class="logo-text">
-        <span class="logo-title">ESPRIT</span>
-        <span class="logo-subtitle">Connect</span>
-      </div>
-    </div>
-
-    <nav class="nav-menu">
-      <ul>
-        <li *ngFor="let item of visibleNavItems">
-          <a [class.active]="activeNav === item.id"
-             (click)="setNav(item.id)">
-            <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <use [attr.href]="'#icon-' + item.icon"></use>
-            </svg>
-            <span class="label">{{ item.label }}</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <div class="user-avatar">{{ userInitials }}</div>
-        <div class="user-details">
-          <span class="user-name">{{ user?.nom || 'User' }}</span>
-          <span class="user-role">{{ user?.role || 'Student' }}</span>
-        </div>
-      </div>
-      <button class="logout-btn" (click)="logout()" title="Sign out">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-          <polyline points="16 17 21 12 16 7"></polyline>
-          <line x1="21" y1="12" x2="9" y2="12"></line>
-        </svg>
-      </button>
-    </div>
-  </aside>
+  <app-user-sidebar [collapsed]="!sidebarOpen" [activeNav]="activeNav" (navChange)="setNav($event)" (toggleSidebar)="toggleSidebar()"></app-user-sidebar>
 
   <!-- ══ MAIN ══ -->
   <main class="main-content">
 
     <!-- Top bar -->
-    <header class="topbar">
-      <div class="topbar-left">
-        <div class="search-box">
-          <i class="bi bi-search"></i>
-          <input type="text" placeholder="Search jobs, people, posts…" />
-        </div>
-      </div>
-      <div class="topbar-right">
-        <button class="icon-btn" title="Notifications">
-          <i class="bi bi-bell"></i>
-          <span class="badge">3</span>
-        </button>
-        <button class="icon-btn" title="Messages">
-          <i class="bi bi-chat"></i>
-          <span class="badge">1</span>
-        </button>
-        <div class="topbar-avatar">{{ userInitials }}</div>
-      </div>
-    </header>
+    <app-user-header></app-user-header>
 
     <!-- ── CONTENT AREA ── -->
     <div class="content-area">
 
-      <!-- Router Outlet for Child Routes (Jobs) -->
-      <router-outlet></router-outlet>
-
-      <section class="dashboard-header" *ngIf="!isJobsRoute">
-        <div class="welcome-strip">
-          <div class="welcome-left">
-            <p class="welcome-label">{{ greeting }},</p>
-            <h1 class="welcome-name">{{ user?.nom || 'Student' }} 👋</h1>
-            <p class="welcome-sub">Your career snapshot for today</p>
-          </div>
-          <div class="welcome-actions">
-            <button class="btn-ghost"><i class="bi bi-chat-dots"></i> AI Assistant</button>
-            <button class="btn-primary"><i class="bi bi-person-check"></i> Improve my profile</button>
-          </div>
-        </div>
-
-        <!-- Stats Row (Moved here for full-width impact) -->
-        <div class="stats-row">
-          <div class="stat-card" *ngFor="let s of stats">
-            <div class="stat-icon" [style.background]="s.color + '18'">
-              <i class="bi" [class]="'bi ' + s.icon" [style.color]="s.color"></i>
+      <!-- ── DASHBOARD VIEW ── -->
+      <ng-container *ngIf="activeNav === 'dashboard'">
+        <section class="dashboard-header">
+          <div class="welcome-strip">
+            <div class="welcome-left">
+              <p class="welcome-label">{{ greeting }},</p>
+              <h1 class="welcome-name">{{ user?.nom || 'Étudiant' }} 👋</h1>
+              <p class="welcome-sub">Votre snapshot carrière du jour</p>
             </div>
-            <div class="stat-body">
-              <p class="stat-label">{{ s.label }}</p>
-              <h3 class="stat-value">{{ s.value }}</h3>
+            <div class="welcome-actions">
+              <button class="btn-ghost"><i class="bi bi-chat-dots"></i> AI Assistant</button>
+              <button class="btn-primary" (click)="setNav('profile')"><i class="bi bi-person-check"></i> Mon Profil &amp; Sécurité</button>
             </div>
-            <span class="stat-delta" [class.up]="s.trend==='up'" [class.down]="s.trend==='down'">
-              <i class="bi" [class.bi-arrow-up-short]="s.trend==='up'"
-                            [class.bi-arrow-down-short]="s.trend==='down'"></i>
-              {{ s.delta }}
-            </span>
           </div>
-        </div>
-      </section>
 
-      <!-- ── MAIN GRID ── -->
-      <div class="dashboard-grid" *ngIf="!isJobsRoute">
-
-        <!-- ── LEFT COLUMN ── -->
-        <div class="col-main">
-
-          <!-- Readiness Card -->
-          <div class="card readiness-card">
-            <div class="card-header-row">
-              <div>
-                <h2 class="card-title">
-                  <i class="bi bi-graph-up-arrow"></i>
-                  Career Readiness Score
-                </h2>
-                <p class="card-sub">You rank above 68% of students. Goal: 90%</p>
+          <!-- Stats Row (Moved here for full-width impact) -->
+          <div class="stats-row">
+            <div class="stat-card" *ngFor="let s of stats">
+              <div class="stat-icon" [style.background]="s.color + '18'">
+                <i class="bi" [class]="'bi ' + s.icon" [style.color]="s.color"></i>
               </div>
+              <div class="stat-body">
+                <p class="stat-label">{{ s.label }}</p>
+                <h3 class="stat-value">{{ s.value }}</h3>
+              </div>
+              <span class="stat-delta" [class.up]="s.trend==='up'" [class.down]="s.trend==='down'">
+                <i class="bi" [class.bi-arrow-up-short]="s.trend==='up'"
+                              [class.bi-arrow-down-short]="s.trend==='down'"></i>
+                {{ s.delta }}
+              </span>
             </div>
+          </div>
+        </section>
 
-            <div class="readiness-body">
-              <div class="ring-wrap">
-                <svg viewBox="0 0 120 120" class="ring-svg">
-                  <circle cx="60" cy="60" r="54" fill="none" stroke="#f0f0f0" stroke-width="10"/>
-                  <circle cx="60" cy="60" r="54" fill="none"
-                          stroke="url(#redGrad)" stroke-width="10"
-                          stroke-linecap="round"
-                          [attr.stroke-dasharray]="circumference"
-                          [attr.stroke-dashoffset]="strokeDashoffset"
-                          class="ring-progress"
-                          transform="rotate(-90 60 60)"/>
-                  <defs>
-                    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#FF4444"/>
-                      <stop offset="100%" stop-color="#CC0000"/>
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <div class="ring-center">
-                  <span class="ring-value">{{ readinessScore }}%</span>
-                  <span class="ring-label">Readiness</span>
+        <!-- ── MAIN GRID ── -->
+        <div class="dashboard-grid">
+
+          <!-- ── LEFT COLUMN ── -->
+          <div class="col-main">
+
+            <!-- Readiness Card -->
+            <div class="card readiness-card">
+              <div class="card-header-row">
+                <div>
+                  <h2 class="card-title">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    Career Readiness Score
+                  </h2>
+                  <p class="card-sub">Vous dépassez 68% des étudiants. Objectif : 90%</p>
                 </div>
               </div>
 
-              <div class="readiness-tasks">
-                <div class="task-item" *ngFor="let t of readinessTasks; let i = index">
-                  <div class="task-check" [class.done]="t.done" (click)="t.done = !t.done">
-                    <i class="bi" [class.bi-check2]="t.done" [class.bi-circle]="!t.done"></i>
-                  </div>
-                  <span class="task-label">{{ t.label }}</span>
-                  <span class="task-gain">+{{ t.gain }}%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Opportunities -->
-          <div class="card">
-            <div class="card-header-row">
-              <h2 class="card-title"><i class="bi bi-briefcase"></i> Recommended opportunities</h2>
-              <a class="see-all">View all <i class="bi bi-arrow-right"></i></a>
-            </div>
-            <div class="opportunities-list">
-              <div class="opp-card" *ngFor="let o of opportunities">
-                <div class="opp-logo" [attr.data-letters]="o.logo">{{ o.logo }}</div>
-                <div class="opp-body">
-                  <h3 class="opp-role">{{ o.role }}</h3>
-                  <p class="opp-meta">
-                    <span>{{ o.company }}</span>
-                    <span class="dot">·</span>
-                    <span>{{ o.location }}</span>
-                    <span class="dot">·</span>
-                    <span>{{ o.posted }}</span>
-                  </p>
-                  <div class="opp-tags">
-                    <span class="tag" *ngFor="let t of o.tags">{{ t }}</span>
-                    <span class="tag type-tag">{{ o.type }}</span>
+              <div class="readiness-body">
+                <div class="ring-wrap">
+                  <svg viewBox="0 0 120 120" class="ring-svg">
+                    <circle cx="60" cy="60" r="54" fill="none" stroke="#f0f0f0" stroke-width="10"/>
+                    <circle cx="60" cy="60" r="54" fill="none"
+                            stroke="url(#redGrad)" stroke-width="10"
+                            stroke-linecap="round"
+                            [attr.stroke-dasharray]="circumference"
+                            [attr.stroke-dashoffset]="strokeDashoffset"
+                            class="ring-progress"
+                            transform="rotate(-90 60 60)"/>
+                    <defs>
+                      <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#FF4444"/>
+                        <stop offset="100%" stop-color="#CC0000"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <div class="ring-center">
+                    <span class="ring-value">{{ readinessScore }}%</span>
+                    <span class="ring-label">Readiness</span>
                   </div>
                 </div>
-                <div class="opp-match">
-                  <div class="match-circle" [style.border-color]="getMatchColor(o.match)">
-                    <span [style.color]="getMatchColor(o.match)">{{ o.match }}%</span>
+
+                <div class="readiness-tasks">
+                  <div class="task-item" *ngFor="let t of readinessTasks; let i = index">
+                    <div class="task-check" [class.done]="t.done" (click)="t.done = !t.done">
+                      <i class="bi" [class.bi-check2]="t.done" [class.bi-circle]="!t.done"></i>
+                    </div>
+                    <span class="task-label">{{ t.label }}</span>
+                    <span class="task-gain">+{{ t.gain }}%</span>
                   </div>
-                  <button class="btn-apply">Postuler</button>
                 </div>
               </div>
             </div>
+
+            <!-- Opportunities -->
+            <div class="card">
+              <div class="card-header-row">
+                <h2 class="card-title"><i class="bi bi-briefcase"></i> Opportunités recommandées</h2>
+                <a class="see-all">Voir tout <i class="bi bi-arrow-right"></i></a>
+              </div>
+              <div class="opportunities-list">
+                <div class="opp-card" *ngFor="let o of opportunities">
+                  <div class="opp-logo" [attr.data-letters]="o.logo">{{ o.logo }}</div>
+                  <div class="opp-body">
+                    <h3 class="opp-role">{{ o.role }}</h3>
+                    <p class="opp-meta">
+                      <span>{{ o.company }}</span>
+                      <span class="dot">·</span>
+                      <span>{{ o.location }}</span>
+                      <span class="dot">·</span>
+                      <span>{{ o.posted }}</span>
+                    </p>
+                    <div class="opp-tags">
+                      <span class="tag" *ngFor="let t of o.tags">{{ t }}</span>
+                      <span class="tag type-tag">{{ o.type }}</span>
+                    </div>
+                  </div>
+                  <div class="opp-match">
+                    <div class="match-circle" [style.border-color]="getMatchColor(o.match)">
+                      <span [style.color]="getMatchColor(o.match)">{{ o.match }}%</span>
+                    </div>
+                    <button class="btn-apply">Postuler</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ── RIGHT COLUMN (Sidebar) ── -->
+          <div class="col-side">
+
+            <!-- AI Assistant -->
+            <div class="card ai-card">
+              <div class="ai-header">
+                <div class="ai-icon"><i class="bi bi-stars"></i></div>
+                <div>
+                  <h3 class="ai-title">AI Career Assistant</h3>
+                  <p class="ai-sub">Recommandations personnalisées</p>
+                </div>
+              </div>
+              <p class="ai-text">
+                Basé sur votre profil et activité récente, je recommande de vous concentrer sur les rôles
+                <a class="ai-link">Frontend Development</a>. Vous avez de solides compétences React.
+              </p>
+              <button class="btn-ai">Analyser mon profil <i class="bi bi-arrow-right"></i></button>
+            </div>
+
+            <!-- Events -->
+            <div class="card">
+              <div class="card-header-row">
+                <h2 class="card-title"><i class="bi bi-calendar-event"></i> Événements</h2>
+                <a class="see-all">Tous <i class="bi bi-arrow-right"></i></a>
+              </div>
+              <div class="events-list">
+                <div class="event-item" *ngFor="let e of upcomingEvents">
+                  <div class="event-icon"><i class="bi" [class]="'bi ' + e.icon"></i></div>
+                  <div class="event-body">
+                    <p class="event-title">{{ e.title }}</p>
+                    <p class="event-date">{{ e.date }}</p>
+                  </div>
+                  <button class="btn-event">S'inscrire</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="card skills-card">
+              <h2 class="card-title"><i class="bi bi-patch-check"></i> Mes compétences clés</h2>
+              <div class="skills-list">
+                <div class="skill-row" *ngFor="let s of [
+                  {name:'Angular', pct:80, color:'#CC0000'},
+                  {name:'Spring Boot', pct:70, color:'#7C3AED'},
+                  {name:'MySQL', pct:65, color:'#059669'}
+                ]">
+                  <div class="skill-header">
+                    <span>{{ s.name }}</span>
+                    <span>{{ s.pct }}%</span>
+                  </div>
+                  <div class="skill-bar">
+                    <div class="skill-fill" [style.width.%]="s.pct" [style.background]="s.color"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
         </div>
+      </ng-container>
 
-        <!-- ── RIGHT COLUMN (Sidebar) ── -->
-        <div class="col-side">
-
-          <!-- AI Assistant -->
-          <div class="card ai-card">
-            <div class="ai-header">
-              <div class="ai-icon"><i class="bi bi-stars"></i></div>
-              <div>
-                <h3 class="ai-title">AI Career Assistant</h3>
-                <p class="ai-sub">Recommandations personnalisées</p>
-              </div>
-            </div>
-            <p class="ai-text">
-              Based on your profile and recent activity, I recommend focusing on
-              <a class="ai-link">Frontend Development</a> roles. You have strong React skills.
-            </p>
-            <button class="btn-ai">Analyze my profile <i class="bi bi-arrow-right"></i></button>
-          </div>
-
-          <!-- Events -->
-          <div class="card">
-            <div class="card-header-row">
-              <h2 class="card-title"><i class="bi bi-calendar-event"></i> Events</h2>
-              <a class="see-all">Tous <i class="bi bi-arrow-right"></i></a>
-            </div>
-            <div class="events-list">
-              <div class="event-item" *ngFor="let e of upcomingEvents">
-                <div class="event-icon"><i class="bi" [class]="'bi ' + e.icon"></i></div>
-                <div class="event-body">
-                  <p class="event-title">{{ e.title }}</p>
-                  <p class="event-date">{{ e.date }}</p>
-                </div>
-                <button class="btn-event">Register</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Skills -->
-          <div class="card skills-card">
-            <h2 class="card-title"><i class="bi bi-patch-check"></i> Mes compétences clés</h2>
-            <div class="skills-list">
-              <div class="skill-row" *ngFor="let s of [
-                {name:'Angular', pct:80, color:'#CC0000'},
-                {name:'Spring Boot', pct:70, color:'#7C3AED'},
-                {name:'MySQL', pct:65, color:'#059669'}
-              ]">
-                <div class="skill-header">
-                  <span>{{ s.name }}</span>
-                  <span>{{ s.pct }}%</span>
-                </div>
-                <div class="skill-bar">
-                  <div class="skill-fill" [style.width.%]="s.pct" [style.background]="s.color"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
+      <!-- ── PROFILE & SECURITY VIEW ── -->
+      <ng-container *ngIf="activeNav === 'profile'">
+        <app-profile></app-profile>
+      </ng-container>
 
     </div>
   </main>
 </div>
-
-<!-- SVG Icon Definitions -->
-<svg style="display: none">
-  <defs>
-    <!-- Dashboard Icon -->
-    <g id="icon-bi-house">
-      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-      <polyline points="9 22 9 12 15 12 15 22"></polyline>
-    </g>
-    <!-- Opportunities Icon -->
-    <g id="icon-bi-compass">
-      <circle cx="12" cy="12" r="10"></circle>
-      <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
-    </g>
-    <!-- Jobs Icon -->
-    <g id="icon-bi-briefcase">
-      <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-    </g>
-    <!-- Network Icon -->
-    <g id="icon-bi-people">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-      <circle cx="9" cy="7" r="4"></circle>
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-    </g>
-    <!-- Mentorship Icon -->
-    <g id="icon-bi-mortarboard">
-      <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-      <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-    </g>
-    <!-- Events Icon -->
-    <g id="icon-bi-calendar-event">
-      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-      <line x1="16" y1="2" x2="16" y2="6"></line>
-      <line x1="8" y1="2" x2="8" y2="6"></line>
-      <line x1="3" y1="10" x2="21" y2="10"></line>
-      <circle cx="8" cy="15" r="1"></circle>
-    </g>
-    <!-- Messages Icon -->
-    <g id="icon-bi-chat">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-    </g>
-    <!-- Profile Icon -->
-    <g id="icon-bi-person">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-      <circle cx="12" cy="7" r="4"></circle>
-    </g>
-  </defs>
-</svg>

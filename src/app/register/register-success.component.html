@@ -41,7 +41,12 @@
         
         <p class="email-address">{{ email }}</p>
         
-        <a href="javascript:void(0)" class="resend-link">Envoyer l'e-mail à nouveau</a>
+        
+        <p class="resend-feedback success" *ngIf="resendMessage">{{ resendMessage }}</p>
+        <p class="resend-feedback error" *ngIf="resendError">{{ resendError }}</p>
+        <a *ngIf="verificationUrl" [href]="verificationUrl" class="resend-link" style="display:block; margin-top: 10px;">
+          Ouvrir directement le lien de vérification
+        </a>
 
         <p class="footer-note">Si vous ne voyez pas cet e-mail dans votre boîte de réception, vérifiez votre dossier de courrier indésirable.</p>
         

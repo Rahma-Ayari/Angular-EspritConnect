@@ -1,14 +1,25 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { EntrepriseJobsComponent } from './pages/jobs/entreprise-jobs.component';
+import { EntrepriseLayoutComponent } from './layout/entreprise-layout/entreprise-layout.component';
+import { EntrepriseDashboardComponent } from './pages/dashboard/entreprise-dashboard.component';
+import { VerificationStatusComponent } from './pages/verification-status/verification-status.component';
+import { EntrepriseProfilComponent } from './pages/profil/entreprise-profil.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'jobs', pathMatch: 'full' },
-  { path: 'jobs', component: EntrepriseJobsComponent }
+  {
+    path: '',
+    component: EntrepriseLayoutComponent,
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: EntrepriseDashboardComponent },
+      { path: 'verification', component: VerificationStatusComponent },
+      { path: 'profil', component: EntrepriseProfilComponent }
+    ]
+  }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class EntrepriseRoutingModule {}
+export class EntrepriseRoutingModule { }
