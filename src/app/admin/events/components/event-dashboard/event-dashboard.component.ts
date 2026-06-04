@@ -104,6 +104,10 @@ export class EventDashboardComponent implements OnInit {
     this.router.navigate(['/events']);
   }
 
+  manageUserEvents(): void {
+    this.router.navigate(['/admin/events/approvals']);
+  }
+
   viewEvent(event: Event): void {
     if (!event.idEvenement) return;
     this.router.navigate(['/admin/events', event.idEvenement]);
