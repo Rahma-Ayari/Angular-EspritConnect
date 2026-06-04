@@ -15,12 +15,61 @@
           </div>
         </div>
 
-        <div class="state" *ngIf="loading">Loading events...</div>
-        <div class="state error" *ngIf="!loading && error">{{ error }}</div>
-        <div class="state" *ngIf="!loading && !error && events.length === 0">You have not created events yet.</div>
+        <div class="loading-state" *ngIf="loading">
+          <div class="spinner"></div>
+          <p>Loading events...</p>
+        </div>
 
-        <div class="events-grid" *ngIf="!loading && !error">
-          <app-user-event-card *ngFor="let event of events" [event]="event"></app-user-event-card>
+        <div class="error-state" *ngIf="!loading && error">
+          <i class="bi bi-exclamation-triangle"></i>
+          <p>{{ error }}</p>
+          <button type="button" (click)="load()">Retry</button>
+        </div>
+
+        <div class="table-wrapper" *ngIf="!loading && !error && events.length > 0">
+          <table class="created-events-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Event Date</th>
+                <th>Created</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let event of events" (click)="viewEvent(event)" class="clickable-row">
+                <td class="col-image">
+                  <img
+                    [src]="event.imageUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=100&auto=format&fit=crop'"
+                    [alt]="event.titre"
+                    class="event-thumb"
+                    (error)="$any($event).target.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=100&auto=format&fit=crop'"
+                  >
+                </td>
+                <td class="col-title">{{ event.titre }}</td>
+                <td class="col-date">{{ event.dateDebut | date:'mediumDate' }}</td>
+                <td class="col-date">{{ event.dateEvenement | date:'mediumDate' }}</td>
+                <td class="col-status">
+                  <span class="status-badge" [ngClass]="getApprovalBadgeClass(event.approvalStatus)">
+                    {{ event.approvalStatus || event.status }}
+                  </span>
+                </td>
+                <td class="col-actions">
+                  <button type="button" class="btn-icon view" (click)="viewEvent(event); $event.stopPropagation()" title="View Details">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="empty-state" *ngIf="!loading && !error && events.length === 0">
+          <i class="bi bi-calendar2-x"></i>
+          <p>You have not created any events yet.</p>
+          <button type="button" class="btn-primary" routerLink="/events/create">Create Your First Event</button>
         </div>
       </section>
     </div>

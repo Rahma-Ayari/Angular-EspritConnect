@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
-import { Event } from '../../models/event.model';
+import { Event, EventApprovalStatus } from '../../models/event.model';
 import { EventService } from '../../services/event.service';
 
 @Component({
@@ -55,6 +54,31 @@ export class EventDetailsComponent implements OnInit {
 
   get statusClass(): string {
     return (this.event?.status || 'UPCOMING').toLowerCase();
+  }
+
+  get approvalStatusClass(): string {
+    const status = this.event?.approvalStatus as EventApprovalStatus;
+    if (!status) return '';
+    return `approval-${status.toLowerCase()}`;
+  }
+
+  approveEvent(): void {
+    if (!this.event?.idEvenement) return;
+    this.eventService.approveEvent(this.event.idEvenement).subscribe({
+      next: () => this.loadEvent(this.event!.idEvenement!),
+      error: (err) => this.error = 'Unable to approve event.'
+    });
+  }
+
+  rejectEvent(): void {
+    if (!this.event?.idEvenement) return;
+    const reason = prompt('Enter rejection reason:', '');
+    if (reason !== null) {
+      this.eventService.rejectEvent(this.event.idEvenement, reason).subscribe({
+        next: () => this.loadEvent(this.event!.idEvenement!),
+        error: (err) => this.error = 'Unable to reject event.'
+      });
+    }
   }
 
   private loadEvent(id: number): void {

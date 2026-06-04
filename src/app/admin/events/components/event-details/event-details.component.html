@@ -43,7 +43,14 @@
       <div class="image-placeholder" *ngIf="!hasImage">
         <i class="bi bi-calendar-event"></i>
       </div>
-      <span class="status-badge" [ngClass]="statusClass">{{ event.status }}</span>
+      <span class="status-badge" [ngClass]="approvalStatusClass">
+        {{ event.approvalStatus || event.status }}
+      </span>
+    </div>
+
+    <div class="rejection-alert" *ngIf="event.approvalStatus === 'REJECTED' && event.rejectionReason">
+      <i class="bi bi-exclamation-triangle"></i>
+      <strong>Rejection Reason:</strong> {{ event.rejectionReason }}
     </div>
 
     <div class="details-content">
@@ -102,6 +109,17 @@
             <strong>{{ event.imageUrl || 'No image URL' }}</strong>
           </div>
         </div>
+      </div>
+
+      <div class="approval-actions" *ngIf="event.approvalStatus === 'PENDING'">
+        <button type="button" class="btn-primary approve-btn" (click)="approveEvent()">
+          <i class="bi bi-check-lg"></i>
+          Approve
+        </button>
+        <button type="button" class="btn-secondary reject-btn" (click)="rejectEvent()">
+          <i class="bi bi-x-lg"></i>
+          Reject
+        </button>
       </div>
     </div>
   </article>

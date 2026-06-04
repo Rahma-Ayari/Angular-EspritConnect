@@ -43,6 +43,10 @@ export class UserEventsService {
     return this.http.get<UserEvent[]>(`${this.apiUrl}/mine`);
   }
 
+  getMyCreatedEventById(id: number): Observable<UserEvent> {
+    return this.http.get<UserEvent>(`${this.apiUrl}/mine/${id}`);
+  }
+
   createEvent(event: Event): Observable<UserEvent> {
     return this.http.post<UserEvent>(this.apiUrl, event);
   }

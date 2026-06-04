@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserEvent, EventApprovalStatus } from '../../models/user-event.model';
 import { UserEventsService } from '../../services/user-events.service';
 
 @Component({
-  selector: 'app-my-created-events',
-  templateUrl: './my-created-events.component.html',
-  styleUrls: ['./my-created-events.component.css']
+  selector: 'app-my-event-details',
+  templateUrl: './my-event-details.component.html',
+  styleUrls: ['./my-event-details.component.css']
 })
-export class MyCreatedEventsComponent implements OnInit {
-  events: UserEvent[] = [];
+export class MyEventDetailsComponent implements OnInit {
+  event?: UserEvent;
   loading = false;
   error: string | null = null;
 
@@ -17,32 +17,43 @@ export class MyCreatedEventsComponent implements OnInit {
   activeNav = 'events';
 
   constructor(
-    private eventsService: UserEventsService,
-    private router: Router
+    private route: ActivatedRoute,
+    private router: Router,
+    private eventsService: UserEventsService
   ) {}
 
   ngOnInit(): void {
-    this.load();
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (id) {
+      this.loadEvent(id);
+    } else {
+      this.error = 'Invalid event id.';
+    }
   }
 
-  load(): void {
+  loadEvent(id: number): void {
     this.loading = true;
-    this.eventsService.getMyCreatedEvents().subscribe({
-      next: (events) => {
-        this.events = events;
+    this.error = null;
+    this.eventsService.getMyCreatedEventById(id).subscribe({
+      next: (event) => {
+        this.event = event;
         this.loading = false;
       },
       error: (err) => {
-        console.error('Failed to load created events:', err);
-        this.error = 'Unable to load your created events.';
+        console.error('Failed to load event:', err);
+        this.error = 'Unable to load event details.';
         this.loading = false;
       }
     });
   }
 
-  viewEvent(event: UserEvent): void {
-    if (event.idEvenement) {
-      this.router.navigate(['/events/my-events', event.idEvenement]);
+  goBack(): void {
+    this.router.navigate(['/events/mine']);
+  }
+
+  editEvent(): void {
+    if (this.event?.idEvenement) {
+      this.router.navigate(['/events/edit', this.event.idEvenement]);
     }
   }
 

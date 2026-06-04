@@ -164,6 +164,68 @@ button:disabled {
   color: #4b5563;
 }
 
+.status-badge.approval-pending {
+  background: #fef9c3;
+  color: #ca8a04;
+}
+
+.status-badge.approval-approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.approval-rejected {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.rejection-alert {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 16px 20px;
+  border-left: 4px solid #ef4444;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rejection-alert i {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.rejection-alert strong {
+  font-weight: 600;
+}
+
+.approval-actions {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  gap: 10px;
+}
+
+.approve-btn {
+  background: #166534;
+  border-color: #166534;
+}
+
+.approve-btn:hover:not(:disabled) {
+  background: #14532d;
+}
+
+.reject-btn {
+  color: #b91c1c;
+  border-color: #b91c1c;
+  background: #fee2e2;
+}
+
+.reject-btn:hover:not(:disabled) {
+  background: #fecaca;
+}
+
 .details-content {
   padding: 26px;
 }

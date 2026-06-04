@@ -6,6 +6,7 @@ import { EventsHomeComponent } from './pages/events-home/events-home.component';
 import { EventDetailsComponent } from './pages/event-details/event-details.component';
 import { MyParticipationsComponent } from './pages/my-participations/my-participations.component';
 import { MyCreatedEventsComponent } from './pages/my-created-events/my-created-events.component';
+import { MyEventDetailsComponent } from './pages/my-event-details/my-event-details.component';
 import { UserEventFormComponent } from './pages/user-event-form/user-event-form.component';
 
 const routes: Routes = [
@@ -20,6 +21,10 @@ const routes: Routes = [
   {
     path: 'mine',
     component: MyCreatedEventsComponent
+  },
+  {
+    path: 'my-events/:id',
+    component: MyEventDetailsComponent
   },
   {
     path: 'create',

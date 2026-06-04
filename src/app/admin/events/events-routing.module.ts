@@ -5,6 +5,7 @@ import { EventDashboardComponent } from './components/event-dashboard/event-dash
 import { EventFormComponent } from './components/event-form/event-form.component';
 import { EventDetailsComponent } from './components/event-details/event-details.component';
 import { EventTypeCrudComponent } from './components/event-type-crud/event-type-crud.component';
+import { EventApprovalsComponent } from './components/event-approvals/event-approvals.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,10 @@ const routes: Routes = [
   {
     path: ':id',
     component: EventDetailsComponent
+  },
+  {
+    path: 'approvals',
+    component: EventApprovalsComponent
   }
 ];
 

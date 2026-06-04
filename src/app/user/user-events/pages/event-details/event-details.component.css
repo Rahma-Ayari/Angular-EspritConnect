@@ -144,6 +144,50 @@ p {
   color: #dc2626;
 }
 
+.approval-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.badge-pending {
+  background: #fef9c3;
+  color: #ca8a04;
+}
+
+.badge-approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-rejected {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.rejection-alert-box {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 16px 20px;
+  border-left: 4px solid #ef4444;
+  margin: 18px 0 0;
+  border-radius: 0 8px 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rejection-alert-box i {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.rejection-alert-box strong {
+  font-weight: 600;
+}
+
 @media (max-width: 760px) {
   .content-area {
     padding: 16px;

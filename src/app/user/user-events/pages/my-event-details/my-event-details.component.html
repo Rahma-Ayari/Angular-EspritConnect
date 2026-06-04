@@ -1,0 +1,109 @@
+<div class="app-shell" [class.sidebar-collapsed]="!sidebarOpen">
+  <app-user-sidebar [collapsed]="!sidebarOpen" [activeNav]="activeNav" (navChange)="setNav($event)" (toggleSidebar)="toggleSidebar()"></app-user-sidebar>
+  <main class="main-content">
+    <app-user-header></app-user-header>
+    <div class="content-area">
+      <section class="my-event-details-page event-background-page event-bg-details">
+        <div class="page-header">
+          <div>
+            <p class="eyebrow">Events</p>
+            <h1>My Event Details</h1>
+          </div>
+          <div class="header-actions">
+            <button type="button" class="btn-secondary" (click)="goBack()">
+              <i class="bi bi-arrow-left"></i>
+              Back
+            </button>
+            <button type="button" class="btn-primary" (click)="editEvent()" [disabled]="!event">
+              <i class="bi bi-pencil"></i>
+              Edit
+            </button>
+          </div>
+        </div>
+
+        <div class="loading-state" *ngIf="loading">
+          <div class="spinner"></div>
+          <p>Loading event...</p>
+        </div>
+
+        <div class="error-state" *ngIf="!loading && error">
+          <i class="bi bi-exclamation-triangle"></i>
+          <p>{{ error }}</p>
+          <button type="button" (click)="goBack()">Back to My Events</button>
+        </div>
+
+        <article class="details-card" *ngIf="!loading && !error && event">
+          <div class="hero-media">
+            <img
+              *ngIf="event.imageUrl"
+              [src]="event.imageUrl"
+              [alt]="event.titre"
+            >
+            <div class="image-placeholder" *ngIf="!event.imageUrl">
+              <i class="bi bi-calendar-event"></i>
+            </div>
+            <span class="status-badge approval-top" [ngClass]="getApprovalBadgeClass(event.approvalStatus)">
+              {{ event.approvalStatus || 'PENDING' }}
+            </span>
+          </div>
+
+          <div class="rejection-alert" *ngIf="event.approvalStatus === 'REJECTED' && event.rejectionReason">
+            <i class="bi bi-exclamation-triangle"></i>
+            <strong>Rejection Reason:</strong> {{ event.rejectionReason }}
+          </div>
+
+          <div class="details-content">
+            <div class="title-row">
+              <h2>{{ event.titre }}</h2>
+              <p *ngIf="event.type" class="event-type">{{ event.type }}</p>
+            </div>
+
+            <p class="event-description" *ngIf="event.lieu">{{ event.lieu }}</p>
+
+            <div class="details-grid">
+              <div class="detail-item">
+                <i class="bi bi-calendar3"></i>
+                <div>
+                  <span>Date</span>
+                  <strong>{{ event.dateDebut | date:'fullDate' }}</strong>
+                </div>
+              </div>
+
+              <div class="detail-item">
+                <i class="bi bi-clock"></i>
+                <div>
+                  <span>Time</span>
+                  <strong>{{ event.heureDebut }} - {{ event.heureFin }}</strong>
+                </div>
+              </div>
+
+              <div class="detail-item">
+                <i class="bi bi-geo-alt"></i>
+                <div>
+                  <span>Location</span>
+                  <strong>{{ event.lieu }}</strong>
+                </div>
+              </div>
+
+              <div class="detail-item">
+                <i class="bi bi-people"></i>
+                <div>
+                  <span>Capacity</span>
+                  <strong>{{ event.unlimitedParticipants ? 'Unlimited' : (event.capacite ? event.capacite + ' seats' : 'No limit') }}</strong>
+                </div>
+              </div>
+
+              <div class="detail-item" *ngIf="event.entrepriseNom">
+                <i class="bi bi-building"></i>
+                <div>
+                  <span>Organizer</span>
+                  <strong>{{ event.entrepriseNom }}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </div>
+  </main>
+</div>

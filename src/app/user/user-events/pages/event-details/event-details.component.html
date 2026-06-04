@@ -19,9 +19,17 @@
         />
 
         <div class="event-details-card">
-          <div>
+          <div class="status-row">
             <span class="event-status">{{ event.status }}</span>
-            <span class="event-status joined" *ngIf="event.participated">Participating</span>
+            <span *ngIf="event.participated" class="event-status joined">Participating</span>
+            <span *ngIf="event.approvalStatus" class="approval-badge" [ngClass]="getApprovalBadgeClass(event.approvalStatus)">
+              {{ event.approvalStatus }}
+            </span>
+          </div>
+
+          <div class="rejection-alert-box" *ngIf="event.approvalStatus === 'REJECTED' && event.rejectionReason">
+            <i class="bi bi-exclamation-triangle"></i>
+            <strong>Rejection Reason:</strong> {{ event.rejectionReason }}
           </div>
 
           <h1>{{ event.titre }}</h1>
