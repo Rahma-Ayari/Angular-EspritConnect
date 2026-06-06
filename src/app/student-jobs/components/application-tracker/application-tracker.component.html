@@ -1,0 +1,32 @@
+<div class="tracker table-view" *ngIf="view === 'table'">
+  <table>
+    <thead>
+      <tr>
+        <th>Job</th>
+        <th>Company</th>
+        <th>Applied</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let a of applications">
+        <td><a [routerLink]="['/dashboard/jobs', a.offreId]">{{ a.jobTitle || 'Job #' + a.offreId }}</a></td>
+        <td>{{ a.companyName || '—' }}</td>
+        <td>{{ a.dateCandidature | date:'mediumDate' }}</td>
+        <td><span class="status-pill">{{ statusLabels[a.uiStatus] }}</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <p *ngIf="!applications.length" class="empty">No applications yet.</p>
+</div>
+
+<div class="tracker kanban-view" *ngIf="view === 'kanban'">
+  <div class="column" *ngFor="let col of columns">
+    <h4>{{ statusLabels[col] }}</h4>
+    <article class="kanban-card sj-card" *ngFor="let a of byStatus(col)">
+      <strong>{{ a.jobTitle || 'Job' }}</strong>
+      <p>{{ a.companyName }}</p>
+      <small>{{ a.dateCandidature | date:'shortDate' }}</small>
+    </article>
+  </div>
+</div>

@@ -1,0 +1,138 @@
+.import-job-page {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.import-job-page h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1D1D1B;
+  margin: 0 0 24px 0;
+}
+
+.import-methods {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.method-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.method-btn i {
+  font-size: 32px;
+  color: #6b7280;
+}
+
+.method-btn span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1D1D1B;
+}
+
+.method-btn:hover {
+  border-color: #C90C0F;
+}
+
+.method-btn.active {
+  border-color: #C90C0F;
+  background: rgba(201, 12, 15, 0.05);
+}
+
+.method-btn.active i,
+.method-btn.active span {
+  color: #C90C0F;
+}
+
+.import-form label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1D1D1B;
+  margin-bottom: 8px;
+}
+
+.import-form input,
+.import-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.import-form input:focus,
+.import-form textarea:focus {
+  outline: none;
+  border-color: #C90C0F;
+}
+
+.btn-primary {
+  padding: 12px 24px;
+  background: #C90C0F;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hint {
+  color: #6b7280;
+  font-size: 13px;
+  margin: -8px 0 16px 0;
+}
+
+.error-banner {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #B91C1C;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.import-preview {
+  margin-top: 28px;
+  padding: 20px;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  background: #F9FAFB;
+}
+
+.import-preview h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+}
+
+.import-preview p {
+  margin: 0 0 8px 0;
+  color: #374151;
+  font-size: 14px;
+}
+
+.preview-text {
+  color: #6B7280 !important;
+  margin: 12px 0 16px 0 !important;
+}

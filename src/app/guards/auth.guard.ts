@@ -31,3 +31,16 @@ export class EntrepriseGuard implements CanActivate {
     return this.router.createUrlTree(['/dashboard']);
   }
 }
+
+@Injectable({ providedIn: 'root' })
+export class StudentGuard implements CanActivate {
+  constructor(private authService: AuthService, private router: Router) {}
+
+  canActivate(): boolean | UrlTree {
+    const role = this.authService.getRole();
+    if (role === 'ETUDIANT' || role === 'ALUMNI') return true;
+    if (role === 'ENTREPRISE') return this.router.createUrlTree(['/entreprise/dashboard']);
+    if (role === 'ADMIN') return this.router.createUrlTree(['/admin']);
+    return this.router.createUrlTree(['/dashboard']);
+  }
+}

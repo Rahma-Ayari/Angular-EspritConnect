@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
+:host {
+  display: block;
+  width: 100%;
+  font-family: 'Outfit', sans-serif;
+  --sidebar-w: 260px;
+  --sidebar-c: 72px;
+  --bg: #f5f5f7;
+}
+
+/* Same shell rules as dashboard — sidebar is fixed, content must shift right */
+.app-shell {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg);
+  overflow-x: hidden;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  min-height: 100vh;
+  margin-left: var(--sidebar-w);
+  width: calc(100% - var(--sidebar-w));
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.app-shell.sidebar-collapsed .main-content {
+  margin-left: var(--sidebar-c);
+  width: calc(100% - var(--sidebar-c));
+}
+
+.content-area.student-jobs-area {
+  flex: 1;
+  padding: 28px;
+  background: var(--bg);
+  box-sizing: border-box;
+}
+
+.jobs-subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.25rem;
+}
+
+.jobs-subnav a {
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  color: #666;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.jobs-subnav a:hover,
+.jobs-subnav a.active {
+  color: #cc0000;
+  background: rgba(204, 0, 0, 0.08);
+  border-color: rgba(204, 0, 0, 0.12);
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: var(--sidebar-c);
+    width: calc(100% - var(--sidebar-c));
+  }
+
+  .content-area.student-jobs-area {
+    padding: 16px;
+  }
+}

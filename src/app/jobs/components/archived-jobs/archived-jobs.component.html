@@ -1,0 +1,24 @@
+<div class="archived-jobs-page">
+  <h2>Archived offers</h2>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && archivedJobs.length === 0">
+    <i class="bi bi-archive"></i>
+    <p>No archived offers</p>
+  </div>
+
+  <div class="archived-list" *ngIf="!loading && archivedJobs.length > 0">
+    <div class="job-card" *ngFor="let job of archivedJobs">
+      <h3>{{ job.title }}</h3>
+      <p>{{ job.department }} - {{ job.location }}</p>
+      <div class="card-actions">
+        <button (click)="restoreJob(job.id!)">Restore</button>
+        <button class="danger" (click)="deleteJob(job.id!)">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

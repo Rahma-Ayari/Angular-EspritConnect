@@ -1,0 +1,15 @@
+<div class="sj-page">
+  <header class="sj-page-header row-header">
+    <div>
+      <h1>My Applications</h1>
+      <p>Track every step of your hiring pipeline.</p>
+    </div>
+    <div class="view-toggle">
+      <button type="button" [class.active]="view === 'table'" (click)="view = 'table'">Table</button>
+      <button type="button" [class.active]="view === 'kanban'" (click)="view = 'kanban'">Kanban</button>
+    </div>
+  </header>
+
+  <div class="sj-skeleton block-skel" *ngIf="loading"></div>
+  <app-application-tracker *ngIf="!loading" [applications]="applications" [view]="view"></app-application-tracker>
+</div>

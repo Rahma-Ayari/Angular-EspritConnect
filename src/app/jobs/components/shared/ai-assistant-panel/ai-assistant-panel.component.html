@@ -1,0 +1,149 @@
+<div class="ai-assistant">
+  <div class="ai-header">
+    <div class="header-left">
+      <div class="ai-icon">
+        <i class="bi bi-stars"></i>
+      </div>
+      <h2>AI Assistant</h2>
+    </div>
+    <button type="button" class="btn-close" (click)="onClose()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="ai-content">
+    <div class="ai-intro">
+      <p>Describe the role you want to publish, choose an output language, and generate a complete job offer draft.</p>
+    </div>
+
+    <div class="prompt-section">
+      <label for="aiPrompt">Your prompt</label>
+      <textarea
+        id="aiPrompt"
+        [(ngModel)]="additionalPrompt"
+        rows="4"
+        placeholder="Example: Create a senior Angular developer offer for a fintech startup, hybrid in Tunis, focused on performance and mentoring juniors.">
+      </textarea>
+    </div>
+
+    <div class="language-section">
+      <label for="outputLanguage">Output language</label>
+      <select id="outputLanguage" [(ngModel)]="outputLanguage">
+        <option *ngFor="let option of languageOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+    </div>
+
+    <div class="current-inputs" *ngIf="jobInfo">
+      <h3>Form context (optional)</h3>
+      <div class="input-chips">
+        <span class="chip" *ngIf="jobInfo.title">
+          <i class="bi bi-briefcase"></i>
+          {{ jobInfo.title }}
+        </span>
+        <span class="chip" *ngIf="jobInfo.department">
+          <i class="bi bi-building"></i>
+          {{ jobInfo.department }}
+        </span>
+        <span class="chip" *ngIf="jobInfo.contractType">
+          <i class="bi bi-file-text"></i>
+          {{ getContractTypeLabel(jobInfo.contractType) }}
+        </span>
+        <span class="chip" *ngIf="jobInfo.experienceLevel">
+          <i class="bi bi-graph-up"></i>
+          {{ jobInfo.experienceLevel }}
+        </span>
+        <span class="chip" *ngIf="jobInfo.location">
+          <i class="bi bi-geo-alt"></i>
+          {{ jobInfo.location }}
+        </span>
+      </div>
+
+      <div class="skills-list" *ngIf="jobInfo.skills && jobInfo.skills.length > 0">
+        <p class="skills-label">Skills:</p>
+        <div class="skill-tags">
+          <span class="skill-tag" *ngFor="let skill of jobInfo.skills">{{ skill }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-banner" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <div class="generated-content" *ngIf="generatedContent && !isGenerating">
+      <p class="ai-disclaimer" *ngIf="generatedContent.aiDisclaimer">{{ generatedContent.aiDisclaimer }}</p>
+
+      <div class="content-section" *ngIf="generatedContent.suggestedTitle">
+        <h4><i class="bi bi-tag"></i> Suggested title</h4>
+        <div class="content-text">{{ generatedContent.suggestedTitle }}</div>
+      </div>
+
+      <div class="content-section">
+        <h4><i class="bi bi-file-text"></i> Description</h4>
+        <div class="content-text">{{ generatedContent.description }}</div>
+      </div>
+
+      <div class="content-section">
+        <h4><i class="bi bi-list-check"></i> Responsibilities</h4>
+        <div class="content-text">{{ generatedContent.responsibilities }}</div>
+      </div>
+
+      <div class="content-section">
+        <h4><i class="bi bi-clipboard-check"></i> Requirements</h4>
+        <div class="content-text">{{ generatedContent.requirements }}</div>
+      </div>
+
+      <div class="content-section" *ngIf="generatedContent.benefits">
+        <h4><i class="bi bi-gift"></i> Benefits</h4>
+        <div class="content-text">{{ generatedContent.benefits }}</div>
+      </div>
+    </div>
+
+    <div class="loading-state" *ngIf="isGenerating">
+      <div class="spinner-large"></div>
+      <p>Generating professional content with AI...</p>
+      <div class="typing-indicator">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="!generatedContent && !isGenerating && !errorMessage">
+      <i class="bi bi-magic"></i>
+      <p>Write a prompt or fill in the job form, then click Generate Content.</p>
+    </div>
+  </div>
+
+  <div class="ai-actions">
+    <button
+      type="button"
+      class="btn-regenerate"
+      [disabled]="isGenerating || !canGenerate"
+      (click)="regenerateContent()">
+      <i class="bi" [ngClass]="hasGeneratedOnce ? 'bi-arrow-clockwise' : 'bi-stars'"></i>
+      {{ hasGeneratedOnce ? 'Regenerate Content' : 'Generate Content' }}
+    </button>
+
+    <div class="action-buttons">
+      <button
+        type="button"
+        class="btn-copy"
+        *ngIf="generatedContent"
+        (click)="copyContent()">
+        <i class="bi bi-clipboard"></i>
+      </button>
+      <button
+        type="button"
+        class="btn-accept"
+        *ngIf="generatedContent"
+        [disabled]="isGenerating"
+        (click)="acceptContent()">
+        <i class="bi bi-check-lg"></i>
+        Accept
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<article class="job-card sj-card" (click)="openDetails()">
+  <div class="card-top">
+    <div class="company-logo">{{ initials }}</div>
+    <div class="top-actions">
+      <button type="button" class="icon-btn" (click)="onSave($event)" [class.active]="saved" title="Save">
+        <i class="bi" [class.bi-bookmark-fill]="saved" [class.bi-bookmark]="!saved"></i>
+      </button>
+      <button type="button" class="icon-btn" (click)="onShare($event)" title="Share">
+        <i class="bi bi-share"></i>
+      </button>
+      <span class="posted"><i class="bi bi-clock"></i> {{ postedLabel }}</span>
+    </div>
+  </div>
+
+  <h3 class="job-title">{{ job.title }}</h3>
+  <p class="company">{{ job.companyName || 'Company' }}</p>
+
+  <div class="meta-row">
+    <span class="sj-chip" *ngIf="job.location"><i class="bi bi-geo-alt"></i> {{ job.location }}</span>
+    <span class="sj-chip" *ngIf="job.workMode">{{ workModeLabels[job.workMode] }}</span>
+    <span class="sj-chip" *ngIf="job.contractType">{{ contractLabels[job.contractType] }}</span>
+    <span class="sj-chip salary" *ngIf="salaryLabel">{{ salaryLabel }}</span>
+  </div>
+
+  <div class="skills-row" *ngIf="job.requiredSkills?.length || job.technologies?.length">
+    <span class="skill" *ngFor="let s of (job.technologies || job.requiredSkills || []).slice(0, 5)">{{ s }}</span>
+  </div>
+
+  <div class="card-footer">
+    <div class="match-block" *ngIf="showMatch && match">
+      <div class="match-ring" [style.--pct]="match.overall + '%'">
+        <span>{{ match.overall }}%</span>
+      </div>
+      <div>
+        <strong>Match Score</strong>
+        <p>{{ match.label }}</p>
+      </div>
+    </div>
+    <button type="button" class="sj-btn-primary apply-btn" (click)="openDetails(); $event.stopPropagation()">
+      Apply Now
+    </button>
+  </div>
+</article>

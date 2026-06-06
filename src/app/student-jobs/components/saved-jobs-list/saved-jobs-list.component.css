@@ -1,0 +1,29 @@
+@import '../../styles/student-jobs.shared.css';
+
+.saved-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.text-btn {
+  border: none;
+  background: none;
+  color: var(--sj-muted);
+  cursor: pointer;
+}
+
+.empty {
+  color: var(--sj-muted);
+  text-align: center;
+  padding: 2rem;
+}

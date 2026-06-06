@@ -102,14 +102,31 @@
             <span class="label">Profile Attributes</span>
           </a>
         </li>
-        <li>
-          <a routerLink="/admin/jobs" routerLinkActive="active">
+        <li class="has-children" [class.expanded]="expandedMenus['jobs']">
+          <a class="menu-toggle" (click)="toggleMenu('jobs', $event)">
             <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
               <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
             </svg>
             <span class="label">Jobs</span>
+            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.rotated]="expandedMenus['jobs']">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
           </a>
+          <ul class="submenu" *ngIf="expandedMenus['jobs']">
+            <li>
+              <a routerLink="/admin/jobs/settings" routerLinkActive="active">
+                <span class="submenu-dot"></span>
+                <span class="label">Settings</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/admin/jobs/import" routerLinkActive="active">
+                <span class="submenu-dot"></span>
+                <span class="label">Import Jobs</span>
+              </a>
+            </li>
+          </ul>
         </li>
         <li>
           <a routerLink="/admin/communications" routerLinkActive="active">
@@ -159,12 +176,21 @@
           </a>
         </li>
         <li>
+          <a routerLink="/entreprise/jobs" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
+            <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <span class="label">Jobs</span>
+          </a>
+        </li>
+        <li>
           <a routerLink="/entreprise/verification" routerLinkActive="active">
             <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M9 12l2 2 4-4"></path>
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
             </svg>
-            <span class="label">Vérification</span>
+            <span class="label">Verification</span>
           </a>
         </li>
 
@@ -174,7 +200,7 @@
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
               <circle cx="12" cy="7" r="4"></circle>
             </svg>
-            <span class="label">Mon Profil</span>
+            <span class="label">My profil</span>
           </a>
         </li>
       </ul>

@@ -1,0 +1,18 @@
+<div class="insights" *ngIf="cvReview">
+  <div class="grid-3">
+    <div><h4>Skills</h4><span class="tag" *ngFor="let s of cvReview.skills">{{ s }}</span></div>
+    <div><h4>Strengths</h4><ul><li *ngFor="let s of cvReview.strengths">{{ s }}</li></ul></div>
+    <div><h4>Improve</h4><ul><li *ngFor="let w of cvReview.weaknesses">{{ w }}</li></ul></div>
+  </div>
+  <h4>Recommendations</h4>
+  <ul><li *ngFor="let r of cvReview.recommendations">{{ r }}</li></ul>
+</div>
+
+<div class="insights" *ngIf="career">
+  <div class="grid-2">
+    <div><h4>Suggested skills</h4><span class="tag" *ngFor="let s of career.skills">{{ s }}</span></div>
+    <div><h4>Certifications</h4><ul><li *ngFor="let c of career.certifications">{{ c }}</li></ul></div>
+    <div><h4>Projects</h4><ul><li *ngFor="let p of career.projects">{{ p }}</li></ul></div>
+    <div><h4>Learning paths</h4><ul><li *ngFor="let l of career.learningPaths">{{ l }}</li></ul></div>
+  </div>
+</div>
