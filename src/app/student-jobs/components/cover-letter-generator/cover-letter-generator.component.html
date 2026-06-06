@@ -1,0 +1,8 @@
+<label>Target job</label>
+<select [ngModel]="selectedJobId" (ngModelChange)="selectedJobIdChange.emit($event)">
+  <option [ngValue]="undefined">Select a job</option>
+  <option *ngFor="let j of jobs" [ngValue]="j.id">{{ j.title }} — {{ j.companyName }}</option>
+</select>
+<button type="button" class="sj-btn-primary" [disabled]="!selectedJobId" (click)="generate.emit()">
+  Generate cover letter
+</button>

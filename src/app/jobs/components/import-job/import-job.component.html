@@ -1,0 +1,64 @@
+<div class="import-job-page">
+  <h2>Import Job Offer</h2>
+
+  <div class="import-methods">
+    <button
+      type="button"
+      class="method-btn"
+      [class.active]="importMethod === 'URL'"
+      (click)="selectMethod('URL')">
+      <i class="bi bi-link-45deg"></i>
+      <span>URL</span>
+    </button>
+    <button
+      type="button"
+      class="method-btn"
+      [class.active]="importMethod === 'PDF'"
+      (click)="selectMethod('PDF')">
+      <i class="bi bi-file-pdf"></i>
+      <span>PDF</span>
+    </button>
+    <button
+      type="button"
+      class="method-btn"
+      [class.active]="importMethod === 'TEXT'"
+      (click)="selectMethod('TEXT')">
+      <i class="bi bi-file-text"></i>
+      <span>Text</span>
+    </button>
+  </div>
+
+  <div class="import-content">
+    <div *ngIf="importMethod === 'URL'" class="import-form">
+      <label>Job posting URL</label>
+      <input type="url" [(ngModel)]="url" placeholder="https://..." />
+    </div>
+
+    <div *ngIf="importMethod === 'PDF'" class="import-form">
+      <label>PDF file</label>
+      <input type="file" accept=".pdf" (change)="onFileSelected($event)" />
+      <p class="hint">PDF parsing is not supported yet. Use the Text tab to paste the job content.</p>
+    </div>
+
+    <div *ngIf="importMethod === 'TEXT'" class="import-form">
+      <label>Job posting text</label>
+      <textarea [(ngModel)]="rawText" rows="10" placeholder="Paste the job text here..."></textarea>
+    </div>
+
+    <div class="error-banner" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <button type="button" class="btn-primary" (click)="importJob()" [disabled]="isImporting">
+      {{ isImporting ? 'Importing...' : 'Import' }}
+    </button>
+  </div>
+
+  <div class="import-preview" *ngIf="importedData">
+    <h3>Imported preview</h3>
+    <p><strong>Title:</strong> {{ importedData.title }}</p>
+    <p *ngIf="importedData.location"><strong>Location:</strong> {{ importedData.location }}</p>
+    <p *ngIf="importedData.contractType"><strong>Contract:</strong> {{ importedData.contractType }}</p>
+    <p *ngIf="importedData.skills?.length"><strong>Skills:</strong> {{ importedData.skills.join(', ') }}</p>
+    <p class="preview-text">{{ importedData.description | slice:0:280 }}...</p>
+    <button type="button" class="btn-primary" (click)="useImportedData()">Use in Create Offer</button>
+  </div>
+</div>

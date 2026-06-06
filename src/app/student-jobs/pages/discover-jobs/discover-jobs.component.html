@@ -1,0 +1,67 @@
+<div class="sj-page discover-page">
+  <header class="sj-page-header">
+    <h1>Discover Jobs</h1>
+    <p>Find your next opportunity.</p>
+  </header>
+
+  <div class="search-panel sj-card">
+    <form [formGroup]="filterForm" (ngSubmit)="searchNow()">
+      <div class="search-row">
+        <i class="bi bi-search"></i>
+        <input type="text" formControlName="search" placeholder="Search by job title, company, or keyword..." />
+        <button type="submit" class="sj-btn-primary">Search</button>
+      </div>
+      <div class="filter-pills">
+        <button type="button" class="pill" (click)="showFilters = !showFilters">
+          <i class="bi bi-funnel"></i> Filters
+        </button>
+        <select formControlName="location" class="pill-select">
+          <option value="">Location</option>
+          <option value="Tunis">Tunis</option>
+          <option value="Remote">Remote</option>
+          <option value="Sfax">Sfax</option>
+        </select>
+        <select formControlName="workMode" class="pill-select">
+          <option value="">Work Mode</option>
+          <option *ngFor="let w of workModeOptions" [value]="w">{{ workModeLabel(w) }}</option>
+        </select>
+        <select formControlName="contractType" class="pill-select">
+          <option value="">Contract Type</option>
+          <option *ngFor="let c of contractOptions" [value]="c">{{ contractLabel(c) }}</option>
+        </select>
+        <select formControlName="sortBy" class="pill-select">
+          <option value="recent">Sort: Recent</option>
+          <option value="title">Sort: Title</option>
+          <option value="deadline">Sort: Deadline</option>
+        </select>
+      </div>
+      <div class="advanced-filters" *ngIf="showFilters">
+        <input type="text" formControlName="skills" placeholder="Skills (comma separated)" />
+        <input type="number" formControlName="salaryMin" placeholder="Min salary (TND)" />
+        <input type="text" formControlName="company" placeholder="Company name" />
+      </div>
+    </form>
+  </div>
+
+  <div class="results" *ngIf="loading">
+    <div class="sj-skeleton card-skel" *ngFor="let i of [1,2,3]"></div>
+  </div>
+
+  <div class="results" *ngIf="!loading">
+    <app-student-job-card
+      *ngFor="let job of jobs"
+      [job]="job"
+      [match]="getMatch(job)"
+      [saved]="isSaved(job.id)"
+      (saveToggle)="toggleSave(job)"
+      (share)="shareJob(job)">
+    </app-student-job-card>
+    <p class="empty" *ngIf="!jobs.length">No active job offers yet. Check back when enterprises publish posts.</p>
+  </div>
+
+  <div class="pagination" *ngIf="total > limit">
+    <button type="button" class="sj-btn-outline" [disabled]="page === 1" (click)="prevPage()">Previous</button>
+    <span>Page {{ page }} · {{ total }} jobs</span>
+    <button type="button" class="sj-btn-outline" [disabled]="page * limit >= total" (click)="nextPage()">Next</button>
+  </div>
+</div>

@@ -1,0 +1,10 @@
+<div class="rich-text-editor">
+  <textarea
+    [value]="value"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+    [placeholder]="placeholder"
+    [style.min-height]="minHeight"
+    class="editor-textarea">
+  </textarea>
+</div>

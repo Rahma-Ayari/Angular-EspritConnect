@@ -1,0 +1,84 @@
+@import '../../styles/student-jobs.shared.css';
+
+.match-card {
+  padding: 1.25rem;
+  background: linear-gradient(180deg, #fff5f5 0%, #ffffff 100%);
+}
+
+.overall {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.ring {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: conic-gradient(var(--sj-red) var(--pct), #f0f0f0 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring span {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--sj-red);
+}
+
+.overall h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+}
+
+.overall p {
+  margin: 0;
+  color: var(--sj-muted);
+  font-size: 0.85rem;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.35rem 0.75rem;
+  align-items: center;
+  margin-bottom: 0.65rem;
+  font-size: 0.85rem;
+}
+
+.bar-row label {
+  grid-column: 1 / -1;
+  color: var(--sj-muted);
+}
+
+.bar {
+  grid-column: 1;
+  height: 8px;
+  background: #eee;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: var(--sj-red);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.block {
+  width: 100%;
+  margin-top: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}

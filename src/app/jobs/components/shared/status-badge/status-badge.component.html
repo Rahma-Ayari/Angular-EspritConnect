@@ -1,0 +1,10 @@
+<span
+  class="status-badge"
+  [class.size-small]="size === 'small'"
+  [class.size-medium]="size === 'medium'"
+  [class.size-large]="size === 'large'"
+  [style.background-color]="color + '20'"
+  [style.color]="color"
+  [style.border-color]="color">
+  {{ label }}
+</span>

@@ -1,0 +1,266 @@
+<div class="homepage" [attr.lang]="lang">
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a routerLink="/" class="logo-link">
+        <img src="esprit-logo.png" alt="ESPRIT" class="logo-img" />
+      </a>
+
+      <nav class="main-nav" [attr.aria-label]="lang === 'fr' ? 'Navigation principale' : 'Main navigation'">
+        <a href="#home">{{ t.nav.home }}</a>
+        <a href="#about">{{ t.nav.about }}</a>
+        <a href="#contact">{{ t.nav.contact }}</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-switch" role="group" [attr.aria-label]="lang === 'fr' ? 'Langue' : 'Language'">
+          <button
+            type="button"
+            class="lang-option"
+            [class.active]="lang === 'en'"
+            (click)="setLanguage('en')"
+          >
+            EN
+          </button>
+          <button
+            type="button"
+            class="lang-option"
+            [class.active]="lang === 'fr'"
+            (click)="setLanguage('fr')"
+          >
+            FR
+          </button>
+        </div>
+        <a routerLink="/login" class="btn-login">
+          <i class="bi bi-box-arrow-in-right"></i>
+          {{ t.nav.login }}
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section id="home" class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-inner">
+      <div class="hero-content">
+        <h1 class="hero-title">
+          {{ t.hero.titleLine1 }}<br />
+          <span class="text-red">{{ t.hero.titleHighlight }}</span>
+        </h1>
+        <p class="hero-desc">{{ t.hero.desc }}</p>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat-card">
+          <span class="hero-stat-num">15,000+</span>
+          <span class="hero-stat-label">{{ t.hero.statStudents }}</span>
+        </div>
+        <div class="hero-stat-card">
+          <span class="hero-stat-num">60+</span>
+          <span class="hero-stat-label">{{ t.hero.statPrograms }}</span>
+        </div>
+        <div class="hero-stat-card">
+          <span class="hero-stat-num">120+</span>
+          <span class="hero-stat-label">{{ t.hero.statPartnerships }}</span>
+        </div>
+        <div class="hero-stat-card">
+          <span class="hero-stat-num">94%</span>
+          <span class="hero-stat-label">{{ t.hero.statEmployment }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <span>{{ t.hero.scroll }}</span>
+      <i class="bi bi-chevron-down"></i>
+    </div>
+  </section>
+
+  <section id="numbers" class="numbers-section">
+    <div class="container">
+      <span class="section-label">{{ t.numbers.label }}</span>
+      <h2 class="section-title">{{ t.numbers.title }}</h2>
+
+      <div class="stats-grid">
+        <article class="stat-card" *ngFor="let stat of statTargets; let i = index">
+          <div class="stat-icon-wrap">
+            <i class="bi" [ngClass]="stat.icon"></i>
+          </div>
+          <p class="stat-value" #statValue>{{ statDisplays[i] }}</p>
+          <h3 class="stat-title">{{ t.numbers.stats[i].title }}</h3>
+          <p class="stat-subtitle">{{ t.numbers.stats[i].subtitle }}</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="why-section">
+    <div class="container">
+      <div class="why-header">
+        <div class="why-header-left">
+          <span class="section-badge">{{ t.why.badge }}</span>
+          <h2 class="section-title light">
+            {{ t.why.titleBefore }}<span class="text-red">{{ t.why.titleHighlight }}</span>{{ t.why.titleAfter }}
+          </h2>
+        </div>
+        <p class="why-intro">{{ t.why.intro }}</p>
+      </div>
+
+      <div class="features-panel">
+        <article class="feature-card" *ngFor="let feature of t.why.features; let i = index">
+          <div class="feature-icon">
+            <i class="bi" [ngClass]="featureIcons[i]"></i>
+          </div>
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.text }}</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="stories-section">
+    <div class="container stories-container">
+      <span class="section-label center">{{ t.stories.label }}</span>
+      <h2 class="section-title center">{{ t.stories.title }}</h2>
+
+      <div class="testimonial-card">
+        <div class="testimonial-avatar">
+          <span>{{ t.testimonials[activeTestimonial].initials }}</span>
+        </div>
+        <div class="testimonial-body">
+          <div class="stars">
+            <i class="bi bi-star-fill" *ngFor="let s of [1,2,3,4,5]"></i>
+          </div>
+          <blockquote>"{{ t.testimonials[activeTestimonial].quote }}"</blockquote>
+          <div class="quote-mark"><i class="bi bi-quote"></i></div>
+          <div class="testimonial-author">
+            <strong>{{ t.testimonials[activeTestimonial].name }}</strong>
+            <span class="author-role">{{ t.testimonials[activeTestimonial].role }}</span>
+            <span class="author-edu">{{ t.testimonials[activeTestimonial].education }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-nav">
+        <div class="testimonial-thumbs">
+          <button
+            type="button"
+            *ngFor="let testimonial of t.testimonials; let i = index"
+            class="thumb"
+            [class.active]="i === activeTestimonial"
+            (click)="selectTestimonial(i)"
+            [attr.aria-label]="testimonial.name"
+          >
+            <span>{{ testimonial.initials }}</span>
+          </button>
+        </div>
+        <div class="testimonial-arrows">
+          <button type="button" (click)="prevTestimonial()" aria-label="Previous">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <button type="button" (click)="nextTestimonial()" aria-label="Next">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="partners-section">
+    <div class="container">
+      <span class="section-label center">{{ t.partners.label }}</span>
+      <h2 class="section-title center">{{ t.partners.title }}</h2>
+      <p class="partners-desc">{{ t.partners.desc }}</p>
+
+      <div class="partners-divider">
+        <span>{{ t.partners.corporate }}</span>
+      </div>
+      <div class="partners-grid">
+        <div class="partner-card" *ngFor="let name of corporatePartners">{{ name }}</div>
+      </div>
+
+      <div class="partners-divider">
+        <span>{{ t.partners.academic }}</span>
+      </div>
+      <div class="partners-grid">
+        <div class="partner-card" *ngFor="let name of academicPartners">{{ name }}</div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact" class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-col footer-about">
+        <img src="esprit-logo.png" alt="ESPRIT" class="footer-logo" />
+        <p>{{ t.footer.about }}</p>
+        <ul class="contact-list">
+          <li><i class="bi bi-geo-alt-fill"></i> Ariana 2083, Tunis, Tunisia</li>
+          <li><i class="bi bi-telephone-fill"></i> +216 71 857 100</li>
+          <li><i class="bi bi-envelope-fill"></i> contact&#64;esprit.tn</li>
+        </ul>
+        <div class="social-links">
+          <a
+            href="https://www.facebook.com/esprit.tn"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook"
+          ><i class="bi bi-facebook"></i></a>
+          <a
+            href="https://www.instagram.com/esprit_ingenieur/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+          ><i class="bi bi-instagram"></i></a>
+          <a
+            href="https://www.linkedin.com/school/ecole-sup%C3%A9rieure-priv%C3%A9e-d'ing%C3%A9nierie-et-de-technologies---esprit/posts/?feedView=all"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+          ><i class="bi bi-linkedin"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>{{ t.footer.quickLinks }}</h4>
+        <ul>
+          <li><a href="#about">{{ t.footer.links.about }}</a></li>
+          <li><a href="#">{{ t.footer.links.research }}</a></li>
+          <li><a href="#">{{ t.footer.links.alumni }}</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>{{ t.footer.resources }}</h4>
+        <ul>
+          <li><a href="#">{{ t.footer.links.calendar }}</a></li>
+          <li><a routerLink="/login">{{ t.footer.links.portal }}</a></li>
+          <li><a href="#">{{ t.footer.links.library }}</a></li>
+          <li><a href="#">{{ t.footer.links.career }}</a></li>
+          <li><a href="#">{{ t.footer.links.international }}</a></li>
+          <li><a href="#">{{ t.footer.links.it }}</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>{{ t.footer.newsletter }}</h4>
+        <p>{{ t.footer.newsletterDesc }}</p>
+        <form class="newsletter-form" (submit)="$event.preventDefault()">
+          <input type="email" [placeholder]="t.footer.emailPlaceholder" aria-label="Email" />
+          <button type="submit">{{ t.footer.subscribe }} <i class="bi bi-arrow-right"></i></button>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <p>{{ t.footer.copyright }}</p>
+        <div class="footer-legal">
+          <a href="#">{{ t.footer.privacy }}</a>
+          <a href="#">{{ t.footer.terms }}</a>
+          <a href="#">{{ t.footer.accessibility }}</a>
+          <a href="#">{{ t.footer.sitemap }}</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
