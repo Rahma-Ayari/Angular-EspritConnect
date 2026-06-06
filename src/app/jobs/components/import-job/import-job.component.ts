@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { JobsService } from '../../services/jobs.service';
 import { ImportJobResponse } from '../../models/job.model';
+import { navigateJobs } from '../../jobs-router.util';
 
 @Component({
   selector: 'app-import-job',
@@ -21,7 +22,8 @@ export class ImportJobComponent {
 
   constructor(
     private jobsService: JobsService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   selectMethod(method: 'URL' | 'PDF' | 'TEXT'): void {
@@ -62,7 +64,7 @@ export class ImportJobComponent {
   useImportedData(): void {
     if (!this.importedData) return;
 
-    this.router.navigate(['/dashboard/jobs/create'], {
+    navigateJobs(this.router, this.route, ['create'], {
       state: {
         importedJob: this.importedData
       }

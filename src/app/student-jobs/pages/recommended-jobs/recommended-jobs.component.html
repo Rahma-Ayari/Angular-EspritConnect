@@ -1,0 +1,56 @@
+<div class="sj-page">
+  <header class="sj-page-header">
+    <h1>Recommended For You</h1>
+    <p>Personalized opportunities powered by your profile and AI matching.</p>
+  </header>
+
+  <div *ngIf="loading" class="sj-skeleton block-skel"></div>
+
+  <ng-container *ngIf="!loading">
+    <section class="block">
+      <h2>High Match Jobs</h2>
+      <div class="rec-grid">
+        <article class="rec-card sj-card" *ngFor="let j of highMatch" [routerLink]="['/dashboard/jobs', j.id]">
+          <span class="score">{{ j.matchScore }}%</span>
+          <h3>{{ j.title }}</h3>
+          <p>{{ j.companyName }}</p>
+          <small class="reason"><i class="bi bi-stars"></i> {{ j.reason }}</small>
+        </article>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Recommended Jobs</h2>
+      <div class="rec-grid">
+        <article class="rec-card sj-card" *ngFor="let j of recommended" [routerLink]="['/dashboard/jobs', j.id]">
+          <h3>{{ j.title }}</h3>
+          <p>{{ j.companyName }} · {{ j.location }}</p>
+          <small class="reason">{{ j.reason }}</small>
+        </article>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Trending Jobs</h2>
+      <div class="rec-grid">
+        <article class="rec-card sj-card" *ngFor="let j of trending" [routerLink]="['/dashboard/jobs', j.id]">
+          <h3>{{ j.title }}</h3>
+          <p>{{ j.applicationCount || 0 }} applicants</p>
+          <small class="reason">{{ j.reason }}</small>
+        </article>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Internship Suggestions</h2>
+      <div class="rec-grid">
+        <article class="rec-card sj-card" *ngFor="let j of internships" [routerLink]="['/dashboard/jobs', j.id]">
+          <h3>{{ j.title }}</h3>
+          <p>{{ j.companyName }}</p>
+          <small class="reason">{{ j.reason }}</small>
+        </article>
+        <p *ngIf="!internships.length" class="muted">No internships published yet.</p>
+      </div>
+    </section>
+  </ng-container>
+</div>

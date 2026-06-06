@@ -1,0 +1,99 @@
+<div class="sj-page details-page" *ngIf="!loading && job">
+  <button type="button" class="back-link" routerLink="/dashboard/jobs/discover">
+    <i class="bi bi-arrow-left"></i> Back to jobs
+  </button>
+
+  <div class="details-grid">
+    <div class="main-col">
+      <div class="hero sj-card">
+        <div class="hero-top">
+          <div class="logo">{{ initials }}</div>
+          <div>
+            <h1>{{ job.title }}</h1>
+            <p class="company"><i class="bi bi-building"></i> {{ job.companyName || 'Company' }}</p>
+            <div class="meta-row">
+              <span class="sj-chip" *ngIf="job.location"><i class="bi bi-geo-alt"></i> {{ job.location }}</span>
+              <span class="sj-chip" *ngIf="job.workMode">{{ workModeLabels[job.workMode] }}</span>
+              <span class="sj-chip" *ngIf="job.contractType">{{ contractLabels[job.contractType] }}</span>
+              <span class="sj-chip salary" *ngIf="job.salaryMin">{{ job.salaryMin }}-{{ job.salaryMax || '—' }} TND</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="sj-card section">
+        <h2>Job Description</h2>
+        <p class="body-text">{{ job.description }}</p>
+      </section>
+
+      <section class="sj-card section" *ngIf="job.responsibilities">
+        <h2>Responsibilities</h2>
+        <p class="body-text">{{ job.responsibilities }}</p>
+      </section>
+
+      <section class="sj-card section">
+        <h2>Requirements</h2>
+        <ul class="check-list">
+          <li *ngFor="let r of requirementsList"><i class="bi bi-check-circle-fill"></i> {{ r }}</li>
+        </ul>
+        <p class="body-text" *ngIf="!requirementsList.length">{{ job.requirements }}</p>
+      </section>
+
+      <section class="sj-card section" *ngIf="job.requiredSkills?.length">
+        <h2>Required Skills</h2>
+        <div class="skills">
+          <span class="skill" *ngFor="let s of job.requiredSkills">{{ s }}</span>
+          <span class="skill" *ngFor="let s of job.technologies">{{ s }}</span>
+        </div>
+      </section>
+
+      <section class="sj-card section" *ngIf="job.benefits">
+        <h2>Benefits</h2>
+        <div class="benefits-grid">
+          <div *ngFor="let b of benefitsList"><i class="bi bi-star"></i> {{ b }}</div>
+        </div>
+      </section>
+
+      <section class="sj-card section company-info">
+        <h2>Company Information</h2>
+        <p><strong>{{ job.companyName }}</strong></p>
+        <p class="muted">Published by an ESPRIT Connect enterprise partner.</p>
+      </section>
+    </div>
+
+    <aside class="side-col">
+      <app-match-score-card
+        *ngIf="match"
+        [match]="match"
+        [applying]="applying"
+        [saved]="saved"
+        (apply)="apply()"
+        (save)="toggleSave()"
+        (share)="share()">
+      </app-match-score-card>
+
+      <div class="apply-box sj-card" *ngIf="!applySuccess">
+        <label>Cover letter (optional)</label>
+        <textarea [(ngModel)]="coverLetter" rows="4" placeholder="Why are you a great fit?"></textarea>
+        <p class="error" *ngIf="applyError">{{ applyError }}</p>
+      </div>
+      <div class="success sj-card" *ngIf="applySuccess">
+        <i class="bi bi-check-circle"></i>
+        <p>Application submitted successfully!</p>
+        <a routerLink="/dashboard/jobs/applications">View my applications</a>
+      </div>
+
+      <div class="similar sj-card" *ngIf="similar.length">
+        <h3>Similar Jobs</h3>
+        <button type="button" class="similar-item" *ngFor="let s of similar" (click)="goToJob(s.id)">
+          <strong>{{ s.title }}</strong>
+          <span>{{ s.companyName }}</span>
+        </button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div *ngIf="loading" class="loading-state">
+  <div class="sj-skeleton" style="height: 320px"></div>
+</div>

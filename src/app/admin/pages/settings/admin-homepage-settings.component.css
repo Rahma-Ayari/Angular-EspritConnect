@@ -1,0 +1,15 @@
+.admin-page {
+  padding: 0;
+}
+
+.page-head h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.page-head p {
+  margin: 0;
+  color: #6b7280;
+}

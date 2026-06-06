@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 
 export interface GeneralSettings {
   alumniDepartmentEmail: string;
@@ -22,7 +23,7 @@ export interface GeneralSettings {
 
 @Injectable({ providedIn: 'root' })
 export class GeneralSettingsService {
-  private readonly API = '/espritconnect/api/admin/settings/general';
+  private readonly API = `${environment.apiUrl}/admin/settings/general`;
 
   constructor(private http: HttpClient) {}
 

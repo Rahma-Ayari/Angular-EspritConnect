@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError, timeout, catchError } from 'rxjs';
+import { environment } from '../environments/environment';
 
 export type RegionalDateFormat = 'DD_MM_YYYY' | 'MM_DD_YYYY' | 'YYYY_MM_DD';
 export type RegionalTimeFormat = 'HOUR_12' | 'HOUR_24';
@@ -18,7 +19,7 @@ export interface RegionalSettings {
 
 @Injectable({ providedIn: 'root' })
 export class RegionalSettingsService {
-  private readonly API = '/espritconnect/api/admin/settings/regional';
+  private readonly API = `${environment.apiUrl}/admin/settings/regional`;
   /** Avoid hanging UI when the backend is down or unreachable through the proxy. */
   private readonly requestMs = 20000;
 

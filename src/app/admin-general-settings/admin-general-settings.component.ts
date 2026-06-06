@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { GeneralSettings, GeneralSettingsService } from '../general-settings.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-admin-general-settings',
@@ -39,8 +40,14 @@ export class AdminGeneralSettingsComponent implements OnInit {
         this.settings = { ...s };
         this.loading = false;
       },
-      error: () => {
-        this.error = 'Impossible de charger les paramètres.';
+      error: (err: { status?: number }) => {
+        if (err?.status === 0) {
+          this.error = `Impossible de joindre l'API (${environment.backendBaseUrl}). Démarrez Spring Boot sur le port 8089.`;
+        } else if (err?.status === 500) {
+          this.error = 'Erreur serveur. Vérifiez les logs Spring et MySQL (base EspritConnecttest).';
+        } else {
+          this.error = 'Impossible de charger les paramètres.';
+        }
         this.loading = false;
       }
     });

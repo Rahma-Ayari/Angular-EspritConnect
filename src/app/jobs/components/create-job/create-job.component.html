@@ -305,6 +305,10 @@
       <i class="bi bi-arrow-right"></i>
     </button>
 
+    <p *ngIf="currentStep === 4 && !isAllFormsValid()" class="form-hint-warn">
+      Complete all required fields (steps 1–4) to publish. After import, review each step or click Next to validate.
+    </p>
+
     <button
       *ngIf="currentStep === 4"
       type="button"

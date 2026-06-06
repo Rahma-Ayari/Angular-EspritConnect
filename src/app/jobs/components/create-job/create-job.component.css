@@ -338,6 +338,13 @@ textarea.form-control {
   cursor: not-allowed;
 }
 
+.form-hint-warn {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  color: #B45309;
+  max-width: 420px;
+}
+
 .btn-secondary {
   background: white;
   color: #374151;

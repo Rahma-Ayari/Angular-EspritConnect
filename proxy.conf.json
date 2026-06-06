@@ -1,6 +1,6 @@
 {
   "/espritconnect": {
-    "target": "http://127.0.0.1:8087",
+    "target": "http://127.0.0.1:8089",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "silent"

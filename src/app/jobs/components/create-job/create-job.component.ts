@@ -1,14 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, takeUntil, debounceTime } from 'rxjs';
+import { Subject, takeUntil, debounceTime, switchMap } from 'rxjs';
 import { JobsService } from '../../services/jobs.service';
 import { AuthService } from '../../../auth.service';
+import { EntrepriseContextService } from '../../../services/entreprise-context.service';
+import { navigateJobs } from '../../jobs-router.util';
 import {
   JobOffer,
   ContractType,
   ExperienceLevel,
   WorkMode,
+  ImportJobResponse,
   CONTRACT_TYPE_LABELS,
   EXPERIENCE_LEVEL_LABELS,
   WORK_MODE_LABELS,
@@ -75,7 +78,8 @@ export class CreateJobComponent implements OnInit, OnDestroy {
     private jobsService: JobsService,
     private router: Router,
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private entrepriseContext: EntrepriseContextService
   ) {}
 
   ngOnInit(): void {
@@ -86,29 +90,160 @@ export class CreateJobComponent implements OnInit, OnDestroy {
   }
 
   private applyImportedJobFromNavigation(): void {
-    const importedJob = history.state?.importedJob;
+    const importedJob = history.state?.importedJob as ImportJobResponse | undefined;
     if (!importedJob) return;
 
-    if (importedJob.title) {
-      this.step1Form.patchValue({ title: importedJob.title });
-    }
-    if (importedJob.contractType) {
-      this.step1Form.patchValue({ contractType: importedJob.contractType });
-    }
-    if (importedJob.location) {
-      this.step2Form.patchValue({ location: importedJob.location });
-    }
-    if (importedJob.skills?.length) {
-      this.step3Form.patchValue({ requiredSkills: importedJob.skills });
-    }
-    if (importedJob.description) {
-      this.step4Form.patchValue({ description: importedJob.description });
-    }
-    if (importedJob.requirements) {
-      this.step4Form.patchValue({ requirements: importedJob.requirements });
+    const description = (importedJob.description || '').trim();
+    if (this.isWeakLinkedInImport(description, importedJob.title)) {
+      this.error =
+        'Import only returned the page title, not the full job description. ' +
+        'Copy the job text from LinkedIn and use TEXT import.';
+      return;
     }
 
+    const skills = importedJob.skills?.length ? importedJob.skills : ['Communication'];
+    const step4 = this.buildStep4FromImport(importedJob, description);
+
+    this.step1Form.patchValue({
+      title: importedJob.title || 'Imported job offer',
+      contractType: this.normalizeContractType(importedJob.contractType),
+      department: this.guessDepartment(description),
+      experienceLevel: this.guessExperienceLevel(description),
+      numberOfPositions: 1
+    });
+
+    this.step2Form.patchValue({
+      workMode: 'HYBRID',
+      location: importedJob.location || 'Tunis, Tunisia',
+      deadline: this.defaultDeadlineIso()
+    });
+
+    this.step3Form.patchValue({
+      requiredSkills: skills,
+      technologies: skills.slice(0, 5),
+      languages: ['English']
+    });
+
+    this.step4Form.patchValue(step4);
+
+    [this.step1Form, this.step2Form, this.step3Form, this.step4Form].forEach((f) => f.updateValueAndValidity());
     this.currentStep = 4;
+  }
+
+  private buildStep4FromImport(importedJob: ImportJobResponse, description: string): {
+    description: string;
+    responsibilities: string;
+    requirements: string;
+    benefits: string;
+  } {
+    let desc = description;
+    let responsibilities = (importedJob.responsibilities || '').trim();
+    let requirements = (importedJob.requirements || '').trim();
+
+    if (!responsibilities) {
+      responsibilities = this.extractSection(description, [
+        'participation', 'conception', 'développement', 'developpement',
+        'what you', 'your mission', 'what you’ll', 'missions', 'responsabilit'
+      ]);
+    }
+
+    if (this.isDuplicateText(responsibilities, desc)) {
+      responsibilities = '';
+    }
+    if (this.isDuplicateText(requirements, desc) || this.isDuplicateText(requirements, responsibilities)) {
+      requirements = '';
+    }
+
+    if (!requirements) {
+      requirements = this.extractSection(description, [
+        'profil recherché', 'profil requis', 'qualifications', 'exigences',
+        'minimum', 'ans d\'expérience', 'bac +', 'requirements'
+      ]);
+    }
+    if (this.isDuplicateText(requirements, desc)) {
+      requirements = '';
+    }
+
+    return {
+      description: desc.length >= 50 ? desc : `${desc} (imported)`,
+      responsibilities: responsibilities.length >= 10
+        ? responsibilities.substring(0, 3000)
+        : 'List the main missions and day-to-day responsibilities for this role.',
+      requirements: requirements.length >= 10
+        ? requirements.substring(0, 3000)
+        : 'List required skills, experience, and qualifications for candidates.',
+      benefits: ''
+    };
+  }
+
+  private isDuplicateText(a: string, b: string): boolean {
+    if (!a?.trim() || !b?.trim()) {
+      return false;
+    }
+    const na = a.trim().toLowerCase().replace(/\s+/g, ' ');
+    const nb = b.trim().toLowerCase().replace(/\s+/g, ' ');
+    if (na === nb) {
+      return true;
+    }
+    const len = Math.min(160, na.length, nb.length);
+    return len > 40 && na.substring(0, len) === nb.substring(0, len);
+  }
+
+  private normalizeContractType(value?: string): ContractType {
+    const allowed: ContractType[] = ['STAGE', 'EMPLOI', 'APPRENTISSAGE', 'PFE'];
+    if (value && allowed.includes(value as ContractType)) {
+      return value as ContractType;
+    }
+    return 'EMPLOI';
+  }
+
+  private guessDepartment(text: string): string {
+    const lower = text.toLowerCase();
+    if (lower.includes('engineering') || lower.includes('developer') || lower.includes('software')) {
+      return 'Engineering';
+    }
+    if (lower.includes('marketing')) return 'Marketing';
+    if (lower.includes('design') || lower.includes('ux')) return 'Design';
+    return 'General';
+  }
+
+  private guessExperienceLevel(text: string): ExperienceLevel {
+    const lower = text.toLowerCase();
+    if (lower.includes('senior') || lower.includes('lead')) return 'SENIOR';
+    if (lower.includes('intermediate') || lower.includes('mid')) return 'INTERMEDIATE';
+    if (lower.includes('expert') || lower.includes('principal')) return 'EXPERT';
+    return 'JUNIOR';
+  }
+
+  private defaultDeadlineIso(): string {
+    const d = new Date();
+    d.setDate(d.getDate() + 30);
+    return d.toISOString().slice(0, 10);
+  }
+
+  private isWeakLinkedInImport(description: string, title?: string): boolean {
+    const d = description.trim();
+    if (d.length < 120) {
+      return true;
+    }
+    if (/\|\s*LinkedIn\s*$/i.test(d) && d.length < 300) {
+      return true;
+    }
+    if (title && d === title.trim()) {
+      return true;
+    }
+    return false;
+  }
+
+  private extractSection(text: string, markers: string[]): string {
+    const lower = text.toLowerCase();
+    for (const marker of markers) {
+      const idx = lower.indexOf(marker);
+      if (idx >= 0) {
+        return text.substring(idx).trim();
+      }
+    }
+    return '';
   }
 
   ngOnDestroy(): void {
@@ -313,19 +448,17 @@ export class CreateJobComponent implements OnInit, OnDestroy {
     this.isSaving = true;
     const jobData: any = this.collectFormData();
     jobData.status = 'DRAFT';
-    
-    // Get current user and add entrepriseId
-    const currentUser = this.authService.getCurrentUser();
-    if (currentUser) {
-      jobData.entrepriseId = parseInt(currentUser.userId);
-    }
 
-    const saveObservable = this.isEditMode && this.jobId
-      ? this.jobsService.updateDraft(this.jobId, jobData)
-      : this.jobsService.saveDraft(jobData);
-
-    saveObservable
-      .pipe(takeUntil(this.destroy$))
+    this.entrepriseContext.getEntrepriseId()
+      .pipe(
+        switchMap((entrepriseId) => {
+          jobData.entrepriseId = entrepriseId;
+          return this.isEditMode && this.jobId
+            ? this.jobsService.updateDraft(this.jobId, jobData)
+            : this.jobsService.saveDraft(jobData);
+        }),
+        takeUntil(this.destroy$)
+      )
       .subscribe({
         next: (job) => {
           if (!this.isEditMode) {
@@ -352,27 +485,28 @@ export class CreateJobComponent implements OnInit, OnDestroy {
     this.error = '';
     const jobData: any = this.collectFormData();
     jobData.status = 'ACTIVE';
-    
-    // Get current user and add entrepriseId
-    const currentUser = this.authService.getCurrentUser();
-    if (currentUser) {
-      // Use the user's userId as entrepriseId
-      jobData.entrepriseId = parseInt(currentUser.userId);
-    }
 
-    const publishObservable = this.isEditMode && this.jobId
-      ? this.jobsService.updateJob(this.jobId, jobData)
-      : this.jobsService.createJob(jobData);
-
-    publishObservable
-      .pipe(takeUntil(this.destroy$))
+    this.entrepriseContext.getEntrepriseId()
+      .pipe(
+        switchMap((entrepriseId) => {
+          jobData.entrepriseId = entrepriseId;
+          return this.isEditMode && this.jobId
+            ? this.jobsService.updateJob(this.jobId, jobData)
+            : this.jobsService.createJob(jobData);
+        }),
+        takeUntil(this.destroy$)
+      )
       .subscribe({
         next: () => {
-          this.router.navigate(['/dashboard/jobs/all']);
+          navigateJobs(this.router, this.route, ['all']);
         },
         error: (err) => {
           console.error('Error publishing job:', err);
-          this.error = err.error?.message || 'Failed to publish job offer';
+          this.error =
+            err?.message ||
+            err.error?.message ||
+            err.error?.error ||
+            'Failed to publish job offer. Sign in with an enterprise account and try again.';
           this.isSubmitting = false;
         }
       });
@@ -396,7 +530,7 @@ export class CreateJobComponent implements OnInit, OnDestroy {
 
   cancel(): void {
     if (confirm('Are you sure you want to cancel? Unsaved changes will be lost.')) {
-      this.router.navigate(['/dashboard/jobs/all']);
+      navigateJobs(this.router, this.route, ['all']);
     }
   }
 

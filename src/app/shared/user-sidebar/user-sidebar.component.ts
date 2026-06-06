@@ -14,11 +14,11 @@ export class UserSidebarComponent implements OnInit {
   @Output() toggleSidebar = new EventEmitter<void>();
   navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'bi-grid', route: '/dashboard' },
-    { id: 'profile', label: 'Mon Profil', icon: 'bi-person', route: '/profile' },
-    { id: 'opportunities', label: 'Opportunités', icon: 'bi-briefcase', route: '/opportunities' },
-    { id: 'events', label: 'Événements', icon: 'bi-calendar-event', route: '/events' },
+    { id: 'profile', label: 'My Profile', icon: 'bi-person', route: '/profile' },
+    { id: 'jobs', label: 'Jobs', icon: 'bi-briefcase', route: '/dashboard/jobs' },
+    { id: 'events', label: 'Events', icon: 'bi-calendar-event', route: '/events' },
     { id: 'messages', label: 'Messages', icon: 'bi-chat-dots', route: '/messages' },
-    { id: 'settings', label: 'Paramètres', icon: 'bi-gear', route: '/settings' }
+    { id: 'settings', label: 'Settings', icon: 'bi-gear', route: '/settings' }
   ];
 
   constructor(
@@ -66,8 +66,8 @@ export class UserSidebarComponent implements OnInit {
   updateActiveNav(url: string): void {
     if (url.includes('/profile')) {
       this.activeNav = 'profile';
-    } else if (url.includes('/opportunities')) {
-      this.activeNav = 'opportunities';
+    } else if (url.includes('/dashboard/jobs') || url.includes('/opportunities')) {
+      this.activeNav = 'jobs';
     } else if (url.includes('/events')) {
       this.activeNav = 'events';
     } else if (url.includes('/messages')) {

@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { JobsService } from '../../services/jobs.service';
+import { navigateJobs } from '../../jobs-router.util';
 import {
   JobOffer,
   JobFilter,
@@ -56,7 +57,8 @@ export class AllJobsComponent implements OnInit, OnDestroy {
 
   constructor(
     private jobsService: JobsService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -201,11 +203,11 @@ export class AllJobsComponent implements OnInit, OnDestroy {
 
   // Navigation
   createJob(): void {
-    this.router.navigate(['/dashboard/jobs/create']);
+    navigateJobs(this.router, this.route, ['create']);
   }
 
   editJob(id: number): void {
-    this.router.navigate(['/dashboard/jobs/edit', id]);
+    navigateJobs(this.router, this.route, ['edit', id]);
   }
 
   viewJob(id: number): void {
@@ -342,6 +344,6 @@ export class AllJobsComponent implements OnInit, OnDestroy {
   }
 
   navigateToImport(): void {
-    this.router.navigate(['/dashboard/jobs/import']);
+    navigateJobs(this.router, this.route, ['import']);
   }
 }

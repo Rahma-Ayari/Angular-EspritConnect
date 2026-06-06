@@ -1,9 +1,10 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, takeUntil, switchMap } from 'rxjs';
 import { JobAIService } from '../../services/job-ai.service';
 import { JobsService } from '../../services/jobs.service';
-import { AuthService } from '../../../auth.service';
+import { EntrepriseContextService } from '../../../services/entreprise-context.service';
+import { navigateJobs } from '../../jobs-router.util';
 import {
   AIGenerateRequest,
   AIGenerateResponse,
@@ -56,8 +57,9 @@ export class AiGeneratorComponent implements OnDestroy {
   constructor(
     private aiService: JobAIService,
     private jobsService: JobsService,
-    private authService: AuthService,
-    private router: Router
+    private entrepriseContext: EntrepriseContextService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnDestroy(): void {
@@ -128,12 +130,6 @@ export class AiGeneratorComponent implements OnDestroy {
   acceptAndSave(): void {
     if (!this.generatedContent || this.isSaving) return;
 
-    const currentUser = this.authService.getCurrentUser();
-    if (!currentUser) {
-      this.errorMessage = 'You must be logged in to save an offer.';
-      return;
-    }
-
     const deadline = new Date();
     deadline.setDate(deadline.getDate() + 30);
 
@@ -145,7 +141,7 @@ export class AiGeneratorComponent implements OnDestroy {
     this.isSaving = true;
     this.errorMessage = '';
 
-    this.jobsService.createJob({
+    const payload = {
       title: jobTitle,
       contractType: this.contractType,
       department: 'General',
@@ -161,13 +157,20 @@ export class AiGeneratorComponent implements OnDestroy {
       responsibilities: this.generatedContent.responsibilities,
       requirements: this.generatedContent.requirements,
       benefits: this.generatedContent.benefits || '',
-      status: 'ACTIVE',
-      entrepriseId: parseInt(currentUser.userId, 10)
-    } as any).pipe(takeUntil(this.destroy$)).subscribe({
+      status: 'ACTIVE'
+    } as any;
+
+    this.entrepriseContext.getEntrepriseId().pipe(
+      switchMap((entrepriseId) => {
+        payload.entrepriseId = entrepriseId;
+        return this.jobsService.createJob(payload);
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe({
       next: () => {
         this.isSaving = false;
         this.successMessage = 'Job offer saved successfully.';
-        setTimeout(() => this.router.navigate(['/dashboard/jobs/all']), 800);
+        setTimeout(() => navigateJobs(this.router, this.route, ['all']), 800);
       },
       error: (error) => {
         this.isSaving = false;
@@ -177,7 +180,7 @@ export class AiGeneratorComponent implements OnDestroy {
   }
 
   goBack(): void {
-    this.router.navigate(['/dashboard/jobs/all']);
+    navigateJobs(this.router, this.route, ['all']);
   }
 
   private handleGenerationSuccess(response: AIGenerateResponse): void {

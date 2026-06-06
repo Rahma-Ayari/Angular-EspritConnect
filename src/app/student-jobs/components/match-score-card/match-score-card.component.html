@@ -1,0 +1,38 @@
+<div class="match-card sj-card">
+  <div class="overall">
+    <div class="ring" [style.--pct]="match.overall + '%'">
+      <span>{{ match.overall }}%</span>
+    </div>
+    <div>
+      <h3>Your Match Score</h3>
+      <p>{{ match.label }} for your profile</p>
+    </div>
+  </div>
+
+  <div class="bar-row">
+    <label>Skills Match</label>
+    <div class="bar"><div class="fill" [style.width.%]="match.skills"></div></div>
+    <span>{{ match.skills }}%</span>
+  </div>
+  <div class="bar-row">
+    <label>Experience Match</label>
+    <div class="bar"><div class="fill" [style.width.%]="match.experience"></div></div>
+    <span>{{ match.experience }}%</span>
+  </div>
+  <div class="bar-row">
+    <label>Education Match</label>
+    <div class="bar"><div class="fill" [style.width.%]="match.education"></div></div>
+    <span>{{ match.education }}%</span>
+  </div>
+
+  <button type="button" class="sj-btn-primary block" [disabled]="applying" (click)="apply.emit()">
+    {{ applying ? 'Applying...' : 'Apply Now' }}
+  </button>
+  <button type="button" class="sj-btn-outline block" (click)="save.emit()">
+    <i class="bi" [class.bi-bookmark-fill]="saved" [class.bi-bookmark]="!saved"></i>
+    {{ saved ? 'Saved' : 'Save Job' }}
+  </button>
+  <button type="button" class="sj-btn-outline block" (click)="share.emit()">
+    <i class="bi bi-share"></i> Share
+  </button>
+</div>

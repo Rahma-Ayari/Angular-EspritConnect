@@ -5,6 +5,7 @@ import {
   RegistrationSettings,
   RegistrationSettingsService
 } from '../registration-settings.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-admin-registration-settings',
@@ -130,15 +131,15 @@ export class AdminRegistrationSettingsComponent implements OnInit {
   private describeLoadError(err: unknown): string {
     if (err instanceof Error && err.message === 'TIMEOUT') {
       return (
-        'The server did not answer in time (20s). Is Spring Boot running on port 8087 with MySQL, ' +
+        'The server did not answer in time (20s). Is Spring Boot running on port 8089 with MySQL, ' +
         'and are you using ng serve with the proxy?'
       );
     }
     const http = err as { status?: number };
     if (http?.status === 0) {
       return (
-        'Cannot reach the API (network). Start the backend on http://localhost:8087/espritconnect ' +
-        'and use ng serve so requests are proxied from port 4200.'
+        `Cannot reach the API (network). Start the backend on ${environment.backendBaseUrl} ` +
+        '(see server.port in application.properties).'
       );
     }
     if (http?.status === 404) {

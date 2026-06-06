@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { navigateJobs } from '../../jobs-router.util';
 
 @Component({
   selector: 'app-jobs-layout',
@@ -7,15 +8,18 @@ import { Router } from '@angular/router';
   styleUrls: ['./jobs-layout.component.css']
 })
 export class JobsLayoutComponent {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   /** Header + action cards only on the main job offers list */
   get showOverview(): boolean {
     const url = this.router.url.split('?')[0];
-    return url.endsWith('/jobs/all') || url.endsWith('/jobs');
+    return /\/jobs(\/all)?\/?$/.test(url);
   }
 
-  navigateTo(route: string): void {
-    this.router.navigate([route]);
+  navigateTo(segment: string): void {
+    navigateJobs(this.router, this.route, [segment]);
   }
 }

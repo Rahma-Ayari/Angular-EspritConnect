@@ -12,6 +12,10 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: EntrepriseDashboardComponent },
+      {
+        path: 'jobs',
+        loadChildren: () => import('../jobs/jobs.module').then((m) => m.JobsModule)
+      },
       { path: 'verification', component: VerificationStatusComponent },
       { path: 'profil', component: EntrepriseProfilComponent }
     ]

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 
 export interface AdminDashboardResponse {
   pendingApprovalsCount: number;
@@ -35,7 +36,7 @@ export interface AdminDashboardResponse {
 
 @Injectable({ providedIn: 'root' })
 export class AdminDashboardService {
-  private readonly API = '/espritconnect/api/admin/dashboard';
+  private readonly API = `${environment.apiUrl}/admin/dashboard`;
 
   constructor(private http: HttpClient) {}
 

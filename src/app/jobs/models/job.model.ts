@@ -20,8 +20,8 @@ export interface JobOffer {
   benefits: string;
   status: JobStatus;
   applicationCount: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date;
   isPinned?: boolean;
   isArchived?: boolean;
   entrepriseId?: number;
@@ -125,6 +125,7 @@ export interface ImportJobRequest {
 export interface ImportJobResponse {
   title: string;
   description: string;
+  responsibilities?: string;
   skills: string[];
   requirements: string;
   location?: string;
