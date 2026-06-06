@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Event, EventStatus } from '../../models/event.model';
 import { EventService } from '../../services/event.service';
-import { Event, EventStats, EventApprovalStatus } from '../../models/event.model';
 
 @Component({
   selector: 'app-event-dashboard',
@@ -10,17 +10,21 @@ import { Event, EventStats, EventApprovalStatus } from '../../models/event.model
 })
 export class EventDashboardComponent implements OnInit {
   events: Event[] = [];
-  stats: EventStats | null = null;
+  stats: any = null;
   isLoading = false;
   error: string | null = null;
   searchQuery = '';
   selectedStatus = '';
   selectedType = '';
-  selectedApprovalStatus: EventApprovalStatus | null = null;
   eventTypes: string[] = [];
+  showCreateModal = false;
+  showEventsList = false;
+  listSearchQuery = '';
+  listSelectedStatus = '';
+  listSelectedType = '';
+  filteredListEvents: Event[] = [];
 
-  readonly statuses = ['ACTIVE', 'UPCOMING', 'CANCELLED', 'COMPLETED'];
-  readonly approvalStatuses: EventApprovalStatus[] = ['PENDING', 'APPROVED', 'REJECTED'];
+  readonly statuses: EventStatus[] = ['ACTIVE', 'UPCOMING', 'CANCELLED', 'COMPLETED'];
 
   constructor(
     private eventService: EventService,
@@ -46,12 +50,8 @@ export class EventDashboardComponent implements OnInit {
       status: this.selectedStatus,
       type: this.selectedType
     };
-    
-    const obs = this.selectedApprovalStatus
-      ? this.eventService.getEventsByApprovalStatus(this.selectedApprovalStatus)
-      : this.eventService.getAllEvents(filters);
 
-    obs.subscribe({
+    this.eventService.getAllEvents(filters).subscribe({
       next: (events) => {
         this.events = events;
         this.isLoading = false;
@@ -83,29 +83,7 @@ export class EventDashboardComponent implements OnInit {
     this.searchQuery = '';
     this.selectedStatus = '';
     this.selectedType = '';
-    this.selectedApprovalStatus = null;
     this.loadEvents();
-  }
-
-  filterByApproval(status: EventApprovalStatus | null) {
-    this.selectedApprovalStatus = status;
-    this.loadEvents();
-  }
-
-  createEvent(): void {
-    this.router.navigate(['/admin/events/create']);
-  }
-
-  manageTypes(): void {
-    this.router.navigate(['/admin/events/types']);
-  }
-
-  openUserView(): void {
-    this.router.navigate(['/events']);
-  }
-
-  manageUserEvents(): void {
-    this.router.navigate(['/admin/events/approvals']);
   }
 
   viewEvent(event: Event): void {
@@ -120,41 +98,15 @@ export class EventDashboardComponent implements OnInit {
 
   deleteEvent(event: Event): void {
     if (!event.idEvenement) return;
-
-    const canDelete = typeof window === 'undefined'
-      ? true
-      : window.confirm(`Delete "${event.titre}"? This action cannot be undone.`);
-
+    const canDelete = typeof window === 'undefined' ? true : window.confirm(`Delete "${event.titre}"? This action cannot be undone.`);
     if (!canDelete) return;
-
     this.eventService.deleteEvent(event.idEvenement).subscribe({
-      next: () => {
-        this.loadDashboard();
-      },
+      next: () => this.loadDashboard(),
       error: (err) => {
         console.error('Failed to delete event:', err);
         this.error = 'Unable to delete this event.';
       }
     });
-  }
-
-  approveEvent(event: Event): void {
-    if (!event.idEvenement) return;
-    this.eventService.approveEvent(event.idEvenement).subscribe({
-      next: () => this.loadDashboard(),
-      error: (err) => this.error = 'Unable to approve event.'
-    });
-  }
-
-  rejectEvent(event: Event): void {
-    if (!event.idEvenement) return;
-    const reason = prompt('Enter rejection reason:', '');
-    if (reason !== null) {
-      this.eventService.rejectEvent(event.idEvenement, reason).subscribe({
-        next: () => this.loadDashboard(),
-        error: (err) => this.error = 'Unable to reject event.'
-      });
-    }
   }
 
   loadEventTypes(): void {
@@ -164,5 +116,61 @@ export class EventDashboardComponent implements OnInit {
       },
       error: (err) => console.error('Failed to load event types:', err)
     });
+  }
+
+  openCreateModal(): void {
+    this.showCreateModal = true;
+  }
+
+  closeCreateModal(): void {
+    this.showCreateModal = false;
+  }
+
+  onEventCreated(): void {
+    this.closeCreateModal();
+    this.loadDashboard();
+  }
+
+  openEventsList(): void {
+    this.showEventsList = true;
+    this.listSearchQuery = '';
+    this.listSelectedStatus = '';
+    this.listSelectedType = '';
+    this.filteredListEvents = [...this.events];
+  }
+
+  filterEventsList(): void {
+    let filtered = [...this.events];
+
+    if (this.listSearchQuery) {
+      const q = this.listSearchQuery.toLowerCase();
+      filtered = filtered.filter(e =>
+        (e.titre || '').toLowerCase().includes(q) ||
+        (e.lieu || '').toLowerCase().includes(q) ||
+        (e.type || '').toLowerCase().includes(q) ||
+        (e.entrepriseNom || '').toLowerCase().includes(q)
+      );
+    }
+
+    if (this.listSelectedStatus) {
+      filtered = filtered.filter(e => e.status === this.listSelectedStatus);
+    }
+
+    if (this.listSelectedType) {
+      filtered = filtered.filter(e => e.type === this.listSelectedType);
+    }
+
+    this.filteredListEvents = filtered;
+  }
+
+  clearListFilters(): void {
+    this.listSearchQuery = '';
+    this.listSelectedStatus = '';
+    this.listSelectedType = '';
+    this.filteredListEvents = [...this.events];
+  }
+
+  closeEventsList(): void {
+    this.showEventsList = false;
   }
 }

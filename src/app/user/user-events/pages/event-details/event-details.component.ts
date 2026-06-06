@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserEvent, EventApprovalStatus } from '../../models/user-event.model';
+import { UserEvent } from '../../models/user-event.model';
 import { UserEventsService } from '../../services/user-events.service';
 
 @Component({
@@ -80,15 +80,6 @@ export class EventDetailsComponent implements OnInit {
       },
       error: () => this.actionLoading = false
     });
-  }
-
-  getApprovalBadgeClass(status: EventApprovalStatus | null | undefined): string {
-    const classes: Record<string, string> = {
-      PENDING: 'badge-pending',
-      APPROVED: 'badge-approved',
-      REJECTED: 'badge-rejected'
-    };
-    return classes[status || ''] || '';
   }
 
   setNav(navId: string): void {

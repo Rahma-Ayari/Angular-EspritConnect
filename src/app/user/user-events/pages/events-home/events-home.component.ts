@@ -32,7 +32,7 @@ export class EventsHomeComponent implements OnInit {
 
     this.eventsService.getEvents().subscribe({
       next: (response) => {
-        this.events = response.filter(e => e.approvalStatus === 'APPROVED' || !e.approvalStatus);
+        this.events = response;
         this.loading = false;
       },
       error: () => {
@@ -46,7 +46,7 @@ export class EventsHomeComponent implements OnInit {
     this.loading = true;
     this.eventsService.getEvents({ search: this.search, type: this.selectedType }).subscribe({
       next: (response) => {
-        this.events = response.filter(e => e.approvalStatus === 'APPROVED' || !e.approvalStatus);
+        this.events = response;
         this.loading = false;
       },
       error: () => {
@@ -78,4 +78,11 @@ export class EventsHomeComponent implements OnInit {
   toggleSidebar(): void {
     this.sidebarOpen = !this.sidebarOpen;
   }
+
+  viewEvent(id: number | undefined): void {
+    if (id) {
+      this.router.navigate(['/events', id]);
+    }
+  }
 }
+

@@ -1,21 +1,47 @@
-<div class="event-form-page event-background-page event-bg-form">
-  <div class="page-header">
-    <div>
-      <p class="eyebrow">Events</p>
-      <h1>{{ isEdit ? 'Edit Event' : 'Create Event' }}</h1>
-      <p class="subtitle">Database-backed event types, image upload, dates, and capacity rules.</p>
-    </div>
-
-    <button type="button" class="btn-secondary" (click)="cancel()">
-      <i class="bi bi-arrow-left"></i>
-      Back
-    </button>
+<div class="event-form-page">
+  <div class="form-error-banner" *ngIf="error">
+    <i class="bi bi-exclamation-triangle"></i>
+    <span>{{ error }}</span>
   </div>
-
-
 
   <form class="form-card" [formGroup]="eventForm" (ngSubmit)="submit()" *ngIf="!isLoading">
     <div class="form-grid">
+      <div class="field full">
+        <label for="typeEvenementId">Event Type *</label>
+        <div class="type-select-row">
+          <select id="typeEvenementId" formControlName="typeEvenementId" class="type-select">
+            <option [ngValue]="null">Select type</option>
+            <option *ngFor="let type of eventTypes" [ngValue]="type.idTypeEvenement">
+              {{ type.nom }}
+            </option>
+          </select>
+          <button type="button" class="btn-add-type" (click)="toggleAddType()" title="Add new type">
+            <i class="bi bi-plus-lg"></i> Add Type
+          </button>
+        </div>
+        <span class="field-error" *ngIf="isInvalid('typeEvenementId')">Event type is required.</span>
+
+        <div class="add-type-panel" *ngIf="showAddType">
+          <form [formGroup]="addTypeForm" (ngSubmit)="saveType()" class="add-type-form">
+            <div class="field">
+              <label for="newTypeName">Type Title *</label>
+              <input id="newTypeName" type="text" formControlName="nom" placeholder="e.g. Workshop">
+              <span class="field-error" *ngIf="addTypeForm.get('nom')?.invalid && addTypeForm.get('nom')?.touched">Name is required.</span>
+            </div>
+            <div class="field">
+              <label for="newTypeDesc">Type Description</label>
+              <textarea id="newTypeDesc" formControlName="description" rows="2" placeholder="Optional description"></textarea>
+            </div>
+            <div class="type-form-actions">
+              <button type="button" class="btn-secondary" (click)="toggleAddType()">Cancel</button>
+              <button type="submit" class="btn-primary" [disabled]="savingType">
+                {{ savingType ? 'Saving...' : 'Save Type' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <div class="field full">
         <label for="titre">Title *</label>
         <input id="titre" type="text" formControlName="titre" placeholder="Career Fair 2026">
@@ -23,20 +49,21 @@
       </div>
 
       <div class="field">
-        <label for="lieu">Location *</label>
-        <input id="lieu" type="text" formControlName="lieu" placeholder="Esprit Campus, Ariana">
-        <span class="field-error" *ngIf="isInvalid('lieu')">Location is required.</span>
+        <label for="onlineEvent">Online Event</label>
+        <div class="toggle-row">
+          <span class="toggle-label" [class.active]="eventForm.get('onlineEvent')?.value">No</span>
+          <label class="toggle-switch">
+            <input type="checkbox" formControlName="onlineEvent">
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="toggle-label" [class.active]="!eventForm.get('onlineEvent')?.value">Yes</span>
+        </div>
       </div>
 
       <div class="field">
-        <label for="typeEvenementId">Event type *</label>
-        <select id="typeEvenementId" formControlName="typeEvenementId">
-          <option [ngValue]="null">Select type</option>
-          <option *ngFor="let type of eventTypes" [ngValue]="type.idTypeEvenement">
-            {{ type.nom }}
-          </option>
-        </select>
-        <span class="field-error" *ngIf="isInvalid('typeEvenementId')">Event type is required.</span>
+        <label for="lieu">Location *</label>
+        <input id="lieu" type="text" formControlName="lieu" placeholder="Esprit Campus, Ariana" [disabled]="eventForm.get('onlineEvent')?.value">
+        <span class="field-error" *ngIf="isInvalid('lieu')">Location is required.</span>
       </div>
 
       <div class="field">
@@ -77,20 +104,14 @@
       </div>
 
       <div class="field">
-        <label for="status">Status *</label>
-        <select id="status" formControlName="status">
-          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="entrepriseId">Organizer</label>
+        <label for="entrepriseId">Organizer *</label>
         <select id="entrepriseId" formControlName="entrepriseId">
-          <option [ngValue]="null">No enterprise organizer</option>
+          <option [ngValue]="null">Select organizer</option>
           <option *ngFor="let entreprise of entreprises" [ngValue]="entreprise.idEntreprise">
             {{ entreprise.nom }}
           </option>
         </select>
+        <span class="field-error" *ngIf="isInvalid('entrepriseId')">Organizer is required.</span>
         <span class="field-hint" *ngIf="entreprises.length === 0">Enterprise list unavailable or not authorized.</span>
       </div>
 
@@ -107,7 +128,7 @@
     </div>
 
     <div class="form-actions">
-      <button type="button" class="btn-secondary" (click)="cancel()">Cancel</button>
+      <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>
       <button type="submit" class="btn-primary" [disabled]="isSaving || isUploading">
         <span *ngIf="!isSaving">{{ isEdit ? 'Update Event' : 'Create Event' }}</span>
         <span *ngIf="isSaving">Saving...</span>

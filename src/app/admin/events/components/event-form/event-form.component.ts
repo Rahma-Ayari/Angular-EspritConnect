@@ -1,5 +1,5 @@
 import { HttpEventType } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
@@ -14,6 +14,9 @@ import { EventService } from '../../services/event.service';
   styleUrls: ['./event-form.component.css']
 })
 export class EventFormComponent implements OnInit {
+  @Output() created = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
+
   eventForm!: FormGroup;
   eventId: number | null = null;
   isEdit = false;
@@ -25,6 +28,11 @@ export class EventFormComponent implements OnInit {
   imagePreview: string | null = null;
   entreprises: EntrepriseOption[] = [];
   eventTypes: EventType[] = [];
+  originalStatus: EventStatus = 'UPCOMING';
+
+  showAddType = false;
+  addTypeForm!: FormGroup;
+  savingType = false;
 
   readonly statuses: EventStatus[] = ['UPCOMING', 'ACTIVE', 'COMPLETED', 'CANCELLED'];
 
@@ -37,6 +45,7 @@ export class EventFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.buildForm();
+    this.buildAddTypeForm();
 
     const idParam = this.route.snapshot.paramMap.get('id');
     this.eventId = idParam ? Number(idParam) : null;
@@ -53,6 +62,20 @@ export class EventFormComponent implements OnInit {
       capacity?.updateValueAndValidity();
     });
 
+    this.eventForm.get('onlineEvent')?.valueChanges.subscribe((isOnline) => {
+      const lieu = this.eventForm.get('lieu');
+      if (isOnline) {
+        lieu?.clearValidators();
+        lieu?.setValue('Online');
+        lieu?.disable();
+      } else {
+        lieu?.setValidators([Validators.required, Validators.maxLength(160)]);
+        lieu?.setValue('');
+        lieu?.enable();
+      }
+      lieu?.updateValueAndValidity();
+    });
+
     this.loadInitialData();
   }
 
@@ -66,6 +89,8 @@ export class EventFormComponent implements OnInit {
     this.isSaving = true;
     this.error = null;
 
+    const isModal = !this.route.parent?.snapshot.url.some(seg => seg.path === 'edit');
+
     const request$ = this.isEdit && this.eventId
       ? this.eventService.updateEvent(this.eventId, payload)
       : this.eventService.createEvent(payload);
@@ -73,7 +98,11 @@ export class EventFormComponent implements OnInit {
     request$.subscribe({
       next: () => {
         this.isSaving = false;
-        this.router.navigate(['/admin/events']);
+        if (this.isEdit) {
+          this.router.navigate(['/admin/events']);
+        } else {
+          this.created.emit();
+        }
       },
       error: (err) => {
         console.error('Failed to save event:', err);
@@ -83,8 +112,8 @@ export class EventFormComponent implements OnInit {
     });
   }
 
-  cancel(): void {
-    this.router.navigate(['/admin/events']);
+  onCancel(): void {
+    this.cancel.emit();
   }
 
   isInvalid(controlName: string): boolean {
@@ -132,6 +161,32 @@ export class EventFormComponent implements OnInit {
     });
   }
 
+  toggleAddType(): void {
+    this.showAddType = !this.showAddType;
+  }
+
+  saveType(): void {
+    if (this.addTypeForm.invalid) {
+      this.addTypeForm.markAllAsTouched();
+      return;
+    }
+    this.savingType = true;
+    this.eventService.createEventType(this.addTypeForm.value).subscribe({
+      next: (newType) => {
+        this.eventTypes = [...this.eventTypes, newType];
+        this.eventForm.patchValue({ typeEvenementId: newType.idTypeEvenement });
+        this.addTypeForm.reset({ nom: '', description: '', actif: true });
+        this.showAddType = false;
+        this.savingType = false;
+      },
+      error: (err) => {
+        console.error('Failed to save event type:', err);
+        this.error = err?.error?.error || 'Unable to save event type.';
+        this.savingType = false;
+      }
+    });
+  }
+
   private buildForm(): void {
     this.eventForm = this.fb.group({
       titre: ['', [Validators.required, Validators.maxLength(120)]],
@@ -144,9 +199,17 @@ export class EventFormComponent implements OnInit {
       capacite: [1, [Validators.required, Validators.min(1)]],
       typeEvenementId: [null, Validators.required],
       imageUrl: [''],
-      status: ['UPCOMING', Validators.required],
-      entrepriseId: [null]
+      onlineEvent: [false],
+      entrepriseId: [null, Validators.required]
     }, { validators: this.dateRangeValidator });
+  }
+
+  private buildAddTypeForm(): void {
+    this.addTypeForm = this.fb.group({
+      nom: ['', [Validators.required, Validators.maxLength(120)]],
+      description: [''],
+      actif: [true]
+    });
   }
 
   private loadInitialData(): void {
@@ -193,18 +256,19 @@ export class EventFormComponent implements OnInit {
       capacite: event.capacite,
       typeEvenementId: event.typeEvenementId,
       imageUrl: event.imageUrl || '',
-      status: event.status || 'UPCOMING',
+      onlineEvent: event.lieu === 'Online',
       entrepriseId: event.entrepriseId || null
     });
     this.imagePreview = event.imageUrl || null;
+    this.originalStatus = event.status || 'UPCOMING';
   }
 
   private buildPayload(): EventModel {
     const raw = this.eventForm.getRawValue();
 
-    return {
+    const basePayload: Partial<EventModel> = {
       titre: raw.titre,
-      lieu: raw.lieu,
+      lieu: raw.onlineEvent ? 'Online' : raw.lieu,
       dateDebut: raw.dateDebut,
       dateFin: raw.dateFin,
       heureDebut: raw.heureDebut,
@@ -213,9 +277,20 @@ export class EventFormComponent implements OnInit {
       capacite: raw.unlimitedParticipants ? null : Number(raw.capacite),
       typeEvenementId: Number(raw.typeEvenementId),
       imageUrl: raw.imageUrl || null,
-      status: raw.status,
       entrepriseId: raw.entrepriseId ? Number(raw.entrepriseId) : null
     };
+
+    if (this.isEdit) {
+      return {
+        ...basePayload,
+        status: this.originalStatus
+      } as EventModel;
+    }
+
+    return {
+      ...basePayload,
+      status: 'UPCOMING'
+    } as EventModel;
   }
 
   private dateRangeValidator(control: AbstractControl): ValidationErrors | null {

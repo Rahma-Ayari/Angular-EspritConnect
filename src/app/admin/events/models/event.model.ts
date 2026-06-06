@@ -1,5 +1,4 @@
 export type EventStatus = 'ACTIVE' | 'UPCOMING' | 'CANCELLED' | 'COMPLETED';
-export type EventApprovalStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export interface EventType {
   idTypeEvenement?: number;
@@ -32,8 +31,6 @@ export interface Event {
   ownedByCurrentUser?: boolean;
   ownerId?: string;
   ownerNom?: string | null;
-  approvalStatus?: EventApprovalStatus | null;
-  rejectionReason?: string | null;
 }
 
 export interface EventStats {

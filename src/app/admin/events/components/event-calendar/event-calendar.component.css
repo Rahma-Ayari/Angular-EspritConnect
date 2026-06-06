@@ -3,165 +3,135 @@
   border: 1px solid #e5e7eb;
   border-radius: 14px;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-  overflow: hidden;
+  overflow: visible;
+  max-width: 100%;
+  min-height: 0;
 }
 
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 18px;
+  padding: 14px 16px;
   border-bottom: 1px solid #f3f4f6;
 }
 
 .panel-header h2 {
-  margin: 0 0 4px;
-  color: #111827;
-  font-size: 18px;
+  margin: 0;
+  font-size: 16px;
   font-weight: 700;
+  color: #111827;
 }
 
 .panel-header p {
   margin: 0;
+  font-size: 12px;
   color: #6b7280;
-  font-size: 13px;
-}
-
-.panel-header i {
-  color: #dc2626;
-  font-size: 22px;
 }
 
 .calendar-actions {
-  display: inline-flex;
-  gap: 6px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
 }
 
 .calendar-actions button {
-  width: 34px;
-  height: 34px;
-  border: 1px solid #e5e7eb;
+  width: 32px;
+  height: 32px;
   border-radius: 8px;
-  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  background: #f3f4f6;
+  color: #374151;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.calendar-actions button:hover {
+  background: #e5e7eb;
+  border-color: #d1d5db;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 6px;
-  padding: 14px 18px 8px;
-}
-
-.weekday {
-  color: #9ca3af;
-  font-size: 11px;
-  font-weight: 800;
-  text-align: center;
-  text-transform: uppercase;
+  gap: 4px;
+  padding: 10px 12px 6px;
 }
 
 .day-cell {
   position: relative;
   aspect-ratio: 1;
   border: 1px solid #f3f4f6;
-  border-radius: 8px;
+  border-radius: 6px;
   background: #ffffff;
   color: #374151;
   cursor: pointer;
   font-weight: 700;
-}
-
-.day-cell.outside {
-  color: #d1d5db;
-  background: #fafafa;
-}
-
-.day-cell.today {
-  border-color: #dc2626;
-}
-
-.day-cell.has-events {
-  background: #fef2f2;
-  color: #b91c1c;
-}
-
-.day-cell.selected {
-  background: #dc2626;
-  color: #ffffff;
+  font-size: 12px;
+  min-height: 0;
 }
 
 .day-cell small {
   position: absolute;
-  right: 5px;
-  bottom: 4px;
-  min-width: 16px;
-  height: 16px;
+  right: 3px;
+  bottom: 2px;
+  min-width: 14px;
+  height: 14px;
   border-radius: 999px;
   background: rgba(220, 38, 38, 0.12);
-  font-size: 10px;
-  line-height: 16px;
+  font-size: 9px;
+  line-height: 14px;
+  padding: 0 3px;
 }
 
-.day-cell.selected small {
-  background: rgba(255, 255, 255, 0.22);
-}
-
-.selected-events h3 {
-  margin: 12px 18px 0;
-  color: #111827;
-  font-size: 14px;
-}
-
-.timeline {
-  padding: 12px 18px 18px;
+.selected-events {
+  padding: 16px 16px 16px;
 }
 
 .timeline-item {
   display: flex;
-  gap: 12px;
-  padding: 14px 0;
+  gap: 10px;
+  padding: 10px 0;
   border-bottom: 1px solid #f3f4f6;
 }
 
 .timeline-item:last-child {
-  border-bottom: 0;
+  border-bottom: none;
 }
 
 .date-box {
-  width: 58px;
-  height: 58px;
+  width: 44px;
+  height: 44px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border-radius: 10px;
+  border-radius: 8px;
   background: #fef2f2;
   color: #dc2626;
 }
 
 .date-box span {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 800;
   line-height: 1;
 }
 
 .date-box small {
-  margin-top: 4px;
-  font-size: 11px;
+  margin-top: 2px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
 }
 
-.event-info {
-  min-width: 0;
-}
-
 .event-info h3 {
-  margin: 0 0 5px;
+  margin: 0 0 3px;
   color: #111827;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -170,23 +140,23 @@
   display: block;
   margin: 0;
   color: #6b7280;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .event-info span {
-  margin-top: 4px;
+  margin-top: 2px;
   color: #9ca3af;
 }
 
 .empty-calendar {
-  padding: 46px 18px;
+  padding: 24px 18px;
   text-align: center;
   color: #9ca3af;
 }
 
 .empty-calendar i {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   color: #d1d5db;
-  font-size: 32px;
+  font-size: 24px;
 }

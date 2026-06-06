@@ -1,99 +1,221 @@
-<div class="events-admin-page event-background-page event-bg-admin">
-  <div class="page-header">
-    <div>
-      <p class="eyebrow">Events</p>
-      <h1>Event Management</h1>
-      <p class="subtitle">Create, monitor, and manage EspritConnect events.</p>
+<div class="dashboard-layout">
+  <div class="top-section">
+    <div class="stats-column">
+      <div class="events-admin-page">
+        <div class="page-header">
+          <div>
+            <p class="eyebrow">Events</p>
+            <h1>Event Management</h1>
+            <p class="subtitle">Create, monitor, and manage EspritConnect events.</p>
+          </div>
+
+<div class="header-actions">
+             <button type="button" class="btn-primary" (click)="openCreateModal()">
+               <i class="bi bi-plus-lg"></i>
+               Create Event
+             </button>
+             <button type="button" class="btn-secondary" (click)="openEventsList()">
+               <i class="bi bi-list"></i>
+               Events List
+             </button>
+             <button type="button" class="btn-user-view" routerLink="/events">
+               <i class="bi bi-eye"></i>
+               User View
+             </button>
+           </div>
+        </div>
+
+        <section class="stats-section">
+          <app-event-stats [stats]="stats"></app-event-stats>
+        </section>
+      </div>
     </div>
 
-    <div class="header-actions">
-      <button type="button" class="btn-secondary" (click)="openUserView()">
-        <i class="bi bi-eye"></i>
-        User View
-      </button>
-      <button type="button" class="btn-secondary" (click)="manageUserEvents()">
-        <i class="bi bi-calendar-check"></i>
-        User Events
-      </button>
-      <button type="button" class="btn-secondary" (click)="manageTypes()">
-        <i class="bi bi-tags"></i>
-        Types
-      </button>
-      <button type="button" class="btn-primary" (click)="createEvent()">
-        <i class="bi bi-plus-lg"></i>
-        Create Event
-      </button>
+    <div class="calendar-column">
+      <app-event-calendar [events]="events"></app-event-calendar>
     </div>
   </div>
 
-  <app-event-stats [stats]="stats"></app-event-stats>
+  <section class="table-section">
+    <div class="card-toolbar">
+      <div class="search-box">
+        <i class="bi bi-search"></i>
+        <input
+          type="text"
+          placeholder="Search by title, location, type, or company..."
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="applyFilters()"
+        >
+      </div>
 
-  <div class="dashboard-grid">
-    <section class="content-card events-card">
-      <div class="card-toolbar">
-        <div class="search-box">
-          <i class="bi bi-search"></i>
-          <input
-            type="text"
-            placeholder="Search by title, location, type, or company..."
-            [(ngModel)]="searchQuery"
-            (ngModelChange)="applyFilters()"
-          >
+      <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
+        <option value="">All statuses</option>
+        <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+      </select>
+
+      <select [(ngModel)]="selectedType" (change)="applyFilters()">
+        <option value="">All types</option>
+        <option *ngFor="let type of eventTypes" [value]="type">{{ type }}</option>
+      </select>
+
+      <button type="button" class="btn-clear" *ngIf="searchQuery || selectedStatus || selectedType" (click)="resetFilters()">
+        Clear filters
+      </button>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading events...</p>
+    </div>
+
+    <div class="error-state" *ngIf="!isLoading && error">
+      <i class="bi bi-exclamation-triangle"></i>
+      <p>{{ error }}</p>
+      <button type="button" (click)="loadDashboard()">Retry</button>
+    </div>
+
+    <div class="events-cards-grid" *ngIf="!isLoading && !error && events.length > 0">
+      <div class="event-card" *ngFor="let event of events">
+        <img
+          class="event-card-image"
+          [src]="event.imageUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1200&auto=format&fit=crop'"
+          [alt]="event.titre"
+          (error)="$any($event).target.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1200&auto=format&fit=crop'"
+        >
+        <div class="event-card-body">
+          <div class="event-card-meta">
+            <span class="status-badge" [ngClass]="(event.status || 'upcoming').toLowerCase()">
+              {{ event.status }}
+            </span>
+            <span>{{ event.type || '-' }}</span>
+          </div>
+          <h3>{{ event.titre }}</h3>
+          <div class="event-card-meta">
+            <span><i class="bi bi-calendar3"></i> {{ event.dateDebut | date:'mediumDate' }}</span>
+            <span><i class="bi bi-geo-alt"></i> {{ event.lieu }}</span>
+            <span><i class="bi bi-building"></i> {{ event.entrepriseNom || '-' }}</span>
+            <span><i class="bi bi-people"></i> {{ event.unlimitedParticipants ? 'Unlimited' : (event.capacite || '-') }}</span>
+          </div>
+          <div class="event-card-actions">
+            <button type="button" class="action-btn view" title="View" (click)="viewEvent(event)">
+              <i class="bi bi-eye"></i> View
+            </button>
+            <button type="button" class="action-btn edit" title="Edit" (click)="editEvent(event)">
+              <i class="bi bi-pencil"></i> Edit
+            </button>
+            <button type="button" class="action-btn delete" title="Delete" (click)="deleteEvent(event)">
+              <i class="bi bi-trash"></i> Delete
+            </button>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
-          <option value="">All statuses</option>
-          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
-        </select>
+    <div class="empty-state" *ngIf="!isLoading && !error && events.length === 0">
+      <div class="empty-icon">
+        <i class="bi bi-calendar2-x"></i>
+      </div>
+      <h3>No events found</h3>
+      <p>Create your first event or adjust the current filters.</p>
+      <button type="button" class="btn-primary" (click)="openCreateModal()">Create Event</button>
+    </div>
+  </section>
 
-        <select [(ngModel)]="selectedType" (change)="applyFilters()">
-          <option value="">All types</option>
-          <option *ngFor="let type of eventTypes" [value]="type">{{ type }}</option>
-        </select>
-
-        <select [(ngModel)]="selectedApprovalStatus" (change)="applyFilters()">
-          <option [ngValue]="null">All approval statuses</option>
-          <option *ngFor="let status of approvalStatuses" [value]="status">{{ status }}</option>
-        </select>
-
-        <button type="button" class="btn-clear" *ngIf="searchQuery || selectedStatus || selectedType || selectedApprovalStatus" (click)="resetFilters()">
-          Clear filters
+  <!-- Create Event Modal -->
+  <div class="modal-overlay" *ngIf="showCreateModal" (click)="closeCreateModal()">
+    <div class="modal-dialog modal-lg" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Create Event</h2>
+        <button type="button" class="modal-close" (click)="closeCreateModal()">
+          <i class="bi bi-x-lg"></i>
         </button>
       </div>
-
-      <div class="loading-state" *ngIf="isLoading">
-        <div class="spinner"></div>
-        <p>Loading events...</p>
+      <div class="modal-body">
+        <app-event-form (created)="onEventCreated()" (cancel)="closeCreateModal()"></app-event-form>
       </div>
+    </div>
+  </div>
 
-      <div class="error-state" *ngIf="!isLoading && error">
-        <i class="bi bi-exclamation-triangle"></i>
-        <p>{{ error }}</p>
-        <button type="button" (click)="loadDashboard()">Retry</button>
+  <!-- Events List Modal -->
+  <div class="modal-overlay" *ngIf="showEventsList" (click)="closeEventsList()">
+    <div class="modal-dialog modal-xl" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Events List</h2>
+        <button type="button" class="modal-close" (click)="closeEventsList()">
+          <i class="bi bi-x-lg"></i>
+        </button>
       </div>
-
-      <div class="events-grid" *ngIf="!isLoading && !error && events.length > 0">
-        <app-event-card
-          *ngFor="let event of events"
-          [event]="event"
-          (viewEvent)="viewEvent($event)"
-          (editEvent)="editEvent($event)"
-          (deleteEvent)="deleteEvent($event)"
-          (approveEvent)="approveEvent($event)"
-          (rejectEvent)="rejectEvent($event)"
-        ></app-event-card>
-      </div>
-
-      <div class="empty-state" *ngIf="!isLoading && !error && events.length === 0">
-        <div class="empty-icon">
-          <i class="bi bi-calendar2-x"></i>
+      <div class="modal-body">
+        <div class="modal-filters">
+          <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input
+              type="text"
+              placeholder="Search by title, location, type, or company..."
+              [(ngModel)]="listSearchQuery"
+              (ngModelChange)="filterEventsList()"
+            >
+          </div>
+          <select [(ngModel)]="listSelectedStatus" (change)="filterEventsList()">
+            <option value="">All statuses</option>
+            <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+          </select>
+          <select [(ngModel)]="listSelectedType" (change)="filterEventsList()">
+            <option value="">All types</option>
+            <option *ngFor="let type of eventTypes" [value]="type">{{ type }}</option>
+          </select>
+          <button type="button" class="btn-clear" *ngIf="listSearchQuery || listSelectedStatus || listSelectedType" (click)="clearListFilters()">
+            Clear
+          </button>
         </div>
-        <h3>No events found</h3>
-        <p>Create your first event or adjust the current filters.</p>
-        <button type="button" class="btn-primary" (click)="createEvent()">Create Event</button>
+        <div class="table-scroll">
+          <table class="events-table events-list-table">
+            <thead>
+              <tr>
+                <th>Event Title</th>
+                <th>Event Type</th>
+                <th>Date</th>
+                <th>Location</th>
+                <th>Organizer</th>
+                <th>Capacity</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let event of filteredListEvents">
+                <td class="col-title">{{ event.titre }}</td>
+                <td class="col-type">{{ event.type || '-' }}</td>
+                <td class="col-date">{{ event.dateDebut | date:'mediumDate' }}</td>
+                <td class="col-location">{{ event.lieu }}</td>
+                <td class="col-organizer">{{ event.entrepriseNom || '-' }}</td>
+                <td class="col-capacity">
+                  {{ event.unlimitedParticipants ? 'Unlimited' : (event.capacite || '-') }}
+                </td>
+                <td class="col-status">
+                  <span class="status-badge" [ngClass]="(event.status || 'upcoming').toLowerCase()">
+                    {{ event.status }}
+                  </span>
+                </td>
+                <td class="col-actions">
+                  <button type="button" class="action-btn view" title="View" (click)="viewEvent(event)">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button type="button" class="action-btn edit" title="Edit" (click)="editEvent(event)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button type="button" class="action-btn delete" title="Delete" (click)="deleteEvent(event)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="empty-state" *ngIf="filteredListEvents.length === 0" style="padding: 24px;">
+          <p>No events match your filters.</p>
+        </div>
       </div>
-    </section>
-
-    <app-event-calendar [events]="events"></app-event-calendar>
+    </div>
   </div>
 </div>

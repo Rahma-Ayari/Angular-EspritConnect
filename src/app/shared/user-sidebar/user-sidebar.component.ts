@@ -17,6 +17,7 @@ export class UserSidebarComponent implements OnInit {
     { id: 'profile', label: 'Mon Profil', icon: 'bi-person', route: '/profile' },
     { id: 'opportunities', label: 'Opportunités', icon: 'bi-briefcase', route: '/opportunities' },
     { id: 'events', label: 'Événements', icon: 'bi-calendar-event', route: '/events' },
+    { id: 'participations', label: 'My Participations', icon: 'bi-calendar-check', route: '/events/participations' },
     { id: 'messages', label: 'Messages', icon: 'bi-chat-dots', route: '/messages' },
     { id: 'settings', label: 'Paramètres', icon: 'bi-gear', route: '/settings' }
   ];
@@ -56,6 +57,8 @@ export class UserSidebarComponent implements OnInit {
       this.activeNav = 'profile';
     } else if (url.includes('/opportunities')) {
       this.activeNav = 'opportunities';
+    } else if (url.includes('/events/participations')) {
+      this.activeNav = 'participations';
     } else if (url.includes('/events')) {
       this.activeNav = 'events';
     } else if (url.includes('/messages')) {

@@ -6,7 +6,7 @@
       <div class="state" *ngIf="loading">Loading event...</div>
       <div class="state error" *ngIf="!loading && error">{{ error }}</div>
 
-      <div *ngIf="!loading && event" class="event-details-page event-background-page event-bg-details">
+       <div *ngIf="!loading && event" class="event-details-page">
         <button class="back-btn" (click)="goBack()">
           <i class="bi bi-arrow-left"></i>
           Back
@@ -22,14 +22,6 @@
           <div class="status-row">
             <span class="event-status">{{ event.status }}</span>
             <span *ngIf="event.participated" class="event-status joined">Participating</span>
-            <span *ngIf="event.approvalStatus" class="approval-badge" [ngClass]="getApprovalBadgeClass(event.approvalStatus)">
-              {{ event.approvalStatus }}
-            </span>
-          </div>
-
-          <div class="rejection-alert-box" *ngIf="event.approvalStatus === 'REJECTED' && event.rejectionReason">
-            <i class="bi bi-exclamation-triangle"></i>
-            <strong>Rejection Reason:</strong> {{ event.rejectionReason }}
           </div>
 
           <h1>{{ event.titre }}</h1>
@@ -39,15 +31,13 @@
           <p *ngIf="event.entrepriseNom">Organizer: {{ event.entrepriseNom }}</p>
 
           <div class="actions">
-            <button type="button" class="primary" *ngIf="!event.participated" [disabled]="actionLoading" (click)="participate()">
+            <button type="button" class="primary" *ngIf="!event.participated && (event.status === 'ACTIVE' || event.status === 'UPCOMING')" [disabled]="actionLoading" (click)="participate()">
               Participate
             </button>
-            <button type="button" *ngIf="event.participated" [disabled]="actionLoading" (click)="cancelParticipation()">
+            <button type="button" *ngIf="event.participated && (event.status === 'ACTIVE' || event.status === 'UPCOMING')" [disabled]="actionLoading" (click)="cancelParticipation()">
               Cancel participation
             </button>
-            <button type="button" *ngIf="event.ownedByCurrentUser" [routerLink]="['/events/edit', event.idEvenement]">
-              Edit
-            </button>
+            <span class="event-closed-hint" *ngIf="event.status === 'COMPLETED'">This event has ended. Participation is closed.</span>
           </div>
         </div>
       </div>

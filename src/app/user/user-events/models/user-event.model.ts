@@ -1,5 +1,4 @@
 export type UserEventStatus = 'ACTIVE' | 'UPCOMING' | 'CANCELLED' | 'COMPLETED';
-export type EventApprovalStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export interface UserEvent {
   idEvenement?: number;
@@ -24,8 +23,6 @@ export interface UserEvent {
   participated?: boolean;
   ownedByCurrentUser?: boolean;
   ownerNom?: string | null;
-  approvalStatus?: EventApprovalStatus | null;
-  rejectionReason?: string | null;
 }
 
 export interface UserParticipation {

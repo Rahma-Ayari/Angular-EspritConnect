@@ -39,14 +39,6 @@ export class UserEventsService {
     return this.http.get<UserParticipation[]>(`${this.apiUrl}/participations/mine`);
   }
 
-  getMyCreatedEvents(): Observable<UserEvent[]> {
-    return this.http.get<UserEvent[]>(`${this.apiUrl}/mine`);
-  }
-
-  getMyCreatedEventById(id: number): Observable<UserEvent> {
-    return this.http.get<UserEvent>(`${this.apiUrl}/mine/${id}`);
-  }
-
   createEvent(event: Event): Observable<UserEvent> {
     return this.http.post<UserEvent>(this.apiUrl, event);
   }
@@ -61,6 +53,10 @@ export class UserEventsService {
 
   getEventTypes(): Observable<Array<{ idTypeEvenement: number; nom: string }>> {
     return this.http.get<Array<{ idTypeEvenement: number; nom: string }>>(this.typesUrl);
+  }
+
+  createEventType(type: { nom: string; description?: string; actif?: boolean }): Observable<{ idTypeEvenement: number; nom: string }> {
+    return this.http.post<{ idTypeEvenement: number; nom: string }>(`${environment.apiUrl}/evenement-types`, type);
   }
 
   uploadEventImage(file: File): Observable<HttpEvent<{ imageUrl: string }>> {

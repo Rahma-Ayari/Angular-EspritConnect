@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { UserEvent, EventApprovalStatus } from '../../models/user-event.model';
+import { UserEvent } from '../../models/user-event.model';
 
 @Component({
   selector: 'app-user-event-card',
@@ -15,12 +15,6 @@ export class UserEventCardComponent {
   @Output() view = new EventEmitter<number>();
 
   constructor(private router: Router) {}
-
-  get approvalStatusClass(): string {
-    const status = this.event.approvalStatus as EventApprovalStatus;
-    if (!status) return '';
-    return `approval-${status.toLowerCase()}`;
-  }
 
   openDetails(): void {
     if (!this.event.idEvenement) {
