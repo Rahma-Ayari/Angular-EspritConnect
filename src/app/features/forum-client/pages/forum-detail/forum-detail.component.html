@@ -1,0 +1,104 @@
+<div class="forum-container">
+  <a routerLink="/user/forum" class="back-link">
+    <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    Retour aux discussions
+  </a>
+
+  <!-- DÉTAIL DU POST -->
+  <div class="card post-detail-card" *ngIf="post && !loading">
+    <div class="detail-header">
+      <span class="category-badge-detail" [style.background-color]="post.category?.color + '15'" [style.color]="post.category?.color || '#dc2626'">
+        {{ post.category?.name || 'Général' }}
+      </span>
+      <span class="detail-date">Créé le {{ post.createdAt | date:'dd MMMM yyyy à HH:mm' }}</span>
+    </div>
+
+    <h1 class="detail-title">{{ post.title }}</h1>
+
+    <div class="author-bar">
+      <div class="avatar" [style.background-color]="getRoleColor(post.authorRole)">
+        {{ post.authorName?.charAt(0)?.toUpperCase() }}
+      </div>
+      <div class="author-info">
+        <div class="author-fullname">
+          {{ post.authorName }} 
+          <span 
+            class="role-badge" 
+            [style.background-color]="getRoleColor(post.authorRole) + '15'"
+            [style.color]="getRoleColor(post.authorRole)"
+          >
+            {{ getRoleLabel(post.authorRole) }}
+          </span>
+        </div>
+        <div class="author-email">{{ post.authorEmail }}</div>
+      </div>
+    </div>
+
+    <div class="detail-content">{{ post.content }}</div>
+  </div>
+
+  <div class="card loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Chargement de la discussion...</p>
+  </div>
+
+  <!-- SECTION RÉPONSES -->
+  <div class="replies-section" *ngIf="post && !loading">
+    <h2 class="section-title">Commentaires ({{ post.replies?.length || 0 }})</h2>
+
+    <!-- Ajouter une réponse -->
+    <div class="card add-reply-card">
+      <label class="field__label">Participer à la discussion</label>
+      <textarea 
+        class="field__input field__textarea" 
+        [(ngModel)]="newReply" 
+        placeholder="Partagez votre point de vue ou apportez une réponse constructive..."
+      ></textarea>
+      <div class="reply-actions">
+        <button class="btn btn-gradient-red" (click)="submitReply()" [disabled]="submitting || !newReply.trim()">
+          <span class="spinner spinner--sm spinner--white" *ngIf="submitting"></span>
+          Envoyer la réponse
+        </button>
+      </div>
+    </div>
+
+    <!-- Fil des réponses -->
+    <div class="replies-list" *ngIf="post.replies?.length">
+      <div class="reply-timeline-connector"></div>
+      
+      <div class="card reply-card" *ngFor="let rep of post.replies">
+        <div class="reply-header">
+          <div class="reply-author">
+            <div class="avatar avatar--sm" [style.background-color]="getRoleColor(rep.authorRole)">
+              {{ rep.authorName?.charAt(0)?.toUpperCase() }}
+            </div>
+            <div class="reply-author-details">
+              <div class="reply-name">
+                {{ rep.authorName }} 
+                <span 
+                  class="role-badge role-badge--sm" 
+                  [style.background-color]="getRoleColor(rep.authorRole) + '15'"
+                  [style.color]="getRoleColor(rep.authorRole)"
+                >
+                  {{ getRoleLabel(rep.authorRole) }}
+                </span>
+              </div>
+              <div class="reply-date">Répondu le {{ rep.createdAt | date:'dd MMM yyyy, HH:mm' }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="reply-content">{{ rep.content }}</div>
+      </div>
+    </div>
+
+    <!-- Si aucun commentaire -->
+    <div class="empty-replies card" *ngIf="!post.replies?.length">
+      <span class="empty-replies-emoji">💬</span>
+      <p>Aucune réponse pour le moment. Soyez le premier à répondre à ce sujet !</p>
+    </div>
+  </div>
+</div>
+

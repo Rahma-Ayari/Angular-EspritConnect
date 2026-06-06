@@ -1,17 +1,21 @@
-<div class="admin-layout" [class.sidebar-collapsed]="sidebarCollapsed">
-  <app-sidebar [collapsed]="sidebarCollapsed"></app-sidebar>
-  
-  <button class="sidebar-toggle" (click)="toggleSidebar()" [class.collapsed]="sidebarCollapsed">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <polyline *ngIf="!sidebarCollapsed" points="15 18 9 12 15 6"></polyline>
-      <polyline *ngIf="sidebarCollapsed" points="9 18 15 12 9 6"></polyline>
-    </svg>
-  </button>
-  
-  <div class="main-content">
-    <app-navbar></app-navbar>
-    <div class="content-area">
-      <router-outlet></router-outlet>
+<ng-container *ngIf="(currentMode$ | async) as mode">
+  <div class="shell">
+    <app-sidebar [collapsed]="sidebarCollapsed"></app-sidebar>
+
+    <button class="sidebar-toggle" (click)="toggleSidebar()" [class.collapsed]="sidebarCollapsed">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline *ngIf="!sidebarCollapsed" points="15 18 9 12 15 6"></polyline>
+        <polyline *ngIf="sidebarCollapsed" points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+
+    <div class="main" [class.sidebar-collapsed]="sidebarCollapsed">
+      <app-navbar></app-navbar>
+
+      <!-- ONE router outlet (never destroyed) -->
+      <div class="content">
+        <router-outlet></router-outlet>
+      </div>
     </div>
   </div>
-</div>
+</ng-container>

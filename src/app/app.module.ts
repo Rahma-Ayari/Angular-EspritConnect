@@ -11,6 +11,7 @@ import { EmailHistoryModule } from './features/email-history/email-history.modul
 import { MailingListsModule } from './features/mailing-lists/mailing-lists.module';           // ← AJOUTER
 import { MessageUsersModule } from './features/message-users/message-users.module';           // ← AJOUTER
 import { ForumModule } from './features/forum/forum.module';
+import { ForumClientModule } from './features/forum-client/forum-client.module';
 import { LayoutModule } from './shared/layout/layout.module';
 
 @NgModule({
@@ -26,6 +27,7 @@ import { LayoutModule } from './shared/layout/layout.module';
     MailingListsModule,     // ← AJOUTER
     MessageUsersModule,     // ← AJOUTER
     ForumModule,
+    ForumClientModule,
     LayoutModule
   ],
   providers: [provideClientHydration()],

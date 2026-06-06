@@ -105,6 +105,14 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(220, 38, 38, 0.25);
+  }
 }
 
 .user-menu {
@@ -231,4 +239,39 @@
   .switch-btn {
     padding: 10px 12px;
   }
+}
+
+.user-badge {
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.back-admin-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid #4b5563;
+  background: white;
+  border-radius: 8px;
+  color: #4b5563;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-admin-btn:hover {
+  background: #f3f4f6;
+  border-color: #1f2937;
+  color: #1f2937;
+}
+
+.back-icon {
+  width: 16px;
+  height: 16px;
 }

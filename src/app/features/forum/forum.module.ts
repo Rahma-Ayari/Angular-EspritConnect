@@ -5,12 +5,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { ForumDashboardComponent } from './pages/forum-dashboard/forum-dashboard.component';
 import { ForumCategoriesComponent } from './pages/forum-categories/forum-categories.component';
 import { ForumPostsComponent } from './pages/forum-posts/forum-posts.component';
+import { ForumGroupsModerationComponent } from './pages/forum-groups-moderation/forum-groups-moderation.component';
 
 @NgModule({
   declarations: [
     ForumDashboardComponent,
     ForumCategoriesComponent,
-    ForumPostsComponent
+    ForumPostsComponent,
+    ForumGroupsModerationComponent
   ],
   imports: [
     CommonModule,
@@ -20,7 +22,8 @@ import { ForumPostsComponent } from './pages/forum-posts/forum-posts.component';
   exports: [
     ForumDashboardComponent,
     ForumCategoriesComponent,
-    ForumPostsComponent
+    ForumPostsComponent,
+    ForumGroupsModerationComponent
   ]
 })
 export class ForumModule { }

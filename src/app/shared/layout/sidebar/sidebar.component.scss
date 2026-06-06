@@ -281,3 +281,51 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* Esthétique et Thème Rouge ESPRIT pour l'Espace Utilisateur */
+.user-nav-menu {
+  a {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  a:hover {
+    color: #b91c1c;
+    background: #fef2f2;
+    transform: translateX(4px);
+  }
+  
+  > ul > li > a.active:not(.menu-toggle) {
+    background: #fef2f2;
+    color: #dc2626;
+    font-weight: 600;
+    
+    &::before {
+      background: #dc2626;
+    }
+  }
+
+  .submenu {
+    border-left: 1px dashed #fca5a5;
+    
+    li a {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      
+      &:hover {
+        color: #b91c1c;
+        background: #fef2f2;
+        transform: translateX(6px);
+      }
+      
+      &.active {
+        color: #dc2626;
+        background: #fef2f2;
+        font-weight: 600;
+        
+        .submenu-dot {
+          background: #dc2626;
+          box-shadow: 0 0 8px rgba(220, 38, 38, 0.6);
+        }
+      }
+    }
+  }
+}
