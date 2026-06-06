@@ -1,0 +1,82 @@
+<div class="create-ticket-simple">
+  
+  <div class="create-header-simple">
+    <button class="btn-back-link" routerLink="/support">
+      <i class="fa-solid fa-arrow-left"></i> Back to My Tickets
+    </button>
+    <h1>New Support Ticket</h1>
+    <p>Please provide the details of your request.</p>
+  </div>
+
+  <div class="create-body-simple">
+    <div class="create-card-simple">
+      <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()">
+        
+        <div class="form-group-simple">
+          <label>Title</label>
+          <input type="text" formControlName="title" placeholder="What is the issue?">
+          <div class="error-simple" *ngIf="ticketForm.get('title')?.touched && ticketForm.get('title')?.invalid">
+            Title is required (min 5 chars).
+          </div>
+        </div>
+
+        <div class="form-row-simple">
+          <div class="form-group-simple">
+            <label>Category</label>
+            <select formControlName="categoryId">
+              <option value="" disabled>Select category</option>
+              <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+            </select>
+            <div class="category-notice-simple" *ngIf="categories.length === 0">
+              No categories found. You can still submit, or contact an admin.
+            </div>
+          </div>
+          <div class="form-group-simple">
+            <label>Priority</label>
+            <select formControlName="priority">
+              <option *ngFor="let prio of priorities" [value]="prio">{{ prio }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group-simple">
+          <label>Description</label>
+          <textarea formControlName="description" rows="6" placeholder="Describe your problem in detail..."></textarea>
+          <div class="error-simple" *ngIf="ticketForm.get('description')?.touched && ticketForm.get('description')?.invalid">
+            Description is required (min 20 chars).
+          </div>
+        </div>
+
+        <!-- Optional Tags -->
+        <div class="form-group-simple">
+          <label>Optional Tags</label>
+          <input type="text" formControlName="tagsString" placeholder="e.g. login, bug, billing (comma-separated)">
+          <small class="form-help-text" style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px; display: block;">Separate tags with commas.</small>
+        </div>
+
+        <!-- Screenshot/File Upload -->
+        <div class="form-group-simple">
+          <label>Screenshot / File Upload</label>
+          <div class="file-upload-wrapper" style="display: flex; align-items: center; gap: 16px; margin-top: 8px; flex-wrap: wrap;">
+            <input type="file" (change)="onFileSelected($event)" accept="image/*,application/pdf" id="file-upload-input" style="display: none;">
+            <label for="file-upload-input" class="btn-file-upload" style="background-color: var(--bg-main); border: 1px dashed var(--border); padding: 10px 16px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Choose Screenshot or File
+            </label>
+            <span class="file-name" *ngIf="selectedFile" style="font-size: 14px; color: var(--text-secondary); font-weight: 600;">{{ selectedFile.name }}</span>
+            <span class="upload-loader" *ngIf="isUploading" style="font-size: 14px; color: var(--primary); font-weight: 600;"><i class="fa-solid fa-spinner fa-spin"></i> Uploading...</span>
+            <span class="upload-success" *ngIf="attachmentUrl && !isUploading" style="font-size: 14px; color: var(--success); font-weight: 600;"><i class="fa-solid fa-circle-check"></i> Uploaded successfully!</span>
+          </div>
+        </div>
+
+        <div class="form-actions-simple" style="margin-top: 32px;">
+          <button type="submit" class="btn-primary-simple" [disabled]="ticketForm.invalid || isSubmitting || isUploading">
+            <span *ngIf="!isSubmitting">Submit Ticket</span>
+            <span *ngIf="isSubmitting">Submitting... <i class="fa-solid fa-spinner fa-spin"></i></span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+</div>

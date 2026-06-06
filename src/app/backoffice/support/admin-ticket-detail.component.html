@@ -1,0 +1,187 @@
+<div class="admin-chat-wrapper" *ngIf="ticket">
+  <div class="admin-chat-header">
+    <div class="header-left">
+      <button class="btn-icon" routerLink="/admin/support"><i class="fas fa-chevron-left"></i></button>
+      <div class="ticket-title">
+        <h1>{{ ticket.title }}</h1>
+        <span class="ticket-id">Student: {{ ticket.creatorName }} • ID: #{{ ticket.id }}</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-control">
+        <label>Status</label>
+        <select [ngModel]="ticket.status" (ngModelChange)="onStatusChange($event)">
+          <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-chat-body">
+    <!-- Sidebar: Ticket Context -->
+    <aside class="ticket-context" style="display: flex; flex-direction: column; gap: 20px;">
+      
+      <!-- SLA TIMER -->
+      <div class="context-group sla-timer-card" *ngIf="ticket.slaMessage" 
+           style="background: var(--primary-light,#e0f2fe); border-left: 4px solid var(--primary,#0284c7); padding: 12px; border-radius: 8px;">
+        <label style="font-size: 10px; text-transform: uppercase; font-weight: 800; color: var(--text-tertiary,#64748b); display: block; margin-bottom: 4px;">SLA Status</label>
+        <span style="font-size: 14px; font-weight: 800; color: var(--primary,#0284c7);"><i class="fas fa-history" style="margin-right: 6px;"></i>{{ ticket.slaMessage }}</span>
+      </div>
+
+      <div class="context-group">
+        <label>Priority</label>
+        <div class="priority-badge" [ngClass]="ticket.priority.toLowerCase()">{{ ticket.priority }}</div>
+      </div>
+
+      <div class="context-group">
+        <label>Category</label>
+        <p>{{ ticket.categoryName }}</p>
+      </div>
+
+      <div class="context-group">
+        <label>Assigned Staff</label>
+        <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start; width: 100%;">
+          <p style="margin: 0; font-weight: 650; color: var(--text-main,#1e293b);">{{ ticket.assignedToName || 'Unassigned' }}</p>
+          <button *ngIf="!ticket.assignedToName" (click)="assignTicket()" class="btn-assign-self"
+                  style="padding: 6px 12px; font-size: 11px; font-weight: 700; background: var(--primary,#0284c7); color: white; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+            <i class="fas fa-user-plus" style="margin-right: 6px;"></i>Assign to Me
+          </button>
+        </div>
+      </div>
+
+      <div class="context-group">
+        <label>Options</label>
+        <button (click)="downloadHistory()" class="btn-download-history"
+                style="padding: 8px 12px; font-size: 11px; font-weight: 700; background: white; color: var(--text-secondary,#475569); border: 1px solid var(--border,#cbd5e1); border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; width: 100%; justify-content: center; box-shadow: var(--shadow-sm);">
+          <i class="fas fa-file-export"></i> Export Ticket Log
+        </button>
+      </div>
+
+      <div class="context-group full-desc">
+        <label>User Description</label>
+        <p>{{ ticket.description }}</p>
+      </div>
+
+      <!-- Ticket Journey Timeline -->
+      <div class="context-group timeline-section" *ngIf="ticket.timeline && ticket.timeline.length > 0" 
+           style="border-top: 1px solid var(--border-light,#e2e8f0); padding-top: 16px;">
+        <label style="margin-bottom: 12px;">Ticket Timeline</label>
+        <div class="timeline-steps" style="display: flex; flex-direction: column; gap: 16px; position: relative; padding-left: 6px;">
+          <div class="timeline-steps-line" style="position: absolute; left: 13px; top: 8px; bottom: 8px; width: 2px; background: var(--border-light,#e2e8f0);"></div>
+          <div class="timeline-step" *ngFor="let step of ticket.timeline" style="display: flex; gap: 10px; position: relative;">
+            <div class="step-icon" [ngClass]="step.eventType.toLowerCase()" 
+                 style="width: 20px; height: 20px; border-radius: 50%; background: white; border: 2px solid var(--border,#cbd5e1); display: flex; align-items: center; justify-content: center; font-size: 8px; color: var(--text-tertiary,#94a3b8); z-index: 2; flex-shrink: 0;">
+              <i class="fas" [ngClass]="{
+                'fa-plus': step.eventType === 'CREATED',
+                'fa-user-cog': step.eventType === 'ASSIGNED',
+                'fa-sync-alt': step.eventType === 'STATUS_CHANGED',
+                'fa-reply': step.eventType === 'ADMIN_REPLY',
+                'fa-user': step.eventType === 'USER_REPLY',
+                'fa-check': step.eventType === 'RESOLVED',
+                'fa-redo': step.eventType === 'REOPENED'
+              }"></i>
+            </div>
+            <div class="step-content" style="display: flex; flex-direction: column; flex: 1;">
+              <span class="step-desc" style="font-size: 11px; font-weight: 650; color: var(--text-main,#1e293b); line-height: 1.3;">{{ step.description }}</span>
+              <span class="step-time" style="font-size: 9px; color: var(--text-tertiary,#94a3b8); margin-top: 2px;">{{ step.timestamp | date:'short' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tags Context -->
+      <div class="context-group" *ngIf="ticket.tags && ticket.tags.length > 0">
+        <label>Tags</label>
+        <div class="tags-list" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;">
+          <span class="tag-badge" *ngFor="let tag of ticket.tags" style="background: white; border: 1px solid var(--border); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: var(--text-secondary);">
+            #{{ tag }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Attachment Context -->
+      <div class="context-group" *ngIf="ticket.attachmentUrl" style="border-top: 1px solid var(--border-light); padding-top: 16px;">
+        <label>Attachment</label>
+        <p style="margin-top: 6px;">
+          <a [href]="'http://localhost:8088/espritconnect' + ticket.attachmentUrl" target="_blank" class="attachment-link" style="color: var(--primary); font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fas fa-paperclip"></i> View File
+          </a>
+        </p>
+        <div class="attachment-thumbnail" *ngIf="ticket.attachmentUrl.match('\\.(jpg|jpeg|png|gif|webp)$') || ticket.attachmentUrl.includes('image')" style="margin-top: 8px; border: 1px solid var(--border-light); border-radius: 6px; overflow: hidden; max-width: 100%;">
+          <img [src]="'http://localhost:8088/espritconnect' + ticket.attachmentUrl" alt="Screenshot" style="width: 100%; display: block; height: auto;">
+        </div>
+      </div>
+    </aside>
+
+    <!-- Chat Area -->
+    <main class="chat-main">
+        <div class="messages-thread">
+          <div class="message-bubble" *ngFor="let msg of messages" 
+               [ngClass]="{'internal-msg': msg.isInternal, 'student-msg': msg.senderName === ticket.creatorName}">
+            <div class="message-info">
+              <span class="sender">{{ msg.senderName }} <span *ngIf="msg.isInternal" class="internal-tag">(Internal Note)</span></span>
+              <span class="time">{{ msg.createdAt | date:'shortTime' }}</span>
+            </div>
+            <!-- Message text -->
+            <div class="message-content" *ngIf="msg.content">
+              {{ msg.content }}
+            </div>
+            <!-- Message attachment -->
+            <div class="msg-attachment" *ngIf="msg.attachmentUrl" style="margin-top: 8px;">
+              <ng-container *ngIf="isImageUrl(msg.attachmentUrl); else adminFileLink">
+                <a [href]="BASE_URL + msg.attachmentUrl" target="_blank">
+                  <img [src]="BASE_URL + msg.attachmentUrl" alt="attachment"
+                       style="max-width: 200px; border-radius: 8px; display: block; cursor: pointer; border: 1px solid rgba(0,0,0,0.1);">
+                </a>
+              </ng-container>
+              <ng-template #adminFileLink>
+                <a [href]="BASE_URL + msg.attachmentUrl" target="_blank"
+                   style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.2); padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none; color: inherit;">
+                  <i class="fas fa-file-download"></i> Download file
+                </a>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+
+      <div class="admin-input-area">
+        <!-- Attachment preview strip -->
+        <div class="attachment-preview-strip" *ngIf="selectedFile" style="padding: 8px 0;">
+          <div class="preview-chip" style="display:inline-flex; align-items:center; gap:10px; background:var(--bg-main,#f5f7fa); border:1px solid var(--border,#e2e8f0); border-radius:10px; padding:8px 12px; font-size:13px; font-weight:600; color:var(--text-secondary,#64748b); max-width:100%; overflow:hidden;">
+            <i class="fas fa-spinner fa-spin" *ngIf="isUploading" style="color:var(--primary);"></i>
+            <img *ngIf="attachmentPreviewUrl && !isUploading" [src]="attachmentPreviewUrl" style="width:36px;height:36px;object-fit:cover;border-radius:6px;border:1px solid var(--border);flex-shrink:0;" alt="preview">
+            <i *ngIf="!attachmentPreviewUrl && !isUploading" class="fas fa-file-alt" style="color:var(--primary);font-size:18px;"></i>
+            <span style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ selectedFile.name }}</span>
+            <span *ngIf="uploadedAttachmentUrl && !isUploading" style="font-size:11px;font-weight:700;color:#22c55e;background:#f0fdf4;padding:2px 8px;border-radius:20px;white-space:nowrap;"><i class="fas fa-check-circle"></i> Ready</span>
+            <span *ngIf="uploadError" style="font-size:11px;font-weight:700;color:#ef4444;background:#fff0f0;padding:2px 8px;border-radius:20px;white-space:nowrap;"><i class="fas fa-exclamation-triangle"></i> {{ uploadError }}</span>
+            <button (click)="clearAttachment()" style="background:none;border:none;color:#94a3b8;cursor:pointer;padding:2px 4px;font-size:14px;" title="Remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div class="input-options">
+          <label class="checkbox-container">
+            <input type="checkbox" [(ngModel)]="isInternal">
+            <span class="checkmark"></span>
+            Internal Note
+          </label>
+        </div>
+        <div class="input-row">
+          <!-- Hidden file input -->
+          <input #fileInput type="file" style="display:none"
+                 accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar"
+                 (change)="onFileSelected($event)">
+          <!-- Attach button -->
+          <button class="btn-attach-admin" (click)="triggerFileInput()" title="Attach file or screenshot"
+                  [style.color]="selectedFile ? 'var(--primary)' : ''">
+            <i class="fas fa-paperclip"></i>
+          </button>
+          <textarea [(ngModel)]="newMessage" placeholder="Reply to student or add internal note..."></textarea>
+          <button class="btn-send" (click)="sendMessage()" [disabled]="!canSend()" [ngClass]="{'btn-internal': isInternal}">
+            <i class="fas" [ngClass]="isInternal ? 'fa-sticky-note' : 'fa-paper-plane'"></i>
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

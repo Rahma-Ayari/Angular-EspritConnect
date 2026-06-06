@@ -1,38 +1,41 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LoginComponent } from './login/login.component';
-import { AuthGuard, AdminGuard, EntrepriseGuard, StudentGuard } from './guards/auth.guard';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { RegisterComponent } from './register/register.component';
-import { RegisterSuccessComponent } from './register/register-success.component';
-import { VerifyEmailComponent } from './verify-email/verify-email.component';
-import { ProfileComponent } from './profile/profile.component';
+import { BadgeListComponent } from './backoffice/badge-list/badge-list.component';
+import { BadgeFormComponent } from './backoffice/badge-form/badge-form.component';
+import { UserBadgesComponent } from './frontoffice/user-badges/user-badges.component';
+import { SupportDashboardComponent } from './frontoffice/support/support-dashboard.component';
+import { TicketCreateComponent } from './frontoffice/support/ticket-create.component';
+import { TicketChatComponent } from './frontoffice/support/ticket-chat.component';
+import { AdminTicketDashboardComponent } from './backoffice/support/admin-ticket-dashboard.component';
+import { AdminTicketDetailComponent } from './backoffice/support/admin-ticket-detail.component';
+import { CategoryManagementComponent } from './backoffice/support/category-management.component';
+import { FaqManagementComponent } from './backoffice/support/faq-management.component';
+import { FaqKnowledgeBaseComponent } from './frontoffice/support/faq-knowledge-base.component';
+import { ReportContentComponent } from './frontoffice/support/report-content.component';
+import { ModerationQueueComponent } from './backoffice/intelligence/moderation-queue.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'register-success', component: RegisterSuccessComponent },
-  { path: 'verify-email', component: VerifyEmailComponent },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: 'profile', component: DashboardComponent, canActivate: [AuthGuard] },
-  {
-    path: 'dashboard/jobs',
-    loadChildren: () =>
-      import('./student-jobs/student-jobs.module').then((m) => m.StudentJobsModule),
-    canActivate: [AuthGuard, StudentGuard]
-  },
-  { path: 'opportunities', redirectTo: 'dashboard/jobs', pathMatch: 'full' },
-  {
-    path: 'admin',
-    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
-    canActivate: [AuthGuard, AdminGuard]
-  },
-  {
-    path: 'entreprise',
-    loadChildren: () => import('./entreprise/entreprise.module').then(m => m.EntrepriseModule),
-    canActivate: [AuthGuard, EntrepriseGuard]
-  }
+  // Backoffice (Admin) routes
+  { path: 'admin/badges', component: BadgeListComponent },
+  { path: 'admin/badges/create', component: BadgeFormComponent },
+  { path: 'admin/badges/edit/:id', component: BadgeFormComponent },
+  { path: 'admin/support', component: AdminTicketDashboardComponent },
+  { path: 'admin/support/ticket/:id', component: AdminTicketDetailComponent },
+  { path: 'admin/support/categories', component: CategoryManagementComponent },
+  { path: 'admin/support/faqs', component: FaqManagementComponent },
+  { path: 'admin/moderation', component: ModerationQueueComponent },
+
+  // Frontoffice (User) routes
+  { path: 'my-badges', component: UserBadgesComponent },
+  { path: 'support', component: SupportDashboardComponent },
+  { path: 'support/faq', component: FaqKnowledgeBaseComponent },
+  { path: 'support/new', component: TicketCreateComponent },
+  { path: 'support/report', component: ReportContentComponent },
+  { path: 'support/ticket/:id', component: TicketChatComponent },
+
+  // Default redirect
+  { path: '', redirectTo: 'admin/badges', pathMatch: 'full' },
+  { path: '**', redirectTo: 'admin/badges' }
 ];
 
 @NgModule({

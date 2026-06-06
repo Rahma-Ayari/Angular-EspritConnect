@@ -1,0 +1,77 @@
+<div class="support-dashboard-container">
+
+  <div class="support-header-simple">
+    <div class="header-content">
+      <h1>My Tickets</h1>
+      <p>Track your requests or open a new support ticket.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-secondary" [routerLink]="['/support/report']">
+        <i class="bi bi-flag"></i> Report content
+      </button>
+      <button class="btn-secondary" [routerLink]="['/support/faq']">
+        <i class="bi bi-question-circle"></i> Frequent Q&amp;A
+      </button>
+      <button class="btn-primary" [routerLink]="['/support/new']">
+        <i class="bi bi-plus-lg"></i> Submit a Ticket
+      </button>
+    </div>
+  </div>
+
+  <section class="support-section tickets-section">
+    <div class="section-title">
+      <i class="bi bi-ticket-perforated"></i>
+      <h2>Your tickets</h2>
+    </div>
+
+    <!-- Loading state -->
+    <div class="empty-state-simple" *ngIf="loading">
+      <i class="bi bi-hourglass-split"></i>
+      <p>Loading your tickets...</p>
+    </div>
+
+    <!-- Error state -->
+    <div class="empty-state-simple error-state" *ngIf="!loading && errorMessage">
+      <i class="bi bi-exclamation-triangle"></i>
+      <p>{{ errorMessage }}</p>
+      <button class="btn-text" (click)="loadMyTickets()">Try again</button>
+    </div>
+
+    <!-- Ticket list -->
+    <div class="ticket-list-simple" *ngIf="!loading && !errorMessage && myTickets.length > 0">
+      <div class="ticket-row-simple" *ngFor="let ticket of myTickets" [routerLink]="['/support/ticket', ticket.id]">
+        <div class="ticket-main">
+          <div class="ticket-id">#{{ ticket.id }}</div>
+          <div class="ticket-info">
+            <span class="ticket-subject">{{ ticket.title }}</span>
+            <span class="ticket-meta">{{ ticket.categoryName }} &bull; {{ ticket.createdAt | date:'shortDate' }}</span>
+          </div>
+        </div>
+        <div class="ticket-status">
+          <span class="status-pill" [ngClass]="ticket.status.toLowerCase().replace('_', '-')">
+            {{ ticket.status }}
+          </span>
+          <i class="bi bi-chevron-right"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <ng-template #noTickets>
+      <div class="empty-state-simple" *ngIf="!loading && !errorMessage && myTickets.length === 0">
+        <i class="bi bi-inbox"></i>
+        <p>You haven't submitted any tickets yet.</p>
+        <button class="btn-text" [routerLink]="['/support/new']">Submit your first ticket</button>
+      </div>
+    </ng-template>
+
+    <div *ngIf="!loading && !errorMessage && myTickets.length === 0" class="empty-state-simple">
+      <i class="bi bi-inbox"></i>
+      <p>You haven't submitted any tickets yet.</p>
+      <button class="btn-text" [routerLink]="['/support/new']">Submit your first ticket</button>
+    </div>
+
+  </section>
+
+</div>
+
