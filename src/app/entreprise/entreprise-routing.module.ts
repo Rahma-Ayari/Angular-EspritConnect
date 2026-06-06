@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { EntrepriseLayoutComponent } from './layout/entreprise-layout/entreprise-layout.component';
 import { EntrepriseDashboardComponent } from './pages/dashboard/entreprise-dashboard.component';
 import { VerificationStatusComponent } from './pages/verification-status/verification-status.component';
+import { EntrepriseProfilComponent } from './pages/profil/entreprise-profil.component';
 
 const routes: Routes = [
   {
@@ -11,7 +12,12 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: EntrepriseDashboardComponent },
-      { path: 'verification', component: VerificationStatusComponent }
+      {
+        path: 'jobs',
+        loadChildren: () => import('../jobs/jobs.module').then((m) => m.JobsModule)
+      },
+      { path: 'verification', component: VerificationStatusComponent },
+      { path: 'profil', component: EntrepriseProfilComponent }
     ]
   }
 ];

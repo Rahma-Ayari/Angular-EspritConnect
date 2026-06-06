@@ -1,0 +1,57 @@
+<div class="jobs-settings">
+  <div class="page-header">
+    <h1>Jobs Settings</h1>
+    <p class="subtitle">Configure job widget options and employment types in backoffice.</p>
+  </div>
+
+  <div class="content-card">
+    <div class="section">
+      <h3>Employment types</h3>
+      <div class="types-list">
+        <div class="type-item" *ngFor="let type of state.employmentTypes">
+          <span>{{ type }}</span>
+          <button type="button" class="remove-link" (click)="removeEmploymentType(type)">Remove</button>
+        </div>
+      </div>
+      <div class="add-row">
+        <input type="text" [(ngModel)]="newEmploymentType" placeholder="New employment type" />
+        <button type="button" class="btn-secondary" (click)="addEmploymentType()">Add</button>
+      </div>
+    </div>
+
+    <div class="section toggles">
+      <label class="toggle-row">
+        <span>Display job widget on the feed page</span>
+        <input type="checkbox" [(ngModel)]="state.showFeedWidget" />
+      </label>
+      <label class="toggle-row">
+        <span>Display external job listing widget on the jobs page</span>
+        <input type="checkbox" [(ngModel)]="state.showExternalWidget" />
+      </label>
+    </div>
+
+    <div class="section">
+      <h3>External jobs listing widget</h3>
+      <div class="image-box">
+        <div class="image-placeholder">{{ state.widgetImageName }}</div>
+        <input type="file" (change)="onImageSelected($event)" />
+      </div>
+
+      <div class="form-grid">
+        <select [(ngModel)]="state.widgetLanguage">
+          <option>English (UK)</option>
+          <option>French (FR)</option>
+        </select>
+        <input type="text" [(ngModel)]="state.widgetTitle" placeholder="Title" />
+        <input type="text" [(ngModel)]="state.widgetDescription" placeholder="Description" />
+        <input type="text" [(ngModel)]="state.widgetUrl" placeholder="Link URL" />
+        <input type="text" [(ngModel)]="state.widgetButtonText" placeholder="Button Text" />
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn-primary" (click)="save()">Save</button>
+      <span class="saved" *ngIf="saveMessage">{{ saveMessage }}</span>
+    </div>
+  </div>
+</div>

@@ -11,6 +11,7 @@ import { EntrepriseLayoutComponent } from './layout/entreprise-layout/entreprise
 // Page Components
 import { EntrepriseDashboardComponent } from './pages/dashboard/entreprise-dashboard.component';
 import { VerificationStatusComponent } from './pages/verification-status/verification-status.component';
+import { EntrepriseProfilComponent } from './pages/profil/entreprise-profil.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { VerificationStatusComponent } from './pages/verification-status/verific
     EntrepriseLayoutComponent,
     // Pages
     EntrepriseDashboardComponent,
-    VerificationStatusComponent
+    VerificationStatusComponent,
+    EntrepriseProfilComponent
   ],
   imports: [
     CommonModule,

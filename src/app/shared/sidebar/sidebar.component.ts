@@ -13,7 +13,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
   @Input() collapsed = false;
   expandedMenus: { [key: string]: boolean } = {
     users: false,
-    settings: false
+    settings: false,
+    jobs: false
   };
   private isBrowser: boolean;
   layoutType: 'admin' | 'entreprise' | 'default' = 'default';
@@ -72,7 +73,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
   updateExpandedMenus(url: string): void {
     this.expandedMenus = {
       users: url.includes('/admin/user-management'),
-      settings: url.includes('/admin/settings')
+      settings: url.includes('/admin/settings'),
+      jobs: url.includes('/admin/jobs')
     };
   }
 

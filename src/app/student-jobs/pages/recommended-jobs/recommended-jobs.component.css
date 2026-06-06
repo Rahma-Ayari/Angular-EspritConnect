@@ -1,0 +1,52 @@
+@import '../../styles/student-jobs.shared.css';
+
+.block {
+  margin-bottom: 2rem;
+}
+
+.block h2 {
+  margin-bottom: 1rem;
+}
+
+.rec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.rec-card {
+  padding: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.rec-card:hover {
+  transform: translateY(-2px);
+}
+
+.rec-card .score {
+  float: right;
+  background: var(--sj-red-soft);
+  color: var(--sj-red);
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.reason {
+  color: var(--sj-muted);
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.block-skel {
+  height: 200px;
+}
+
+.muted {
+  color: var(--sj-muted);
+}

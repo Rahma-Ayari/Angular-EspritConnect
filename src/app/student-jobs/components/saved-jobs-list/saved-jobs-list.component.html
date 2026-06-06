@@ -1,0 +1,14 @@
+<div class="saved-list">
+  <article class="saved-item sj-card" *ngFor="let job of jobs">
+    <div>
+      <h3>{{ job.title }}</h3>
+      <p>{{ job.companyName }} · {{ job.location }}</p>
+    </div>
+    <div class="actions">
+      <a class="sj-btn-outline" [routerLink]="['/dashboard/jobs', job.id]">View</a>
+      <a class="sj-btn-primary" [routerLink]="['/dashboard/jobs', job.id]">Apply</a>
+      <button type="button" class="text-btn" (click)="remove.emit(job.id!)">Remove</button>
+    </div>
+  </article>
+  <p *ngIf="!jobs.length" class="empty">No saved jobs. Save offers from Discover Jobs.</p>
+</div>

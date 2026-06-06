@@ -1,0 +1,154 @@
+<div class="all-jobs-container">
+  <!-- Toolbar -->
+  <div class="jobs-toolbar">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input
+        type="text"
+        placeholder="Search jobs by title, department, location..."
+        [value]="searchQuery"
+        (input)="onSearchInput($event)"
+      />
+    </div>
+
+    <div class="toolbar-actions">
+      <div class="dropdown" [class.active]="showStatusFilter">
+        <button type="button" class="btn-filter" (click)="showStatusFilter = !showStatusFilter">
+          <i class="bi bi-funnel"></i>
+          All Status
+          <i class="bi bi-chevron-down"></i>
+        </button>
+        <div class="dropdown-menu" *ngIf="showStatusFilter">
+          <label *ngFor="let status of statusOptions" class="dropdown-item">
+            <input
+              type="checkbox"
+              [checked]="selectedStatuses.includes(status)"
+              (change)="toggleStatus(status)"
+            />
+            <span>{{ statusLabels[status] }}</span>
+          </label>
+        </div>
+      </div>
+
+      <button type="button" class="btn-outline" (click)="navigateToImport()">
+        <i class="bi bi-upload"></i>
+        Import
+      </button>
+
+      <button type="button" class="btn-primary" (click)="createJob()">
+        <i class="bi bi-plus-lg"></i>
+        Create Offer
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading jobs...</p>
+  </div>
+
+  <!-- Empty state (no extra CTA button) -->
+  <div *ngIf="!loading && jobs.length === 0" class="empty-state">
+    <div class="empty-icon">
+      <i class="bi bi-briefcase"></i>
+    </div>
+    <h3>No job offers found</h3>
+    <p>Start by creating your first job offer using the card above or the Create Offer button.</p>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!loading && jobs.length > 0" class="table-wrap">
+    <table class="jobs-table">
+      <thead>
+        <tr>
+          <th>Job Title</th>
+          <th>Contract Type</th>
+          <th>Department</th>
+          <th>Location</th>
+          <th>Applications</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Deadline</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let job of jobs">
+          <td class="col-title"><strong>{{ job.title }}</strong></td>
+          <td>{{ typeLabels[job.contractType] }}</td>
+          <td>{{ job.department }}</td>
+          <td>{{ job.location }}</td>
+          <td class="col-apps">
+            <strong>{{ job.applicationCount || 0 }}</strong> applicants
+          </td>
+          <td>
+            <app-status-badge [status]="job.status" size="small"></app-status-badge>
+          </td>
+          <td class="col-date">{{ job.createdAt | date:'dd/MM/yyyy' }}</td>
+          <td class="col-date">{{ job.deadline | date:'dd/MM/yyyy' }}</td>
+          <td class="col-actions">
+            <div class="actions-menu">
+              <button type="button" class="btn-menu" (click)="toggleActionsMenu(job.id)">
+                <i class="bi bi-three-dots-vertical"></i>
+              </button>
+              <div class="actions-dropdown" *ngIf="activeMenuId === job.id">
+                <button type="button" (click)="editJob(job.id!)">
+                  <i class="bi bi-pencil"></i> Edit
+                </button>
+                <button type="button" (click)="duplicateJob(job.id!)">
+                  <i class="bi bi-files"></i> Duplicate
+                </button>
+                <button type="button" (click)="archiveJob(job.id)">
+                  <i class="bi bi-archive"></i> Archive
+                </button>
+                <button type="button" class="danger" (click)="deleteJob(job.id!)">
+                  <i class="bi bi-trash"></i> Delete
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!loading && jobs.length > 0 && totalPages > 1" class="pagination">
+    <button
+      type="button"
+      class="btn-page"
+      [disabled]="currentPage === 1"
+      (click)="goToPage(currentPage - 1)">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+    <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+    <button
+      type="button"
+      class="btn-page"
+      [disabled]="currentPage === totalPages"
+      (click)="goToPage(currentPage + 1)">
+      <i class="bi bi-chevron-right"></i>
+    </button>
+  </div>
+
+  <!-- Summary stats -->
+  <div class="stats-row" *ngIf="!loading">
+    <div class="stat-card">
+      <span class="stat-label">Total Offers</span>
+      <span class="stat-value">{{ statsTotalOffers }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Active</span>
+      <span class="stat-value stat-value--green">{{ statsActive }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Total Applications</span>
+      <span class="stat-value">{{ statsTotalApplications }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Avg. Applications</span>
+      <span class="stat-value">{{ statsAvgApplications }}</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,120 @@
+:host {
+  --sj-red: #cc0000;
+  --sj-red-soft: rgba(204, 0, 0, 0.08);
+  --sj-bg: #f5f5f7;
+  --sj-card: #ffffff;
+  --sj-text: #111111;
+  --sj-muted: #666666;
+  --sj-border: #ebebeb;
+  --sj-radius: 14px;
+  --sj-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+}
+
+.sj-page {
+  padding: 0 0 2rem;
+}
+
+.sj-page-header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--sj-text);
+  margin: 0 0 0.25rem;
+}
+
+.sj-page-header p {
+  color: var(--sj-muted);
+  margin: 0 0 1.5rem;
+}
+
+.sj-card {
+  background: var(--sj-card);
+  border: 1px solid var(--sj-border);
+  border-radius: var(--sj-radius);
+  box-shadow: var(--sj-shadow);
+}
+
+.sj-btn-primary {
+  background: var(--sj-red);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sj-btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(204, 0, 0, 0.25);
+}
+
+.sj-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sj-btn-outline {
+  background: #fff;
+  color: var(--sj-red);
+  border: 1px solid var(--sj-red);
+  border-radius: 10px;
+  padding: 0.65rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sj-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--sj-border);
+  font-size: 0.8rem;
+  color: var(--sj-muted);
+  background: #fafafa;
+}
+
+.sj-chip.salary {
+  background: var(--sj-red-soft);
+  color: var(--sj-red);
+  border-color: transparent;
+  font-weight: 600;
+}
+
+.sj-skeleton {
+  background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+  background-size: 200% 100%;
+  animation: sj-shimmer 1.2s infinite;
+  border-radius: 8px;
+}
+
+@keyframes sj-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.sj-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.sj-tabs a {
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  color: var(--sj-muted);
+  font-weight: 500;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.sj-tabs a.active,
+.sj-tabs a:hover {
+  color: var(--sj-red);
+  background: var(--sj-red-soft);
+  border-color: rgba(204, 0, 0, 0.15);
+}

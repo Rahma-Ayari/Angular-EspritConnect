@@ -1,0 +1,46 @@
+<div class="jobs-import">
+  <div class="page-header">
+    <h1>Import Jobs</h1>
+    <p class="subtitle">Configure automated feeds and review import history.</p>
+  </div>
+
+  <div class="tabs-container">
+    <div class="tabs">
+      <button class="tab" [class.active]="activeTab === 'automated'" (click)="activeTab = 'automated'">AUTOMATED</button>
+      <button class="tab" [class.active]="activeTab === 'history'" (click)="activeTab = 'history'">HISTORY</button>
+    </div>
+  </div>
+
+  <div class="content-card" *ngIf="activeTab === 'automated'">
+    <div class="feed-card">
+      <h3>Automated Feed - 1</h3>
+      <div class="providers">
+        <label><input type="radio" name="provider" value="handshake" [(ngModel)]="selectedProvider" /> Handshake</label>
+        <label><input type="radio" name="provider" value="symplicity" [(ngModel)]="selectedProvider" /> Symplicity</label>
+        <label><input type="radio" name="provider" value="custom" [(ngModel)]="selectedProvider" /> Custom</label>
+      </div>
+      <label>Feed URL *</label>
+      <input type="text" [(ngModel)]="feedUrl" placeholder="https://..." />
+      <div class="actions">
+        <button class="btn-primary" (click)="saveFeed()">Save</button>
+        <span class="saved" *ngIf="saveMessage">{{ saveMessage }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-card" *ngIf="activeTab === 'history'">
+    <div class="history-list" *ngIf="feeds.length; else emptyState">
+      <div class="history-row" *ngFor="let feed of feeds">
+        <div>
+          <strong>{{ feed.provider | uppercase }}</strong>
+          <p>{{ feed.feedUrl }}</p>
+          <small>{{ feed.updatedAt | date:'short' }}</small>
+        </div>
+        <button class="remove-link" (click)="removeFeed(feed.id)">REMOVE</button>
+      </div>
+    </div>
+    <ng-template #emptyState>
+      <p class="empty">No import history yet.</p>
+    </ng-template>
+  </div>
+</div>

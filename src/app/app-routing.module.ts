@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
-import { AuthGuard, AdminGuard, EntrepriseGuard } from './guards/auth.guard';
+import { AuthGuard, AdminGuard, EntrepriseGuard, StudentGuard } from './guards/auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RegisterComponent } from './register/register.component';
 import { RegisterSuccessComponent } from './register/register-success.component';
@@ -16,6 +16,13 @@ const routes: Routes = [
   { path: 'verify-email', component: VerifyEmailComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'profile', component: DashboardComponent, canActivate: [AuthGuard] },
+  {
+    path: 'dashboard/jobs',
+    loadChildren: () =>
+      import('./student-jobs/student-jobs.module').then((m) => m.StudentJobsModule),
+    canActivate: [AuthGuard, StudentGuard]
+  },
+  { path: 'opportunities', redirectTo: 'dashboard/jobs', pathMatch: 'full' },
   {
     path: 'admin',
     loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),

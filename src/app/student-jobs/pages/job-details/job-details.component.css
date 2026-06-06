@@ -1,0 +1,160 @@
+@import '../../styles/student-jobs.shared.css';
+
+.back-link {
+  border: none;
+  background: none;
+  color: var(--sj-red);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.hero {
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero-top {
+  display: flex;
+  gap: 1rem;
+}
+
+.logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  background: var(--sj-red-soft);
+  color: var(--sj-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.hero h1 {
+  margin: 0 0 0.35rem;
+}
+
+.company {
+  color: var(--sj-muted);
+  margin: 0 0 0.75rem;
+}
+
+.section {
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.section h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+}
+
+.body-text {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  color: var(--sj-text);
+}
+
+.check-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.check-list li {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.check-list i {
+  color: var(--sj-red);
+}
+
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skill {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: #f5f5f5;
+  border: 1px solid var(--sj-border);
+  font-size: 0.85rem;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.benefits-grid i {
+  color: var(--sj-red);
+  margin-right: 0.35rem;
+}
+
+.apply-box {
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.apply-box textarea {
+  width: 100%;
+  border: 1px solid var(--sj-border);
+  border-radius: 10px;
+  padding: 0.65rem;
+  margin-top: 0.35rem;
+}
+
+.error {
+  color: #b91c1c;
+  font-size: 0.85rem;
+}
+
+.success {
+  padding: 1rem;
+  margin-top: 1rem;
+  text-align: center;
+  color: var(--sj-red);
+}
+
+.similar {
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.similar-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+}
+
+.similar-item span {
+  display: block;
+  color: var(--sj-muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 960px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,11 @@
+@import '../../styles/student-jobs.shared.css';
+
+select {
+  display: block;
+  width: 100%;
+  max-width: 480px;
+  margin: 0.5rem 0 1rem;
+  padding: 0.55rem;
+  border: 1px solid var(--sj-border);
+  border-radius: 8px;
+}
