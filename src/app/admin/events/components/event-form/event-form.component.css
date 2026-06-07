@@ -184,20 +184,31 @@ textarea:disabled {
 }
 
 .add-type-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
-  align-items: end;
 }
 
-.add-type-form .field.full {
-  grid-column: 1 / -1;
+.add-type-form .field {
+  flex: 1;
+  min-width: 0;
+}
+
+.add-type-form .field-row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.add-type-form .field-row .field {
+  flex: 1;
 }
 
 .type-form-actions {
   display: flex;
   gap: 10px;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .toggle-row {

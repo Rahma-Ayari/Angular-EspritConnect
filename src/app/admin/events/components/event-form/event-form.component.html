@@ -21,25 +21,27 @@
         </div>
         <span class="field-error" *ngIf="isInvalid('typeEvenementId')">Event type is required.</span>
 
-        <div class="add-type-panel" *ngIf="showAddType">
-          <form [formGroup]="addTypeForm" (ngSubmit)="saveType()" class="add-type-form">
-            <div class="field">
-              <label for="newTypeName">Type Title *</label>
-              <input id="newTypeName" type="text" formControlName="nom" placeholder="e.g. Workshop">
-              <span class="field-error" *ngIf="addTypeForm.get('nom')?.invalid && addTypeForm.get('nom')?.touched">Name is required.</span>
-            </div>
-            <div class="field">
-              <label for="newTypeDesc">Type Description</label>
-              <textarea id="newTypeDesc" formControlName="description" rows="2" placeholder="Optional description"></textarea>
-            </div>
-            <div class="type-form-actions">
-              <button type="button" class="btn-secondary" (click)="toggleAddType()">Cancel</button>
-              <button type="submit" class="btn-primary" [disabled]="savingType">
-                {{ savingType ? 'Saving...' : 'Save Type' }}
-              </button>
-            </div>
-          </form>
-        </div>
+<div class="add-type-panel" *ngIf="showAddType">
+           <form [formGroup]="addTypeForm" (ngSubmit)="saveType()" class="add-type-form">
+             <div class="field-row">
+               <div class="field">
+                 <label for="newTypeName">Type Title *</label>
+                 <input id="newTypeName" type="text" formControlName="nom" placeholder="e.g. Workshop">
+                 <span class="field-error" *ngIf="addTypeForm.get('nom')?.invalid && addTypeForm.get('nom')?.touched">Name is required.</span>
+               </div>
+               <div class="field">
+                 <label for="newTypeDesc">Type Description</label>
+                 <textarea id="newTypeDesc" formControlName="description" rows="2" placeholder="Optional description"></textarea>
+               </div>
+             </div>
+             <div class="type-form-actions">
+               <button type="button" class="btn-secondary" (click)="toggleAddType()">Cancel</button>
+               <button type="submit" class="btn-primary" [disabled]="savingType">
+                 {{ savingType ? 'Saving...' : 'Save Type' }}
+               </button>
+             </div>
+           </form>
+         </div>
       </div>
 
       <div class="field full">
