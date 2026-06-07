@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { SupportService } from '../../services/support.service';
-import { AuthService } from '../../services/auth.service';
 import { SupportTicket } from '../../models/support.model';
 
 @Component({
@@ -13,10 +12,7 @@ export class SupportDashboardComponent implements OnInit {
   loading = true;
   errorMessage = '';
 
-  constructor(
-    private supportService: SupportService,
-    private authService: AuthService
-  ) {}
+  constructor(private supportService: SupportService) {}
 
   ngOnInit(): void {
     this.loadMyTickets();

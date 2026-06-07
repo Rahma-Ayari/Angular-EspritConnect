@@ -3,6 +3,7 @@
 // ============================================================
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
 
 interface EmailHistoryItem {
   id: number;
@@ -29,7 +30,7 @@ interface PageResponse<T> {
 })
 export class EmailHistoryComponent implements OnInit {
 
-  private base = 'http://localhost:8088/espritconnect';
+  private base = environment.backendBaseUrl;
 
   items:    EmailHistoryItem[] = [];
   loading   = false;

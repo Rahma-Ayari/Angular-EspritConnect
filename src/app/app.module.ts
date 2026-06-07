@@ -1,14 +1,21 @@
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { authInterceptor } from './interceptors/auth.interceptor';
-import { AuthService } from './services/auth.service';
+import { RoleRedirectComponent } from './role-redirect.component';
+import { LoginComponent } from './login/login.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { RegisterComponent } from './register/register.component';
+import { RegisterSuccessComponent } from './register/register-success.component';
+import { VerifyEmailComponent } from './verify-email/verify-email.component';
+import { ProfileComponent } from './profile/profile.component';
+import { SharedLayoutModule } from './shared/shared-layout.module';
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
 
-// Modules (Features)
 import { ActivityDigestModule } from './features/activity-digest/activity-digest.module';
 import { AutomaticEmailsModule } from './features/automatic-emails/automatic-emails.module';
 import { EmailHistoryModule } from './features/email-history/email-history.module';
@@ -17,8 +24,8 @@ import { MessageUsersModule } from './features/message-users/message-users.modul
 import { ForumModule } from './features/forum/forum.module';
 import { ForumClientModule } from './features/forum-client/forum-client.module';
 import { LayoutModule } from './shared/layout/layout.module';
+import { AdminModule } from './admin/admin.module';
 
-// Composants (Support & Backoffice)
 import { BadgeListComponent } from './backoffice/badge-list/badge-list.component';
 import { BadgeFormComponent } from './backoffice/badge-form/badge-form.component';
 import { UserBadgesComponent } from './frontoffice/user-badges/user-badges.component';
@@ -34,18 +41,16 @@ import { AIChatbotComponent } from './frontoffice/support/ai-chatbot.component';
 import { ReportContentComponent } from './frontoffice/support/report-content.component';
 import { ModerationQueueComponent } from './backoffice/intelligence/moderation-queue.component';
 
-export function initializeApp(authService: AuthService) {
-  return () => new Promise<void>((resolve) => {
-    authService.loginAsCurrentRole().subscribe({
-      next: () => resolve(),
-      error: () => resolve()
-    });
-  });
-}
-
 @NgModule({
   declarations: [
     AppComponent,
+    RoleRedirectComponent,
+    LoginComponent,
+    DashboardComponent,
+    RegisterComponent,
+    RegisterSuccessComponent,
+    VerifyEmailComponent,
+    ProfileComponent,
     BadgeListComponent,
     BadgeFormComponent,
     UserBadgesComponent,
@@ -66,6 +71,9 @@ export function initializeApp(authService: AuthService) {
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    HttpClientModule,
+    RouterModule,
+    SharedLayoutModule,
     ActivityDigestModule,
     AutomaticEmailsModule,
     EmailHistoryModule,
@@ -73,18 +81,13 @@ export function initializeApp(authService: AuthService) {
     MessageUsersModule,
     ForumModule,
     ForumClientModule,
-    LayoutModule
+    LayoutModule,
+    AdminModule
   ],
   providers: [
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideClientHydration(),
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeApp,
-      deps: [AuthService],
-      multi: true
-    }
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

@@ -4,6 +4,7 @@
 // ============================================================
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
 
 interface BirthdaySettings {
   id?: number;
@@ -21,7 +22,7 @@ interface BirthdaySettings {
 })
 export class AutomaticEmailsComponent implements OnInit {
 
-  private base = 'http://localhost:8088/espritconnect';
+  private base = environment.backendBaseUrl;
 
   // ── État principal ──
   settings: BirthdaySettings = {

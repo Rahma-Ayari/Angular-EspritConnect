@@ -11,7 +11,7 @@ import {
 } from '../models/support.model';
 import { FAQ, FAQRequest } from '../models/faq.model';
 import { ChatbotHistoryItem, ChatbotResponse } from '../models/chatbot.model';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth.service';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -25,7 +25,7 @@ export class SupportService {
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   get CURRENT_USER_ID(): string {
-    return this.authService.getCurrentUser().id;
+    return this.authService.getCurrentUser()?.userId ?? '';
   }
 
   resolveFileUrl(path: string): string {

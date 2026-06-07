@@ -1,21 +1,8 @@
-<div class="app-shell" [class.sidebar-collapsed]="!sidebarOpen">
-  <app-user-sidebar
-    [collapsed]="!sidebarOpen"
-    activeNav="jobs"
-    (toggleSidebar)="toggleSidebar()">
-  </app-user-sidebar>
-
-  <main class="main-content">
-    <app-user-header></app-user-header>
-    <div class="content-area student-jobs-area">
-      <nav class="jobs-subnav" aria-label="Jobs sections">
-        <a routerLink="/dashboard/jobs/discover" routerLinkActive="active">Discover Jobs</a>
-        <a routerLink="/dashboard/jobs/recommended" routerLinkActive="active">Recommended</a>
-        <a routerLink="/dashboard/jobs/applications" routerLinkActive="active">My Applications</a>
-        <a routerLink="/dashboard/jobs/saved" routerLinkActive="active">Saved Jobs</a>
-        <a routerLink="/dashboard/jobs/ai-assistant" routerLinkActive="active">AI Career Assistant</a>
-      </nav>
-      <router-outlet></router-outlet>
-    </div>
-  </main>
-</div>
+<nav class="jobs-subnav" aria-label="Jobs sections">
+  <a routerLink="/dashboard/jobs/discover" routerLinkActive="active">Discover Jobs</a>
+  <a routerLink="/dashboard/jobs/recommended" routerLinkActive="active">Recommended</a>
+  <a routerLink="/dashboard/jobs/applications" routerLinkActive="active">My Applications</a>
+  <a routerLink="/dashboard/jobs/saved" routerLinkActive="active">Saved Jobs</a>
+  <a routerLink="/dashboard/jobs/ai-assistant" routerLinkActive="active">AI Career Assistant</a>
+</nav>
+<router-outlet></router-outlet>

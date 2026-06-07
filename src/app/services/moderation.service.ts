@@ -8,7 +8,7 @@ import {
   ModerationReviewRequest,
   ModerationStatus
 } from '../models/moderation.model';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class ModerationService {
@@ -18,7 +18,8 @@ export class ModerationService {
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   submitReport(request: ModerationReportRequest): Observable<ModerationReport> {
-    const params = new HttpParams().set('reporterId', this.authService.getCurrentUser().id);
+    const reporterId = this.authService.getCurrentUser()?.userId ?? '';
+    const params = new HttpParams().set('reporterId', reporterId);
     return this.http.post<ModerationReport>(`${this.frontUrl}/reports`, request, { params });
   }
 

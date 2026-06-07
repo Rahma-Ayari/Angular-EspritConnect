@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppViewMode, ViewModeService } from '../services/view-mode.service';
+import { AuthService } from '../../../auth.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -12,45 +13,53 @@ export class NavbarComponent implements OnInit, OnDestroy {
   searchQuery: string = '';
   showDropdown: boolean = false;
   currentMode: AppViewMode = 'admin';
+  userRole: string | null = null;
+  currentUser: { nom: string; email: string } | null = null;
   private modeSub?: Subscription;
-
-  // Mock currentUser car AuthService n'est pas présent dans le projet
-  currentUser = {
-    nom: 'Admin Esprit',
-    email: 'admin.connect@esprit.tn'
-  };
+  private userSub?: Subscription;
 
   constructor(
     private readonly viewMode: ViewModeService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly authService: AuthService
   ) {}
 
+  get showAdminControls(): boolean {
+    return this.userRole === 'ADMIN' && this.currentMode === 'admin';
+  }
+
+  get showAdminPreviewBar(): boolean {
+    return this.userRole === 'ADMIN' && this.currentMode !== 'admin';
+  }
+
+  get userViewLabel(): string {
+    if (this.userRole === 'ALUMNI' || this.currentMode === 'alumni') {
+      return 'VUE ALUMNI';
+    }
+    if (this.userRole === 'ENTREPRISE') {
+      return 'VUE ENTREPRISE';
+    }
+    return 'VUE ÉTUDIANT';
+  }
+
   ngOnInit(): void {
+    this.userRole = this.authService.getRole();
+
+    this.userSub = this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        this.userRole = user.role;
+        this.currentUser = { nom: user.nom, email: user.email };
+      }
+    });
+
     this.modeSub = this.viewMode.currentMode$.subscribe(mode => {
       this.currentMode = mode;
-      if (mode === 'student') {
-        this.currentUser = {
-          nom: 'Étudiant Demo',
-          email: 'etudiant.demo@esprit.tn'
-        };
-      } else if (mode === 'alumni') {
-        this.currentUser = {
-          nom: 'Alumni Demo',
-          email: 'alumni.demo@esprit.tn'
-        };
-      } else {
-        this.currentUser = {
-          nom: 'Admin Esprit',
-          email: 'admin.connect@esprit.tn'
-        };
-      }
     });
   }
 
   ngOnDestroy(): void {
-    if (this.modeSub) {
-      this.modeSub.unsubscribe();
-    }
+    this.modeSub?.unsubscribe();
+    this.userSub?.unsubscribe();
   }
 
   onSearch(): void {
@@ -70,16 +79,18 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
-    console.log('Déconnexion de l\'administrateur');
+    this.showDropdown = false;
+    this.viewMode.setMode('admin');
+    this.authService.logout();
   }
 
   switchTo(mode: AppViewMode): void {
     this.viewMode.setMode(mode);
     this.showDropdown = false;
     if (mode === 'admin') {
-      this.router.navigate(['/activity-digest']);
+      this.router.navigate(['/admin/dashboard']);
     } else {
-      this.router.navigate(['/user/forum']);
+      this.router.navigate(['/dashboard']);
     }
   }
 }

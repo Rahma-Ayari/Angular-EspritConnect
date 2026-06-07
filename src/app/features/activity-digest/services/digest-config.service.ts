@@ -6,10 +6,11 @@ import {
   DigestPreviewResponseDTO
 } from '../models/digest.models';
 import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DigestConfigService {
-  private base = 'http://localhost:8088/espritconnect';
+  private base = environment.backendBaseUrl;
 
   constructor(private http: HttpClient) {}
 

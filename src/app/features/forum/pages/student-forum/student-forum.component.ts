@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
 
 interface ForumCategory {
   id: number;
@@ -43,7 +44,7 @@ interface StudentMember {
   styleUrls: ['./student-forum.component.css']
 })
 export class StudentForumComponent implements OnInit {
-  private base = 'http://localhost:8088/espritconnect/api/forum';
+  private base = `${environment.apiUrl}/forum`;
 
   // Liste des posts et catégories chargés depuis le backend
   posts: ForumPost[] = [];

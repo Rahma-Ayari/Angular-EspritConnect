@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ViewModeService } from './shared/layout/services/view-mode.service';
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'app-root',
@@ -12,11 +13,20 @@ export class AppComponent implements OnInit, OnDestroy {
   isUserView = false;
   private modeSub?: Subscription;
 
-  constructor(private readonly viewMode: ViewModeService) {}
+  constructor(
+    private readonly viewMode: ViewModeService,
+    private readonly authService: AuthService
+  ) {}
 
   ngOnInit(): void {
+    const role = this.authService.getRole();
+    if (role && role !== 'ADMIN') {
+      this.viewMode.syncFromRole(role);
+    }
+
     this.modeSub = this.viewMode.currentMode$.subscribe((mode) => {
-      this.isUserView = mode !== 'admin';
+      const roleNow = this.authService.getRole();
+      this.isUserView = roleNow !== 'ADMIN' || mode !== 'admin';
     });
   }
 

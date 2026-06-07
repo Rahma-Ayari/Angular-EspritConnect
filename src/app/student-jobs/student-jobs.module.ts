@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SharedLayoutModule } from '../shared/shared-layout.module';
+import { RouterModule } from '@angular/router';
 import { StudentJobsRoutingModule } from './student-jobs-routing.module';
 import { StudentJobsLayoutComponent } from './layout/student-jobs-layout.component';
 import { DiscoverJobsComponent } from './pages/discover-jobs/discover-jobs.component';
@@ -39,7 +39,7 @@ import { AiInsightsPanelComponent } from './components/ai-insights-panel/ai-insi
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedLayoutModule,
+    RouterModule,
     StudentJobsRoutingModule
   ]
 })

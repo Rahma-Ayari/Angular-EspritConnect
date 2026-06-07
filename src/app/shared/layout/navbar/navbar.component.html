@@ -28,7 +28,7 @@
     </button>
 
     <!-- Affichage en mode Admin -->
-    <ng-container *ngIf="currentMode === 'admin'">
+    <ng-container *ngIf="showAdminControls">
       <span class="admin-badge" routerLink="/activity-digest">ADMIN VIEW</span>
       <div class="user-menu">
         <button class="switch-btn" (click)="toggleDropdown()">
@@ -53,7 +53,7 @@
             View as Alumni
           </button>
           <div class="dropdown-divider"></div>
-          <button class="dropdown-item logout" (click)="logout()">
+          <button type="button" class="dropdown-item logout" (click)="logout(); $event.stopPropagation()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
               <polyline points="16 17 21 12 16 7"></polyline>
@@ -65,10 +65,10 @@
       </div>
     </ng-container>
 
-    <!-- Affichage en mode Utilisateur (Étudiant / Alumni) -->
-    <ng-container *ngIf="currentMode !== 'admin'">
+    <!-- Admin previewing front office -->
+    <ng-container *ngIf="showAdminPreviewBar">
       <span class="user-badge" [style.background-color]="currentMode === 'student' ? '#10b981' : '#3b82f6'">
-        {{ currentMode === 'student' ? 'VUE ÉTUDIANT' : 'VUE ALUMNI' }}
+        {{ currentMode === 'student' ? 'VUE ÉTUDIANT (PREVIEW)' : 'VUE ALUMNI (PREVIEW)' }}
       </span>
       <button class="back-admin-btn" (click)="switchTo('admin')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="back-icon">
@@ -76,6 +76,13 @@
         </svg>
         Retour Administration
       </button>
+    </ng-container>
+
+    <!-- Affichage en mode Utilisateur réel (Étudiant / Alumni / Entreprise) -->
+    <ng-container *ngIf="userRole !== 'ADMIN'">
+      <span class="user-badge" [style.background-color]="userRole === 'ALUMNI' ? '#3b82f6' : userRole === 'ENTREPRISE' ? '#8b5cf6' : '#10b981'">
+        {{ userViewLabel }}
+      </span>
     </ng-container>
   </div>
 </header>

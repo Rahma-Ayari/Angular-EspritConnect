@@ -8,7 +8,7 @@
   </div>
 
   <!-- MENU POUR ADMINISTRATEUR -->
-  <nav class="nav-menu" *ngIf="currentMode === 'admin'">
+  <nav class="nav-menu" *ngIf="showAdminMenu">
     <ul>
       <li>
         <a routerLink="/admin/dashboard" routerLinkActive="active">
@@ -80,6 +80,12 @@
             </a>
           </li>
           <li>
+            <a routerLink="/admin/user-management/enterprise-verification" routerLinkActive="active">
+              <span class="submenu-dot"></span>
+              <span class="label">Enterprise Verification</span>
+            </a>
+          </li>
+          <li>
             <a routerLink="/admin/user-management/affiliations" routerLinkActive="active">
               <span class="submenu-dot"></span>
               <span class="label">Affiliations</span>
@@ -96,14 +102,31 @@
           <span class="label">Profile Attributes</span>
         </a>
       </li>
-      <li>
-        <a routerLink="/admin/jobs" routerLinkActive="active">
+      <li class="has-children" [class.expanded]="expandedMenus['jobs']">
+        <a class="menu-toggle" (click)="toggleMenu('jobs', $event)">
           <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
           </svg>
           <span class="label">Jobs</span>
+          <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.rotated]="expandedMenus['jobs']">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
         </a>
+        <ul class="submenu" *ngIf="expandedMenus['jobs']">
+          <li>
+            <a routerLink="/admin/jobs/settings" routerLinkActive="active">
+              <span class="submenu-dot"></span>
+              <span class="label">Settings</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/admin/jobs/import" routerLinkActive="active">
+              <span class="submenu-dot"></span>
+              <span class="label">Import Jobs</span>
+            </a>
+          </li>
+        </ul>
       </li>
       
       <!-- Badges (develop) -->
@@ -245,17 +268,28 @@
     </ul>
   </nav>
 
-  <!-- MENU POUR UTILISATEUR (ÉTUDIANT / ALUMNI) - JOLI, MODERNE & PROFESSIONNEL -->
-  <nav class="nav-menu user-nav-menu" *ngIf="currentMode !== 'admin'">
+  <!-- MENU POUR UTILISATEUR (ÉTUDIANT / ALUMNI / ENTREPRISE) -->
+  <nav class="nav-menu user-nav-menu" *ngIf="showUserMenu">
     <ul>
-      <!-- Accueil -->
-      <li>
-        <a routerLink="/user/forum">
+      <!-- Dashboard & profile (job branch) -->
+      <li *ngIf="userRole === 'ETUDIANT' || userRole === 'ALUMNI' || (userRole === 'ADMIN' && showUserMenu)">
+        <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
           <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
           </svg>
-          <span class="label">Accueil</span>
+          <span class="label">Dashboard</span>
+        </a>
+      </li>
+      <li *ngIf="userRole === 'ETUDIANT' || userRole === 'ALUMNI' || (userRole === 'ADMIN' && showUserMenu)">
+        <a routerLink="/profile" routerLinkActive="active">
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span class="label">My Profile</span>
         </a>
       </li>
 
@@ -357,15 +391,27 @@
         </ul>
       </li>
 
-      <!-- Jobs -->
-      <li>
-        <a routerLink="/user/forum" [queryParams]="{tab: 'stages'}" routerLinkActive="active">
+      <!-- Jobs (student / alumni + admin preview) -->
+      <li *ngIf="userRole === 'ETUDIANT' || userRole === 'ALUMNI' || (userRole === 'ADMIN' && showUserMenu)">
+        <a routerLink="/dashboard/jobs/discover" routerLinkActive="active" [routerLinkActiveOptions]="jobsLinkActiveOptions">
           <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
           </svg>
           <span class="label">Jobs</span>
-          <span class="badge-mini" style="background:#e0f2fe; color:#0369a1; font-size:10px; padding:2px 6px; border-radius:10px; margin-left:auto; font-weight:700;">Bientôt</span>
+        </a>
+      </li>
+
+      <!-- Espace entreprise -->
+      <li *ngIf="userRole === 'ENTREPRISE'">
+        <a routerLink="/entreprise/dashboard" routerLinkActive="active">
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <span class="label">Espace Entreprise</span>
         </a>
       </li>
 
@@ -386,14 +432,19 @@
   </nav>
 
   <div class="sidebar-footer">
-    <div class="admin-info" style="border-left: 3px solid #dc2626">
-      <div class="admin-avatar" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)">
-        {{ currentUser?.nom?.substring(0, 2)?.toUpperCase() || 'AD' }}
+    <div class="user-footer">
+      <div class="user-avatar">{{ userInitials }}</div>
+      <div class="user-footer-meta">
+        <span class="user-footer-name">{{ currentUser.nom }}</span>
+        <span class="user-footer-role">{{ userRoleLabel }}</span>
       </div>
-      <div class="admin-details">
-        <span class="admin-name">{{ currentUser?.nom || 'Utilisateur' }}</span>
-        <span class="admin-email">{{ currentUser?.email || 'user@esprit.tn' }}</span>
-      </div>
+      <button type="button" class="logout-btn" (click)="logout()" title="Déconnexion" aria-label="Déconnexion">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+      </button>
     </div>
   </div>
 </aside>

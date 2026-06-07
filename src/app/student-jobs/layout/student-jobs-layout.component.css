@@ -4,43 +4,6 @@
   display: block;
   width: 100%;
   font-family: 'Outfit', sans-serif;
-  --sidebar-w: 260px;
-  --sidebar-c: 72px;
-  --bg: #f5f5f7;
-}
-
-/* Same shell rules as dashboard — sidebar is fixed, content must shift right */
-.app-shell {
-  display: flex;
-  width: 100%;
-  min-height: 100vh;
-  background: var(--bg);
-  overflow-x: hidden;
-}
-
-.main-content {
-  flex: 1;
-  min-width: 0;
-  min-height: 100vh;
-  margin-left: var(--sidebar-w);
-  width: calc(100% - var(--sidebar-w));
-  display: flex;
-  flex-direction: column;
-  background: var(--bg);
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.app-shell.sidebar-collapsed .main-content {
-  margin-left: var(--sidebar-c);
-  width: calc(100% - var(--sidebar-c));
-}
-
-.content-area.student-jobs-area {
-  flex: 1;
-  padding: 28px;
-  background: var(--bg);
-  box-sizing: border-box;
 }
 
 .jobs-subnav {
@@ -71,12 +34,12 @@
 }
 
 @media (max-width: 768px) {
-  .main-content {
-    margin-left: var(--sidebar-c);
-    width: calc(100% - var(--sidebar-c));
+  .jobs-subnav {
+    gap: 0.35rem;
   }
 
-  .content-area.student-jobs-area {
-    padding: 16px;
+  .jobs-subnav a {
+    font-size: 0.82rem;
+    padding: 0.4rem 0.75rem;
   }
 }

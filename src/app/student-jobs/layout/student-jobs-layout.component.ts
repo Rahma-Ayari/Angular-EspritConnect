@@ -5,10 +5,4 @@ import { Component } from '@angular/core';
   templateUrl: './student-jobs-layout.component.html',
   styleUrls: ['./student-jobs-layout.component.css']
 })
-export class StudentJobsLayoutComponent {
-  sidebarOpen = true;
-
-  toggleSidebar(): void {
-    this.sidebarOpen = !this.sidebarOpen;
-  }
-}
+export class StudentJobsLayoutComponent {}

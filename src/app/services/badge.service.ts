@@ -2,19 +2,20 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Badge, BadgeReq, BadgeRequest, UserBadge } from '../models/badge.model';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BadgeService {
 
-  private apiUrl = 'http://localhost:8088/espritconnect/api/badges';
+  private apiUrl = `${environment.apiUrl}/badges`;
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   get CURRENT_USER_ID(): string {
-    return this.authService.getCurrentUser().id;
+    return this.authService.getCurrentUser()?.userId ?? '';
   }
 
   // === BADGE CRUD ===

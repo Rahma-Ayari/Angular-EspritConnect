@@ -16,5 +16,22 @@ export class ViewModeService {
   setMode(mode: AppViewMode): void {
     this.mode$.next(mode);
   }
+
+  /** Map backend role to front-office view mode (admin preview keeps current mode). */
+  syncFromRole(role: string | null | undefined): void {
+    switch (role) {
+      case 'ETUDIANT':
+        this.setMode('student');
+        break;
+      case 'ALUMNI':
+        this.setMode('alumni');
+        break;
+      case 'ADMIN':
+        break;
+      default:
+        this.setMode('student');
+        break;
+    }
+  }
 }
 

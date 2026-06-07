@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, UrlTree } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { homeRouteForRole } from '../utils/role-home.util';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
@@ -18,7 +19,7 @@ export class AdminGuard implements CanActivate {
 
   canActivate(): boolean | UrlTree {
     if (this.authService.getRole() === 'ADMIN') return true;
-    return this.router.createUrlTree(['/dashboard']);
+    return this.router.createUrlTree(homeRouteForRole(this.authService.getRole()));
   }
 }
 
@@ -28,7 +29,7 @@ export class EntrepriseGuard implements CanActivate {
 
   canActivate(): boolean | UrlTree {
     if (this.authService.getRole() === 'ENTREPRISE') return true;
-    return this.router.createUrlTree(['/dashboard']);
+    return this.router.createUrlTree(homeRouteForRole(this.authService.getRole()));
   }
 }
 
@@ -38,9 +39,30 @@ export class StudentGuard implements CanActivate {
 
   canActivate(): boolean | UrlTree {
     const role = this.authService.getRole();
-    if (role === 'ETUDIANT' || role === 'ALUMNI') return true;
-    if (role === 'ENTREPRISE') return this.router.createUrlTree(['/entreprise/dashboard']);
-    if (role === 'ADMIN') return this.router.createUrlTree(['/admin']);
-    return this.router.createUrlTree(['/dashboard']);
+    if (role === 'ETUDIANT' || role === 'ALUMNI' || role === 'ADMIN') return true;
+    return this.router.createUrlTree(homeRouteForRole(role));
+  }
+}
+
+/** Redirects `/` inside the main shell to the correct home for the logged-in role. */
+@Injectable({ providedIn: 'root' })
+export class RoleHomeRedirectGuard implements CanActivate {
+  constructor(private authService: AuthService, private router: Router) {}
+
+  canActivate(): UrlTree {
+    return this.router.createUrlTree(homeRouteForRole(this.authService.getRole()));
+  }
+}
+
+/** Sends unknown routes to login (guest) or role home (authenticated). */
+@Injectable({ providedIn: 'root' })
+export class FallbackRedirectGuard implements CanActivate {
+  constructor(private authService: AuthService, private router: Router) {}
+
+  canActivate(): UrlTree {
+    if (!this.authService.isLoggedIn()) {
+      return this.router.createUrlTree(['/login']);
+    }
+    return this.router.createUrlTree(homeRouteForRole(this.authService.getRole()));
   }
 }

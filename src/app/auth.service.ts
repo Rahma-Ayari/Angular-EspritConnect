@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from '../environments/environment';
+import { ViewModeService } from './shared/layout/services/view-mode.service';
+import { homeRouteForRole } from './utils/role-home.util';
 
 export interface LoginRequest {
   email: string;
@@ -46,7 +49,7 @@ export interface AuthResponse {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private readonly API = 'http://localhost:8089/espritconnect/api/auth';
+  private readonly API = `${environment.apiUrl}/auth`;
   private readonly TOKEN_KEY = 'esprit_token';
   private readonly USER_KEY  = 'esprit_user';
   private readonly DEVICE_TOKEN_KEY = 'esprit_device_token';
@@ -54,7 +57,11 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<AuthResponse | null>(this.storedUser());
   currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private viewMode: ViewModeService
+  ) {}
 
   // ── Login ──────────────────────────────────────────────────────────────────
   login(req: LoginRequest, deviceToken?: string): Observable<AuthResponse> {
@@ -139,9 +146,11 @@ export class AuthService {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.USER_KEY);
+      localStorage.removeItem(this.DEVICE_TOKEN_KEY);
     }
     this.currentUserSubject.next(null);
-    this.router.navigate(['/login']);
+    this.viewMode.setMode('admin');
+    this.router.navigate(['/login'], { replaceUrl: true });
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
@@ -166,17 +175,13 @@ export class AuthService {
 
   // ── Redirect after login ───────────────────────────────────────────────────
   redirectAfterLogin(role: string): void {
-    switch (role) {
-      case 'ADMIN':
-        this.router.navigate(['/admin/user-management/approval']);
-        break;
-      case 'ENTREPRISE':
-        this.router.navigate(['/entreprise/dashboard']);
-        break;
-      case 'ETUDIANT':
-      default:
-        this.router.navigate(['/dashboard']);
+    this.viewMode.syncFromRole(role);
+    if (role === 'ADMIN') {
+      this.viewMode.setMode('admin');
+      this.router.navigate(['/admin/dashboard']);
+      return;
     }
+    this.router.navigate(homeRouteForRole(role));
   }
 
   private clearSessionOnly(): void {

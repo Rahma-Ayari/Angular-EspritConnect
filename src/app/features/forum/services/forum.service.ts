@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ForumCategory, ForumPost, ForumReply, ForumStats } from '../models/forum.models';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ForumService {
-  private base = 'http://localhost:8088/espritconnect/api/forum';
+  private base = `${environment.apiUrl}/forum`;
 
   constructor(private http: HttpClient) {}
 

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { finalize } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
 
 interface MailingList {
   id: number;
@@ -21,7 +22,7 @@ interface MailingListMember {
   styleUrls: ['./message-users.component.css']
 })
 export class MessageUsersComponent implements OnInit {
-  private base = 'http://localhost:8088/espritconnect';
+  private base = environment.backendBaseUrl;
 
   loadingLists = false;
   loadingMembers = false;

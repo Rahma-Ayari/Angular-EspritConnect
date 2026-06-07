@@ -103,12 +103,12 @@
       <div class="context-group" *ngIf="ticket.attachmentUrl" style="border-top: 1px solid var(--border-light); padding-top: 16px;">
         <label>Attachment</label>
         <p style="margin-top: 6px;">
-          <a [href]="'http://localhost:8088/espritconnect' + ticket.attachmentUrl" target="_blank" class="attachment-link" style="color: var(--primary); font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+          <a [href]="BASE_URL + ticket.attachmentUrl" target="_blank" class="attachment-link" style="color: var(--primary); font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
             <i class="fas fa-paperclip"></i> View File
           </a>
         </p>
         <div class="attachment-thumbnail" *ngIf="ticket.attachmentUrl.match('\\.(jpg|jpeg|png|gif|webp)$') || ticket.attachmentUrl.includes('image')" style="margin-top: 8px; border: 1px solid var(--border-light); border-radius: 6px; overflow: hidden; max-width: 100%;">
-          <img [src]="'http://localhost:8088/espritconnect' + ticket.attachmentUrl" alt="Screenshot" style="width: 100%; display: block; height: auto;">
+          <img [src]="BASE_URL + ticket.attachmentUrl" alt="Screenshot" style="width: 100%; display: block; height: auto;">
         </div>
       </div>
     </aside>

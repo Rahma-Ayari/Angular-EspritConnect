@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-import { AdminRoutingModule } from './admin-routing.module';
 import { SharedLayoutModule } from '../shared/shared-layout.module';
 
 import { AdminLayoutComponent } from './layout/admin-layout/admin-layout.component';
@@ -35,8 +34,19 @@ import { JobsImportComponent } from './pages/jobs/jobs-import.component';
     FormsModule,
     HttpClientModule,
     RouterModule,
-    AdminRoutingModule,
     SharedLayoutModule
+  ],
+  exports: [
+    DashboardComponent,
+    UserApprovalsComponent,
+    EnterpriseVerificationComponent,
+    AdminGeneralSettingsComponent,
+    AdminRegionalSettingsComponent,
+    AdminRegistrationSettingsComponent,
+    AdminHomepageSettingsComponent,
+    JobsSettingsComponent,
+    JobsImportComponent
   ]
 })
 export class AdminModule { }
+

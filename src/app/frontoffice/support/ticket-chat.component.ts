@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { SupportService } from '../../services/support.service';
 import { SupportTicket, TicketMessage, TicketStatus } from '../../models/support.model';
 import { Subscription, interval } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-ticket-chat',
@@ -24,7 +25,7 @@ export class TicketChatComponent implements OnInit, OnDestroy {
   uploadedAttachmentUrl: string | null = null;
   isUploading: boolean = false;
   uploadError: string | null = null;
-  readonly BASE_URL = 'http://localhost:8088/espritconnect';
+  readonly BASE_URL = environment.backendBaseUrl;
 
   constructor(
     private route: ActivatedRoute,

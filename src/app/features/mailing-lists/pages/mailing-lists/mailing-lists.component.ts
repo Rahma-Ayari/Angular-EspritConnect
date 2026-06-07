@@ -4,6 +4,7 @@
 // ============================================================
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
 
 interface MailingList {
   id: number;
@@ -26,7 +27,7 @@ interface MailingListMember {
 })
 export class MailingListsComponent implements OnInit {
 
-  private base = 'http://localhost:8088/espritconnect';
+  private base = environment.backendBaseUrl;
 
   lists:    MailingList[] = [];
   loading   = false;
