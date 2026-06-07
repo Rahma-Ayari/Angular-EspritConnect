@@ -1,0 +1,154 @@
+<div class="badge-form-page">
+
+  <div class="form-page-header">
+    <button class="btn-back" (click)="cancel()">
+      <i class="fa-solid fa-arrow-left"></i> Back to Badges
+    </button>
+    <h1>{{ isEditMode ? 'Edit Badge' : 'Create New Badge' }}</h1>
+    <p>{{ isEditMode ? 'Update the details for this badge' : 'Define a new badge for your community' }}</p>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading badge...</p>
+  </div>
+
+  <form [formGroup]="badgeForm" (ngSubmit)="onSubmit()" *ngIf="!loading" class="form-grid">
+
+    <!-- LEFT COLUMN -->
+    <div class="form-col">
+
+      <!-- Badge Name -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <i class="fa-solid fa-tag"></i>
+          <h3>Basic Info</h3>
+        </div>
+
+        <div class="form-group">
+          <label for="name">Badge Name <span class="required">*</span></label>
+          <input id="name" type="text" formControlName="name" placeholder="e.g. Community Helper" />
+          <div class="error" *ngIf="badgeForm.get('name')?.touched && badgeForm.get('name')?.hasError('required')">Name is required.</div>
+          <div class="error" *ngIf="badgeForm.get('name')?.touched && badgeForm.get('name')?.hasError('minlength')">At least 2 characters.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="criteria">Badge Criteria <span class="required">*</span></label>
+          <input id="criteria" type="text" formControlName="criteria" placeholder="e.g. Helped 10 students" />
+          <div class="error" *ngIf="badgeForm.get('criteria')?.touched && badgeForm.get('criteria')?.hasError('required')">Criteria is required.</div>
+        </div>
+
+        <div class="form-group">
+          <label>Active</label>
+          <label class="toggle-row">
+            <label class="toggle">
+              <input type="checkbox" formControlName="enabled">
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">{{ badgeForm.get('enabled')?.value ? 'Badge is visible and active' : 'Badge is hidden' }}</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Badge Icon -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <i class="fa-solid fa-palette"></i>
+          <h3>Icon</h3>
+        </div>
+
+        <div class="icon-options">
+          <label class="radio-option" *ngFor="let icon of presetIcons">
+            <input type="radio" name="iconMode" [checked]="selectedIcon === icon && !useCustomIcon" (change)="selectIcon(icon)" />
+            <div class="icon-preview-box" [class.selected]="selectedIcon === icon && !useCustomIcon">
+              <i class="fa-solid fa-shield" [style.color]="getIconColor(icon)"></i>
+            </div>
+          </label>
+
+          <label class="radio-option custom-option">
+            <input type="radio" name="iconMode" [checked]="useCustomIcon" (change)="toggleCustomIcon()" />
+            <div class="icon-preview-box custom-box" [class.selected]="useCustomIcon">
+              <i class="fa-solid fa-pencil"></i>
+              <span>Custom</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="form-group" *ngIf="useCustomIcon" style="margin-top: 16px">
+          <label for="customIcon">Custom Icon Identifier</label>
+          <input id="customIcon" type="text" formControlName="icon" placeholder="Enter icon name or URL" />
+        </div>
+
+        <div class="error" *ngIf="badgeForm.get('icon')?.touched && badgeForm.get('icon')?.hasError('required')">Icon is required.</div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="form-col">
+
+      <!-- Badge Type -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <i class="fa-solid fa-robot"></i>
+          <h3>Badge Type</h3>
+        </div>
+
+        <div class="type-cards">
+          <label class="type-card" *ngFor="let type of badgeTypes" [class.selected]="badgeForm.get('badgeType')?.value === type.value">
+            <input type="radio" formControlName="badgeType" [value]="type.value" />
+            <div class="type-card-inner">
+              <i class="fa-solid" [class.fa-hand-pointer]="type.value === BadgeType.MANUALLY_ASSIGNED" [class.fa-bolt]="type.value === BadgeType.AUTOMATICALLY_EARNED"></i>
+              <div>
+                <strong>{{ type.label }}</strong>
+                <p>{{ type.desc }}</p>
+              </div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Auto-Threshold Fields (shown only for AUTOMATICALLY_EARNED) -->
+      <div class="form-card auto-card" *ngIf="isAuto">
+        <div class="form-card-header">
+          <i class="fa-solid fa-sliders"></i>
+          <h3>Activity Thresholds</h3>
+        </div>
+        <p class="auto-note">
+          <i class="fa-solid fa-circle-info"></i>
+          The badge is automatically awarded when a user meets either of these criteria. Leave blank to ignore.
+        </p>
+
+        <div class="form-group">
+          <label>Posts Required</label>
+          <div class="threshold-input">
+            <i class="fa-solid fa-file-pen"></i>
+            <input type="number" formControlName="postThreshold" placeholder="e.g. 10" min="1" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Resolved Support Tickets</label>
+          <div class="threshold-input">
+            <i class="fa-solid fa-headset"></i>
+            <input type="number" formControlName="resolvedTicketsThreshold" placeholder="e.g. 5" min="1" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="submit" class="btn-submit" [disabled]="submitting">
+          <span *ngIf="!submitting">
+            <i class="fa-solid" [class.fa-check]="isEditMode" [class.fa-plus]="!isEditMode"></i>
+            {{ isEditMode ? 'Update Badge' : 'Create Badge' }}
+          </span>
+          <span *ngIf="submitting">
+            <i class="fa-solid fa-spinner fa-spin"></i> Saving...
+          </span>
+        </button>
+        <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+      </div>
+    </div>
+
+  </form>
+</div>

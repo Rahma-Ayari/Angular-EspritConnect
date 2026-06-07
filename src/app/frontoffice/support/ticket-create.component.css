@@ -1,0 +1,64 @@
+.create-ticket-simple {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ===================== HEADER ===================== */
+.create-header-simple {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.btn-back-link {
+  background: none; border: none; color: var(--text-tertiary);
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+}
+.btn-back-link:hover { color: var(--primary); }
+
+.create-header-simple h1 { font-size: 28px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
+.create-header-simple p { font-size: 15px; color: var(--text-tertiary); margin: 0; }
+
+/* ===================== BODY ===================== */
+.create-card-simple {
+  background: white; padding: 32px; border-radius: 12px;
+  border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+}
+
+.form-group-simple { margin-bottom: 24px; }
+.form-group-simple label {
+  display: block; font-size: 13px; font-weight: 700; color: var(--text-secondary);
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+}
+
+.form-group-simple input, .form-group-simple select, .form-group-simple textarea {
+  width: 100%; padding: 12px 14px; border-radius: 8px;
+  border: 1px solid var(--border); background: #fdfdfd; font-size: 15px;
+  transition: all 0.2s; outline: none;
+}
+.form-group-simple input:focus, .form-group-simple select:focus, .form-group-simple textarea:focus {
+  border-color: var(--primary); background: white;
+  box-shadow: 0 0 0 4px var(--primary-light);
+}
+
+.form-row-simple { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+.error-simple { font-size: 12px; color: var(--error); font-weight: 600; margin-top: 4px; }
+
+.form-actions-simple { padding-top: 16px; display: flex; justify-content: flex-end; }
+
+.btn-primary-simple {
+  background-color: var(--primary); color: white; border: none;
+  padding: 12px 32px; border-radius: 10px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-primary-simple:hover:not(:disabled) { background-color: var(--primary-hover); transform: translateY(-1px); }
+.btn-primary-simple:disabled { opacity: 0.5; }
+
+.category-notice-simple {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 5px;
+  font-style: italic;
+}

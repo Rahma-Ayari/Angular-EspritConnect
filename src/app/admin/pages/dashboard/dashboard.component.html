@@ -1,0 +1,67 @@
+<div class="dashboard">
+  <div class="page-header">
+    <h1>Dashboard</h1>
+    <p class="subtitle">Welcome to the EspritConnect Admin Panel</p>
+  </div>
+
+  <div class="stats-grid" *ngIf="!isLoading && stats">
+    <div class="stat-card pending">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.pendingCount }}</span>
+        <span class="stat-label">Pending Approvals</span>
+      </div>
+      <a routerLink="/admin/user-management/approval" class="stat-link">View all →</a>
+    </div>
+
+    <div class="stat-card approved">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.approvedCount }}</span>
+        <span class="stat-label">Approved Users</span>
+      </div>
+    </div>
+
+    <div class="stat-card students">
+      <div class="stat-icon">🎓</div>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.totalStudents }}</span>
+        <span class="stat-label">Students</span>
+      </div>
+    </div>
+
+    <div class="stat-card alumni">
+      <div class="stat-icon">👥</div>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.totalAlumni }}</span>
+        <span class="stat-label">Alumni</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading dashboard...</p>
+  </div>
+
+  <div class="quick-actions">
+    <h2>Quick Actions</h2>
+    <div class="actions-grid">
+      <a routerLink="/admin/user-management/approval" class="action-card">
+        <span class="action-icon">👥</span>
+        <span class="action-title">User Approvals</span>
+        <span class="action-desc">Review and approve pending registrations</span>
+      </a>
+      <a routerLink="/admin/user-management/approval" [queryParams]="{tab: 'settings'}" class="action-card">
+        <span class="action-icon">⚙️</span>
+        <span class="action-title">Approval Settings</span>
+        <span class="action-desc">Configure auto-approval and notifications</span>
+      </a>
+      <a routerLink="/admin/user-management/approval" [queryParams]="{tab: 'list-tools'}" class="action-card">
+        <span class="action-icon">📋</span>
+        <span class="action-title">User List</span>
+        <span class="action-desc">View and manage all registered users</span>
+      </a>
+    </div>
+  </div>
+</div>

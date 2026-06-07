@@ -56,6 +56,30 @@
   --shadow-lg:     0 10px 40px rgba(0,0,0,0.10), 0 4px 10px rgba(0,0,0,0.05);
 
   --transition:    150ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Alias develop (badges / support) */
+  --primary:         var(--red);
+  --primary-light:   var(--red-light);
+  --primary-hover:   var(--red-dark);
+  --bg-main:         var(--surface-2);
+  --bg-sidebar:      var(--surface);
+  --bg-card:         var(--surface);
+  --text-main:       var(--ink);
+  --text-secondary:  var(--ink-3);
+  --text-tertiary:   var(--muted);
+  --text-white:      #ffffff;
+  --border:          var(--line);
+  --border-light:    var(--line-2);
+  --success:         var(--green);
+  --success-bg:      var(--green-bg);
+  --warning:         var(--amber);
+  --warning-bg:      var(--amber-bg);
+  --error:           var(--red);
+  --error-bg:        var(--red-light);
+  --font-main:       var(--font);
+  --font-heading:    var(--font);
+  --sidebar-width:   260px;
+  --header-height:   68px;
 }
 
 /* ── Reset ── */

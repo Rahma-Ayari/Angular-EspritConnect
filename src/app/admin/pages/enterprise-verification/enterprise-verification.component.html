@@ -1,0 +1,365 @@
+<div class="verification-admin-container">
+  <div class="page-header">
+    <h1>Vérification des entreprises</h1>
+    <p>Gérez les demandes de vérification des comptes entreprise</p>
+  </div>
+
+  <!-- Alerts -->
+  <div *ngIf="error" class="alert alert-error">
+    <span class="alert-icon">⚠️</span>
+    <span>{{ error }}</span>
+    <button class="alert-close" (click)="dismissError()">&times;</button>
+  </div>
+
+  <div *ngIf="success" class="alert alert-success">
+    <span class="alert-icon">✓</span>
+    <span>{{ success }}</span>
+    <button class="alert-close" (click)="dismissSuccess()">&times;</button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement...</p>
+  </div>
+
+  <div *ngIf="!loading">
+    <!-- Stats Cards -->
+    <div class="stats-grid" *ngIf="stats">
+      <div class="stat-card">
+        <div class="stat-icon total">📊</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.total }}</span>
+          <span class="stat-label">Total entreprises</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon pending">⏳</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.pending }}</span>
+          <span class="stat-label">En attente</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon verified">✓</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.verified }}</span>
+          <span class="stat-label">Vérifiées</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon rejected">✗</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.rejected }}</span>
+          <span class="stat-label">Refusées</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button class="tab" [class.active]="activeTab === 'pending'" (click)="switchTab('pending')">
+          En attente
+          <span class="tab-badge" *ngIf="pendingEnterprises.length > 0">{{ pendingEnterprises.length }}</span>
+        </button>
+        <button class="tab" [class.active]="activeTab === 'all'" (click)="switchTab('all')">
+          Toutes les entreprises
+        </button>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <div class="search-box">
+          <input type="text" 
+                 [(ngModel)]="searchTerm" 
+                 (ngModelChange)="onSearchChange()"
+                 placeholder="Rechercher par nom, email ou RC...">
+          <span class="search-icon">🔍</span>
+        </div>
+        <select *ngIf="activeTab === 'all'" 
+                [(ngModel)]="statusFilter" 
+                (ngModelChange)="onStatusFilterChange()"
+                class="status-filter">
+          <option value="">Tous les statuts</option>
+          <option value="NOT_SUBMITTED">Non soumis</option>
+          <option value="PENDING">En attente</option>
+          <option value="VERIFIED">Vérifié</option>
+          <option value="REJECTED">Refusé</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+      <table class="data-table" *ngIf="filteredEnterprises.length > 0">
+        <thead>
+          <tr>
+            <th>Entreprise</th>
+            <th>RC / Matricule</th>
+            <th>Secteur</th>
+            <th>Document</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let enterprise of paginatedEnterprises">
+            <td>
+              <div class="enterprise-info">
+                <span class="enterprise-name">{{ enterprise.nom }}</span>
+                <span class="enterprise-email">{{ enterprise.email }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="rc-number" *ngIf="enterprise.businessRegistrationNumber">
+                {{ enterprise.businessRegistrationNumber }}
+              </span>
+              <span class="no-data" *ngIf="!enterprise.businessRegistrationNumber">-</span>
+            </td>
+            <td>
+              <span *ngIf="enterprise.companySector">{{ enterprise.companySector }}</span>
+              <span class="no-data" *ngIf="!enterprise.companySector">-</span>
+            </td>
+            <td>
+              <button *ngIf="enterprise.hasDocument" 
+                      class="btn-icon" 
+                      (click)="viewDocument(enterprise)"
+                      title="Voir le document">
+                📄
+              </button>
+              <span class="no-data" *ngIf="!enterprise.hasDocument">-</span>
+            </td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(enterprise.verificationStatus)">
+                {{ getStatusLabel(enterprise.verificationStatus) }}
+              </span>
+            </td>
+            <td>
+              <div class="actions">
+                <!-- Actions pour les entreprises en attente (PENDING) -->
+                <ng-container *ngIf="enterprise.verificationStatus === 'PENDING'">
+                  <button class="btn-action btn-auto" 
+                          (click)="openAutoVerifyModal(enterprise)"
+                          title="Vérification automatique">
+                    🛡️
+                  </button>
+                  <button class="btn-action btn-approve" 
+                          (click)="openVerifyModal(enterprise, 'approve')"
+                          title="Approuver">
+                    ✓
+                  </button>
+                  <button class="btn-action btn-reject" 
+                          (click)="openVerifyModal(enterprise, 'reject')"
+                          title="Refuser">
+                    ✗
+                  </button>
+                </ng-container>
+
+                <!-- Bouton re-soumission pour les entreprises déjà traitées -->
+                <button class="btn-action btn-resubmit" 
+                        (click)="openResubmitModal(enterprise)"
+                        title="Demander re-soumission"
+                        *ngIf="enterprise.verificationStatus === 'VERIFIED' || enterprise.verificationStatus === 'REJECTED'">
+                  ↻
+                </button>
+
+                <!-- Message pour les entreprises non soumises -->
+                <span class="no-action-text" *ngIf="enterprise.verificationStatus === 'NOT_SUBMITTED'">
+                  En attente de soumission
+                </span>
+
+                <!-- Badge pour les entreprises vérifiées -->
+                <span class="verified-badge" *ngIf="enterprise.verificationStatus === 'VERIFIED'">
+                  ✅ Vérifié
+                </span>
+
+                <!-- Badge pour les entreprises refusées -->
+                <span class="rejected-badge" *ngIf="enterprise.verificationStatus === 'REJECTED'">
+                  ❌ Refusé
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="empty-state" *ngIf="filteredEnterprises.length === 0">
+        <div class="empty-icon">📭</div>
+        <p>Aucune entreprise trouvée</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="filteredEnterprises.length > 0">
+      <div class="pagination-info">
+        <span>Affichage {{ startIndex }} - {{ endIndex }} sur {{ filteredEnterprises.length }} entreprises</span>
+        <div class="items-per-page">
+          <label>Par page:</label>
+          <select [(ngModel)]="itemsPerPage" (ngModelChange)="onItemsPerPageChange()">
+            <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="pagination-controls" *ngIf="totalPages > 1">
+        <button class="pagination-btn" 
+                (click)="goToPage(1)" 
+                [disabled]="currentPage === 1"
+                title="Première page">
+          «
+        </button>
+        <button class="pagination-btn" 
+                (click)="previousPage()" 
+                [disabled]="currentPage === 1"
+                title="Page précédente">
+          ‹
+        </button>
+        
+        <button *ngFor="let page of getPageNumbers()" 
+                class="pagination-btn" 
+                [class.active]="page === currentPage"
+                (click)="goToPage(page)">
+          {{ page }}
+        </button>
+        
+        <button class="pagination-btn" 
+                (click)="nextPage()" 
+                [disabled]="currentPage === totalPages"
+                title="Page suivante">
+          ›
+        </button>
+        <button class="pagination-btn" 
+                (click)="goToPage(totalPages)" 
+                [disabled]="currentPage === totalPages"
+                title="Dernière page">
+          »
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auto Verify Modal -->
+  <div class="modal-overlay" *ngIf="showAutoVerifyModal" (click)="closeAutoVerifyModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Vérification automatique</h3>
+        <button class="modal-close" (click)="closeAutoVerifyModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="!autoVerifyResult" class="loading-modal">
+          <div class="spinner"></div>
+          <p>Analyse en cours...</p>
+        </div>
+
+        <div *ngIf="autoVerifyResult" class="auto-verify-result">
+          <div class="enterprise-detail">
+            <strong>{{ selectedEnterprise?.nom }}</strong>
+            <span>{{ selectedEnterprise?.email }}</span>
+          </div>
+
+          <div class="score-display" [ngClass]="getScoreClass(autoVerifyResult.totalScore)">
+            <span class="score-label">Score de confiance</span>
+            <span class="score-value">{{ autoVerifyResult.totalScore }}/100</span>
+          </div>
+
+          <div class="breakdown-list">
+            <div class="breakdown-item" *ngFor="let item of autoVerifyResult.breakdown">
+              <span class="breakdown-icon" [class.passed]="item.passed">
+                {{ item.passed ? '✓' : '✗' }}
+              </span>
+              <span class="breakdown-text">{{ item.criteria }}</span>
+              <span class="breakdown-score">{{ item.points }}/{{ item.maxPoints }}</span>
+            </div>
+          </div>
+
+          <div class="recommendation-box" [ngClass]="getRecommendationClass(autoVerifyResult.recommendation)">
+            <strong>Recommandation:</strong>
+            <p>{{ autoVerifyResult.recommendationText }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" *ngIf="autoVerifyResult">
+        <button class="btn btn-secondary" (click)="closeAutoVerifyModal()">Fermer</button>
+        <button class="btn btn-success" 
+                (click)="closeAutoVerifyModal(); openVerifyModal(selectedEnterprise!, 'approve')"
+                *ngIf="autoVerifyResult.recommendation === 'APPROVE'">
+          Approuver
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verify Modal -->
+  <div class="modal-overlay" *ngIf="showVerifyModal" (click)="closeVerifyModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Vérification de l'entreprise</h3>
+        <button class="modal-close" (click)="closeVerifyModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="enterprise-detail">
+          <strong>{{ selectedEnterprise?.nom }}</strong>
+          <span>{{ selectedEnterprise?.email }}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="notes">Notes (optionnel)</label>
+          <textarea id="notes" 
+                    [(ngModel)]="verificationNotes" 
+                    placeholder="Ajoutez des notes pour l'entreprise..."
+                    rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeVerifyModal()">Annuler</button>
+        <button class="btn btn-danger" 
+                (click)="rejectEnterprise()" 
+                [disabled]="actionLoading">
+          {{ actionLoading ? 'Traitement...' : 'Refuser' }}
+        </button>
+        <button class="btn btn-success" 
+                (click)="approveEnterprise()" 
+                [disabled]="actionLoading">
+          {{ actionLoading ? 'Traitement...' : 'Approuver' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resubmit Modal -->
+  <div class="modal-overlay" *ngIf="showResubmitModal" (click)="closeResubmitModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Demander une re-soumission</h3>
+        <button class="modal-close" (click)="closeResubmitModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="enterprise-detail">
+          <strong>{{ selectedEnterprise?.nom }}</strong>
+          <span>{{ selectedEnterprise?.email }}</span>
+        </div>
+
+        <p class="warning-text">
+          Cette action supprimera le document actuel et demandera à l'entreprise de soumettre à nouveau sa vérification.
+        </p>
+
+        <div class="form-group">
+          <label for="reason">Raison de la demande (optionnel)</label>
+          <textarea id="reason" 
+                    [(ngModel)]="resubmitReason" 
+                    placeholder="Expliquez pourquoi une re-soumission est nécessaire..."
+                    rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeResubmitModal()">Annuler</button>
+        <button class="btn btn-warning" 
+                (click)="requestResubmission()" 
+                [disabled]="actionLoading">
+          {{ actionLoading ? 'Traitement...' : 'Demander re-soumission' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

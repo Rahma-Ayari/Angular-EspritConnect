@@ -106,6 +106,58 @@
         </a>
       </li>
       
+      <!-- Badges (develop) -->
+      <li>
+        <a routerLink="/admin/badges" routerLinkActive="active">
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="8" r="6"></circle>
+            <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
+          </svg>
+          <span class="label">Badges Management</span>
+        </a>
+      </li>
+
+      <!-- Help & Support (develop) -->
+      <li class="has-children" [class.expanded]="expandedMenus['support']">
+        <a class="menu-toggle" (click)="toggleMenu('support', $event)">
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"></path>
+            <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+          </svg>
+          <span class="label">Help &amp; Support</span>
+          <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.rotated]="expandedMenus['support']">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </a>
+        <ul class="submenu" *ngIf="expandedMenus['support']">
+          <li>
+            <a routerLink="/admin/support" routerLinkActive="active">
+              <span class="submenu-dot"></span>
+              <span class="label">Tickets</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/admin/support/faqs" routerLinkActive="active">
+              <span class="submenu-dot"></span>
+              <span class="label">FAQ Management</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/admin/support/categories" routerLinkActive="active">
+              <span class="submenu-dot"></span>
+              <span class="label">Categories</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/admin/moderation" routerLinkActive="active">
+              <span class="submenu-dot"></span>
+              <span class="label">Moderation</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
       <!-- Email Communications -->
       <li class="has-children" [class.expanded]="expandedMenus['communications']">
         <a class="menu-toggle" (click)="toggleMenu('communications', $event)">
@@ -205,6 +257,52 @@
           </svg>
           <span class="label">Accueil</span>
         </a>
+      </li>
+
+      <!-- Mes badges (develop) -->
+      <li>
+        <a routerLink="/my-badges" routerLinkActive="active">
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="8" r="6"></circle>
+            <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
+          </svg>
+          <span class="label">Mes badges</span>
+        </a>
+      </li>
+
+      <!-- Aide & Support (develop) -->
+      <li class="has-children" [class.expanded]="expandedMenus['support']">
+        <a class="menu-toggle" (click)="toggleMenu('support', $event)">
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"></path>
+            <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+          </svg>
+          <span class="label">Aide &amp; Support</span>
+          <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.rotated]="expandedMenus['support']">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </a>
+        <ul class="submenu" *ngIf="expandedMenus['support']">
+          <li>
+            <a routerLink="/support" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+              <span class="submenu-dot"></span>
+              <span class="label">Mes tickets</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/support/faq" routerLinkActive="active">
+              <span class="submenu-dot"></span>
+              <span class="label">FAQ</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/support/report" routerLinkActive="active">
+              <span class="submenu-dot"></span>
+              <span class="label">Signaler un contenu</span>
+            </a>
+          </li>
+        </ul>
       </li>
 
       <!-- Groupes -->

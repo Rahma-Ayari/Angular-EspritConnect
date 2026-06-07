@@ -1,0 +1,35 @@
+.insights h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.grid-3,
+.grid-2 {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.tag {
+  display: inline-block;
+  margin: 0.15rem;
+  padding: 0.2rem 0.5rem;
+  background: rgba(204, 0, 0, 0.08);
+  color: #cc0000;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: #444;
+}

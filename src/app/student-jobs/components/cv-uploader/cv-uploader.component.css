@@ -1,0 +1,12 @@
+.upload-zone {
+  border: 2px dashed #ddd;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  color: #666;
+}
+
+.upload-zone i {
+  font-size: 2rem;
+  color: #cc0000;
+}

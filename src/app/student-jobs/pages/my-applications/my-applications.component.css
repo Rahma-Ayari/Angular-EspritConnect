@@ -1,0 +1,27 @@
+@import '../../styles/student-jobs.shared.css';
+
+.row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.view-toggle button {
+  border: 1px solid var(--sj-border);
+  background: #fff;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  margin-left: 0.35rem;
+  cursor: pointer;
+}
+
+.view-toggle button.active {
+  background: var(--sj-red-soft);
+  color: var(--sj-red);
+  border-color: var(--sj-red);
+}
+
+.block-skel {
+  height: 240px;
+}

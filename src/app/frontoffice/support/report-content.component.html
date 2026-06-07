@@ -1,0 +1,104 @@
+<div class="report-page">
+
+  <!-- Back button -->
+  <button class="btn-back" (click)="back()">
+    <i class="fa-solid fa-arrow-left"></i> Back to Support
+  </button>
+
+  <!-- Header -->
+  <div class="report-header">
+    <div class="report-header-icon">
+      <i class="fa-solid fa-flag"></i>
+    </div>
+    <div>
+      <h1 class="report-title">Report Content</h1>
+      <p class="report-subtitle">Flag inappropriate or harmful content for review by our moderation team.</p>
+    </div>
+  </div>
+
+  <!-- Success State -->
+  <div class="success-card" *ngIf="submitted">
+    <div class="success-icon">
+      <i class="fa-solid fa-circle-check"></i>
+    </div>
+    <h2>Report Submitted!</h2>
+    <p>Thank you for helping keep the community safe. Our moderation team will review this shortly.</p>
+    <button class="btn-primary" (click)="back()">
+      <i class="fa-solid fa-arrow-left"></i> Return to Support
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form [formGroup]="form" (ngSubmit)="submit()" *ngIf="!submitted" class="report-form">
+
+    <!-- Content Type -->
+    <div class="form-group">
+      <label class="form-label">
+        <i class="fa-solid fa-layer-group"></i> Content Type
+      </label>
+      <div class="type-grid">
+        <button
+          type="button"
+          class="type-card"
+          *ngFor="let t of contentTypes"
+          [class.selected]="form.get('contentType')?.value === t.value"
+          (click)="form.get('contentType')?.setValue(t.value)">
+          <i class="fa-solid" [ngClass]="typeIcon(t.value)"></i>
+          <span>{{ t.label }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Content Reference ID -->
+    <div class="form-group">
+      <label class="form-label">
+        <i class="fa-solid fa-fingerprint"></i> Content Reference ID
+      </label>
+      <div class="input-wrapper">
+        <input
+          formControlName="contentRefId"
+          class="form-input"
+          placeholder="Post ID, message ID, user ID..." />
+      </div>
+      <p class="form-hint">You can find this in the URL or by hovering over the content.</p>
+    </div>
+
+    <!-- Reason -->
+    <div class="form-group">
+      <label class="form-label">
+        <i class="fa-solid fa-comment-exclamation"></i> Reason for Report
+      </label>
+      <div class="reason-chips">
+        <span class="reason-chip" (click)="appendReason('This content contains hate speech.')">Hate speech</span>
+        <span class="reason-chip" (click)="appendReason('This content is spam or misleading.')">Spam</span>
+        <span class="reason-chip" (click)="appendReason('This content contains harassment or bullying.')">Harassment</span>
+        <span class="reason-chip" (click)="appendReason('This content is inappropriate or explicit.')">Inappropriate</span>
+        <span class="reason-chip" (click)="appendReason('This content violates community guidelines.')">Policy violation</span>
+      </div>
+      <textarea
+        formControlName="reason"
+        class="form-textarea"
+        rows="4"
+        placeholder="Describe what is wrong with this content (minimum 20 characters)..."></textarea>
+      <div class="char-count" [class.danger]="(form.get('reason')?.value?.length || 0) < 20">
+        {{ form.get('reason')?.value?.length || 0 }} / 20 min
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div class="error-alert" *ngIf="error">
+      <i class="fa-solid fa-triangle-exclamation"></i> {{ error }}
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" class="btn-submit" [disabled]="form.invalid">
+      <i class="fa-solid fa-paper-plane"></i> Submit Report
+    </button>
+
+    <p class="privacy-note">
+      <i class="fa-solid fa-lock"></i>
+      Your report is confidential. We will not share your identity with the reported user.
+    </p>
+
+  </form>
+</div>

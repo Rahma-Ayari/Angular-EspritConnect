@@ -1,0 +1,53 @@
+<div class="sj-page assistant-page">
+  <header class="sj-page-header">
+    <h1>AI Career Assistant</h1>
+    <p>Improve your employability with AI-powered coaching.</p>
+  </header>
+
+  <div class="tab-bar">
+    <button type="button" [class.active]="activeTab === 'cv'" (click)="activeTab = 'cv'">CV Review</button>
+    <button type="button" [class.active]="activeTab === 'cover'" (click)="activeTab = 'cover'">Cover Letter</button>
+    <button type="button" [class.active]="activeTab === 'interview'" (click)="activeTab = 'interview'">Interview Prep</button>
+    <button type="button" [class.active]="activeTab === 'career'" (click)="activeTab = 'career'; loadCareer()">Career Tips</button>
+  </div>
+
+  <div class="tab-panel sj-card" *ngIf="activeTab === 'cv'">
+    <app-cv-uploader (fileSelected)="onCvSelected($event)"></app-cv-uploader>
+    <p *ngIf="cvFileName" class="file-name">Analyzing: {{ cvFileName }}</p>
+    <div class="sj-skeleton" *ngIf="cvLoading" style="height:120px"></div>
+    <app-ai-insights-panel *ngIf="cvResult && !cvLoading" [cvReview]="cvResult"></app-ai-insights-panel>
+  </div>
+
+  <div class="tab-panel sj-card" *ngIf="activeTab === 'cover'">
+    <app-cover-letter-generator
+      [jobs]="jobs"
+      [(selectedJobId)]="selectedJobId"
+      (generate)="generateCover()">
+    </app-cover-letter-generator>
+    <div class="sj-skeleton" *ngIf="coverLoading" style="height:100px"></div>
+    <pre class="letter-output typing" *ngIf="typingCover">{{ typingCover }}</pre>
+  </div>
+
+  <div class="tab-panel sj-card" *ngIf="activeTab === 'interview'">
+    <label>Select a job context</label>
+    <select [(ngModel)]="selectedJobId">
+      <option [ngValue]="undefined">Choose job</option>
+      <option *ngFor="let j of jobs" [ngValue]="j.id">{{ j.title }}</option>
+    </select>
+    <button type="button" class="sj-btn-primary" (click)="generateInterview()">Generate questions</button>
+    <div class="sj-skeleton" *ngIf="interviewLoading" style="height:120px"></div>
+    <div *ngIf="interviewResult && !interviewLoading" class="qa-blocks">
+      <h3>HR Questions</h3>
+      <ul><li *ngFor="let q of interviewResult.hrQuestions">{{ q }}</li></ul>
+      <h3>Technical Questions</h3>
+      <ul><li *ngFor="let q of interviewResult.technicalQuestions">{{ q }}</li></ul>
+      <h3>Role-specific Questions</h3>
+      <ul><li *ngFor="let q of interviewResult.roleQuestions">{{ q }}</li></ul>
+    </div>
+  </div>
+
+  <div class="tab-panel sj-card" *ngIf="activeTab === 'career'">
+    <div class="sj-skeleton" *ngIf="careerLoading" style="height:140px"></div>
+    <app-ai-insights-panel *ngIf="careerResult && !careerLoading" [career]="careerResult"></app-ai-insights-panel>
+  </div>
+</div>

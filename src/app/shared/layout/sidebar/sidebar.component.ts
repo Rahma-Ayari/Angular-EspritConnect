@@ -19,8 +19,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
   expandedMenus: { [key: string]: boolean } = {
     users: false,
     settings: false,
-    communications: true, // Ouvert par défaut pour accès rapide
-    forum: false
+    communications: true,
+    forum: false,
+    support: false,
+    badges: false
   };
 
   currentUser = {
@@ -72,6 +74,15 @@ export class SidebarComponent implements OnInit, OnDestroy {
       }
       if (url.includes('/forum/') || url.includes('/user/forum')) {
         this.expandedMenus['forum'] = true;
+      }
+      if (url.includes('/admin/badges')) {
+        this.expandedMenus['badges'] = true;
+      }
+      if (url.includes('/admin/support') || url.includes('/admin/moderation')) {
+        this.expandedMenus['support'] = true;
+      }
+      if (url.includes('/my-badges') || url.includes('/support')) {
+        this.expandedMenus['support'] = true;
       }
     }
   }

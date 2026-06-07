@@ -1,0 +1,199 @@
+<div class="badges-page">
+
+  <!-- Toast Notification -->
+  <div class="toast" *ngIf="toast" [class.toast-success]="toast.type === 'success'" [class.toast-error]="toast.type === 'error'">
+    <i class="fa-solid" [class.fa-circle-check]="toast.type === 'success'" [class.fa-circle-xmark]="toast.type === 'error'"></i>
+    {{ toast.message }}
+  </div>
+
+  <!-- Hero Header -->
+  <div class="hero-section">
+    <div class="hero-content">
+      <div class="hero-icon">
+        <i class="fa-solid fa-trophy"></i>
+      </div>
+      <div>
+        <h1>Your Achievements</h1>
+        <p>Collect badges by contributing to the ESPRIT community</p>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-val">{{ userBadges.length }}</span>
+        <span class="hero-stat-label">Earned</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">{{ availableBadges.length }}</span>
+        <span class="hero-stat-label">Available</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading your achievements...</p>
+  </div>
+
+  <div *ngIf="!loading">
+
+    <!-- Section: My Earned Badges -->
+    <section class="badges-section">
+      <div class="section-head">
+        <div class="section-head-left">
+          <div class="section-icon earned-icon">
+            <i class="fa-solid fa-medal"></i>
+          </div>
+          <div>
+            <h2>My Badges</h2>
+            <p>{{ userBadges.length }} badge{{ userBadges.length !== 1 ? 's' : '' }} earned</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="earned-grid" *ngIf="userBadges.length > 0">
+        <div class="earned-card" *ngFor="let ub of userBadges">
+          <div class="earned-shine"></div>
+          <div class="earned-badge-top">
+            <div class="badge-shield">
+              <i class="fa-solid fa-shield"></i>
+              <span class="shield-check"><i class="fa-solid fa-check"></i></span>
+            </div>
+          </div>
+          <h3 class="earned-badge-name">{{ ub.badgeName }}</h3>
+          <p class="earned-badge-when">
+            <i class="fa-regular fa-clock"></i>
+            {{ getTimeAgo(ub.earnedAt!) }}
+          </p>
+          <div class="earned-ribbon">EARNED</div>
+        </div>
+      </div>
+
+      <div class="empty-earned" *ngIf="userBadges.length === 0">
+        <i class="fa-regular fa-star"></i>
+        <p>No badges yet — start contributing to earn your first one!</p>
+      </div>
+    </section>
+
+    <!-- Section: Badges to Request (Manual) -->
+    <section class="badges-section mt-6" *ngIf="manualBadges.length > 0">
+      <div class="section-head">
+        <div class="section-head-left">
+          <div class="section-icon available-icon">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <div>
+            <h2>Special Honors</h2>
+            <p>Request these badges by describing your unique contributions</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="available-grid">
+        <div class="available-card" *ngFor="let badge of manualBadges">
+          <div class="available-icon-wrap">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <div class="available-info">
+            <h3>{{ badge.name }}</h3>
+            <p class="available-criteria">
+              <i class="fa-solid fa-circle-info"></i>
+              {{ badge.criteria }}
+            </p>
+          </div>
+          
+          <div class="badge-action-area">
+            <span class="status-pending" *ngIf="isPending(badge.id!)">
+              <i class="fa-solid fa-clock-rotate-left"></i> Pending Review
+            </span>
+            <button class="btn-request" *ngIf="!isPending(badge.id!)" (click)="openRequestModal(badge)">
+              <i class="fa-solid fa-paper-plane"></i>
+              Request
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Progress Badges (Automatic) -->
+    <section class="badges-section mt-6" *ngIf="autoBadges.length > 0">
+      <div class="section-head">
+        <div class="section-head-left">
+          <div class="section-icon auto-icon">
+            <i class="fa-solid fa-bolt"></i>
+          </div>
+          <div>
+            <h2>Milestones</h2>
+            <p>Earn these automatically based on your activity</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="available-grid">
+        <div class="available-card auto-card" *ngFor="let badge of autoBadges">
+          <div class="available-icon-wrap auto-bg">
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <div class="available-info">
+            <h3>{{ badge.name }}</h3>
+            <p class="available-criteria">{{ badge.criteria }}</p>
+          </div>
+          <div class="badge-status-area">
+             <span class="status-auto">Automatic Unlock</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Request Modal Overlay -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title">
+          <div class="modal-badge-icon">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <div>
+            <h3>Request Badge</h3>
+            <p>{{ selectedBadge?.name }}</p>
+          </div>
+        </div>
+        <button class="modal-close" (click)="closeModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <label>Why do you deserve this badge?</label>
+        <textarea
+          [(ngModel)]="motivation"
+          placeholder="Describe your contributions, activities, or how you meet the criteria for this badge..."
+          rows="5"
+        ></textarea>
+        <p class="char-count" [class.warn]="motivation.length > 450">
+          {{ motivation.length }}/500 characters
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel-modal" (click)="closeModal()">Cancel</button>
+        <button
+          class="btn-submit-modal"
+          [disabled]="motivation.trim().length < 10 || submitting"
+          (click)="submitRequest()"
+        >
+          <span *ngIf="!submitting">
+            <i class="fa-solid fa-paper-plane me-2"></i> Send Request
+          </span>
+          <span *ngIf="submitting">
+            <i class="fa-solid fa-spinner fa-spin me-2"></i> Sending...
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

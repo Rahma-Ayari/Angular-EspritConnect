@@ -1,0 +1,171 @@
+<div class="ai-generator-page">
+  <div class="page-top">
+    <button type="button" class="btn-back" (click)="goBack()">
+      <i class="bi bi-arrow-left"></i>
+    </button>
+    <div>
+      <h1>AI Job Generator</h1>
+      <p>Generate professional job descriptions with AI assistance</p>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button
+      type="button"
+      class="tab"
+      [class.active]="activeTab === 'generate'"
+      (click)="setTab('generate')">
+      Generate New
+    </button>
+    <button
+      type="button"
+      class="tab"
+      [class.active]="activeTab === 'improve'"
+      (click)="setTab('improve')">
+      Improve Existing
+    </button>
+  </div>
+
+  <div class="error-banner" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="success-banner" *ngIf="successMessage">{{ successMessage }}</div>
+
+  <div class="generator-layout">
+    <div class="form-card">
+      <div class="card-header">
+        <span class="card-icon"><i class="bi bi-stars"></i></span>
+        <h2>{{ activeTab === 'generate' ? 'Job Details' : 'Improve Content' }}</h2>
+      </div>
+
+      <ng-container *ngIf="activeTab === 'generate'">
+        <div class="form-group">
+          <label for="title">Job Title *</label>
+          <input id="title" type="text" [(ngModel)]="title" placeholder="e.g., Senior Frontend Developer" />
+        </div>
+
+        <div class="form-group">
+          <label for="skills">Skills &amp; Technologies</label>
+          <input id="skills" type="text" [(ngModel)]="skillsInput" placeholder="e.g., React, TypeScript, Node.js" />
+          <small>Separate multiple skills with commas</small>
+        </div>
+
+        <div class="form-group">
+          <label for="experience">Experience Level *</label>
+          <select id="experience" [(ngModel)]="experienceLevel">
+            <option *ngFor="let level of experienceLevels" [value]="level">
+              {{ experienceLevelLabels[level] }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="contractType">Contract Type</label>
+          <select id="contractType" [(ngModel)]="contractType">
+            <option *ngFor="let type of contractTypes" [value]="type">
+              {{ contractTypeLabels[type] }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="prompt">Prompt (optional)</label>
+          <textarea
+            id="prompt"
+            rows="4"
+            [(ngModel)]="additionalPrompt"
+            placeholder="Add extra context, tone, or requirements for the AI...">
+          </textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="language">Output Language</label>
+          <select id="language" [(ngModel)]="outputLanguage">
+            <option *ngFor="let option of languageOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="activeTab === 'improve'">
+        <div class="form-group">
+          <label for="improveTitle">Job Title</label>
+          <input id="improveTitle" type="text" [(ngModel)]="improveJobTitle" placeholder="Optional job title" />
+        </div>
+
+        <div class="form-group">
+          <label for="improveText">Existing Content *</label>
+          <textarea
+            id="improveText"
+            rows="8"
+            [(ngModel)]="improveText"
+            placeholder="Paste the job description you want to improve...">
+          </textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="improveLanguage">Output Language</label>
+          <select id="improveLanguage" [(ngModel)]="outputLanguage">
+            <option *ngFor="let option of languageOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </ng-container>
+
+      <button
+        type="button"
+        class="btn-generate"
+        [disabled]="!canGenerate || isGenerating"
+        (click)="generate()">
+        <i class="bi bi-stars"></i>
+        <span *ngIf="!isGenerating">{{ hasGenerated ? 'Regenerate with AI' : 'Generate with AI' }}</span>
+        <span *ngIf="isGenerating">Generating...</span>
+      </button>
+    </div>
+
+    <div class="preview-card">
+      <div class="preview-empty" *ngIf="!generatedContent && !isGenerating">
+        <i class="bi bi-stars"></i>
+        <p>Fill in the job details and click "Generate with AI" to create professional content</p>
+      </div>
+
+      <div class="preview-loading" *ngIf="isGenerating">
+        <div class="spinner"></div>
+        <p>Generating professional content...</p>
+      </div>
+
+      <div class="preview-content" *ngIf="generatedContent && !isGenerating">
+        <p class="ai-disclaimer" *ngIf="generatedContent.aiDisclaimer">{{ generatedContent.aiDisclaimer }}</p>
+
+        <section>
+          <h3>Description</h3>
+          <p>{{ generatedContent.description }}</p>
+        </section>
+
+        <section>
+          <h3>Responsibilities</h3>
+          <p>{{ generatedContent.responsibilities }}</p>
+        </section>
+
+        <section>
+          <h3>Requirements</h3>
+          <p>{{ generatedContent.requirements }}</p>
+        </section>
+
+        <section *ngIf="generatedContent.benefits">
+          <h3>Benefits</h3>
+          <p>{{ generatedContent.benefits }}</p>
+        </section>
+
+        <button
+          type="button"
+          class="btn-accept"
+          [disabled]="isSaving"
+          (click)="acceptAndSave()">
+          <i class="bi bi-check-lg"></i>
+          {{ isSaving ? 'Saving...' : 'Accept & Save Offer' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

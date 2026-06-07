@@ -1,0 +1,161 @@
+<div class="admin-page" *ngIf="loading">
+  <div class="loading-full">Loading registration settings…</div>
+</div>
+
+<div class="admin-page" *ngIf="!loading && settings">
+  <section class="body settings-body">
+      <div *ngIf="error" class="banner-error">{{ error }}</div>
+      <div *ngIf="saveOk" class="banner-ok">Changes saved successfully.</div>
+
+      <header class="page-head">
+        <h1>Registration Settings</h1>
+        <p>Configure how users can register and access your platform.</p>
+      </header>
+
+      <section class="card card-registration-methods">
+        <div class="section-head-row">
+          <div class="section-icon maroon"><i class="bi bi-person-plus"></i></div>
+          <div>
+            <h2 class="card-title tight">Registration Methods</h2>
+            <p class="card-desc tight">Enable or disable registration methods for users</p>
+          </div>
+        </div>
+
+        <div class="methods-grid">
+          <div class="method-card method-linkedin">
+            <div class="method-icon"><i class="bi bi-linkedin"></i></div>
+            <div class="method-body">
+              <p class="method-name">LinkedIn</p>
+              <p class="method-status" [class.on]="settings.linkedInEnabled" [class.off]="!settings.linkedInEnabled">
+                {{ settings.linkedInEnabled ? 'Enabled' : 'Disabled' }}
+              </p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="settings.linkedInEnabled" name="li" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="method-card method-facebook">
+            <div class="method-icon"><i class="bi bi-facebook"></i></div>
+            <div class="method-body">
+              <p class="method-name">Facebook</p>
+              <p class="method-status" [class.on]="settings.facebookEnabled" [class.off]="!settings.facebookEnabled">
+                {{ settings.facebookEnabled ? 'Enabled' : 'Disabled' }}
+              </p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="settings.facebookEnabled" name="fb" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="method-card method-google">
+            <div class="method-icon"><i class="bi bi-google"></i></div>
+            <div class="method-body">
+              <p class="method-name">Google</p>
+              <p class="method-status" [class.on]="settings.googleEnabled" [class.off]="!settings.googleEnabled">
+                {{ settings.googleEnabled ? 'Enabled' : 'Disabled' }}
+              </p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="settings.googleEnabled" name="go" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="method-card method-sso">
+            <div class="method-icon"><i class="bi bi-lock-fill"></i></div>
+            <div class="method-body">
+              <p class="method-name">Single Sign On</p>
+              <p class="method-status" [class.on]="settings.ssoEnabled" [class.off]="!settings.ssoEnabled">
+                {{ settings.ssoEnabled ? 'Enabled' : 'Disabled' }}
+              </p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="settings.ssoEnabled" name="sso" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="method-card method-email">
+            <div class="method-icon"><i class="bi bi-envelope-fill"></i></div>
+            <div class="method-body">
+              <p class="method-name">Email</p>
+              <p class="method-status" [class.on]="settings.emailEnabled" [class.off]="!settings.emailEnabled">
+                {{ settings.emailEnabled ? 'Enabled' : 'Disabled' }}
+              </p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="settings.emailEnabled" name="em" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="method-card method-apple">
+            <div class="method-icon"><i class="bi bi-apple"></i></div>
+            <div class="method-body">
+              <p class="method-name">Apple</p>
+              <p class="method-status" [class.on]="settings.appleEnabled" [class.off]="!settings.appleEnabled">
+                {{ settings.appleEnabled ? 'Enabled' : 'Disabled' }}
+              </p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="settings.appleEnabled" name="ap" />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="card card-terms">
+        <div class="section-head-row">
+          <div class="section-icon maroon"><i class="bi bi-file-earmark-text"></i></div>
+          <div>
+            <h2 class="card-title tight">Terms of Use &amp; Privacy Policy</h2>
+            <p class="card-desc tight">Add links to your institution's legal documents</p>
+            <p class="card-desc legal-hint">
+              Add links to your institution's terms of use and/or privacy policy. This will appear as part of the opt in on the first page of registration.
+            </p>
+          </div>
+        </div>
+
+        <div class="rte-label"><i class="bi bi-shield-check"></i> Rich Text Editor</div>
+        <div class="rte-shell">
+          <div
+            #termsEditor
+            class="rte-editable"
+            contenteditable="true"
+            spellcheck="true"
+            data-placeholder="Use the editor to add formatted text, links to your terms of use and privacy policy..."
+            (input)="onTermsInput()"
+          ></div>
+          <div class="rte-toolbar">
+            <button type="button" class="rte-btn" (mousedown)="execFormat($event, 'bold')" title="Bold"><strong>B</strong></button>
+            <button type="button" class="rte-btn" (mousedown)="execFormat($event, 'italic')" title="Italic"><em>I</em></button>
+            <button type="button" class="rte-btn" (mousedown)="execFormat($event, 'underline')" title="Underline"><span class="u">U</span></button>
+            <button type="button" class="rte-btn rte-btn-link" (mousedown)="execFormat($event, 'createLink')" title="Link">
+              <i class="bi bi-link-45deg"></i> Link
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <div class="reg-page-footer">
+        <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button type="button" class="btn-save" (click)="save()" [disabled]="saving">
+          <i class="bi bi-save"></i> {{ saving ? 'Saving…' : 'Save Changes' }}
+        </button>
+      </div>
+  </section>
+</div>
+
+<div class="admin-page" *ngIf="!loading && !settings">
+  <section class="body settings-body load-error-panel">
+      <div class="banner-error">{{ error || 'Unable to load registration settings.' }}</div>
+      <p class="error-hint">
+        Start the API at <code>http://localhost:8089/espritconnect</code> and use <code>ng serve</code> with the project proxy.
+      </p>
+      <button type="button" class="btn-save" (click)="load()">Retry</button>
+  </section>
+</div>

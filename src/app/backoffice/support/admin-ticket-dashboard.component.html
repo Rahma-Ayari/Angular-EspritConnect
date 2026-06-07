@@ -1,0 +1,123 @@
+<div class="admin-dashboard-container">
+  <header class="dashboard-header">
+    <div class="title-area">
+      <h1>Support Management</h1>
+      <p>Monitor and resolve student requests</p>
+    </div>
+    <div class="actions-area">
+      <button class="btn-secondary" routerLink="/admin/support/categories">
+        <i class="fas fa-tags"></i> Manage Categories
+      </button>
+    </div>
+  </header>
+
+  <!-- Metric Cards -->
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <div class="stat-icon"><i class="fas fa-list-ul"></i></div>
+      <div class="stat-info">
+        <h3>Total Tickets</h3>
+        <p>{{ stats.total }}</p>
+      </div>
+    </div>
+    <div class="stat-card open">
+      <div class="stat-icon"><i class="fas fa-envelope-open"></i></div>
+      <div class="stat-info">
+        <h3>Open</h3>
+        <p>{{ stats.open }}</p>
+      </div>
+    </div>
+    <div class="stat-card progress">
+      <div class="stat-icon"><i class="fas fa-spinner"></i></div>
+      <div class="stat-info">
+        <h3>In Progress</h3>
+        <p>{{ stats.inProgress }}</p>
+      </div>
+    </div>
+    <div class="stat-card resolved">
+      <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="stat-info">
+        <h3>Resolved</h3>
+        <p>{{ stats.resolved }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters and Table -->
+  <div class="content-card">
+    <div class="table-header" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+      <div class="filter-tabs" style="margin-bottom: 0;">
+        <button [class.active]="statusFilter === 'ALL'" (click)="onFilterChange('ALL')">All</button>
+        <button [class.active]="statusFilter === 'OPEN'" (click)="onFilterChange('OPEN')">Open</button>
+        <button [class.active]="statusFilter === 'IN_PROGRESS'" (click)="onFilterChange('IN_PROGRESS')">In Progress</button>
+        <button [class.active]="statusFilter === 'RESOLVED'" (click)="onFilterChange('RESOLVED')">Resolved</button>
+      </div>
+
+      <div class="filter-controls" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        <!-- Search Box -->
+        <div class="search-input-wrapper" style="position: relative; display: flex; align-items: center;">
+          <input type="text" [(ngModel)]="searchQuery" (input)="onSearch()" placeholder="Search tickets..." 
+                 style="padding: 8px 12px 8px 32px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 600; min-width: 180px; outline: none; height: 38px;">
+          <i class="fas fa-search" style="position: absolute; left: 12px; color: var(--text-tertiary); font-size: 13px;"></i>
+        </div>
+
+        <!-- Priority Select Dropdown -->
+        <select [ngModel]="priorityFilter" (ngModelChange)="onPriorityChange($event)" 
+                style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 600; outline: none; background: white; cursor: pointer; height: 38px;">
+          <option value="ALL">All Priorities</option>
+          <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+        </select>
+
+        <!-- Category Select Dropdown -->
+        <select [ngModel]="categoryFilter" (ngModelChange)="onCategoryChange($event)" 
+                style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 600; outline: none; background: white; cursor: pointer; height: 38px;">
+          <option value="ALL">All Categories</option>
+          <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+        </select>
+      </div>
+    </div>
+
+    <table class="ticket-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Subject</th>
+          <th>User</th>
+          <th>Category</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ticket of filteredTickets">
+          <td>#{{ ticket.id }}</td>
+          <td class="subject-cell">{{ ticket.title }}</td>
+          <td>{{ ticket.creatorName }}</td>
+          <td><span class="category-pill">{{ ticket.categoryName }}</span></td>
+          <td>
+            <span class="priority-badge" [ngClass]="ticket.priority.toLowerCase()">
+              {{ ticket.priority }}
+            </span>
+          </td>
+          <td>
+            <span class="status-badge" [ngClass]="ticket.status.toLowerCase().replace('_', '-')">
+              {{ ticket.status }}
+            </span>
+          </td>
+          <td>{{ ticket.createdAt | date:'shortDate' }}</td>
+          <td>
+            <button class="btn-action" [routerLink]="['/admin/support/ticket', ticket.id]">
+              Manage <i class="fas fa-arrow-right"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="empty-table" *ngIf="filteredTickets.length === 0">
+      <p>No tickets found for this filter.</p>
+    </div>
+  </div>
+</div>
