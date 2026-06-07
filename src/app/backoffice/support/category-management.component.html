@@ -1,0 +1,62 @@
+<div class="category-container">
+  <header class="header">
+    <button class="btn-icon" routerLink="/admin/support"><i class="fas fa-arrow-left"></i></button>
+    <h1>Ticket Categories</h1>
+    <button class="btn-text" (click)="onSeedData()" style="margin-left: auto; font-size: 0.8rem; opacity: 0.7;">
+      <i class="fas fa-magic"></i> Quick Seed
+    </button>
+  </header>
+
+  <div class="grid">
+    <!-- List Section -->
+    <div class="list-card">
+      <h2>Existing Categories</h2>
+      <div class="category-list">
+        <div class="category-item" *ngFor="let cat of categories">
+          <div class="cat-info">
+            <h3>{{ cat.name }}</h3>
+            <p>{{ cat.description }}</p>
+          </div>
+          <div class="cat-actions">
+            <span class="sla-badge">{{ cat.slaHours }}h SLA</span>
+            <div class="action-buttons">
+                <button class="btn-action edit" (click)="editCategory(cat)" title="Edit">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-action delete" (click)="deleteCategory(cat.id)" title="Delete">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create/Edit Section -->
+    <div class="create-card">
+      <h2>{{ editingId ? 'Edit Category' : 'Add New Category' }}</h2>
+      <div class="form">
+        <div class="form-group">
+          <label>Category Name</label>
+          <input type="text" [(ngModel)]="newCategory.name" placeholder="e.g., Technical Support">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea [(ngModel)]="newCategory.description" placeholder="What kind of issues..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>SLA Resolution Time (Hours)</label>
+          <input type="number" [(ngModel)]="newCategory.slaHours">
+        </div>
+        <div class="form-actions">
+            <button class="btn-save" (click)="saveCategory()" [disabled]="!newCategory.name">
+                {{ editingId ? 'Update' : 'Save' }} Category
+            </button>
+            <button class="btn-cancel" *ngIf="editingId" (click)="resetForm()">
+                Cancel
+            </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

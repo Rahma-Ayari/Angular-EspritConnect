@@ -1,0 +1,69 @@
+<div class="post-card" (click)="goToDetail()" role="button" tabindex="0">
+  <div class="post-card__header">
+    <div class="post-card__author">
+      <div class="post-card__avatar" [style.background-color]="getRoleColor(post.authorRole)">
+        {{ post.authorName?.charAt(0)?.toUpperCase() }}
+      </div>
+      <div>
+        <div class="post-card__author-name">
+          {{ post.authorName }}
+          <span
+            class="role-badge"
+            [style.background-color]="getRoleColor(post.authorRole) + '15'"
+            [style.color]="getRoleColor(post.authorRole)"
+          >
+            {{ getRoleLabel(post.authorRole) }}
+          </span>
+        </div>
+        <div class="post-card__date">
+          {{ post.createdAt | date:'dd MMM yyyy à HH:mm' }}
+        </div>
+      </div>
+    </div>
+
+    <span class="category-badge" *ngIf="post.category?.name">
+      {{ post.category.name }}
+    </span>
+  </div>
+
+  <div class="post-card__body">
+    <h3 class="post-card__title">
+      <span class="pin-icon" *ngIf="post.pinned" title="Message important épinglé">📌</span>
+      {{ post.title }}
+    </h3>
+    <p class="post-card__excerpt">
+      {{ post.content | slice:0:160 }}{{ (post.content?.length ?? 0) > 160 ? '...' : '' }}
+    </p>
+  </div>
+
+  <div class="post-card__footer">
+    <div class="post-card__stats">
+      <span class="stat-item" title="Vues">
+        <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+        <span>{{ post.viewsCount || 0 }}</span>
+      </span>
+      <span class="stat-item" title="Réponses">
+        <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span>{{ post.replies?.length || 0 }}</span>
+      </span>
+    </div>
+    
+    <button 
+      class="post-card__like-btn" 
+      [class.post-card__like-btn--active]="isLiked" 
+      (click)="onLikeClick($event)" 
+      title="J'aime"
+    >
+      <svg class="like-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [attr.fill]="isLiked ? '#ef4444' : 'none'">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
+      <span>{{ post.likesCount || 0 }}</span>
+    </button>
+  </div>
+</div>
+

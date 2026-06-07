@@ -1,0 +1,113 @@
+<div class="chatbot-wrapper">
+
+  <!-- FAB Button -->
+  <button class="chatbot-fab" [class.open]="isOpen" (click)="toggleChat()">
+    <div class="fab-pulse" *ngIf="!isOpen && unreadCount > 0"></div>
+    <i class="fa-solid fa-message open-icon"></i>
+    <i class="fa-solid fa-xmark close-icon"></i>
+  </button>
+
+  <!-- Chat Panel -->
+  <div class="chatbot-panel" [class.visible]="isOpen">
+
+    <!-- Header -->
+    <div class="chatbot-header">
+      <div class="header-bot-info">
+        <div class="bot-avatar">
+          <i class="fa-solid fa-robot"></i>
+          <span class="online-dot"></span>
+        </div>
+        <div class="bot-meta">
+          <span class="bot-name">Support AI</span>
+          <span class="bot-status" *ngIf="!isTyping">Online</span>
+          <span class="typing-status" *ngIf="isTyping">Typing...</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-header-action" title="Clear history" (click)="clearHistory()">
+          <i class="fa-solid fa-rotate-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="chatbot-messages" #messagesContainer>
+
+      <div class="message-wrapper"
+           *ngFor="let msg of messages"
+           [ngClass]="{'user-msg': msg.sender === 'user', 'bot-msg': msg.sender === 'bot'}">
+        <div class="msg-avatar" [ngClass]="{'user-avatar': msg.sender === 'user'}">
+          <i class="fa-solid" [ngClass]="msg.sender === 'user' ? 'fa-user' : 'fa-robot'"></i>
+        </div>
+        <div class="msg-bubble-group">
+          <div class="msg-bubble" [innerHTML]="msg.content"></div>
+          <div class="msg-time">{{ msg.timestamp | date:'shortTime' }}</div>
+        </div>
+      </div>
+
+      <!-- Typing indicator -->
+      <div class="message-wrapper bot-msg" *ngIf="isTyping">
+        <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+        <div class="msg-bubble-group">
+          <div class="msg-bubble typing-bubble">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ticket suggestion -->
+      <div class="ticket-suggest-bar" *ngIf="suggestedAction === 'OPEN_TICKET'">
+        <button class="btn-open-ticket" routerLink="/support/new">
+          <i class="fa-solid fa-ticket"></i> Open Support Ticket
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Suggested Questions (only on fresh conversation) -->
+    <div class="suggestions-section" *ngIf="messages.length === 1 && !isTyping">
+      <p class="suggestions-label">✨ Try asking about</p>
+      <div class="suggestion-list">
+        <button class="suggestion-item" (click)="sendPrompt('How do I create a support ticket?')">
+          <i class="fa-solid fa-ticket"></i>
+          <span>How to create a support ticket?</span>
+        </button>
+        <button class="suggestion-item" (click)="sendPrompt('What are some CV writing tips for students?')">
+          <i class="fa-solid fa-file-lines"></i>
+          <span>CV writing tips for students</span>
+        </button>
+        <button class="suggestion-item" (click)="sendPrompt('How does the mentoring program work?')">
+          <i class="fa-solid fa-user-graduate"></i>
+          <span>How does mentoring work?</span>
+        </button>
+        <button class="suggestion-item" (click)="sendPrompt('How can I find job offers on this platform?')">
+          <i class="fa-solid fa-briefcase"></i>
+          <span>How to find job offers?</span>
+        </button>
+        <button class="suggestion-item" (click)="sendPrompt('How do I prepare for a technical interview?')">
+          <i class="fa-solid fa-laptop-code"></i>
+          <span>Technical interview prep</span>
+        </button>
+        <button class="suggestion-item" (click)="sendPrompt('What events are available for alumni?')">
+          <i class="fa-solid fa-calendar-days"></i>
+          <span>Events for alumni</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Input Bar -->
+    <div class="chatbot-input-bar">
+      <textarea
+        [(ngModel)]="newMessage"
+        (keydown.enter)="$event.preventDefault(); sendMessage()"
+        placeholder="Ask me anything..."
+        [disabled]="isTyping"></textarea>
+      <button class="btn-send" (click)="sendMessage()" [disabled]="!newMessage.trim() || isTyping">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+
+    <div class="chatbot-footer">Powered by ESPRIT AI Support</div>
+
+  </div>
+</div>

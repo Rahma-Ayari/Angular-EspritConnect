@@ -1,0 +1,147 @@
+<div class="mod-page">
+
+  <!-- ===== HEADER ===== -->
+  <div class="mod-header">
+    <div class="mod-header-left">
+      <div class="mod-header-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div>
+        <h1 class="mod-title">Moderation Queue</h1>
+        <p class="mod-subtitle">Review and act on user-submitted content reports</p>
+      </div>
+    </div>
+    <div class="mod-stats">
+      <div class="stat-chip">
+        <span class="stat-num">{{ reports.length }}</span>
+        <span class="stat-label">Reports</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FILTER BAR ===== -->
+  <div class="filter-bar">
+    <span class="filter-label"><i class="fa-solid fa-filter"></i> Filter by status:</span>
+    <div class="filter-pills">
+      <button class="filter-pill" [class.active]="filter === 'ALL'" (click)="filter='ALL'; load()">All</button>
+      <button class="filter-pill pending" [class.active]="filter === 'PENDING'" (click)="filter='PENDING'; load()">Pending</button>
+      <button class="filter-pill review" [class.active]="filter === 'UNDER_REVIEW'" (click)="filter='UNDER_REVIEW'; load()">Under Review</button>
+      <button class="filter-pill resolved" [class.active]="filter === 'RESOLVED'" (click)="filter='RESOLVED'; load()">Resolved</button>
+      <button class="filter-pill dismissed" [class.active]="filter === 'DISMISSED'" (click)="filter='DISMISSED'; load()">Dismissed</button>
+    </div>
+  </div>
+
+  <!-- ===== MAIN LAYOUT ===== -->
+  <div class="mod-layout">
+
+    <!-- LEFT: Report List -->
+    <div class="report-list-panel">
+      <div class="panel-head">
+        <i class="fa-solid fa-list-ul"></i> Reports
+      </div>
+
+      <div class="report-list">
+        <div
+          class="report-card"
+          *ngFor="let r of reports"
+          [class.active]="selected?.id === r.id"
+          (click)="selectReport(r)">
+
+          <div class="report-card-top">
+            <span class="report-id">#{{ r.id }}</span>
+            <span class="status-badge" [ngClass]="r.status.toLowerCase().replace('_', '-')">{{ r.status | titlecase }}</span>
+          </div>
+
+          <div class="report-type">
+            <i class="fa-solid fa-tag"></i> {{ r.contentType }}
+          </div>
+
+          <p class="report-reason">{{ r.reason }}</p>
+
+          <div class="report-reporter">
+            <i class="fa-solid fa-user-shield"></i>
+            <span>{{ r.reporterName || r.reporterId || 'Anonymous' }}</span>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="reports.length === 0">
+          <i class="fa-solid fa-inbox"></i>
+          <p>No reports in this queue</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Detail / Review Panel -->
+    <div class="detail-panel" [class.visible]="!!selected">
+
+      <div class="detail-empty" *ngIf="!selected">
+        <i class="fa-solid fa-arrow-left-long"></i>
+        <p>Select a report to review</p>
+      </div>
+
+      <ng-container *ngIf="selected">
+        <div class="detail-header">
+          <div class="detail-title">
+            <span class="detail-id">Report #{{ selected.id }}</span>
+            <span class="status-badge" [ngClass]="selected.status.toLowerCase().replace('_', '-')">{{ selected.status | titlecase }}</span>
+          </div>
+        </div>
+
+        <div class="detail-info-grid">
+          <div class="info-item">
+            <span class="info-key"><i class="fa-solid fa-file-lines"></i> Content Type</span>
+            <span class="info-val">{{ selected.contentType }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-key"><i class="fa-solid fa-fingerprint"></i> Content Ref</span>
+            <span class="info-val">{{ selected.contentRefId }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-key"><i class="fa-solid fa-user"></i> Reporter</span>
+            <span class="info-val">{{ selected.reporterName || selected.reporterId || 'Anonymous' }}</span>
+          </div>
+          <div class="info-item full">
+            <span class="info-key"><i class="fa-solid fa-comment-exclamation"></i> Reason</span>
+            <span class="info-val reason-text">{{ selected.reason }}</span>
+          </div>
+        </div>
+
+        <div class="review-section">
+          <h4 class="review-section-title"><i class="fa-solid fa-gavel"></i> Review Decision</h4>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">New Status</label>
+              <select [(ngModel)]="reviewStatus" class="form-select">
+                <option value="UNDER_REVIEW">Under Review</option>
+                <option value="RESOLVED">Resolved</option>
+                <option value="DISMISSED">Dismissed</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Action Taken</label>
+              <select [(ngModel)]="reviewAction" class="form-select">
+                <option value="NONE">No Action</option>
+                <option value="WARN_USER">Warn User</option>
+                <option value="HIDE_CONTENT">Hide Content</option>
+                <option value="SUSPEND_USER">Suspend User</option>
+                <option value="ESCALATED_TO_TICKET">Escalate to Ticket</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Moderator Notes</label>
+            <textarea [(ngModel)]="reviewNotes" rows="3" class="form-textarea" placeholder="Add optional notes about your decision..."></textarea>
+          </div>
+
+          <button class="btn-submit" (click)="submitReview()">
+            <i class="fa-solid fa-check"></i> Save Review
+          </button>
+        </div>
+      </ng-container>
+
+    </div>
+  </div>
+</div>

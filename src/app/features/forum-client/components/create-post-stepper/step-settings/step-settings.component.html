@@ -1,0 +1,64 @@
+<div class="step">
+  <div class="step__grid">
+    <div class="field">
+      <label class="field__label">Catégorie <span class="field__req">*</span></label>
+      <select class="field__input" [ngModel]="state.value.category?.id" (ngModelChange)="setCategory($event)">
+        <option [ngValue]="undefined" disabled>Choisir une thématique...</option>
+        <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+      </select>
+      <p class="field__hint">La catégorie aide les autres étudiants à vous trouver plus vite.</p>
+    </div>
+
+    <div class="field">
+      <label class="field__label">Mentions (anti-spam)</label>
+      <div class="radio-row">
+        <label class="radio">
+          <input
+            type="radio"
+            name="mentions"
+            [checked]="state.value.allowMentions === true"
+            (change)="state.patch({ allowMentions: true })"
+          />
+          Autoriser les mentions
+        </label>
+        <label class="radio">
+          <input
+            type="radio"
+            name="mentions"
+            [checked]="state.value.allowMentions === false"
+            (change)="state.patch({ allowMentions: false })"
+          />
+          Désactiver les mentions
+        </label>
+      </div>
+      <p class="field__hint">Cette option est UI-only pour le moment (pas encore côté backend).</p>
+    </div>
+
+    <div class="field field--full">
+      <label class="field__label">Étiquettes (Tags)</label>
+      <div class="tags-input">
+        <input
+          class="field__input"
+          type="text"
+          placeholder="Ex: alternance, génie-logiciel, club..."
+          [(ngModel)]="tagInput"
+          (keyup.enter)="addTag()"
+        />
+        <button type="button" class="btn btn--ghost" (click)="addTag()">Ajouter</button>
+      </div>
+      <div class="tags" *ngIf="state.value.tags.length">
+        <span class="tag" *ngFor="let t of state.value.tags">
+          {{ t }}
+          <button type="button" class="tag__x" (click)="removeTag(t)">×</button>
+        </span>
+      </div>
+      <p class="field__hint">Appuyez sur Entrée pour ajouter rapidement un tag.</p>
+    </div>
+  </div>
+
+  <div class="step__actions">
+    <button type="button" class="btn btn--ghost" (click)="back.emit()">Retour</button>
+    <button type="button" class="btn btn-gradient-red" (click)="next.emit()" [disabled]="!canContinue()">Continuer</button>
+  </div>
+</div>
+
