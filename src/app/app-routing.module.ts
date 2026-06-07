@@ -30,19 +30,7 @@ import { ForumGroupDetailComponent } from './features/forum-client/pages/forum-g
 import { ForumGroupsModerationComponent } from './features/forum/pages/forum-groups-moderation/forum-groups-moderation.component';
 
 // Imports Support, Badges et Moderation
-import { BadgeListComponent } from './backoffice/badge-list/badge-list.component';
-import { BadgeFormComponent } from './backoffice/badge-form/badge-form.component';
-import { UserBadgesComponent } from './frontoffice/user-badges/user-badges.component';
-import { SupportDashboardComponent } from './frontoffice/support/support-dashboard.component';
-import { TicketCreateComponent } from './frontoffice/support/ticket-create.component';
-import { TicketChatComponent } from './frontoffice/support/ticket-chat.component';
-import { AdminTicketDashboardComponent } from './backoffice/support/admin-ticket-dashboard.component';
-import { AdminTicketDetailComponent } from './backoffice/support/admin-ticket-detail.component';
-import { CategoryManagementComponent } from './backoffice/support/category-management.component';
-import { FaqManagementComponent } from './backoffice/support/faq-management.component';
-import { FaqKnowledgeBaseComponent } from './frontoffice/support/faq-knowledge-base.component';
-import { ReportContentComponent } from './frontoffice/support/report-content.component';
-import { ModerationQueueComponent } from './backoffice/intelligence/moderation-queue.component';
+
 
 const routes: Routes = [
   // Routes Activity & Mailing
