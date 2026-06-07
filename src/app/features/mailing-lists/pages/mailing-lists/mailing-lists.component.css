@@ -1,0 +1,191 @@
+/* ================================================================
+   mailing-lists.component.css
+   ================================================================ */
+
+.ml-wrap {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 6px 0 48px;
+  animation: fadeIn 0.3s ease;
+}
+
+.ml-loader {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 14px; padding: 60px; color: #9ca3af; font-size: 13px;
+}
+
+/* ── Formulaire création ── */
+.ml-create-card {
+  padding: 20px;
+  margin-bottom: 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+.ml-create-card__title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 700; color: #0f0f14;
+  margin: 0 0 16px;
+}
+
+.ml-create-card__fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 600px) {
+  .ml-create-card__fields { grid-template-columns: 1fr; }
+}
+
+.ml-create-card__actions {
+  display: flex; gap: 10px; margin-top: 14px;
+}
+
+/* ── Table header ── */
+.ml-table-header {
+  display: flex; align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  background: #f9fafb;
+}
+
+.ml-table-count {
+  font-size: 11.5px; font-weight: 700;
+  color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+/* ── Cellules table ── */
+.ml-list-name {
+  font-weight: 700; color: #0f0f14; font-size: 14px;
+}
+
+.ml-list-desc {
+  font-size: 12.5px; color: #9ca3af;
+}
+
+.ml-count-btn {
+  display: flex; flex-direction: column; align-items: center;
+  background: none; border: 1.5px solid #e5e7eb;
+  border-radius: 8px; padding: 6px 14px; cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ml-count-btn:hover {
+  border-color: #d7282f; background: #fef2f2;
+}
+
+.ml-count {
+  font-size: 18px; font-weight: 800; color: #d7282f; line-height: 1;
+}
+
+.ml-count-label {
+  font-size: 10px; color: #9ca3af; font-weight: 600;
+}
+
+/* ── Actions ── */
+.ml-actions {
+  display: flex; gap: 4px; justify-content: flex-end;
+}
+
+/* ── Édition inline ── */
+.ml-row--editing { background: #fffbeb !important; }
+
+.ml-inline-edit {
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.ml-inline-input {
+  font-size: 13px; padding: 7px 10px;
+}
+
+/* ── Empty ── */
+.ml-empty {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; padding: 40px; text-align: center; color: #9ca3af;
+}
+
+.ml-empty p { font-size: 13.5px; color: #6b7280; margin: 0; }
+
+/* ── Panneau membres ── */
+.ml-members-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; justify-content: flex-end;
+}
+
+.ml-members-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(2px);
+}
+
+.ml-members-panel {
+  position: relative; z-index: 1;
+  width: min(420px, 95vw);
+  background: #fff;
+  box-shadow: -4px 0 32px rgba(0,0,0,0.12);
+  display: flex; flex-direction: column;
+  animation: slideFromRight 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+
+@keyframes slideFromRight {
+  from { transform: translateX(40px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+.ml-members-panel__header {
+  display: flex; align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #fff 0%, #fef2f2 100%);
+  flex-shrink: 0;
+}
+
+.ml-members-panel__title {
+  font-size: 15px; font-weight: 800; color: #0f0f14; margin: 0 0 4px;
+}
+
+.ml-members-panel__sub {
+  font-size: 12px; color: #9ca3af; margin: 0;
+}
+
+.ml-members-panel__add {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+  flex-shrink: 0;
+}
+
+.ml-member-input { font-size: 13px; }
+
+.ml-members-panel__list {
+  flex: 1; overflow-y: auto; padding: 12px 20px;
+}
+
+/* Ligne membre */
+.ml-member-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.12s;
+}
+
+.ml-member-row:last-child { border-bottom: none; }
+
+.ml-member-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: #fef2f2;
+  color: #d7282f;
+  display: grid; place-items: center;
+  font-size: 13px; font-weight: 800;
+  flex-shrink: 0;
+}
+
+.ml-member-info {
+  flex: 1; display: flex; flex-direction: column; gap: 2px;
+}
+
+.ml-member-name  { font-size: 13px; font-weight: 600; color: #0f0f14; }
+.ml-member-email { font-size: 12px; color: #9ca3af; }

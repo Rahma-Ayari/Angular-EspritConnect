@@ -1,0 +1,205 @@
+<!-- ================================================================
+     mailing-lists.component.html — Fonctionnel & Moderne
+     ================================================================ -->
+<div class="ml-wrap">
+
+  <!-- ── En-tête ── -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Mailing Lists</h1>
+      <p class="page-subtitle">Gérez vos listes de diffusion pour les campagnes email.</p>
+    </div>
+    <button class="btn btn--primary" (click)="showCreateForm = !showCreateForm">
+      <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      Nouvelle liste
+    </button>
+  </div>
+
+  <!-- ── Alertes ── -->
+  <div class="alert alert--success" *ngIf="successMsg">
+    <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+    {{ successMsg }}
+  </div>
+  <div class="alert alert--error" *ngIf="errorMsg">
+    <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+    {{ errorMsg }}
+  </div>
+
+  <!-- ── Formulaire création ── -->
+  <div class="card ml-create-card" *ngIf="showCreateForm">
+    <h3 class="ml-create-card__title">
+      <svg viewBox="0 0 24 24" width="17" height="17"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      Nouvelle liste de diffusion
+    </h3>
+    <div class="ml-create-card__fields">
+      <div class="field">
+        <label class="field__label">Nom <span class="field__req">*</span></label>
+        <input class="field__input" [(ngModel)]="newListName" placeholder="Ex: Étudiants 2026"
+               (keyup.enter)="createList()"/>
+      </div>
+      <div class="field">
+        <label class="field__label">Description</label>
+        <input class="field__input" [(ngModel)]="newListDesc" placeholder="Description optionnelle…"/>
+      </div>
+    </div>
+    <div class="ml-create-card__actions">
+      <button class="btn btn--primary" (click)="createList()" [disabled]="creating || !newListName.trim()">
+        <span class="spinner spinner--sm" *ngIf="creating" style="border-top-color:#fff"></span>
+        {{ creating ? 'Création…' : 'Créer' }}
+      </button>
+      <button class="btn btn--ghost" (click)="showCreateForm = false; newListName = ''; newListDesc = ''">Annuler</button>
+    </div>
+  </div>
+
+  <!-- ── Loader ── -->
+  <div class="ml-loader" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Chargement…</p>
+  </div>
+
+  <!-- ── Table ── -->
+  <div class="card" style="overflow:hidden" *ngIf="!loading">
+    <div class="ml-table-header">
+      <span class="ml-table-count">{{ lists.length }} liste(s)</span>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nom de la liste</th>
+            <th>Description</th>
+            <th style="text-align:center">Membres</th>
+            <th style="text-align:right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Ligne normale -->
+          <tr *ngFor="let list of lists" [class.ml-row--editing]="editingId === list.id">
+            <td>
+              <!-- Mode édition inline -->
+              <div *ngIf="editingId === list.id" class="ml-inline-edit">
+                <input class="field__input ml-inline-input" [(ngModel)]="editName"
+                       (keyup.enter)="saveEdit(list)" (keyup.escape)="cancelEdit()"
+                       placeholder="Nom de la liste"/>
+                <input class="field__input ml-inline-input" [(ngModel)]="editDesc"
+                       placeholder="Description…"/>
+              </div>
+              <!-- Mode affichage -->
+              <div *ngIf="editingId !== list.id">
+                <span class="ml-list-name">{{ list.name }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="ml-list-desc" *ngIf="editingId !== list.id">
+                {{ list.description || '—' }}
+              </span>
+            </td>
+            <td style="text-align:center">
+              <button class="ml-count-btn" (click)="openMembers(list)" title="Voir et gérer les membres">
+                <span class="ml-count">{{ list.membersCount }}</span>
+                <span class="ml-count-label">membres</span>
+              </button>
+            </td>
+            <td>
+              <div class="ml-actions">
+                <!-- Mode édition : boutons valider/annuler -->
+                <ng-container *ngIf="editingId === list.id">
+                  <button class="btn btn--primary btn--sm" (click)="saveEdit(list)" [disabled]="editSaving || !editName.trim()" title="Valider">
+                    <span class="spinner spinner--sm" *ngIf="editSaving" style="border-top-color:#fff"></span>
+                    <svg *ngIf="!editSaving" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    Valider
+                  </button>
+                  <button class="btn btn--ghost btn--sm" (click)="cancelEdit()" title="Annuler">
+                    Annuler
+                  </button>
+                </ng-container>
+
+                <!-- Mode normal : modifier / supprimer / export -->
+                <ng-container *ngIf="editingId !== list.id">
+                  <button class="btn btn--ghost btn--sm btn--icon" (click)="startEdit(list)" title="Modifier">
+                    <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                  </button>
+                  <button class="btn btn--ghost btn--sm btn--icon" (click)="deleteList(list.id)" title="Supprimer">
+                    <svg viewBox="0 0 24 24" width="15" height="15" style="color:#d7282f"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                  </button>
+                  <button class="btn btn--ghost btn--sm btn--icon" (click)="exportList(list)" title="Exporter CSV">
+                    <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                  </button>
+                  <button class="btn btn--ghost btn--sm btn--icon" (click)="openMembers(list)" title="Gérer les membres">
+                    <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                  </button>
+                </ng-container>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Vide -->
+          <tr *ngIf="lists.length === 0">
+            <td colspan="4">
+              <div class="ml-empty">
+                <svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                <p>Aucune liste créée. Cliquez sur <strong>Nouvelle liste</strong> pour commencer.</p>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Panneau membres ── -->
+  <div class="ml-members-overlay" *ngIf="membersListId !== null">
+    <div class="ml-members-backdrop" (click)="closeMembers()"></div>
+    <div class="ml-members-panel">
+
+      <div class="ml-members-panel__header">
+        <div>
+          <h3 class="ml-members-panel__title">Membres — {{ membersListName }}</h3>
+          <p class="ml-members-panel__sub">{{ members.length }} membre(s)</p>
+        </div>
+        <button class="btn btn--ghost btn--sm btn--icon" (click)="closeMembers()">
+          <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+
+      <!-- Ajouter un membre -->
+      <div class="ml-members-panel__add">
+        <input class="field__input ml-member-input" type="email" [(ngModel)]="newMemberEmail"
+               placeholder="email@exemple.com" (keyup.enter)="addMember()"/>
+        <input class="field__input ml-member-input" type="text" [(ngModel)]="newMemberNom"
+               placeholder="Nom (optionnel)" (keyup.enter)="addMember()"/>
+        <button class="btn btn--primary btn--sm" (click)="addMember()" [disabled]="addingMember || !newMemberEmail.trim()">
+          <span class="spinner spinner--sm" *ngIf="addingMember" style="border-top-color:#fff"></span>
+          <svg *ngIf="!addingMember" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          Ajouter
+        </button>
+      </div>
+
+      <!-- Liste des membres -->
+      <div class="ml-members-panel__list">
+        <div class="ml-loader" *ngIf="loadingMembers" style="padding:30px">
+          <div class="spinner"></div>
+        </div>
+
+        <div class="ml-member-row" *ngFor="let m of members">
+          <div class="ml-member-avatar">{{ (m.nom || m.email).charAt(0).toUpperCase() }}</div>
+          <div class="ml-member-info">
+            <span class="ml-member-name">{{ m.nom || '—' }}</span>
+            <span class="ml-member-email">{{ m.email }}</span>
+          </div>
+          <button class="btn btn--ghost btn--sm btn--icon" (click)="removeMember(m.id)" title="Retirer">
+            <svg viewBox="0 0 24 24" width="14" height="14" style="color:#d7282f"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+          </button>
+        </div>
+
+        <div class="ml-empty" *ngIf="!loadingMembers && members.length === 0" style="padding:30px">
+          <p>Aucun membre dans cette liste.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

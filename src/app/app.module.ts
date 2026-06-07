@@ -1,11 +1,24 @@
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { authInterceptor } from './interceptors/auth.interceptor';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { authInterceptor } from './interceptors/auth.interceptor';
+import { AuthService } from './services/auth.service';
+
+// Modules (Features)
+import { ActivityDigestModule } from './features/activity-digest/activity-digest.module';
+import { AutomaticEmailsModule } from './features/automatic-emails/automatic-emails.module';
+import { EmailHistoryModule } from './features/email-history/email-history.module';
+import { MailingListsModule } from './features/mailing-lists/mailing-lists.module';
+import { MessageUsersModule } from './features/message-users/message-users.module';
+import { ForumModule } from './features/forum/forum.module';
+import { ForumClientModule } from './features/forum-client/forum-client.module';
+import { LayoutModule } from './shared/layout/layout.module';
+
+// Composants (Support & Backoffice)
 import { BadgeListComponent } from './backoffice/badge-list/badge-list.component';
 import { BadgeFormComponent } from './backoffice/badge-form/badge-form.component';
 import { UserBadgesComponent } from './frontoffice/user-badges/user-badges.component';
@@ -20,14 +33,12 @@ import { FaqKnowledgeBaseComponent } from './frontoffice/support/faq-knowledge-b
 import { AIChatbotComponent } from './frontoffice/support/ai-chatbot.component';
 import { ReportContentComponent } from './frontoffice/support/report-content.component';
 import { ModerationQueueComponent } from './backoffice/intelligence/moderation-queue.component';
-import { FormsModule } from '@angular/forms';
-import { AuthService } from './services/auth.service';
 
 export function initializeApp(authService: AuthService) {
   return () => new Promise<void>((resolve) => {
     authService.loginAsCurrentRole().subscribe({
       next: () => resolve(),
-      error: () => resolve() // Resolve anyway to avoid blocking the app from loading
+      error: () => resolve()
     });
   });
 }
@@ -53,8 +64,16 @@ export function initializeApp(authService: AuthService) {
   imports: [
     BrowserModule,
     AppRoutingModule,
+    FormsModule,
     ReactiveFormsModule,
-    FormsModule
+    ActivityDigestModule,
+    AutomaticEmailsModule,
+    EmailHistoryModule,
+    MailingListsModule,
+    MessageUsersModule,
+    ForumModule,
+    ForumClientModule,
+    LayoutModule
   ],
   providers: [
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),

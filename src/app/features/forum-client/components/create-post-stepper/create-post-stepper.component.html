@@ -1,0 +1,45 @@
+<div class="stepper">
+  <div class="stepper__header">
+    <div class="stepper__title">
+      <h2>Créer une discussion</h2>
+      <p>Un stepper premium en 3 étapes, clair et rapide.</p>
+    </div>
+    <button type="button" class="close" (click)="cancel.emit()">×</button>
+  </div>
+
+  <div class="stepper__steps">
+    <button type="button" class="chip" [class.chip--active]="step === 1" (click)="goTo(1)">
+      <span class="dot">1</span> Identité
+    </button>
+    <button
+      type="button"
+      class="chip"
+      [class.chip--active]="step === 2"
+      (click)="goTo(2)"
+      [disabled]="!(state.value.title.trim() && state.value.content.trim())"
+    >
+      <span class="dot">2</span> Paramètres
+    </button>
+    <button
+      type="button"
+      class="chip"
+      [class.chip--active]="step === 3"
+      (click)="goTo(3)"
+      [disabled]="!state.value.category?.id"
+    >
+      <span class="dot">3</span> Finaliser
+    </button>
+  </div>
+
+  <div class="stepper__body">
+    <app-step-identity *ngIf="step === 1" (next)="next()"></app-step-identity>
+    <app-step-settings
+      *ngIf="step === 2"
+      [categories]="categories"
+      (back)="back()"
+      (next)="next()"
+    ></app-step-settings>
+    <app-step-review *ngIf="step === 3" (back)="back()" (submit)="submit.emit()"></app-step-review>
+  </div>
+</div>
+

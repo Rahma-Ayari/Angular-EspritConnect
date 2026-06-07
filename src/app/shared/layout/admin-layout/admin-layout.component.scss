@@ -1,0 +1,151 @@
+/* Legacy v1 layout styles kept for reference. */
+
+/* Toggle Button */
+.sidebar-toggle {
+  position: fixed;
+  left: 248px;
+  top: 22px;
+  z-index: 200;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.sidebar-toggle:hover {
+  background: #f9fafb;
+  border-color: #dc2626;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+}
+
+.sidebar-toggle:hover svg {
+  color: #dc2626;
+}
+
+.sidebar-toggle svg {
+  width: 14px;
+  height: 14px;
+  color: #6b7280;
+  transition: color 0.15s ease;
+}
+
+.sidebar-toggle.collapsed {
+  left: 16px;
+  background: #dc2626;
+  border-color: #dc2626;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.sidebar-toggle.collapsed svg {
+  color: white;
+}
+
+.sidebar-toggle.collapsed:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.sidebar-toggle.collapsed:hover svg {
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 1280px) {
+  .content { padding: 20px 24px; }
+}
+
+@media (max-width: 1024px) {
+  .sidebar-toggle {
+    left: 16px;
+  }
+  
+  .sidebar-toggle:not(.collapsed) {
+    left: 248px;
+  }
+  
+  .content { padding: 16px 20px; }
+}
+
+/* ── User topbar (front-office) ────────────────────────────────── */
+.user-topbar {
+  height: 68px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.user-back {
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #111827;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.user-back:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.user-badge {
+  background: #dc2626;
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+/* ── Shell v2 (single router-outlet) ───────────────────────────── */
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: #f9fafb;
+  position: relative;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-left: 260px;
+  transition: margin-left 0.3s ease;
+}
+
+.main.sidebar-collapsed {
+  margin-left: 0;
+}
+
+.content {
+  padding: 24px 32px;
+  flex: 1;
+}
+
+@media (max-width: 1024px) {
+  .main--admin {
+    margin-left: 0;
+  }
+
+  .content {
+    padding: 16px 20px;
+  }
+}
