@@ -12,7 +12,7 @@
         (click)="onTabChange('pending')"
       >
         Pending
-        <span class="tab-badge" *ngIf="stats">{{ stats.pendingCount }}</span>
+        <span class="tab-badge" *ngIf="stats && stats.pendingCount > 0">{{ stats.pendingCount }}</span>
       </button>
       <button 
         class="tab" 
@@ -789,7 +789,7 @@
       <div class="setting-item" *ngIf="settings.autoApproveEspritEmails">
         <div class="setting-info">
           <span class="setting-title">Auto-approve domain</span>
-          <span class="setting-desc">Email domain for automatic approval</span>
+          <span class="setting-desc">Domain only (e.g. gmail.com), without &#64;</span>
         </div>
         <input 
           type="text" 

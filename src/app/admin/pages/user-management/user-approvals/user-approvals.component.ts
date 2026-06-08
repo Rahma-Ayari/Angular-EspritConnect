@@ -115,6 +115,7 @@ export class UserApprovalsComponent implements OnInit {
         this.users = users;
         this.applyPendingFilters();
         this.isLoading = false;
+        this.loadStats();
       },
       error: (err) => {
         this.error = 'Failed to load pending users';
@@ -510,7 +511,10 @@ export class UserApprovalsComponent implements OnInit {
   saveSettings(): void {
     this.settingsLoading = true;
     this.settingsSaved = false;
-    
+    this.settings.autoApproveDomain = (this.settings.autoApproveDomain || '')
+      .trim()
+      .replace(/^@+/, '');
+
     this.userApprovalService.updateSettings(this.settings).subscribe({
       next: (updatedSettings) => {
         this.settings = updatedSettings;
