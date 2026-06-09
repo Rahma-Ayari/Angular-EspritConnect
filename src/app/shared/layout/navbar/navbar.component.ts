@@ -117,4 +117,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.router.navigate(['/dashboard']);
     }
   }
+
+  goToEnterpriseJobs(): void {
+    this.router.navigate(['/entreprise/jobs/all']);
+  }
 }

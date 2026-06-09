@@ -65,6 +65,27 @@ export class SidebarComponent implements OnInit, OnDestroy {
     return !this.showAdminMenu;
   }
 
+  get isFrontOfficeUser(): boolean {
+    return (
+      this.userRole === 'ETUDIANT' ||
+      this.userRole === 'ALUMNI' ||
+      this.userRole === 'ENTREPRISE' ||
+      (this.userRole === 'ADMIN' && this.showUserMenu)
+    );
+  }
+
+  get dashboardRoute(): string {
+    return this.userRole === 'ENTREPRISE' ? '/entreprise/dashboard' : '/dashboard';
+  }
+
+  get profileRoute(): string {
+    return this.userRole === 'ENTREPRISE' ? '/entreprise/profil' : '/profile';
+  }
+
+  get jobsRoute(): string {
+    return this.userRole === 'ENTREPRISE' ? '/entreprise/jobs/all' : '/dashboard/jobs/discover';
+  }
+
   get userInitials(): string {
     const nom = this.currentUser.nom?.trim() || '';
     const parts = nom.split(/\s+/).filter(Boolean);
@@ -146,6 +167,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
     if (url.includes('/my-badges') || url.includes('/support')) {
       this.expandedMenus['support'] = true;
+    }
+    if (url.includes('/entreprise/jobs') || url.includes('/dashboard/jobs')) {
+      this.expandedMenus['jobs'] = true;
     }
   }
 

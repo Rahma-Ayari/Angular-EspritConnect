@@ -80,7 +80,12 @@
 
     <!-- Affichage en mode Utilisateur réel (Étudiant / Alumni / Entreprise) -->
     <ng-container *ngIf="userRole !== 'ADMIN'">
-      <span class="user-badge" [style.background-color]="userRole === 'ALUMNI' ? '#3b82f6' : userRole === 'ENTREPRISE' ? '#8b5cf6' : '#10b981'">
+      <span
+        class="user-badge"
+        [class.user-badge--clickable]="userRole === 'ENTREPRISE'"
+        [style.background-color]="userRole === 'ALUMNI' ? '#3b82f6' : userRole === 'ENTREPRISE' ? '#8b5cf6' : '#10b981'"
+        (click)="userRole === 'ENTREPRISE' && goToEnterpriseJobs()"
+      >
         {{ userViewLabel }}
       </span>
     </ng-container>

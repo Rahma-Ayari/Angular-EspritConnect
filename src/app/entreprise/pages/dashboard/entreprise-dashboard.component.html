@@ -32,7 +32,7 @@
         <span class="stat-label">Offres publiées</span>
         <span class="stat-value">0</span>
       </div>
-      <a routerLink="/entreprise/offres" class="stat-action">
+      <a routerLink="/entreprise/jobs/all" class="stat-action">
         Gérer les offres →
       </a>
     </div>
@@ -43,7 +43,7 @@
         <span class="stat-label">Candidatures reçues</span>
         <span class="stat-value">0</span>
       </div>
-      <a routerLink="/entreprise/candidatures" class="stat-action">
+      <a routerLink="/entreprise/jobs/all" class="stat-action">
         Voir les candidatures →
       </a>
     </div>
@@ -89,11 +89,11 @@
   <div class="quick-actions" *ngIf="verification?.verificationStatus === 'VERIFIED'">
     <h2>Actions rapides</h2>
     <div class="actions-grid">
-      <a routerLink="/entreprise/offres" class="action-card">
+      <a routerLink="/entreprise/jobs/create" class="action-card">
         <span class="action-icon">➕</span>
         <span class="action-label">Publier une offre</span>
       </a>
-      <a routerLink="/entreprise/candidatures" class="action-card">
+      <a routerLink="/entreprise/jobs/all" class="action-card">
         <span class="action-icon">📊</span>
         <span class="action-label">Voir les candidatures</span>
       </a>

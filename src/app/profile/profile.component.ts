@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ProfileService, Profile } from '../services/profile.service';
 import { AuthService } from '../auth.service';
 
@@ -35,10 +36,15 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private profileService: ProfileService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    if (this.authService.getRole() === 'ENTREPRISE') {
+      this.router.navigate(['/entreprise/profil']);
+      return;
+    }
     this.loadProfile();
     this.loadMfaStatus();
   }

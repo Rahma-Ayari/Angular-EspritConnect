@@ -6,7 +6,7 @@ import { RegisterComponent } from './register/register.component';
 import { RegisterSuccessComponent } from './register/register-success.component';
 import { VerifyEmailComponent } from './verify-email/verify-email.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { AuthGuard, AdminGuard, EntrepriseGuard, StudentGuard, RoleHomeRedirectGuard, FallbackRedirectGuard } from './guards/auth.guard';
+import { AuthGuard, AdminGuard, EntrepriseGuard, StudentGuard, StudentJobsGuard, RoleHomeRedirectGuard, FallbackRedirectGuard } from './guards/auth.guard';
 
 import { AdminLayoutComponent } from './shared/layout/admin-layout/admin-layout.component';
 
@@ -116,9 +116,16 @@ const adminShellRoutes: Routes = [
     path: 'dashboard/jobs',
     loadChildren: () =>
       import('./student-jobs/student-jobs.module').then((m) => m.StudentJobsModule),
-    canActivate: [StudentGuard]
+    canActivate: [StudentJobsGuard]
   },
   { path: 'opportunities', redirectTo: 'dashboard/jobs/discover', pathMatch: 'full' },
+
+  // Enterprise area (same shell + sidebar as students; jobs use enterprise module)
+  {
+    path: 'entreprise',
+    loadChildren: () => import('./entreprise/entreprise.module').then((m) => m.EntrepriseModule),
+    canActivate: [EntrepriseGuard]
+  },
 
   { path: '', canActivate: [RoleHomeRedirectGuard], pathMatch: 'full', component: RoleRedirectComponent },
 ];
@@ -128,11 +135,6 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'register-success', component: RegisterSuccessComponent },
   { path: 'verify-email', component: VerifyEmailComponent },
-  {
-    path: 'entreprise',
-    loadChildren: () => import('./entreprise/entreprise.module').then((m) => m.EntrepriseModule),
-    canActivate: [AuthGuard, EntrepriseGuard]
-  },
   {
     path: '',
     component: AdminLayoutComponent,

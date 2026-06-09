@@ -4,7 +4,8 @@
     <div class="header-main-info">
       <div class="title-row">
         <h1 class="page-title">Espace Forum</h1>
-        <span class="chip-premium" *ngIf="viewMode.getCurrentMode() === 'student'">Espace Étudiant</span>
+        <span class="chip-premium" *ngIf="viewMode.getCurrentMode() === 'student' && userRole !== 'ENTREPRISE'">Espace Étudiant</span>
+        <span class="chip-premium entreprise" *ngIf="userRole === 'ENTREPRISE'">Espace Entreprise</span>
         <span class="chip-premium alumni" *ngIf="viewMode.getCurrentMode() === 'alumni'">Réseau Alumni</span>
       </div>
       <p class="page-subtitle" style="white-space: nowrap;">Posez vos questions, partagez vos opportunités et échangez avec les membres d'ESPRIT.</p>

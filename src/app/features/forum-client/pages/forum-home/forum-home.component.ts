@@ -5,6 +5,7 @@ import { ForumCategory, ForumPost } from '../../models/forum-client.models';
 import { ForumClientService } from '../../services/forum-client.service';
 import { CreatePostStateService } from '../../services/create-post-state.service';
 import { ViewModeService } from '../../../../shared/layout/services/view-mode.service';
+import { AuthService } from '../../../../auth.service';
 
 @Component({
   selector: 'app-forum-home-client',
@@ -28,6 +29,7 @@ export class ForumHomeComponent implements OnInit, OnDestroy {
   activeSort: 'date' | 'likes' | 'views' = 'date';
   likedPostIds: number[] = [];
   activeTab = '';
+  userRole: string | null = null;
 
   private routeSub?: Subscription;
 
@@ -35,11 +37,13 @@ export class ForumHomeComponent implements OnInit, OnDestroy {
     private readonly api: ForumClientService,
     private readonly createState: CreatePostStateService,
     public readonly viewMode: ViewModeService,
+    private readonly authService: AuthService,
     private readonly route: ActivatedRoute,
     private readonly router: Router
   ) {}
 
   ngOnInit(): void {
+    this.userRole = this.authService.getRole();
     this.likedPostIds = JSON.parse(localStorage.getItem('forum_liked_posts') || '[]');
     this.loadCategories();
     

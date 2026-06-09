@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthResponse, AuthService } from '../auth.service';
 
@@ -88,9 +89,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     { title: 'Hackathon Esprit',  date: 'Mai 15', type: 'HACKATHON',   icon: 'bi-code-slash' }
   ];
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    if (this.authService.getRole() === 'ENTREPRISE') {
+      this.router.navigate(['/entreprise/dashboard']);
+      return;
+    }
     this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
       this.user = user;
       if (user) {

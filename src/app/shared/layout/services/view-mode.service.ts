@@ -26,6 +26,8 @@ export class ViewModeService {
       case 'ALUMNI':
         this.setMode('alumni');
         break;
+      case 'ENTREPRISE':
+        break;
       case 'ADMIN':
         break;
       default:

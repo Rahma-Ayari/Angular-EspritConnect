@@ -39,6 +39,21 @@ export class StudentGuard implements CanActivate {
 
   canActivate(): boolean | UrlTree {
     const role = this.authService.getRole();
+    if (role === 'ETUDIANT' || role === 'ALUMNI' || role === 'ENTREPRISE' || role === 'ADMIN') return true;
+    return this.router.createUrlTree(homeRouteForRole(role));
+  }
+}
+
+/** Student/alumni job discovery — enterprise users use /entreprise/jobs instead. */
+@Injectable({ providedIn: 'root' })
+export class StudentJobsGuard implements CanActivate {
+  constructor(private authService: AuthService, private router: Router) {}
+
+  canActivate(): boolean | UrlTree {
+    const role = this.authService.getRole();
+    if (role === 'ENTREPRISE') {
+      return this.router.createUrlTree(['/entreprise/jobs/all']);
+    }
     if (role === 'ETUDIANT' || role === 'ALUMNI' || role === 'ADMIN') return true;
     return this.router.createUrlTree(homeRouteForRole(role));
   }

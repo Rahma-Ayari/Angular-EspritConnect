@@ -3,10 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { EntrepriseRoutingModule } from './entreprise-routing.module';
-import { SharedLayoutModule } from '../shared/shared-layout.module';
-
-// Layout Components
-import { EntrepriseLayoutComponent } from './layout/entreprise-layout/entreprise-layout.component';
 
 // Page Components
 import { EntrepriseDashboardComponent } from './pages/dashboard/entreprise-dashboard.component';
@@ -15,9 +11,6 @@ import { EntrepriseProfilComponent } from './pages/profil/entreprise-profil.comp
 
 @NgModule({
   declarations: [
-    // Layout
-    EntrepriseLayoutComponent,
-    // Pages
     EntrepriseDashboardComponent,
     VerificationStatusComponent,
     EntrepriseProfilComponent
@@ -26,8 +19,7 @@ import { EntrepriseProfilComponent } from './pages/profil/entreprise-profil.comp
     CommonModule,
     FormsModule,
     RouterModule,
-    EntrepriseRoutingModule,
-    SharedLayoutModule
+    EntrepriseRoutingModule
   ]
 })
 export class EntrepriseModule { }
