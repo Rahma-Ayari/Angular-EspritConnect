@@ -40,6 +40,7 @@ import { FaqKnowledgeBaseComponent } from './frontoffice/support/faq-knowledge-b
 import { AIChatbotComponent } from './frontoffice/support/ai-chatbot.component';
 import { ReportContentComponent } from './frontoffice/support/report-content.component';
 import { ModerationQueueComponent } from './backoffice/intelligence/moderation-queue.component';
+import { HomepageComponent } from './homepage/homepage.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +65,8 @@ import { ModerationQueueComponent } from './backoffice/intelligence/moderation-q
     FaqKnowledgeBaseComponent,
     AIChatbotComponent,
     ReportContentComponent,
-    ModerationQueueComponent
+    ModerationQueueComponent,
+    HomepageComponent
   ],
   imports: [
     BrowserModule,

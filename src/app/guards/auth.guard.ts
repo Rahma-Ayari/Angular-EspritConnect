@@ -76,7 +76,7 @@ export class FallbackRedirectGuard implements CanActivate {
 
   canActivate(): UrlTree {
     if (!this.authService.isLoggedIn()) {
-      return this.router.createUrlTree(['/login']);
+      return this.router.createUrlTree(['/']);
     }
     return this.router.createUrlTree(homeRouteForRole(this.authService.getRole()));
   }

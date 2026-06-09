@@ -116,6 +116,12 @@ export class SupportService {
     return this.http.post<ChatbotResponse>(`${this.frontUrl}/chatbot/ask`, { message, history });
   }
 
+  getChatbotStatus(): Observable<{ configured: boolean; provider: string; model: string }> {
+    return this.http.get<{ configured: boolean; provider: string; model: string }>(
+      `${this.frontUrl}/chatbot/status`
+    );
+  }
+
   // --- Backoffice: admin ---
 
   getAllTicketsAdmin(): Observable<SupportTicket[]> {

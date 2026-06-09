@@ -19,8 +19,8 @@
         </div>
         <div class="bot-meta">
           <span class="bot-name">Support AI</span>
-          <span class="bot-status" *ngIf="!isTyping">Online</span>
-          <span class="typing-status" *ngIf="isTyping">Typing...</span>
+          <span class="bot-status" *ngIf="!isTyping">{{ aiConfigured ? 'IA en ligne' : 'Mode aide' }}</span>
+          <span class="typing-status" *ngIf="isTyping">En train d'écrire...</span>
         </div>
       </div>
       <div class="header-actions">
@@ -40,7 +40,7 @@
           <i class="fa-solid" [ngClass]="msg.sender === 'user' ? 'fa-user' : 'fa-robot'"></i>
         </div>
         <div class="msg-bubble-group">
-          <div class="msg-bubble" [innerHTML]="msg.content"></div>
+          <div class="msg-bubble" [innerHTML]="formatMessage(msg.content)"></div>
           <div class="msg-time">{{ msg.timestamp | date:'shortTime' }}</div>
         </div>
       </div>
@@ -58,7 +58,7 @@
       <!-- Ticket suggestion -->
       <div class="ticket-suggest-bar" *ngIf="suggestedAction === 'OPEN_TICKET'">
         <button class="btn-open-ticket" routerLink="/support/new">
-          <i class="fa-solid fa-ticket"></i> Open Support Ticket
+          <i class="fa-solid fa-ticket"></i> Ouvrir un ticket support
         </button>
       </div>
 
@@ -66,31 +66,31 @@
 
     <!-- Suggested Questions (only on fresh conversation) -->
     <div class="suggestions-section" *ngIf="messages.length === 1 && !isTyping">
-      <p class="suggestions-label">✨ Try asking about</p>
+      <p class="suggestions-label">✨ Essayez de demander</p>
       <div class="suggestion-list">
-        <button class="suggestion-item" (click)="sendPrompt('How do I create a support ticket?')">
+        <button class="suggestion-item" (click)="sendPrompt('Comment créer un ticket de support ?')">
           <i class="fa-solid fa-ticket"></i>
-          <span>How to create a support ticket?</span>
+          <span>Comment créer un ticket ?</span>
         </button>
-        <button class="suggestion-item" (click)="sendPrompt('What are some CV writing tips for students?')">
+        <button class="suggestion-item" (click)="sendPrompt('Quels conseils pour rédiger un bon CV ?')">
           <i class="fa-solid fa-file-lines"></i>
-          <span>CV writing tips for students</span>
+          <span>Conseils pour mon CV</span>
         </button>
-        <button class="suggestion-item" (click)="sendPrompt('How does the mentoring program work?')">
+        <button class="suggestion-item" (click)="sendPrompt('Comment fonctionne le mentorat sur ESPRIT Connect ?')">
           <i class="fa-solid fa-user-graduate"></i>
-          <span>How does mentoring work?</span>
+          <span>Comment fonctionne le mentorat ?</span>
         </button>
-        <button class="suggestion-item" (click)="sendPrompt('How can I find job offers on this platform?')">
+        <button class="suggestion-item" (click)="sendPrompt('Comment trouver des offres d\'emploi sur la plateforme ?')">
           <i class="fa-solid fa-briefcase"></i>
-          <span>How to find job offers?</span>
+          <span>Trouver des offres d'emploi</span>
         </button>
-        <button class="suggestion-item" (click)="sendPrompt('How do I prepare for a technical interview?')">
+        <button class="suggestion-item" (click)="sendPrompt('Comment me préparer à un entretien technique ?')">
           <i class="fa-solid fa-laptop-code"></i>
-          <span>Technical interview prep</span>
+          <span>Préparer un entretien technique</span>
         </button>
-        <button class="suggestion-item" (click)="sendPrompt('What events are available for alumni?')">
+        <button class="suggestion-item" (click)="sendPrompt('Quels événements sont disponibles pour les alumni ?')">
           <i class="fa-solid fa-calendar-days"></i>
-          <span>Events for alumni</span>
+          <span>Événements pour alumni</span>
         </button>
       </div>
     </div>
@@ -100,7 +100,7 @@
       <textarea
         [(ngModel)]="newMessage"
         (keydown.enter)="$event.preventDefault(); sendMessage()"
-        placeholder="Ask me anything..."
+        placeholder="Posez votre question..."
         [disabled]="isTyping"></textarea>
       <button class="btn-send" (click)="sendMessage()" [disabled]="!newMessage.trim() || isTyping">
         <i class="fa-solid fa-paper-plane"></i>

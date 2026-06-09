@@ -49,6 +49,7 @@ import { ForumGroupDetailComponent } from './features/forum-client/pages/forum-g
 import { ForumGroupsModerationComponent } from './features/forum/pages/forum-groups-moderation/forum-groups-moderation.component';
 import { ProfileComponent } from './profile/profile.component';
 import { RoleRedirectComponent } from './role-redirect.component';
+import { HomepageComponent } from './homepage/homepage.component';
 
 const adminShellRoutes: Routes = [
   // Job & user management (from job branch)
@@ -131,6 +132,7 @@ const adminShellRoutes: Routes = [
 ];
 
 const routes: Routes = [
+  { path: '', component: HomepageComponent, pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'register-success', component: RegisterSuccessComponent },
