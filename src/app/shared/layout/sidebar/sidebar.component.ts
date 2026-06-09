@@ -41,6 +41,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
     fragment: 'ignored'
   };
 
+  readonly eventsLinkActiveOptions: IsActiveMatchOptions = {
+    paths: 'subset',
+    matrixParams: 'ignored',
+    queryParams: 'ignored',
+    fragment: 'ignored'
+  };
+
   constructor(
     @Inject(PLATFORM_ID) platformId: Object,
     private router: Router,

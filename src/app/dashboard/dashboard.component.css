@@ -24,7 +24,7 @@
   font-family: 'Outfit', sans-serif;
 }
 
-/* ── Shell (legacy — layout handled by AdminLayout) ─────────────────────── */
+/* ── Shell (layout handled by AdminLayout) ──────────────────────────────── */
 .student-dashboard {
   width: 100%;
 }
@@ -502,7 +502,7 @@
 
 @media (max-width: 768px) {
   .sidebar { width: var(--sidebar-c); }
-  .main-content { margin-left: var(--sidebar-c); }
+  .dashboard-main { margin-left: 0; }
   .col-side { grid-template-columns: 1fr; }
   .stats-row { grid-template-columns: 1fr 1fr; }
   .welcome-strip { flex-direction: column; align-items: flex-start; gap: 12px; }

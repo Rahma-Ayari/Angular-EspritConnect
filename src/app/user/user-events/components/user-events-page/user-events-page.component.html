@@ -1,0 +1,123 @@
+<main class="public-events-page">
+  <section class="events-hero">
+    <div class="hero-content">
+      <a routerLink="/login" class="brand-link">
+        <span class="brand-mark">E</span>
+        <span>EspritConnect</span>
+      </a>
+      <p class="eyebrow">Events</p>
+      <h1>Explore campus events and career opportunities</h1>
+      <p class="hero-copy">Browse workshops, company sessions, hackathons, and community gatherings published by EspritConnect partners.</p>
+
+      <div class="hero-actions">
+        <button type="button" class="btn-primary" (click)="loadEvents()">
+          <i class="bi bi-arrow-repeat"></i>
+          Refresh
+        </button>
+        <a routerLink="/login" class="btn-secondary">
+          <i class="bi bi-box-arrow-in-right"></i>
+          Sign in
+        </a>
+      </div>
+    </div>
+
+    <div class="featured-panel" *ngIf="featuredEvent as featured">      <span class="featured-label">Featured</span>
+      <h2>{{ featured.titre }}</h2>
+      <p>{{ featured.lieu }}</p>
+      <div class="featured-meta">
+        <span>{{ featured.dateEvenement | date:'mediumDate' }}</span>
+        <span>{{ featured.capacite }} seats</span>
+      </div>
+      <button type="button" (click)="openDetails(featured)">View details</button>
+    </div>
+  </section>
+
+  <section class="events-content">
+    <div class="toolbar">
+      <div class="search-box">
+        <i class="bi bi-search"></i>
+        <input
+          type="text"
+          placeholder="Search events, places, companies..."
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="loadEvents()"
+        >
+      </div>
+
+      <select [(ngModel)]="selectedType" (change)="loadEvents()">
+        <option value="">All types</option>
+        <option *ngFor="let type of eventTypes" [value]="type">{{ type }}</option>
+      </select>
+
+      <button type="button" class="btn-filter" (click)="loadEvents()">
+        <i class="bi bi-funnel"></i>
+        Filter
+      </button>
+      <button type="button" class="btn-clear" (click)="resetFilters()">Reset</button>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading events...</p>
+    </div>
+
+    <div class="error-state" *ngIf="!isLoading && error">
+      <i class="bi bi-exclamation-triangle"></i>
+      <p>{{ error }}</p>
+      <button type="button" (click)="loadEvents()">Retry</button>
+    </div>
+
+    <div class="events-grid" *ngIf="!isLoading && !error && events.length > 0">
+      <article class="event-card" *ngFor="let event of events" (click)="openDetails(event)">
+        <div class="event-media">
+          <img
+            *ngIf="hasImage(event)"
+            [src]="event.imageUrl || ''"
+            [alt]="event.titre"
+            (error)="markImageFailed(event)"
+          >
+          <div class="image-placeholder" *ngIf="!hasImage(event)">
+            <i class="bi bi-calendar-event"></i>
+          </div>
+          <span class="status">{{ event.status }}</span>
+        </div>
+
+        <div class="event-body">
+          <div class="event-title-row">
+            <h2>{{ event.titre }}</h2>
+            <span *ngIf="event.type">{{ event.type }}</span>
+          </div>
+
+          <div class="event-meta">
+            <p>
+              <i class="bi bi-calendar3"></i>
+              {{ event.dateEvenement | date:'mediumDate' }} at {{ event.dateEvenement | date:'shortTime' }}
+            </p>
+            <p>
+              <i class="bi bi-geo-alt"></i>
+              {{ event.lieu }}
+            </p>
+            <p>
+              <i class="bi bi-building"></i>
+              {{ event.entrepriseNom || 'EspritConnect partner' }}
+            </p>
+          </div>
+
+          <div class="event-footer">
+            <span>{{ event.capacite }} seats</span>
+            <button type="button" (click)="openDetails(event); $event.stopPropagation()">
+              Details
+              <i class="bi bi-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="empty-state" *ngIf="!isLoading && !error && events.length === 0">
+      <i class="bi bi-calendar2-x"></i>
+      <h2>No events found</h2>
+      <p>Try changing the filters or check back when new events are published.</p>
+    </div>
+  </section>
+</main>

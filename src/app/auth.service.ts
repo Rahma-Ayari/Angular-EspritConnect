@@ -53,6 +53,7 @@ export class AuthService {
   private readonly TOKEN_KEY = 'esprit_token';
   private readonly USER_KEY  = 'esprit_user';
   private readonly DEVICE_TOKEN_KEY = 'esprit_device_token';
+  private readonly REMEMBER_KEY = 'esprit_remember';
 
   private currentUserSubject = new BehaviorSubject<AuthResponse | null>(this.storedUser());
   currentUser$ = this.currentUserSubject.asObservable();
@@ -64,14 +65,14 @@ export class AuthService {
   ) {}
 
   // ── Login ──────────────────────────────────────────────────────────────────
-  login(req: LoginRequest, deviceToken?: string): Observable<AuthResponse> {
+  login(req: LoginRequest, deviceToken?: string, rememberMe = false): Observable<AuthResponse> {
     const payload = deviceToken ? { ...req, deviceToken } : req;
     return this.http.post<AuthResponse>(`${this.API}/login`, payload).pipe(
       tap(res => {
         if (res.mfaRequired) {
           this.clearSessionOnly();
         } else {
-          this.storeSession(res);
+          this.storeSession(res, rememberMe);
         }
       })
     );
@@ -147,6 +148,9 @@ export class AuthService {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.USER_KEY);
       localStorage.removeItem(this.DEVICE_TOKEN_KEY);
+      localStorage.removeItem(this.REMEMBER_KEY);
+      sessionStorage.removeItem(this.TOKEN_KEY);
+      sessionStorage.removeItem(this.USER_KEY);
     }
     this.currentUserSubject.next(null);
     this.viewMode.setMode('admin');
@@ -156,7 +160,8 @@ export class AuthService {
   // ── Helpers ────────────────────────────────────────────────────────────────
   getToken(): string | null {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem(this.TOKEN_KEY);
+      const remembered = localStorage.getItem(this.REMEMBER_KEY) === 'true';
+      return sessionStorage.getItem(this.TOKEN_KEY) || (remembered ? localStorage.getItem(this.TOKEN_KEY) : null);
     }
     return null;
   }
@@ -188,21 +193,31 @@ export class AuthService {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.USER_KEY);
+      sessionStorage.removeItem(this.TOKEN_KEY);
+      sessionStorage.removeItem(this.USER_KEY);
     }
     this.currentUserSubject.next(null);
   }
 
-  private storeSession(res: AuthResponse): void {
+  private storeSession(res: AuthResponse, rememberMe = false): void {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(this.TOKEN_KEY, res.token);
-      localStorage.setItem(this.USER_KEY, JSON.stringify(res));
+      const storage = rememberMe ? localStorage : sessionStorage;
+      const otherStorage = rememberMe ? sessionStorage : localStorage;
+
+      storage.setItem(this.TOKEN_KEY, res.token);
+      storage.setItem(this.USER_KEY, JSON.stringify(res));
+      localStorage.setItem(this.REMEMBER_KEY, String(rememberMe));
+
+      otherStorage.removeItem(this.TOKEN_KEY);
+      otherStorage.removeItem(this.USER_KEY);
     }
     this.currentUserSubject.next(res);
   }
 
   private storedUser(): AuthResponse | null {
     if (typeof window !== 'undefined') {
-      const raw = localStorage.getItem(this.USER_KEY);
+      const remembered = localStorage.getItem(this.REMEMBER_KEY) === 'true';
+      const raw = sessionStorage.getItem(this.USER_KEY) || (remembered ? localStorage.getItem(this.USER_KEY) : null);
       return raw ? JSON.parse(raw) : null;
     }
     return null;

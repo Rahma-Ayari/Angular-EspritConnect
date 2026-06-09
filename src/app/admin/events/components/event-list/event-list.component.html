@@ -1,0 +1,45 @@
+<div class="events-page">
+
+  <div class="overlay"></div>
+
+  <div class="content">
+
+    <div class="header">
+      <h1>Events Management</h1>
+
+      <button routerLink="/admin/events/create">
+        + Create Event
+      </button>
+    </div>
+
+    <div class="cards">
+
+      <div class="event-card" *ngFor="let e of events">
+
+        <div class="top">
+          <h2>{{ e.titre }}</h2>
+          <span>{{ e.type }}</span>
+        </div>
+
+        <p>📍 {{ e.lieu }}</p>
+        <p>📅 {{ e.dateEvenement | date:'mediumDate' }}</p>
+        <p>👥 {{ e.capacite }} participants</p>
+
+        <div class="bottom">
+          <button class="details" [routerLink]="['/admin/events', e.idEvenement]">Details</button>
+
+          <button class="details" [routerLink]="['/admin/events/edit', e.idEvenement]">Edit</button>
+
+          <button class="delete"
+                  (click)="deleteEvent(e.idEvenement)">
+            Delete
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

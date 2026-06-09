@@ -62,6 +62,11 @@ const adminShellRoutes: Routes = [
   { path: 'admin/jobs', redirectTo: 'admin/jobs/settings', pathMatch: 'full' },
   { path: 'admin/jobs/settings', component: JobsSettingsComponent, canActivate: [AdminGuard] },
   { path: 'admin/jobs/import', component: JobsImportComponent, canActivate: [AdminGuard] },
+  {
+    path: 'admin/events',
+    loadChildren: () => import('./admin/events/events.module').then((m) => m.EventsModule),
+    canActivate: [AdminGuard]
+  },
 
   // Email communications (from develop)
   { path: 'activity-digest', component: ActivityDigestComponent, canActivate: [AdminGuard] },
@@ -99,6 +104,12 @@ const adminShellRoutes: Routes = [
   // Student dashboard & profile (same unified sidebar)
   { path: 'dashboard', component: DashboardComponent, canActivate: [StudentGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [StudentGuard] },
+  {
+    path: 'events',
+    loadChildren: () =>
+      import('./user/user-events/user-events.module').then((m) => m.UserEventsModule),
+    canActivate: [StudentGuard]
+  },
 
   // Student jobs (same shell as forum, badges, support)
   {

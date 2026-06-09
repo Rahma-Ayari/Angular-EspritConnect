@@ -1,0 +1,13 @@
+.user-events-page { animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+.eyebrow { margin: 0 0 4px; color: #dc2626; font-size: 12px; font-weight: 800; text-transform: uppercase; }
+h1 { margin: 0; color: #111827; }
+.events-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+.event-card { overflow: hidden; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; }
+.event-card img { width: 100%; height: 160px; object-fit: cover; background: #f3f4f6; }
+.event-card div { padding: 16px; }
+.badge { display: inline-flex; padding: 4px 9px; border-radius: 999px; background: #fef2f2; color: #dc2626; font-size: 12px; font-weight: 800; }
+.state { padding: 28px; border: 1px solid #e5e7eb; border-radius: 12px; background: white; color: #6b7280; }
+.error { color: #dc2626; }
+.btn-secondary { border: 1px solid #e5e7eb; background: #fff; border-radius: 8px; min-height: 38px; padding: 0 12px; cursor: pointer; }

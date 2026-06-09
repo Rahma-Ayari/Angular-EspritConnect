@@ -1,0 +1,22 @@
+.user-layout-shell {
+  display: flex;
+  min-height: 100vh;
+  background: #f1f5f9;
+}
+
+.user-layout-main {
+  flex: 1;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-layout-page {
+  padding: 28px;
+}
+
+@media (max-width: 900px) {
+  .user-layout-main {
+    margin-left: 76px;
+  }
+}

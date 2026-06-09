@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
@@ -71,7 +71,6 @@ import { ModerationQueueComponent } from './backoffice/intelligence/moderation-q
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
     RouterModule,
     SharedLayoutModule,
     ActivityDigestModule,
@@ -86,6 +85,7 @@ import { ModerationQueueComponent } from './backoffice/intelligence/moderation-q
   ],
   providers: [
     provideClientHydration(),
+    provideHttpClient(withFetch(), withInterceptorsFromDi()),
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]

@@ -30,7 +30,11 @@ const routes: Routes = [
       { path: 'jobs/import', component: JobsImportComponent },
 
       { path: 'user-management/approval', component: UserApprovalsComponent },
-      { path: 'user-management/enterprise-verification', component: EnterpriseVerificationComponent }
+      { path: 'user-management/enterprise-verification', component: EnterpriseVerificationComponent },
+      {
+        path: 'events',
+        loadChildren: () => import('./events/events.module').then(m => m.EventsModule)
+      }
     ]
   }
 ];

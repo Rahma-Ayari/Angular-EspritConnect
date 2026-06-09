@@ -310,3 +310,69 @@ tbody td {
   font-size: 13.5px;
 }
 tbody tr:last-child td { border-bottom: none; }
+
+/* ── Event page backgrounds ── */
+.event-background-page {
+  --event-bg-image: url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1600&auto=format&fit=crop');
+  position: relative;
+  isolation: isolate;
+  min-height: calc(100vh - 120px);
+  margin: -4px;
+  padding: 24px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.event-background-page::before,
+.event-background-page::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.event-background-page::before {
+  z-index: -2;
+  background:
+    linear-gradient(135deg, rgba(127, 29, 29, 0.35), rgba(15, 23, 42, 0.2)),
+    var(--event-bg-image) center / cover no-repeat;
+}
+
+.event-background-page::after {
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(249, 250, 251, 0.94) 280px, rgba(249, 250, 251, 0.98)),
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.32), transparent 380px);
+}
+
+.event-bg-home {
+  --event-bg-image: url('https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1600&auto=format&fit=crop');
+}
+
+.event-bg-admin {
+  --event-bg-image: url('https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=1600&auto=format&fit=crop');
+}
+
+.event-bg-form {
+  --event-bg-image: url('https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=1600&auto=format&fit=crop');
+}
+
+.event-bg-details {
+  --event-bg-image: url('https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=1600&auto=format&fit=crop');
+}
+
+.event-bg-list {
+  --event-bg-image: url('https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=1600&auto=format&fit=crop');
+}
+
+.event-bg-types {
+  --event-bg-image: url('https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1600&auto=format&fit=crop');
+}
+
+@media (max-width: 760px) {
+  .event-background-page {
+    margin: -8px;
+    padding: 18px;
+    border-radius: 14px;
+  }
+}
