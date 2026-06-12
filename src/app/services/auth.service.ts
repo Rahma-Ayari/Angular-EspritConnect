@@ -62,7 +62,7 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<AuthResponse | null> {
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/api/auth/login`, { email, password }).pipe(
+    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, { email, password }).pipe(
       tap(res => this.applyAuthResponse(res)),
       catchError((err) => {
         console.error('Login failed for email: ' + email, err);
@@ -126,5 +126,13 @@ export class AuthService {
       role,
       etudiantId: role === 'STUDENT' ? 1 : undefined
     });
+  }
+
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${environment.apiUrl}/auth/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${environment.apiUrl}/auth/reset-password`, { token, newPassword });
   }
 }

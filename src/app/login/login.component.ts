@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { environment } from '../../environments/environment';
@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
   loginForm!: FormGroup;
   mfaForm!: FormGroup;
@@ -16,6 +16,11 @@ export class LoginComponent implements OnInit {
   errorMessage = '';
   isMfaRequired = false;
   mfaPendingToken = '';
+  remainingAttempts = 5;
+  lockoutSeconds = 0;
+  isAccountLocked = false;
+  lockoutCountdown = '';
+  private lockoutInterval: any;
   private readonly oauthBaseUrl = environment.backendBaseUrl || environment.apiUrl.replace(/\/api$/, '');
 
   constructor(
@@ -36,6 +41,12 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.lockoutInterval) {
+      clearInterval(this.lockoutInterval);
+    }
+  }
+
   isFieldInvalid(field: string): boolean {
     const control = this.loginForm.get(field);
     return !!(control && control.invalid && (control.dirty || control.touched));
@@ -46,7 +57,7 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.loginForm.invalid) {
+    if (this.loginForm.invalid || this.isAccountLocked) {
       this.loginForm.markAllAsTouched();
       return;
     }
@@ -68,13 +79,54 @@ export class LoginComponent implements OnInit {
       },
       error: (err) => {
         this.isLoading    = false;
-        if (err.status === 403 && err.error?.code === 'EMAIL_NOT_VERIFIED') {
+        if (err.status === 423) { // ACCOUNT_LOCKED
+          this.isAccountLocked = true;
+          this.remainingAttempts = 0;
+          this.lockoutSeconds = err.error?.lockoutSeconds || 900;
+          this.startLockoutCountdown();
+          this.errorMessage = err.error?.message || 'Votre compte est temporairement verrouillé.';
+        } else if (err.status === 401) {
+          this.remainingAttempts = err.error?.remainingAttempts !== undefined ? err.error.remainingAttempts : 5;
+          if (this.remainingAttempts < 5) {
+            this.errorMessage = `Email ou mot de passe incorrect. Il vous reste ${this.remainingAttempts} tentative(s).`;
+          } else {
+            this.errorMessage = err.error?.message || 'Email ou mot de passe incorrect.';
+          }
+        } else if (err.status === 403 && err.error?.code === 'EMAIL_NOT_VERIFIED') {
           this.errorMessage = err.error?.message || 'Veuillez vérifier votre email.';
         } else {
           this.errorMessage = err.error?.message || 'Email ou mot de passe incorrect.';
         }
       }
     });
+  }
+
+  startLockoutCountdown(): void {
+    if (this.lockoutInterval) {
+      clearInterval(this.lockoutInterval);
+    }
+    
+    this.loginForm.disable();
+    this.updateCountdownText();
+    
+    this.lockoutInterval = setInterval(() => {
+      this.lockoutSeconds--;
+      if (this.lockoutSeconds <= 0) {
+        this.isAccountLocked = false;
+        this.remainingAttempts = 5;
+        this.errorMessage = '';
+        this.loginForm.enable();
+        clearInterval(this.lockoutInterval);
+      } else {
+        this.updateCountdownText();
+      }
+    }, 1000);
+  }
+
+  updateCountdownText(): void {
+    const minutes = Math.floor(this.lockoutSeconds / 60);
+    const seconds = this.lockoutSeconds % 60;
+    this.lockoutCountdown = `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
   onMfaSubmit(): void {

@@ -12,6 +12,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { RegisterComponent } from './register/register.component';
 import { RegisterSuccessComponent } from './register/register-success.component';
 import { VerifyEmailComponent } from './verify-email/verify-email.component';
+import { ForgotPasswordComponent } from './login/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
 import { ProfileComponent } from './profile/profile.component';
 import { SharedLayoutModule } from './shared/shared-layout.module';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
@@ -51,6 +53,8 @@ import { HomepageComponent } from './homepage/homepage.component';
     RegisterComponent,
     RegisterSuccessComponent,
     VerifyEmailComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
     ProfileComponent,
     BadgeListComponent,
     BadgeFormComponent,
