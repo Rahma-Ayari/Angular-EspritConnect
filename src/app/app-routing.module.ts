@@ -5,6 +5,8 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { RegisterSuccessComponent } from './register/register-success.component';
 import { VerifyEmailComponent } from './verify-email/verify-email.component';
+import { ForgotPasswordComponent } from './login/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard, AdminGuard, EntrepriseGuard, StudentGuard, StudentJobsGuard, RoleHomeRedirectGuard, FallbackRedirectGuard } from './guards/auth.guard';
 
@@ -137,6 +139,8 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'register-success', component: RegisterSuccessComponent },
   { path: 'verify-email', component: VerifyEmailComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
   {
     path: '',
     component: AdminLayoutComponent,

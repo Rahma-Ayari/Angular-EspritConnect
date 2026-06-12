@@ -222,4 +222,13 @@ export class AuthService {
     }
     return null;
   }
+
+  // ── Forgot / Reset Password ───────────────────────────────────────────────
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.API}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.API}/reset-password`, { token, newPassword });
+  }
 }
