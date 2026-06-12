@@ -52,9 +52,30 @@
           <p *ngIf="isMfaRequired">Entrez le code de vérification pour continuer</p>
         </header>
 
-        <div class="alert-error" *ngIf="errorMessage" role="alert">
+        <!-- Alerte de verrouillage avec compte à rebours -->
+        <div class="alert-lockout" *ngIf="isAccountLocked" role="alert">
+          <div class="lockout-header">
+            <i class="bi bi-shield-lock-fill" aria-hidden="true"></i>
+            <span>Compte verrouillé temporairement</span>
+          </div>
+          <div class="lockout-countdown">
+            Réessayez dans <strong>{{ lockoutCountdown }}</strong>
+          </div>
+          <div class="lockout-progress-container">
+            <div class="lockout-progress-bar" [style.width.%]="(lockoutSeconds / 900) * 100"></div>
+          </div>
+        </div>
+
+        <!-- Alerte d'erreur générique -->
+        <div class="alert-error" *ngIf="errorMessage && !isAccountLocked" role="alert">
           <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
-          {{ errorMessage }}
+          <span style="flex: 1;">{{ errorMessage }}</span>
+        </div>
+
+        <!-- Avertissement de tentatives restantes -->
+        <div class="attempts-warning" *ngIf="remainingAttempts < 3 && remainingAttempts > 0 && !isAccountLocked">
+          <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+          <span>Attention : encore <strong>{{ remainingAttempts }}</strong> tentative(s) avant verrouillage.</span>
         </div>
 
         <!-- ── FORMULAIRE 1 : EMAIL + PASSWORD ── -->
@@ -111,7 +132,7 @@
             <a class="forgot-link" routerLink="/forgot-password">Mot de passe oublié ?</a>
           </div>
 
-          <button type="submit" class="btn-submit" [disabled]="isLoading" [attr.aria-busy]="isLoading">
+          <button type="submit" class="btn-submit" [disabled]="isLoading || isAccountLocked" [attr.aria-busy]="isLoading">
             <span *ngIf="!isLoading">Se connecter</span>
             <span *ngIf="isLoading" class="spinner" aria-label="Connexion en cours"></span>
           </button>
