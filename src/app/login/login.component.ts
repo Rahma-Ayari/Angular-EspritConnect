@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { environment } from '../../environments/environment';
+import { SocialAuthService } from '@abacritt/angularx-social-login';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -21,11 +23,14 @@ export class LoginComponent implements OnInit, OnDestroy {
   isAccountLocked = false;
   lockoutCountdown = '';
   private lockoutInterval: any;
+  private googleAuthSub!: Subscription;
+  private isProcessingGoogleLogin = false;
   private readonly oauthBaseUrl = environment.backendBaseUrl || environment.apiUrl.replace(/\/api$/, '');
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private socialAuthService: SocialAuthService
   ) {}
 
   ngOnInit(): void {
@@ -39,11 +44,36 @@ export class LoginComponent implements OnInit, OnDestroy {
       code:           ['', [Validators.required, Validators.minLength(6), Validators.maxLength(9)]],
       rememberDevice: [false]
     });
+
+    // Subscribe to Google auth state — only process if the user actively clicked
+    // the Google button (not a cached session replay after logout).
+    this.googleAuthSub = this.socialAuthService.authState.subscribe((user) => {
+      if (user && user.idToken && !this.isProcessingGoogleLogin && !this.authService.isLoggedIn()) {
+        this.isProcessingGoogleLogin = true;
+        this.isLoading = true;
+        this.errorMessage = '';
+        this.authService.loginWithGoogle(user.idToken).subscribe({
+          next: (res) => {
+            this.isLoading = false;
+            this.isProcessingGoogleLogin = false;
+            this.authService.redirectAfterLogin(res.role);
+          },
+          error: (err) => {
+            this.isLoading = false;
+            this.isProcessingGoogleLogin = false;
+            this.errorMessage = err.error?.message || 'Erreur lors de la connexion avec Google.';
+          }
+        });
+      }
+    });
   }
 
   ngOnDestroy(): void {
     if (this.lockoutInterval) {
       clearInterval(this.lockoutInterval);
+    }
+    if (this.googleAuthSub) {
+      this.googleAuthSub.unsubscribe();
     }
   }
 
@@ -163,10 +193,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.mfaPendingToken = '';
     this.errorMessage = '';
     this.mfaForm.reset();
-  }
-
-  loginWithGoogle(): void {
-    window.location.href = `${this.oauthBaseUrl}/oauth2/authorization/google`;
   }
 
   loginWithLinkedIn(): void {

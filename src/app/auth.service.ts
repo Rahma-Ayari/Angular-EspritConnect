@@ -5,6 +5,7 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../environments/environment';
 import { ViewModeService } from './shared/layout/services/view-mode.service';
 import { homeRouteForRole } from './utils/role-home.util';
+import { SocialAuthService } from '@abacritt/angularx-social-login';
 
 export interface LoginRequest {
   email: string;
@@ -61,7 +62,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private viewMode: ViewModeService
+    private viewMode: ViewModeService,
+    private socialAuthService: SocialAuthService
   ) {}
 
   // ── Login ──────────────────────────────────────────────────────────────────
@@ -74,6 +76,14 @@ export class AuthService {
         } else {
           this.storeSession(res, rememberMe);
         }
+      })
+    );
+  }
+
+  loginWithGoogle(idToken: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.API}/google-login`, { idToken }).pipe(
+      tap(res => {
+        this.storeSession(res, false);
       })
     );
   }
@@ -144,6 +154,9 @@ export class AuthService {
 
   // ── Logout ─────────────────────────────────────────────────────────────────
   logout(): void {
+    // Sign out from Google social session (if any) to prevent auto-relogin
+    this.socialAuthService.signOut().catch(() => { /* ignore if no social session */ });
+
     if (typeof window !== 'undefined') {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.USER_KEY);
