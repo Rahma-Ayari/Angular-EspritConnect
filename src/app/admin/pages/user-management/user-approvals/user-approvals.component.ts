@@ -34,7 +34,7 @@ export class UserApprovalsComponent implements OnInit {
     emailNotificationsOnNewRegistration: true,
     requireEmailVerification: false,
     notifyUserOnApproval: true,
-    notifyUserOnDecline: false,
+    notifyUserOnDecline: true,
     autoApproveDomain: 'esprit.tn'
   };
   settingsLoading: boolean = false;
