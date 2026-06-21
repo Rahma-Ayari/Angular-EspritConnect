@@ -97,9 +97,12 @@ export interface AIGenerateResponse {
   requirements: string;
   benefits: string;
   keywords: string[];
+  recruitmentText?: string;
   aiDisclaimer?: string;
   suggestedTitle?: string;
   suggestedSkills?: string[];
+  provider?: string;
+  cached?: boolean;
 }
 
 export interface AIImproveRequest {
@@ -128,8 +131,10 @@ export interface ImportJobResponse {
   responsibilities?: string;
   skills: string[];
   requirements: string;
+  benefits?: string;
   location?: string;
   contractType?: ContractType;
+  experienceLevel?: ExperienceLevel | string;
   extractedData: Record<string, any>;
 }
 

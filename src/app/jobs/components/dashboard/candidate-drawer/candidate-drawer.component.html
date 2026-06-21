@@ -1,0 +1,75 @@
+<div class="drawer-backdrop" *ngIf="open" (click)="close()"></div>
+
+<aside class="candidate-drawer" [class.open]="open">
+  <div class="drawer-header">
+    <div>
+      <h2>{{ candidate?.etudiantNom || 'Candidate' }}</h2>
+      <p>{{ candidate?.filiere }} · {{ candidate?.etudiantEmail }}</p>
+    </div>
+    <button type="button" class="btn-close" (click)="close()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="drawer-body">
+    <span class="ai-badge">{{ poweredBy }}</span>
+
+    <div class="drawer-skeleton" *ngIf="loading">
+      <div class="sk-block"></div>
+      <div class="sk-block short"></div>
+      <div class="sk-block"></div>
+    </div>
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <ng-container *ngIf="!loading && matchData">
+      <div class="score-grid">
+        <div class="score-card">
+          <span>Overall</span>
+          <strong>{{ matchData.overallScore }}%</strong>
+        </div>
+        <div class="score-card">
+          <span>Skills</span>
+          <strong>{{ matchData.skillsScore }}%</strong>
+        </div>
+        <div class="score-card">
+          <span>Experience</span>
+          <strong>{{ matchData.experienceScore }}%</strong>
+        </div>
+        <div class="score-card">
+          <span>Education</span>
+          <strong>{{ matchData.educationScore }}%</strong>
+        </div>
+      </div>
+
+      <section *ngIf="matchData.matchingSkills?.length">
+        <h4>Matching Skills</h4>
+        <div class="tags">
+          <span class="tag tag-green" *ngFor="let s of matchData.matchingSkills">{{ s }}</span>
+        </div>
+      </section>
+
+      <section *ngIf="matchData.missingSkills?.length">
+        <h4>Missing Skills</h4>
+        <div class="tags">
+          <span class="tag tag-red" *ngFor="let s of matchData.missingSkills">{{ s }}</span>
+        </div>
+      </section>
+
+      <section *ngIf="summaryData">
+        <h4>AI Summary</h4>
+        <p class="summary-text">{{ summaryData.summary }}</p>
+        <p class="recommendation"><strong>Recommendation:</strong> {{ summaryData.recommendation || matchData.recommendation }}</p>
+      </section>
+    </ng-container>
+  </div>
+
+  <div class="drawer-footer" *ngIf="!loading && summaryData">
+    <button type="button" class="btn-action" (click)="regenerate()">
+      <i class="bi bi-arrow-clockwise"></i> Regenerate
+    </button>
+    <button type="button" class="btn-action" (click)="copySummary()">
+      <i class="bi bi-clipboard"></i> Copy
+    </button>
+  </div>
+</aside>

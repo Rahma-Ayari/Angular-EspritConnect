@@ -32,6 +32,10 @@
     <div *ngIf="importMethod === 'URL'" class="import-form">
       <label>Job posting URL</label>
       <input type="url" [(ngModel)]="url" placeholder="https://..." />
+      <p class="hint hint-warn">
+        LinkedIn often blocks full job text from URLs. For best results, open the job on LinkedIn,
+        copy the full description, and use the <strong>Text</strong> tab.
+      </p>
     </div>
 
     <div *ngIf="importMethod === 'PDF'" class="import-form">
@@ -48,17 +52,24 @@
     <div class="error-banner" *ngIf="errorMessage">{{ errorMessage }}</div>
 
     <button type="button" class="btn-primary" (click)="importJob()" [disabled]="isImporting">
-      {{ isImporting ? 'Importing...' : 'Import' }}
+      <span *ngIf="isImporting" class="import-skeleton">Extracting with AI...</span>
+      <span *ngIf="!isImporting">Import with AI</span>
     </button>
   </div>
 
   <div class="import-preview" *ngIf="importedData">
     <h3>Imported preview</h3>
+    <span class="ai-badge" *ngIf="importedData.extractedData?.['aiProvider']">
+      Powered by {{ importedData.extractedData['aiProvider'] }}
+    </span>
     <p><strong>Title:</strong> {{ importedData.title }}</p>
     <p *ngIf="importedData.location"><strong>Location:</strong> {{ importedData.location }}</p>
     <p *ngIf="importedData.contractType"><strong>Contract:</strong> {{ importedData.contractType }}</p>
     <p *ngIf="importedData.skills?.length"><strong>Skills:</strong> {{ importedData.skills.join(', ') }}</p>
-    <p class="preview-text">{{ importedData.description | slice:0:280 }}...</p>
+    <p><strong>Description:</strong> {{ importedData.description | slice:0:200 }}...</p>
+    <p *ngIf="importedData.responsibilities"><strong>Responsibilities:</strong> {{ importedData.responsibilities | slice:0:120 }}...</p>
+    <p *ngIf="importedData.requirements"><strong>Requirements:</strong> {{ importedData.requirements | slice:0:120 }}...</p>
+    <p *ngIf="importedData.benefits"><strong>Benefits:</strong> {{ importedData.benefits | slice:0:120 }}...</p>
     <button type="button" class="btn-primary" (click)="useImportedData()">Use in Create Offer</button>
   </div>
 </div>

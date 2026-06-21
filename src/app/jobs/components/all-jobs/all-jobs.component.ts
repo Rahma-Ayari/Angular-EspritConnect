@@ -1,8 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Subject, takeUntil, debounceTime, distinctUntilChanged, forkJoin, of, switchMap, catchError } from 'rxjs';
 import { JobsService } from '../../services/jobs.service';
+import { JobsAiService } from '../../ai/ai.service';
+import { EntrepriseJobDashboardService } from '../../../services/entreprise-job-dashboard.service';
+import { EntrepriseContextService } from '../../../services/entreprise-context.service';
 import { navigateJobs } from '../../jobs-router.util';
+import { TopMatchCandidate } from '../../ai/models/ai.model';
+import { CandidateMatch } from '../../../models/job-dashboard.model';
 import {
   JobOffer,
   JobFilter,
@@ -55,8 +60,23 @@ export class AllJobsComponent implements OnInit, OnDestroy {
   // Active menu tracking
   activeMenuId: number | null = null;
 
+  // Dashboard tabs
+  activeTab: 'offers' | 'top-matches' | 'analytics' = 'offers';
+  selectedJobId: number | null = null;
+  entrepriseId: number | null = null;
+
+  // AI Top Matches
+  topCandidates: TopMatchCandidate[] = [];
+  topMatchesLoading = false;
+  drawerOpen = false;
+  selectedCandidate: TopMatchCandidate | null = null;
+  topScores: number[] = [];
+
   constructor(
     private jobsService: JobsService,
+    private jobsAiService: JobsAiService,
+    private dashboardService: EntrepriseJobDashboardService,
+    private entrepriseContext: EntrepriseContextService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -64,6 +84,9 @@ export class AllJobsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadJobs();
     this.setupSearchDebounce();
+    this.entrepriseContext.getEntrepriseId()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(id => this.entrepriseId = id);
   }
 
   ngOnDestroy(): void {
@@ -345,5 +368,89 @@ export class AllJobsComponent implements OnInit, OnDestroy {
 
   navigateToImport(): void {
     navigateJobs(this.router, this.route, ['import']);
+  }
+
+  setTab(tab: 'offers' | 'top-matches' | 'analytics'): void {
+    this.activeTab = tab;
+    if (tab === 'top-matches' && this.selectedJobId) {
+      this.loadTopMatches(this.selectedJobId);
+    }
+  }
+
+  selectJobForMatches(job: JobOffer): void {
+    if (!job.id) return;
+    this.selectedJobId = job.id;
+    this.loadTopMatches(job.id);
+  }
+
+  onCandidateSelected(candidate: TopMatchCandidate): void {
+    this.selectedCandidate = candidate;
+    this.drawerOpen = true;
+  }
+
+  closeDrawer(): void {
+    this.drawerOpen = false;
+    this.selectedCandidate = null;
+  }
+
+  private loadTopMatches(offreId: number): void {
+    this.topMatchesLoading = true;
+    this.dashboardService.topCandidates(offreId, 10)
+      .pipe(
+        switchMap((candidates) => this.enrichWithAiScores(offreId, candidates)),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (enriched) => {
+          this.topCandidates = enriched;
+          this.topScores = enriched.map(c => c.aiScore ?? c.scoreCompatibilite).filter(s => s > 0);
+          this.topMatchesLoading = false;
+        },
+        error: () => {
+          this.topCandidates = [];
+          this.topMatchesLoading = false;
+        }
+      });
+  }
+
+  private enrichWithAiScores(offreId: number, candidates: CandidateMatch[]) {
+    if (!candidates.length) {
+      return of([] as TopMatchCandidate[]);
+    }
+
+    const mapped: TopMatchCandidate[] = candidates.map(c => ({
+      candidatureId: c.candidatureId,
+      etudiantId: c.etudiantId,
+      etudiantNom: c.etudiantNom,
+      etudiantEmail: c.etudiantEmail,
+      filiere: c.filiere,
+      scoreCompatibilite: c.scoreCompatibilite,
+      skillsMatched: c.skillsMatched || [],
+      recommendation: c.recommandations?.[0],
+      hasResume: c.hasResume,
+      candidatureStatus: c.candidatureStatus
+    }));
+
+    const aiCalls = mapped.slice(0, 5).map(c =>
+      this.jobsAiService.matchCandidate({
+        offreId,
+        etudiantId: c.etudiantId,
+        candidatureId: c.candidatureId
+      }).pipe(
+        catchError(() => of(null))
+      )
+    );
+
+    return forkJoin(aiCalls).pipe(
+      switchMap(results => {
+        results.forEach((res, i) => {
+          if (res && mapped[i]) {
+            mapped[i].aiScore = res.overallScore;
+            mapped[i].recommendation = res.recommendation;
+          }
+        });
+        return of(mapped);
+      })
+    );
   }
 }

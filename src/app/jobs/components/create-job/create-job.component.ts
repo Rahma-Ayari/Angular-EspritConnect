@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, takeUntil, debounceTime, switchMap } from 'rxjs';
+import { Subject, takeUntil, debounceTime, switchMap, merge, finalize } from 'rxjs';
 import { JobsService } from '../../services/jobs.service';
 import { AuthService } from '../../../auth.service';
 import { EntrepriseContextService } from '../../../services/entreprise-context.service';
@@ -40,6 +40,8 @@ export class CreateJobComponent implements OnInit, OnDestroy {
   // Autosave
   isSaving = false;
   lastSaved?: Date;
+  private autosavePaused = true;
+  private draftSaveInFlight = false;
 
   // Submit
   isSubmitting = false;
@@ -87,6 +89,9 @@ export class CreateJobComponent implements OnInit, OnDestroy {
     this.setupAutosave();
     this.checkEditMode();
     this.applyImportedJobFromNavigation();
+    if (!history.state?.importedJob) {
+      this.autosavePaused = false;
+    }
   }
 
   private applyImportedJobFromNavigation(): void {
@@ -96,25 +101,29 @@ export class CreateJobComponent implements OnInit, OnDestroy {
     const description = (importedJob.description || '').trim();
     if (this.isWeakLinkedInImport(description, importedJob.title)) {
       this.error =
-        'Import only returned the page title, not the full job description. ' +
-        'Copy the job text from LinkedIn and use TEXT import.';
+        'LinkedIn URL import only returned a short preview. Open the job on LinkedIn, ' +
+        'copy the full description, and use TEXT import for accurate results.';
       return;
     }
 
-    const skills = importedJob.skills?.length ? importedJob.skills : ['Communication'];
+    const skills = importedJob.skills?.length ? importedJob.skills : this.inferSkillsFromText(description);
     const step4 = this.buildStep4FromImport(importedJob, description);
+    const experienceLevel = this.normalizeExperienceLevel(
+      importedJob.experienceLevel || importedJob.extractedData?.['experienceLevel'],
+      description
+    );
 
     this.step1Form.patchValue({
-      title: importedJob.title || 'Imported job offer',
+      title: this.sanitizeTitle(importedJob.title),
       contractType: this.normalizeContractType(importedJob.contractType),
       department: this.guessDepartment(description),
-      experienceLevel: this.guessExperienceLevel(description),
+      experienceLevel,
       numberOfPositions: 1
     });
 
     this.step2Form.patchValue({
-      workMode: 'HYBRID',
-      location: importedJob.location || 'Tunis, Tunisia',
+      workMode: this.guessWorkMode(description),
+      location: this.sanitizeLocation(importedJob.location, description),
       deadline: this.defaultDeadlineIso()
     });
 
@@ -128,6 +137,50 @@ export class CreateJobComponent implements OnInit, OnDestroy {
 
     [this.step1Form, this.step2Form, this.step3Form, this.step4Form].forEach((f) => f.updateValueAndValidity());
     this.currentStep = 4;
+    setTimeout(() => {
+      this.autosavePaused = false;
+    }, 5000);
+  }
+
+  private sanitizeTitle(title?: string): string {
+    if (!title?.trim()) return 'Imported job offer';
+    return title.replace(/\s*\|\s*LinkedIn\s*$/i, '').trim();
+  }
+
+  private sanitizeLocation(location?: string, description?: string): string {
+    const candidate = (location || '').trim();
+    if (candidate && candidate.length <= 80 && !/employees work|similar jobs|linkedin/i.test(candidate)) {
+      return candidate;
+    }
+    const match = description?.match(/\bin\s+([A-Za-z][A-Za-z\s.'-]+,\s*[A-Z]{2})\b/);
+    if (match) return match[1].trim();
+    return 'Tunis, Tunisia';
+  }
+
+  private guessWorkMode(text: string): WorkMode {
+    const lower = text.toLowerCase();
+    if (lower.includes('remote') && !lower.includes('hybrid')) return 'REMOTE';
+    if (lower.includes('hybrid')) return 'HYBRID';
+    if (lower.includes('on-site') || lower.includes('onsite')) return 'ON_SITE';
+    return 'HYBRID';
+  }
+
+  private normalizeExperienceLevel(value: unknown, text: string): ExperienceLevel {
+    const allowed: ExperienceLevel[] = ['JUNIOR', 'INTERMEDIATE', 'SENIOR', 'EXPERT'];
+    if (typeof value === 'string' && allowed.includes(value as ExperienceLevel)) {
+      return value as ExperienceLevel;
+    }
+    return this.guessExperienceLevel(text);
+  }
+
+  private inferSkillsFromText(text: string): string[] {
+    const catalog = [
+      'Node.js', 'Python', 'Go', 'Kubernetes', 'Docker', 'React', 'Angular', 'TypeScript',
+      'Java', 'Spring Boot', 'MySQL', 'PostgreSQL', 'MongoDB', 'AWS', 'CI/CD'
+    ];
+    const lower = text.toLowerCase();
+    const found = catalog.filter(s => lower.includes(s.toLowerCase()));
+    return found.length ? found : ['Communication'];
   }
 
   private buildStep4FromImport(importedJob: ImportJobResponse, description: string): {
@@ -168,11 +221,11 @@ export class CreateJobComponent implements OnInit, OnDestroy {
       description: desc.length >= 50 ? desc : `${desc} (imported)`,
       responsibilities: responsibilities.length >= 10
         ? responsibilities.substring(0, 3000)
-        : 'List the main missions and day-to-day responsibilities for this role.',
+        : 'Describe the main missions and day-to-day responsibilities for this role.',
       requirements: requirements.length >= 10
         ? requirements.substring(0, 3000)
         : 'List required skills, experience, and qualifications for candidates.',
-      benefits: ''
+      benefits: (importedJob.benefits || '').trim()
     };
   }
 
@@ -222,14 +275,17 @@ export class CreateJobComponent implements OnInit, OnDestroy {
   }
 
   private isWeakLinkedInImport(description: string, title?: string): boolean {
-    const d = description.trim();
+    const d = description.trim().toLowerCase();
     if (d.length < 120) {
       return true;
     }
-    if (/\|\s*LinkedIn\s*$/i.test(d) && d.length < 300) {
+    if (d.includes("see what you're missing") || d.includes('similar jobs on linkedin')) {
       return true;
     }
-    if (title && d === title.trim()) {
+    if (/\|\s*linkedin\s*$/i.test(description.trim()) && d.length < 300) {
+      return true;
+    }
+    if (title && description.trim() === title.trim()) {
       return true;
     }
     return false;
@@ -288,21 +344,13 @@ export class CreateJobComponent implements OnInit, OnDestroy {
   }
 
   setupAutosave(): void {
-    // Autosave every 30 seconds
-    this.step1Form.valueChanges
-      .pipe(debounceTime(30000), takeUntil(this.destroy$))
-      .subscribe(() => this.saveDraft());
-      
-    this.step2Form.valueChanges
-      .pipe(debounceTime(30000), takeUntil(this.destroy$))
-      .subscribe(() => this.saveDraft());
-      
-    this.step3Form.valueChanges
-      .pipe(debounceTime(30000), takeUntil(this.destroy$))
-      .subscribe(() => this.saveDraft());
-      
-    this.step4Form.valueChanges
-      .pipe(debounceTime(30000), takeUntil(this.destroy$))
+    merge(
+      this.step1Form.valueChanges,
+      this.step2Form.valueChanges,
+      this.step3Form.valueChanges,
+      this.step4Form.valueChanges
+    )
+      .pipe(debounceTime(45000), takeUntil(this.destroy$))
       .subscribe(() => this.saveDraft());
   }
 
@@ -443,8 +491,11 @@ export class CreateJobComponent implements OnInit, OnDestroy {
 
   // Save & Submit
   saveDraft(): void {
-    if (!this.step1Form.valid) return;
+    if (!this.step1Form.valid || this.autosavePaused || this.draftSaveInFlight || this.isSubmitting) {
+      return;
+    }
 
+    this.draftSaveInFlight = true;
     this.isSaving = true;
     const jobData: any = this.collectFormData();
     jobData.status = 'DRAFT';
@@ -457,6 +508,10 @@ export class CreateJobComponent implements OnInit, OnDestroy {
             ? this.jobsService.updateDraft(this.jobId, jobData)
             : this.jobsService.saveDraft(jobData);
         }),
+        finalize(() => {
+          this.draftSaveInFlight = false;
+          this.isSaving = false;
+        }),
         takeUntil(this.destroy$)
       )
       .subscribe({
@@ -466,11 +521,9 @@ export class CreateJobComponent implements OnInit, OnDestroy {
             this.jobId = job.id;
           }
           this.lastSaved = new Date();
-          this.isSaving = false;
         },
         error: (err) => {
           console.error('Error saving draft:', err);
-          this.isSaving = false;
         }
       });
   }
@@ -481,6 +534,7 @@ export class CreateJobComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.autosavePaused = true;
     this.isSubmitting = true;
     this.error = '';
     const jobData: any = this.collectFormData();
@@ -502,6 +556,7 @@ export class CreateJobComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Error publishing job:', err);
+          this.autosavePaused = false;
           this.error =
             err?.message ||
             err.error?.message ||
