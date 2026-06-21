@@ -17,6 +17,7 @@ import { ResetPasswordComponent } from './login/reset-password/reset-password.co
 import { ProfileComponent } from './profile/profile.component';
 import { SharedLayoutModule } from './shared/shared-layout.module';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule, GoogleSigninButtonModule, SOCIAL_AUTH_CONFIG } from '@abacritt/angularx-social-login';
 
 import { ActivityDigestModule } from './features/activity-digest/activity-digest.module';
 import { AutomaticEmailsModule } from './features/automatic-emails/automatic-emails.module';
@@ -43,6 +44,7 @@ import { AIChatbotComponent } from './frontoffice/support/ai-chatbot.component';
 import { ReportContentComponent } from './frontoffice/support/report-content.component';
 import { ModerationQueueComponent } from './backoffice/intelligence/moderation-queue.component';
 import { HomepageComponent } from './homepage/homepage.component';
+import { CaptchaComponent } from './shared/captcha/captcha.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +72,8 @@ import { HomepageComponent } from './homepage/homepage.component';
     AIChatbotComponent,
     ReportContentComponent,
     ModerationQueueComponent,
-    HomepageComponent
+    HomepageComponent,
+    CaptchaComponent
   ],
   imports: [
     BrowserModule,
@@ -87,12 +90,29 @@ import { HomepageComponent } from './homepage/homepage.component';
     ForumModule,
     ForumClientModule,
     LayoutModule,
-    AdminModule
+    AdminModule,
+    SocialLoginModule,
+    GoogleSigninButtonModule
   ],
   providers: [
     provideClientHydration(),
     provideHttpClient(withFetch(), withInterceptorsFromDi()),
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    {
+      provide: SOCIAL_AUTH_CONFIG,
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider('483287701118-an9qar20q70rg13s8firlpmu6jg4kpnf.apps.googleusercontent.com')
+          }
+        ],
+        onError: (err) => {
+          console.error(err);
+        }
+      } as SocialAuthServiceConfig,
+    }
   ],
   bootstrap: [AppComponent]
 })

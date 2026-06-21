@@ -27,7 +27,10 @@ export class JwtInterceptor implements HttpInterceptor {
           url.includes('/api/auth/register') ||
           url.includes('/api/auth/verify-2fa-login') ||
           url.includes('/api/auth/verify-email') ||
-          url.includes('/api/auth/resend-verification-email');
+          url.includes('/api/auth/resend-verification-email') ||
+          url.includes('/api/auth/forgot-password') ||
+          url.includes('/api/auth/reset-password') ||
+          url.includes('/api/captcha/');
 
         if (err.status === 401 && !isPublicAuthCall) {
           this.authService.logout();

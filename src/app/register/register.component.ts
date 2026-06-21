@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import zxcvbn from 'zxcvbn';
+import { CaptchaVerifiedState } from '../shared/captcha/captcha.models';
 
 @Component({
   selector: 'app-register',
@@ -25,6 +26,8 @@ export class RegisterComponent implements OnInit {
   
   documentFileName = '';
   documentFileError = '';
+  captchaVerified = false;
+  captchaState: CaptchaVerifiedState | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -155,7 +158,7 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.registerForm.invalid) {
+    if (this.registerForm.invalid || !this.captchaVerified || !this.captchaState) {
       this.registerForm.markAllAsTouched();
       return;
     }
@@ -170,7 +173,9 @@ export class RegisterComponent implements OnInit {
       password: val.password,
       role: val.typeUtilisateur,
       diplome: val.diplome,
-      photo: val.photo
+      photo: val.photo,
+      captchaId: this.captchaState.captchaId,
+      captchaToken: this.captchaState.captchaToken
     };
 
     if (val.typeUtilisateur === 'ETUDIANT') {
@@ -202,7 +207,7 @@ export class RegisterComponent implements OnInit {
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage = err.error?.message || "Une erreur est survenue lors de l'inscription.";
+        this.errorMessage = err.error?.error || err.error?.message || "Une erreur est survenue lors de l'inscription.";
         this.currentStep = 1;
       }
     });
@@ -225,6 +230,16 @@ export class RegisterComponent implements OnInit {
 
   goToLogin(): void {
     this.router.navigate(['/login']);
+  }
+
+  onCaptchaVerified(state: CaptchaVerifiedState): void {
+    this.captchaVerified = true;
+    this.captchaState = state;
+  }
+
+  onCaptchaReset(): void {
+    this.captchaVerified = false;
+    this.captchaState = null;
   }
 
   onDocumentSelected(event: any): void {

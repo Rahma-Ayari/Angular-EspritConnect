@@ -297,9 +297,14 @@
               </div>
             </ng-container>
 
+            <app-captcha
+              (verified)="onCaptchaVerified($event)"
+              (verificationReset)="onCaptchaReset()"
+            ></app-captcha>
+
             <div class="form-actions-dual">
               <button type="button" class="btn-back" (click)="prevStep()">Retour</button>
-              <button type="submit" class="btn-submit" [disabled]="isLoading">
+              <button type="submit" class="btn-submit" [disabled]="isLoading || !captchaVerified">
                 <span *ngIf="!isLoading">Créer le compte</span>
                 <span *ngIf="isLoading" class="spinner"></span>
               </button>

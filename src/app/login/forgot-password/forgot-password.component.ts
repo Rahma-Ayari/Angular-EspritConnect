@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../auth.service';
+import { CaptchaVerifiedState } from '../../shared/captcha/captcha.models';
 
 @Component({
   selector: 'app-forgot-password',
@@ -12,6 +13,8 @@ export class ForgotPasswordComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
   successMessage = '';
+  captchaVerified = false;
+  captchaState: CaptchaVerifiedState | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -30,7 +33,7 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.forgotPasswordForm.invalid) {
+    if (this.forgotPasswordForm.invalid || !this.captchaVerified || !this.captchaState) {
       this.forgotPasswordForm.markAllAsTouched();
       return;
     }
@@ -41,7 +44,11 @@ export class ForgotPasswordComponent implements OnInit {
 
     const email = this.forgotPasswordForm.value.email;
 
-    this.authService.forgotPassword(email).subscribe({
+    this.authService.forgotPassword(
+      email,
+      this.captchaState.captchaId,
+      this.captchaState.captchaToken
+    ).subscribe({
       next: (response) => {
         this.isLoading = false;
         this.successMessage = response.message || 'Lien de réinitialisation envoyé.';
@@ -49,8 +56,18 @@ export class ForgotPasswordComponent implements OnInit {
       error: (err) => {
         this.isLoading = false;
         // Optionnel : ne pas afficher d'erreur spécifique pour ne pas divulguer l'existence des emails
-        this.errorMessage = err.error?.message || 'Une erreur est survenue. Veuillez réessayer.';
+        this.errorMessage = err.error?.error || err.error?.message || 'Une erreur est survenue. Veuillez réessayer.';
       }
     });
+  }
+
+  onCaptchaVerified(state: CaptchaVerifiedState): void {
+    this.captchaVerified = true;
+    this.captchaState = state;
+  }
+
+  onCaptchaReset(): void {
+    this.captchaVerified = false;
+    this.captchaState = null;
   }
 }
