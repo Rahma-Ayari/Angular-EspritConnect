@@ -1,12 +1,17 @@
 import { HttpEventType } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { EntrepriseOption, Event as EventModel, EventStatus, EventType } from '../../models/event.model';
+import { EntrepriseOption, Event as EventModel, EventType } from '../../models/event.model';
 import { EventService } from '../../services/event.service';
+
+interface LocationPayload {
+  latitude: number;
+  longitude: number;
+  address: string;
+}
 
 @Component({
   selector: 'app-event-form',
@@ -14,8 +19,13 @@ import { EventService } from '../../services/event.service';
   styleUrls: ['./event-form.component.css']
 })
 export class EventFormComponent implements OnInit {
+  @Input() modalMode = true;
+  @Input() eventId: number | null = null;
+
+  @Output() closed = new EventEmitter<void>();
+  @Output() saved = new EventEmitter<void>();
+
   eventForm!: FormGroup;
-  eventId: number | null = null;
   isEdit = false;
   isLoading = false;
   isSaving = false;
@@ -25,22 +35,22 @@ export class EventFormComponent implements OnInit {
   imagePreview: string | null = null;
   entreprises: EntrepriseOption[] = [];
   eventTypes: EventType[] = [];
-
-  readonly statuses: EventStatus[] = ['UPCOMING', 'ACTIVE', 'COMPLETED', 'CANCELLED'];
+  showTypeCreator = false;
+  typeCreatorForm!: FormGroup;
+  isCreatingType = false;
+  typeError: string | null = null;
+  latitude: number | null = null;
+  longitude: number | null = null;
 
   constructor(
     private fb: FormBuilder,
-    private eventService: EventService,
-    private router: Router,
-    private route: ActivatedRoute
+    private eventService: EventService
   ) {}
 
   ngOnInit(): void {
     this.buildForm();
-
-    const idParam = this.route.snapshot.paramMap.get('id');
-    this.eventId = idParam ? Number(idParam) : null;
-    this.isEdit = !!this.eventId;
+    this.buildTypeCreatorForm();
+    this.isEdit = this.eventId !== null;
 
     this.eventForm.get('unlimitedParticipants')?.valueChanges.subscribe((unlimited) => {
       const capacity = this.eventForm.get('capacite');
@@ -51,6 +61,17 @@ export class EventFormComponent implements OnInit {
         capacity?.setValidators([Validators.required, Validators.min(1)]);
       }
       capacity?.updateValueAndValidity();
+    });
+
+    this.eventForm.get('online')?.valueChanges.subscribe((online) => {
+      const lieu = this.eventForm.get('lieu');
+      if (online) {
+        lieu?.clearValidators();
+        lieu?.setValue('');
+      } else {
+        lieu?.setValidators([Validators.required, Validators.maxLength(160)]);
+      }
+      lieu?.updateValueAndValidity();
     });
 
     this.loadInitialData();
@@ -73,7 +94,7 @@ export class EventFormComponent implements OnInit {
     request$.subscribe({
       next: () => {
         this.isSaving = false;
-        this.router.navigate(['/admin/events']);
+        this.saved.emit();
       },
       error: (err) => {
         console.error('Failed to save event:', err);
@@ -84,12 +105,70 @@ export class EventFormComponent implements OnInit {
   }
 
   cancel(): void {
-    this.router.navigate(['/admin/events']);
+    this.closed.emit();
   }
 
   isInvalid(controlName: string): boolean {
     const control = this.eventForm.get(controlName);
     return !!control && control.invalid && (control.dirty || control.touched);
+  }
+
+  getTimeValue(controlName: string): string {
+    return this.eventForm.get(controlName)?.value || '';
+  }
+
+  setTimeValue(controlName: string, value: string): void {
+    this.eventForm.get(controlName)?.setValue(value);
+  }
+
+  toggleTypeCreator(): void {
+    this.showTypeCreator = !this.showTypeCreator;
+    if (this.showTypeCreator) {
+      this.typeCreatorForm.reset({ title: '', description: '' });
+      this.typeError = null;
+    }
+  }
+
+  onLocationInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.trim();
+    if (!value) {
+      this.latitude = null;
+      this.longitude = null;
+      return;
+    }
+    this.debouncedGeocode(value);
+  }
+
+  private geocodeTimeout: any = null;
+  private debouncedGeocode(address: string): void {
+    if (this.geocodeTimeout) clearTimeout(this.geocodeTimeout);
+    this.geocodeTimeout = setTimeout(() => this.geocode(address), 800);
+  }
+
+  private geocode(address: string): void {
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`, {
+      headers: { 'User-Agent': 'EspritConnect-Events/1.0' }
+    })
+      .then(res => res.json())
+      .then((data: any[]) => {
+        if (!data || data.length === 0) return;
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        const displayName = data[0].display_name || address;
+        this.latitude = lat;
+        this.longitude = lon;
+        this.eventForm.get('lieu')?.setValue(displayName);
+      })
+      .catch(() => {});
+  }
+
+  onMapLocationSelected(payload: LocationPayload): void {
+    this.latitude = payload.latitude;
+    this.longitude = payload.longitude;
+    if (payload.address) {
+      this.eventForm.get('lieu')?.setValue(payload.address);
+    }
   }
 
   onImageSelected(event: globalThis.Event): void {
@@ -132,6 +211,37 @@ export class EventFormComponent implements OnInit {
     });
   }
 
+  createType(): void {
+    const title = this.typeCreatorForm.get('title')?.value?.trim();
+    if (!title) {
+      this.typeError = 'Type title is required.';
+      return;
+    }
+
+    this.isCreatingType = true;
+    this.typeError = null;
+
+    const payload: EventType = {
+      nom: title,
+      description: (this.typeCreatorForm.get('description')?.value || '').trim() || null,
+      actif: true
+    };
+
+    this.eventService.createEventType(payload).subscribe({
+      next: (type) => {
+        this.isCreatingType = false;
+        this.eventTypes = [...this.eventTypes, type];
+        this.eventForm.patchValue({ typeEvenementId: type.idTypeEvenement || null });
+        this.toggleTypeCreator();
+      },
+      error: (err) => {
+        console.error('Failed to create event type:', err);
+        this.isCreatingType = false;
+        this.typeError = err?.error?.error || 'Unable to create event type.';
+      }
+    });
+  }
+
   private buildForm(): void {
     this.eventForm = this.fb.group({
       titre: ['', [Validators.required, Validators.maxLength(120)]],
@@ -140,13 +250,20 @@ export class EventFormComponent implements OnInit {
       dateFin: ['', Validators.required],
       heureDebut: ['', Validators.required],
       heureFin: ['', Validators.required],
+      online: [false],
       unlimitedParticipants: [false],
       capacite: [1, [Validators.required, Validators.min(1)]],
       typeEvenementId: [null, Validators.required],
       imageUrl: [''],
-      status: ['UPCOMING', Validators.required],
       entrepriseId: [null]
     }, { validators: this.dateRangeValidator });
+  }
+
+  private buildTypeCreatorForm(): void {
+    this.typeCreatorForm = this.fb.group({
+      title: ['', [Validators.required, Validators.maxLength(80)]],
+      description: ['']
+    });
   }
 
   private loadInitialData(): void {
@@ -184,37 +301,42 @@ export class EventFormComponent implements OnInit {
   private patchEvent(event: EventModel): void {
     this.eventForm.patchValue({
       titre: event.titre,
-      lieu: event.lieu,
+      lieu: event.lieu || '',
       dateDebut: event.dateDebut,
       dateFin: event.dateFin,
       heureDebut: event.heureDebut,
       heureFin: event.heureFin,
+      online: event.online ?? !event.lieu,
       unlimitedParticipants: event.unlimitedParticipants,
       capacite: event.capacite,
       typeEvenementId: event.typeEvenementId,
       imageUrl: event.imageUrl || '',
-      status: event.status || 'UPCOMING',
       entrepriseId: event.entrepriseId || null
     });
     this.imagePreview = event.imageUrl || null;
+    this.latitude = event.latitude ?? null;
+    this.longitude = event.longitude ?? null;
   }
 
   private buildPayload(): EventModel {
     const raw = this.eventForm.getRawValue();
+    const online = !!raw.online;
 
     return {
       titre: raw.titre,
-      lieu: raw.lieu,
+      lieu: online ? '' : raw.lieu,
       dateDebut: raw.dateDebut,
       dateFin: raw.dateFin,
       heureDebut: raw.heureDebut,
       heureFin: raw.heureFin,
+      online,
       unlimitedParticipants: !!raw.unlimitedParticipants,
       capacite: raw.unlimitedParticipants ? null : Number(raw.capacite),
       typeEvenementId: Number(raw.typeEvenementId),
       imageUrl: raw.imageUrl || null,
-      status: raw.status,
-      entrepriseId: raw.entrepriseId ? Number(raw.entrepriseId) : null
+      entrepriseId: raw.entrepriseId ? Number(raw.entrepriseId) : null,
+      latitude: this.latitude,
+      longitude: this.longitude
     };
   }
 

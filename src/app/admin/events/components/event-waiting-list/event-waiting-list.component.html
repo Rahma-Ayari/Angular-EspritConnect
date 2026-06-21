@@ -1,0 +1,55 @@
+<div class="waiting-list-panel">
+  <div class="waiting-list-header">
+    <h3>Waiting List</h3>
+    <button type="button" class="icon-button close-btn" (click)="close()" aria-label="Close">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="loading-state compact" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <span>Loading...</span>
+  </div>
+
+  <div class="error-state compact" *ngIf="!isLoading && error">
+    <i class="bi bi-exclamation-triangle"></i>
+    <span>{{ error }}</span>
+  </div>
+
+  <div class="empty-compact" *ngIf="!isLoading && !error && entries.length === 0">
+    <i class="bi bi-inbox"></i>
+    <p>No users on the waiting list.</p>
+  </div>
+
+  <div class="waiting-list-table-wrap" *ngIf="!isLoading && entries.length > 0">
+    <table class="waiting-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Registered</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of entries">
+          <td>{{ entry.userNom || '-' }}</td>
+          <td>{{ entry.userEmail || '-' }}</td>
+          <td>{{ entry.createdAt | date:'short' }}</td>
+          <td class="waiting-actions">
+            <button type="button" class="btn-approve" (click)="accept(entry)" title="Approve">
+              <i class="bi bi-check-lg"></i> Approve
+            </button>
+            <button type="button" class="btn-reject" (click)="reject(entry)" title="Reject">
+              <i class="bi bi-x-lg"></i> Reject
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="waiting-list-footer" *ngIf="entries.length > 0">
+    <span class="count-badge">{{ entries.length }} waiting</span>
+  </div>
+</div>

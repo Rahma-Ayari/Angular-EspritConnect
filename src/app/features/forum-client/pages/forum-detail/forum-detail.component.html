@@ -10,8 +10,8 @@
   <!-- DÉTAIL DU POST -->
   <div class="card post-detail-card" *ngIf="post && !loading">
     <div class="detail-header">
-      <span class="category-badge-detail" [style.background-color]="post.category?.color + '15'" [style.color]="post.category?.color || '#dc2626'">
-        {{ post.category?.name || 'Général' }}
+      <span class="category-badge-detail" [style.background-color]="post.category.color + '15'" [style.color]="post.category.color || '#dc2626'">
+        {{ post.category.name || 'Général' }}
       </span>
       <span class="detail-date">Créé le {{ post.createdAt | date:'dd MMMM yyyy à HH:mm' }}</span>
     </div>
@@ -20,7 +20,7 @@
 
     <div class="author-bar">
       <div class="avatar" [style.background-color]="getRoleColor(post.authorRole)">
-        {{ post.authorName?.charAt(0)?.toUpperCase() }}
+        {{ post.authorName.charAt(0).toUpperCase() }}
       </div>
       <div class="author-info">
         <div class="author-fullname">
@@ -73,7 +73,7 @@
         <div class="reply-header">
           <div class="reply-author">
             <div class="avatar avatar--sm" [style.background-color]="getRoleColor(rep.authorRole)">
-              {{ rep.authorName?.charAt(0)?.toUpperCase() }}
+              {{ rep.authorName.charAt(0).toUpperCase() }}
             </div>
             <div class="reply-author-details">
               <div class="reply-name">

@@ -1,0 +1,25 @@
+<div class="time-picker">
+  <span class="time-picker-label">{{ label }}</span>
+  <div class="time-picker-controls">
+    <select
+      class="time-select"
+      [value]="selectedHour12"
+      (change)="selectedHour12 = ($any($event.target).value); emitValue()">
+      <option *ngFor="let h of hours12" [value]="h">{{ h }}</option>
+    </select>
+    <span class="time-separator">:</span>
+    <select
+      class="time-select"
+      [value]="selectedMinute"
+      (change)="selectedMinute = ($any($event.target).value); emitValue()">
+      <option *ngFor="let m of minutes" [value]="m">{{ m }}</option>
+    </select>
+    <select
+      class="time-select time-period"
+      [value]="selectedPeriod"
+      (change)="selectedPeriod = ($any($event.target).value); emitValue()">
+      <option value="AM">AM</option>
+      <option value="PM">PM</option>
+    </select>
+  </div>
+</div>

@@ -17,7 +17,24 @@
   width: 100%;
   height: 190px;
   object-fit: cover;
+  display: block;
+}
+
+.event-media {
+  position: relative;
+  height: 190px;
   background: #f3f4f6;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #dc2626;
+  background: #f9fafb;
+  font-size: 34px;
 }
 
 .event-card-content {

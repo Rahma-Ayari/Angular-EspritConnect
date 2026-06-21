@@ -1,42 +1,89 @@
-<div class="event-form-page event-background-page event-bg-form">
-  <div class="page-header">
+<section class="modal-panel event-form-modal" (click)="$event.stopPropagation()">
+  <div class="modal-header">
     <div>
       <p class="eyebrow">Events</p>
-      <h1>{{ isEdit ? 'Edit Event' : 'Create Event' }}</h1>
-      <p class="subtitle">Database-backed event types, image upload, dates, and capacity rules.</p>
+      <h2>{{ isEdit ? 'Edit Event' : 'Create Event' }}</h2>
+      <p class="subtitle">Manage event details, type, organizer, and visibility settings.</p>
     </div>
-
-    <button type="button" class="btn-secondary" (click)="cancel()">
-      <i class="bi bi-arrow-left"></i>
-      Back
+    <button type="button" class="icon-button" (click)="cancel()" aria-label="Close event form">
+      <i class="bi bi-x-lg"></i>
     </button>
   </div>
 
-
+  <div class="error-state" *ngIf="error">
+    <p>{{ error }}</p>
+  </div>
 
   <form class="form-card" [formGroup]="eventForm" (ngSubmit)="submit()" *ngIf="!isLoading">
     <div class="form-grid">
-      <div class="field full">
+      <div class="field">
+        <label for="typeEvenementId">Type *</label>
+        <div class="type-control">
+          <select id="typeEvenementId" formControlName="typeEvenementId">
+            <option [ngValue]="null">Select type</option>
+            <option *ngFor="let type of eventTypes" [ngValue]="type.idTypeEvenement">
+              {{ type.nom }}
+            </option>
+          </select>
+          <button type="button" class="btn-secondary add-type-btn" (click)="toggleTypeCreator()">
+            Add Type
+          </button>
+        </div>
+        <span class="field-error" *ngIf="isInvalid('typeEvenementId')">Event type is required.</span>
+
+        <div class="type-creator" *ngIf="showTypeCreator">
+          <form [formGroup]="typeCreatorForm" (ngSubmit)="createType()">
+            <label>
+              Title *
+              <input type="text" formControlName="title" placeholder="Workshop">
+              <span class="field-error" *ngIf="typeCreatorForm.get('title')?.invalid && typeCreatorForm.get('title')?.touched">Title is required.</span>
+            </label>
+            <label>
+              Description
+              <input type="text" formControlName="description" placeholder="Optional description">
+            </label>
+            <div class="type-creator-actions">
+              <button type="button" class="btn-secondary" (click)="toggleTypeCreator()">Cancel</button>
+              <button type="submit" class="btn-primary" [disabled]="typeCreatorForm.invalid || isCreatingType">
+                {{ isCreatingType ? 'Creating...' : 'Create Type' }}
+              </button>
+            </div>
+          </form>
+          <span class="field-error" *ngIf="typeError">{{ typeError }}</span>
+        </div>
+      </div>
+
+      <div class="field">
         <label for="titre">Title *</label>
         <input id="titre" type="text" formControlName="titre" placeholder="Career Fair 2026">
         <span class="field-error" *ngIf="isInvalid('titre')">Title is required.</span>
       </div>
 
-      <div class="field">
+      <div class="field full location-field" *ngIf="!eventForm.get('online')?.value">
         <label for="lieu">Location *</label>
-        <input id="lieu" type="text" formControlName="lieu" placeholder="Esprit Campus, Ariana">
+        <input id="lieu" type="text" formControlName="lieu" placeholder="Esprit Campus, Ariana" (input)="onLocationInput($event)">
         <span class="field-error" *ngIf="isInvalid('lieu')">Location is required.</span>
       </div>
 
-      <div class="field">
-        <label for="typeEvenementId">Event type *</label>
-        <select id="typeEvenementId" formControlName="typeEvenementId">
-          <option [ngValue]="null">Select type</option>
-          <option *ngFor="let type of eventTypes" [ngValue]="type.idTypeEvenement">
-            {{ type.nom }}
-          </option>
-        </select>
-        <span class="field-error" *ngIf="isInvalid('typeEvenementId')">Event type is required.</span>
+      <div class="field full map-field" *ngIf="!eventForm.get('online')?.value">
+        <label>Location on map</label>
+        <app-event-map
+          [latitude]="latitude"
+          [longitude]="longitude"
+          [locationAddress]="eventForm.get('lieu')?.value || null"
+          [readOnly]="false"
+          (locationSelected)="onMapLocationSelected($event)">
+        </app-event-map>
+        <span class="field-hint">Select or drag the marker to update coordinates.</span>
+      </div>
+
+      <div class="field online-field">
+        <span class="toggle-label">Online</span>
+        <label class="switch">
+          <input type="checkbox" formControlName="online">
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-hint">{{ eventForm.get('online')?.value ? 'Online event' : 'Physical location required' }}</span>
       </div>
 
       <div class="field">
@@ -44,20 +91,22 @@
         <input id="dateDebut" type="date" formControlName="dateDebut">
       </div>
 
-      <div class="field">
-        <label for="heureDebut">Start time *</label>
-        <input id="heureDebut" type="time" formControlName="heureDebut">
-      </div>
+      <app-time-picker
+        [label]="'Start time *'"
+        [value]="getTimeValue('heureDebut')"
+        (valueChange)="setTimeValue('heureDebut', $event)">
+      </app-time-picker>
 
       <div class="field">
         <label for="dateFin">End date *</label>
         <input id="dateFin" type="date" formControlName="dateFin">
       </div>
 
-      <div class="field">
-        <label for="heureFin">End time *</label>
-        <input id="heureFin" type="time" formControlName="heureFin">
-      </div>
+      <app-time-picker
+        [label]="'End time *'"
+        [value]="getTimeValue('heureFin')"
+        (valueChange)="setTimeValue('heureFin', $event)">
+      </app-time-picker>
 
       <div class="field full" *ngIf="eventForm.hasError('invalidEventRange')">
         <span class="field-error">End date and time must be after start date and time.</span>
@@ -74,13 +123,6 @@
         <label for="capacite">Max participants *</label>
         <input id="capacite" type="number" min="1" formControlName="capacite">
         <span class="field-error" *ngIf="isInvalid('capacite')">Max participants must be greater than zero.</span>
-      </div>
-
-      <div class="field">
-        <label for="status">Status *</label>
-        <select id="status" formControlName="status">
-          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
-        </select>
       </div>
 
       <div class="field">
@@ -114,4 +156,4 @@
       </button>
     </div>
   </form>
-</div>
+</section>

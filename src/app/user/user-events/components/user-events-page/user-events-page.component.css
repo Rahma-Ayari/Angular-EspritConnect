@@ -13,8 +13,7 @@
   min-height: 460px;
   padding: 34px min(6vw, 72px) 42px;
   background:
-    linear-gradient(135deg, rgba(17, 24, 39, 0.94), rgba(127, 29, 29, 0.88)),
-    url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1600&q=80') center / cover;
+    linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(185, 28, 28, 0.92));
   color: white;
 }
 

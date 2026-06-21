@@ -1,4 +1,4 @@
-<section class="events-home-page event-background-page event-bg-home">
+<section class="events-home-page">
   <div class="events-toolbar">
     <div>
       <p class="eyebrow">Events</p>
@@ -6,8 +6,6 @@
     </div>
     <div class="toolbar-actions">
       <button type="button" routerLink="/events/participations">My Participations</button>
-      <button type="button" routerLink="/events/mine">My Created Events</button>
-      <button type="button" class="primary" routerLink="/events/create">Create Event</button>
     </div>
   </div>
 
@@ -18,6 +16,23 @@
       <option *ngFor="let type of eventTypes" [value]="type">{{ type }}</option>
     </select>
   </div>
+
+  <section class="suggestions-section" *ngIf="!suggestionsLoading && suggestions.length > 0">
+    <h2>Suggested Events For You</h2>
+    <div class="suggestions-scroll">
+      <div class="suggestion-card" *ngFor="let suggestion of suggestions">
+        <div class="suggestion-header">
+          <h3>{{ suggestion.category }}</h3>
+          <span class="badge">{{ suggestion.interestedUsers }} interested</span>
+        </div>
+        <div class="suggestion-matches">
+          <button type="button" class="match-chip" *ngFor="let match of suggestion.matches" (click)="navigateToEvent(match.idEvenement)">
+            {{ match.titre }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <div class="state" *ngIf="loading">Loading events...</div>
   <div class="state error" *ngIf="!loading && error">{{ error }}</div>

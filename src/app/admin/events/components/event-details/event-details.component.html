@@ -1,4 +1,183 @@
-<div class="event-details-page event-background-page event-bg-details">
+<div class="event-details-shell" *ngIf="modalMode">
+  <div class="modal-backdrop" (click)="backToEvents()">
+    <article class="modal-panel event-details-modal" (click)="$event.stopPropagation()">
+      <div class="page-header details-header">
+        <div>
+          <p class="eyebrow">Events</p>
+          <h1>Event Details</h1>
+          <p class="subtitle">Review event information, organizer, and participations.</p>
+        </div>
+
+        <div class="header-actions">
+          <button type="button" class="btn-secondary" (click)="openUserView()" [disabled]="!event">
+            <i class="bi bi-eye"></i>
+            User View
+          </button>
+          <button type="button" class="btn-secondary" (click)="editEvent()" [disabled]="!event">
+            <i class="bi bi-pencil"></i>
+            Edit
+          </button>
+          <button type="button" class="icon-button" (click)="backToEvents()" aria-label="Close event details">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="loading-state" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Loading event...</p>
+      </div>
+
+      <div class="error-state" *ngIf="!isLoading && error">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p>{{ error }}</p>
+      </div>
+
+      <article class="details-card" *ngIf="!isLoading && !error && event">
+        <div class="hero-media">
+          <img
+            *ngIf="hasImage"
+            [src]="event.imageUrl || ''"
+            [alt]="event.titre"
+            (error)="onImageError()"
+          >
+          <div class="image-placeholder" *ngIf="!hasImage">
+            <i class="bi bi-calendar-event"></i>
+          </div>
+          <span class="status-badge" [ngClass]="statusClass">{{ event.status }}</span>
+        </div>
+
+        <div class="details-content">
+          <div class="title-row">
+            <div>
+              <h2>{{ event.titre }}</h2>
+              <p *ngIf="event.type">{{ event.type }}</p>
+            </div>
+            <button type="button" class="btn-secondary" (click)="openParticipationsList()">
+              <i class="bi bi-people"></i>
+              Participations List
+            </button>
+          </div>
+
+          <div class="details-grid">
+            <div class="detail-item">
+              <i class="bi bi-calendar3"></i>
+              <div>
+                <span>Date</span>
+                <strong>{{ event.dateDebut | date:'fullDate' }}</strong>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <i class="bi bi-clock"></i>
+              <div>
+                <span>Time</span>
+                <strong>{{ event.heureDebut }} - {{ event.heureFin }}</strong>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <i class="bi" [ngClass]="event.online ? 'bi-globe' : 'bi-geo-alt'"></i>
+              <div>
+                <span>Location</span>
+                <strong>{{ event.online ? 'Online event' : (event.lieu || 'Not specified') }}</strong>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <i class="bi bi-people"></i>
+              <div>
+                <span>Capacity</span>
+                <strong>{{ event.unlimitedParticipants ? 'Unlimited' : (event.capacite || 0) }} seats</strong>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <i class="bi bi-building"></i>
+              <div>
+                <span>Organizer</span>
+                <strong>{{ event.entrepriseNom || 'Not assigned' }}</strong>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <i class="bi bi-person"></i>
+              <div>
+                <span>Owner</span>
+                <strong>{{ event.ownerNom || 'System' }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="details-actions">
+            <button type="button" class="btn-secondary" (click)="deleteEvent()" [disabled]="!event">
+              <i class="bi bi-trash"></i>
+              Delete Event
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <div class="modal-backdrop participations-backdrop" *ngIf="participationsModalOpen" (click)="closeParticipationsList()">
+        <section class="modal-panel participations-modal" (click)="$event.stopPropagation()">
+          <div class="modal-header compact-header">
+            <div>
+              <p class="eyebrow">Events</p>
+              <h2>Participations List</h2>
+              <p class="subtitle">Users participating in this event.</p>
+            </div>
+            <button type="button" class="icon-button" (click)="closeParticipationsList()" aria-label="Close participations">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+
+          <div class="loading-state compact" *ngIf="participationsLoading">
+            <div class="spinner"></div>
+            <p>Loading participations...</p>
+          </div>
+
+          <div class="error-state" *ngIf="participationsError">
+            <p>{{ participationsError }}</p>
+          </div>
+
+          <div class="admin-table-wrap" *ngIf="!participationsLoading && !participationsError">
+            <table class="admin-events-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Email</th>
+                  <th>Joined at</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let participation of participations">
+                  <td>{{ participation.userNom || 'Unknown user' }}</td>
+                  <td>{{ participation.userEmail || '-' }}</td>
+                  <td>{{ participation.createdAt | date:'medium' }}</td>
+                  <td>
+                    <span class="status-badge" [ngClass]="(participation.status || 'APPROVED').toLowerCase()">
+                      {{ participation.status || 'APPROVED' }}
+                    </span>
+                  </td>
+                  <td class="table-actions" *ngIf="participation.status === 'PENDING_APPROVAL'">
+                    <button type="button" class="btn-approve" (click)="approveParticipation(participation)">Approve</button>
+                    <button type="button" class="btn-reject" (click)="rejectParticipation(participation)">Reject</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="empty-state compact" *ngIf="participations.length === 0">
+              <i class="bi bi-calendar2-x"></i>
+              <p>No participations yet.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </article>
+  </div>
+</div>
+
+<div class="event-details-page" *ngIf="!modalMode">
   <div class="page-header">
     <div>
       <p class="eyebrow">Events</p>
@@ -52,22 +231,23 @@
           <h2>{{ event.titre }}</h2>
           <p *ngIf="event.type">{{ event.type }}</p>
         </div>
+        <button type="button" class="btn-secondary" (click)="openParticipationsList()">
+          <i class="bi bi-people"></i>
+          Participations List
+        </button>
+        <button type="button" class="btn-secondary" (click)="openWaitingList()">
+          <i class="bi bi-people"></i>
+          Waiting List
+          <span class="count-pill" *ngIf="waitingListCount > 0">{{ waitingListCount }}</span>
+        </button>
       </div>
 
       <div class="details-grid">
         <div class="detail-item">
-          <i class="bi bi-geo-alt"></i>
-          <div>
-            <span>Location</span>
-            <strong>{{ event.lieu }}</strong>
-          </div>
-        </div>
-
-        <div class="detail-item">
           <i class="bi bi-calendar3"></i>
           <div>
             <span>Date</span>
-            <strong>{{ event.dateEvenement | date:'fullDate' }}</strong>
+            <strong>{{ event.dateDebut | date:'fullDate' }}</strong>
           </div>
         </div>
 
@@ -75,7 +255,15 @@
           <i class="bi bi-clock"></i>
           <div>
             <span>Time</span>
-            <strong>{{ event.dateEvenement | date:'shortTime' }}</strong>
+            <strong>{{ event.heureDebut }} - {{ event.heureFin }}</strong>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <i class="bi bi-geo-alt"></i>
+          <div>
+            <span>Location</span>
+            <strong>{{ event.lieu }}</strong>
           </div>
         </div>
 
@@ -103,6 +291,14 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="waiting-list-section" *ngIf="waitingListOpen">
+      <app-event-waiting-list
+        [event]="event"
+        (closed)="closeWaitingList()"
+        (updated)="onWaitingListUpdated()">
+      </app-event-waiting-list>
     </div>
   </article>
 </div>

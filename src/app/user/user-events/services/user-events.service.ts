@@ -3,7 +3,6 @@ import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { UserEvent, UserEventFilters, UserParticipation } from '../models/user-event.model';
-import { Event } from '../../../admin/events/models/event.model';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({
@@ -39,24 +38,12 @@ export class UserEventsService {
     return this.http.get<UserParticipation[]>(`${this.apiUrl}/participations/mine`);
   }
 
-  getMyCreatedEvents(): Observable<UserEvent[]> {
-    return this.http.get<UserEvent[]>(`${this.apiUrl}/mine`);
-  }
-
-  createEvent(event: Event): Observable<UserEvent> {
-    return this.http.post<UserEvent>(this.apiUrl, event);
-  }
-
-  updateEvent(id: number, event: Event): Observable<UserEvent> {
-    return this.http.put<UserEvent>(`${this.apiUrl}/${id}`, event);
-  }
-
-  deleteEvent(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
-
   getEventTypes(): Observable<Array<{ idTypeEvenement: number; nom: string }>> {
     return this.http.get<Array<{ idTypeEvenement: number; nom: string }>>(this.typesUrl);
+  }
+
+  getSuggestions(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/suggestions`);
   }
 
   uploadEventImage(file: File): Observable<HttpEvent<{ imageUrl: string }>> {

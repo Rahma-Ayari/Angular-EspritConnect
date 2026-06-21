@@ -56,7 +56,7 @@
 
   <!-- Groups Grid -->
   <div class="groups-grid" *ngIf="!loading && activeTab === 'explore' && getFilteredActiveGroups().length > 0">
-    <div class="group-card" *ngFor="let group of getFilteredActiveGroups()" (click)="group.id && memberships[group.id]?.status === 'APPROVED' ? visitGroup(group.id) : null">
+    <div class="group-card" *ngFor="let group of getFilteredActiveGroups()" (click)="group.id && memberships[group.id] && memberships[group.id].status === 'APPROVED' ? visitGroup(group.id) : null">
       <div class="card-header">
         <span class="visibility-badge" [class.private]="group.private">
           {{ group.private ? '🔒 Privé' : '🌐 Public' }}
@@ -75,16 +75,16 @@
           <span class="creator-name">Par {{ group.creatorName }}</span>
         </div>
         <div class="actions">
-          <button class="btn btn-sm btn-outline" *ngIf="group.id && memberships[group.id]?.status === 'APPROVED'" (click)="group.id && visitGroup(group.id)">
+          <button class="btn btn-sm btn-outline" *ngIf="group.id && memberships[group.id] && memberships[group.id].status === 'APPROVED'" (click)="group.id && visitGroup(group.id)">
             Visiter
           </button>
           <button class="btn btn-sm btn-primary" *ngIf="group.id && !memberships[group.id]" (click)="joinGroup(group, $event)">
             {{ group.private ? 'Demander l\'accès' : 'Rejoindre' }}
           </button>
-          <button class="btn btn-sm btn-disabled" *ngIf="group.id && memberships[group.id]?.status === 'PENDING'" disabled>
+          <button class="btn btn-sm btn-disabled" *ngIf="group.id && memberships[group.id] && memberships[group.id].status === 'PENDING'" disabled>
             En attente
           </button>
-          <button class="btn btn-sm btn-disabled" *ngIf="group.id && memberships[group.id]?.status === 'REJECTED'" disabled>
+          <button class="btn btn-sm btn-disabled" *ngIf="group.id && memberships[group.id] && memberships[group.id].status === 'REJECTED'" disabled>
             Refusé
           </button>
         </div>
@@ -99,7 +99,7 @@
           {{ group.private ? '🔒 Privé' : '🌐 Public' }}
         </span>
         <span class="status-badge">
-          {{ group.id && memberships[group.id]?.role === 'OWNER' ? '👑 Propriétaire' : 'Membre' }}
+          {{ group.id && memberships[group.id] && memberships[group.id].role === 'OWNER' ? '👑 Propriétaire' : 'Membre' }}
         </span>
       </div>
       <div class="card-body">

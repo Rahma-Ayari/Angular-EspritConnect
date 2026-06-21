@@ -1,0 +1,34 @@
+<div class="suggestions-section">
+  <div class="suggestions-header">
+    <div>
+      <h2>Suggested Events Based on User Interests</h2>
+      <p class="subtitle">Potential events users may like based on their interests and participation history.</p>
+    </div>
+  </div>
+
+  <div class="loading-state compact" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading suggestions...</p>
+  </div>
+
+  <div class="suggestions-grid" *ngIf="!isLoading && suggestions.length > 0">
+    <div class="suggestion-card" *ngFor="let suggestion of suggestions">
+      <div class="suggestion-category">
+        <h3>{{ suggestion.category }}</h3>
+        <span class="user-count">{{ suggestion.interestedUsers }} interested users</span>
+      </div>
+      <ul class="suggestion-matches">
+        <li *ngFor="let match of suggestion.matches" class="match-item">
+          <span class="match-title">{{ match.titre }}</span>
+          <span class="status-badge" [ngClass]="(match.status || 'UPCOMING').toLowerCase()">{{ match.status }}</span>
+          <button type="button" class="btn-link" (click)="onViewMatch(match)">View</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="empty-state compact" *ngIf="!isLoading && suggestions.length === 0">
+    <i class="bi bi-lightbulb"></i>
+    <p>No suggestions available yet.</p>
+  </div>
+</div>

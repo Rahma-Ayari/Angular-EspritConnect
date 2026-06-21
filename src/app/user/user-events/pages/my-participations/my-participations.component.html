@@ -1,4 +1,4 @@
-<section class="user-events-page event-background-page event-bg-list">
+<section class="user-events-page">
   <div class="page-header">
     <div>
       <p class="eyebrow">Events</p>
@@ -16,12 +16,17 @@
 
   <div class="events-grid" *ngIf="!loading && !error">
     <article class="event-card" *ngFor="let item of participations">
-      <img [src]="item.evenement.imageUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1200&auto=format&fit=crop'" alt="">
+      <div class="event-media">
+        <img *ngIf="item.evenement.imageUrl" [src]="item.evenement.imageUrl" alt="">
+        <div class="image-placeholder" *ngIf="!item.evenement.imageUrl">
+          <i class="bi bi-calendar-event"></i>
+        </div>
+      </div>
       <div>
         <span class="badge">{{ item.evenement.status }}</span>
         <h3>{{ item.evenement.titre }}</h3>
         <p>{{ item.evenement.dateDebut | date:'mediumDate' }} · {{ item.evenement.heureDebut }}</p>
-        <p>{{ item.evenement.lieu }}</p>
+        <p>{{ item.evenement.online ? 'Online event' : item.evenement.lieu }}</p>
         <button type="button" class="btn-secondary" (click)="cancel(item.evenement.idEvenement)">Cancel participation</button>
       </div>
     </article>

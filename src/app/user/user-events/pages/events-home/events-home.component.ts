@@ -3,6 +3,18 @@ import { Component, OnInit } from '@angular/core';
 import { UserEvent } from '../../models/user-event.model';
 import { UserEventsService } from '../../services/user-events.service';
 
+interface CategorySuggestion {
+  category: string;
+  interestedUsers: number;
+  matches: EventMatch[];
+}
+
+interface EventMatch {
+  idEvenement: number;
+  titre: string;
+  status: string | null;
+}
+
 @Component({
   selector: 'app-events-home',
   templateUrl: './events-home.component.html',
@@ -11,7 +23,9 @@ import { UserEventsService } from '../../services/user-events.service';
 export class EventsHomeComponent implements OnInit {
 
   events: UserEvent[] = [];
+  suggestions: CategorySuggestion[] = [];
   loading = false;
+  suggestionsLoading = false;
   error: string | null = null;
   search = '';
   selectedType = '';
@@ -20,6 +34,7 @@ export class EventsHomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchEvents();
+    this.fetchSuggestions();
   }
 
   fetchEvents(): void {
@@ -27,7 +42,7 @@ export class EventsHomeComponent implements OnInit {
 
     this.eventsService.getEvents().subscribe({
       next: (response) => {
-        this.events = response;
+        this.events = response.filter(event => event.status !== 'COMPLETED');
         this.loading = false;
       },
       error: () => {
@@ -37,11 +52,24 @@ export class EventsHomeComponent implements OnInit {
     });
   }
 
+  fetchSuggestions(): void {
+    this.suggestionsLoading = true;
+    this.eventsService.getSuggestions().subscribe({
+      next: (data) => {
+        this.suggestions = data.suggestions || [];
+        this.suggestionsLoading = false;
+      },
+      error: () => {
+        this.suggestionsLoading = false;
+      }
+    });
+  }
+
   applyFilters(): void {
     this.loading = true;
     this.eventsService.getEvents({ search: this.search, type: this.selectedType }).subscribe({
       next: (response) => {
-        this.events = response;
+        this.events = response.filter(event => event.status !== 'COMPLETED');
         this.loading = false;
       },
       error: () => {
@@ -53,5 +81,9 @@ export class EventsHomeComponent implements OnInit {
 
   get eventTypes(): string[] {
     return [...new Set(this.events.map(event => event.type).filter((type): type is string => !!type))].sort();
+  }
+
+  navigateToEvent(id: number): void {
+    window.open(`/events/${id}`, '_blank');
   }
 }

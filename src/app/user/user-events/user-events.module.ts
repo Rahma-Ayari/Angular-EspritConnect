@@ -12,8 +12,6 @@ import { EventsHomeComponent } from './pages/events-home/events-home.component';
 import { EventDetailsComponent } from './pages/event-details/event-details.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MyParticipationsComponent } from './pages/my-participations/my-participations.component';
-import { MyCreatedEventsComponent } from './pages/my-created-events/my-created-events.component';
-import { UserEventFormComponent } from './pages/user-event-form/user-event-form.component';
 
 @NgModule({
   declarations: [
@@ -22,9 +20,7 @@ import { UserEventFormComponent } from './pages/user-event-form/user-event-form.
     UserEventCardComponent,
     EventsHomeComponent,
     EventDetailsComponent,
-    MyParticipationsComponent,
-    MyCreatedEventsComponent,
-    UserEventFormComponent
+    MyParticipationsComponent
   ],
   imports: [
     CommonModule,

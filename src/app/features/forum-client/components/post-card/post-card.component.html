@@ -2,7 +2,7 @@
   <div class="post-card__header">
     <div class="post-card__author">
       <div class="post-card__avatar" [style.background-color]="getRoleColor(post.authorRole)">
-        {{ post.authorName?.charAt(0)?.toUpperCase() }}
+        {{ post.authorName.charAt(0).toUpperCase() }}
       </div>
       <div>
         <div class="post-card__author-name">
@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <span class="category-badge" *ngIf="post.category?.name">
+    <span class="category-badge" *ngIf="post.category.name">
       {{ post.category.name }}
     </span>
   </div>
@@ -32,7 +32,7 @@
       {{ post.title }}
     </h3>
     <p class="post-card__excerpt">
-      {{ post.content | slice:0:160 }}{{ (post.content?.length ?? 0) > 160 ? '...' : '' }}
+      {{ post.content | slice:0:160 }}{{ post.content.length > 160 ? '...' : '' }}
     </p>
   </div>
 

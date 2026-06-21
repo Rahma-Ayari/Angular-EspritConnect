@@ -1,0 +1,61 @@
+<div class="events-admin-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Events</p>
+      <h1>Archived Events</h1>
+      <p class="subtitle">Completed events that have already taken place.</p>
+    </div>
+    <button type="button" class="btn-secondary" (click)="back()">
+      <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </button>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading archived events...</p>
+  </div>
+
+  <div class="admin-table-wrap" *ngIf="!isLoading && archiveEvents.length > 0">
+    <table class="admin-events-table">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Category</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Organizer</th>
+          <th>Participants</th>
+          <th>Status</th>
+          <th class="actions-column">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let event of archiveEvents; trackBy: trackEvent">
+          <td><strong>{{ event.titre }}</strong></td>
+          <td>{{ event.type || '-' }}</td>
+          <td>{{ event.dateDebut | date:'mediumDate' }}</td>
+          <td>{{ event.dateFin | date:'mediumDate' }}</td>
+          <td>{{ event.entrepriseNom || 'Not assigned' }}</td>
+          <td>{{ event.nombreParticipants || 0 }}</td>
+          <td><span class="status-badge completed">{{ event.status }}</span></td>
+          <td class="table-actions">
+            <button type="button" class="action-btn" title="View details" (click)="onView(event)">
+              <i class="bi bi-eye"></i>
+            </button>
+            <button type="button" class="action-btn delete" title="Delete event" (click)="onDelete(event)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="empty-state" *ngIf="!isLoading && archiveEvents.length === 0">
+    <div class="empty-icon">
+      <i class="bi bi-archive"></i>
+    </div>
+    <h3>No archived events yet.</h3>
+    <p>Completed events will appear here once their end date has passed.</p>
+  </div>
+</div>

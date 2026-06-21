@@ -12,6 +12,7 @@ export interface UserEvent {
   dureeMinutes?: number;
   capacite?: number | null;
   unlimitedParticipants: boolean;
+  online?: boolean | null;
   nombreParticipants?: number;
   placesRestantes?: number | null;
   typeEvenementId?: number;

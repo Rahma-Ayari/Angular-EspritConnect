@@ -1,0 +1,31 @@
+<div class="event-map-wrapper">
+  <div class="map-search">
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      (keydown)="onSearchKeydown($event)"
+      placeholder="Search city, address, place..."
+      [disabled]="readOnly || isSearching">
+    <button
+      type="button"
+      class="search-btn"
+      (click)="searchLocation()"
+      [disabled]="readOnly || isSearching">
+      <i class="bi bi-search"></i>
+    </button>
+  </div>
+  <div class="search-error" *ngIf="searchError">{{ searchError }}</div>
+
+  <div id="event-map-container" class="event-map-container"></div>
+
+  <div class="map-hint" *ngIf="!readOnly">
+    <i class="bi bi-info-circle"></i>
+    Click or drag the marker to set the event location.
+  </div>
+
+  <div class="map-preview" *ngIf="latitude != null && longitude != null">
+    <i class="bi bi-geo-alt"></i>
+    <span>Lat: {{ latitude | number:'1.6-6' }}, Lng: {{ longitude | number:'1.6-6' }}</span>
+    <span class="address-preview" *ngIf="resolvedAddress || locationAddress">{{ resolvedAddress || locationAddress }}</span>
+  </div>
+</div>

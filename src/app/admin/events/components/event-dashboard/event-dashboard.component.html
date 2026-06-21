@@ -1,4 +1,4 @@
-<div class="events-admin-page event-background-page event-bg-admin">
+<div class="events-admin-page">
   <div class="page-header">
     <div>
       <p class="eyebrow">Events</p>
@@ -11,16 +11,22 @@
         <i class="bi bi-eye"></i>
         User View
       </button>
-      <button type="button" class="btn-secondary" (click)="manageTypes()">
-        <i class="bi bi-tags"></i>
-        Types
+      <button type="button" class="btn-secondary" (click)="openEventsListModal()">
+        <i class="bi bi-table"></i>
+        Events List
       </button>
-      <button type="button" class="btn-primary" (click)="createEvent()">
+      <button type="button" class="btn-secondary" (click)="openArchiveModal()">
+        <i class="bi bi-archive"></i>
+        Archive
+      </button>
+      <button type="button" class="btn-primary" (click)="openCreateEvent()">
         <i class="bi bi-plus-lg"></i>
         Create Event
       </button>
     </div>
   </div>
+
+  <app-event-suggestions [events]="events" (viewEvent)="viewEvent($event)"></app-event-suggestions>
 
   <app-event-stats [stats]="stats"></app-event-stats>
 
@@ -52,37 +58,276 @@
         </button>
       </div>
 
-      <div class="loading-state" *ngIf="isLoading">
+      <div class="loading-state" *ngIf="pageLoading">
         <div class="spinner"></div>
         <p>Loading events...</p>
       </div>
 
-      <div class="error-state" *ngIf="!isLoading && error">
+      <div class="error-state" *ngIf="!pageLoading && error">
         <i class="bi bi-exclamation-triangle"></i>
         <p>{{ error }}</p>
         <button type="button" (click)="loadDashboard()">Retry</button>
       </div>
 
-      <div class="events-grid" *ngIf="!isLoading && !error && events.length > 0">
-        <app-event-card
-          *ngFor="let event of events"
-          [event]="event"
-          (viewEvent)="viewEvent($event)"
-          (editEvent)="editEvent($event)"
-          (deleteEvent)="deleteEvent($event)"
-        ></app-event-card>
+      <div class="admin-table-wrap" *ngIf="!pageLoading && !error && currentPageEvents.length > 0">
+        <table class="admin-events-table">
+          <thead>
+            <tr>
+              <th class="image-column">Image</th>
+              <th>Event</th>
+              <th>Date & time</th>
+              <th>Location</th>
+              <th>Organizer</th>
+              <th>Capacity</th>
+              <th>Status</th>
+              <th class="actions-column">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let event of currentPageEvents; trackBy: trackEvent">
+              <td class="image-cell">
+                <img *ngIf="event.imageUrl" [src]="event.imageUrl" [alt]="event.titre">
+                <div class="image-placeholder" *ngIf="!event.imageUrl">
+                  <i class="bi bi-calendar-event"></i>
+                </div>
+              </td>
+              <td>
+                <strong>{{ event.titre }}</strong>
+                <span *ngIf="event.type">{{ event.type }}</span>
+              </td>
+              <td>
+                {{ event.dateDebut | date:'mediumDate' }} · {{ event.heureDebut }}
+              </td>
+              <td>
+                <span *ngIf="event.online" class="online-pill">
+                  <i class="bi bi-globe"></i>
+                  Online
+                </span>
+                <span *ngIf="!event.online">{{ event.lieu || 'Not specified' }}</span>
+              </td>
+              <td>{{ event.entrepriseNom || 'Not assigned' }}</td>
+              <td>{{ event.unlimitedParticipants ? 'Unlimited' : (event.capacite || 0) }}</td>
+              <td><span class="status-badge" [ngClass]="(event.status || 'UPCOMING').toLowerCase()">{{ event.status }}</span></td>
+              <td class="table-actions">
+                <button type="button" class="action-btn" title="View details" (click)="viewEvent(event)">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button type="button" class="action-btn edit" title="Edit event" (click)="editEvent(event)">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button type="button" class="action-btn delete" title="Delete event" (click)="deleteEvent(event)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <div class="empty-state" *ngIf="!isLoading && !error && events.length === 0">
+      <div class="empty-state" *ngIf="!pageLoading && !error && currentPageEvents.length === 0">
         <div class="empty-icon">
           <i class="bi bi-calendar2-x"></i>
         </div>
         <h3>No events found</h3>
         <p>Create your first event or adjust the current filters.</p>
-        <button type="button" class="btn-primary" (click)="createEvent()">Create Event</button>
+        <button type="button" class="btn-primary" (click)="openCreateEvent()">Create Event</button>
+      </div>
+
+      <div class="pagination-bar" *ngIf="paginatedTotalPages > 1">
+        <button type="button" class="page-btn" (click)="previousPage()" [disabled]="paginatedPage === 0">Previous</button>
+        <span class="page-info">Page {{ paginatedPage + 1 }} of {{ paginatedTotalPages }}</span>
+        <button type="button" class="page-btn" (click)="nextPage()" [disabled]="paginatedPage + 1 >= paginatedTotalPages">Next</button>
       </div>
     </section>
 
     <app-event-calendar [events]="events"></app-event-calendar>
+  </div>
+
+  <div class="modal-backdrop form-modal-backdrop" *ngIf="formModalOpen" (click)="closeFormModal()">
+    <app-event-form
+      [modalMode]="true"
+      [eventId]="formEditingEvent?.idEvenement || null"
+      (closed)="closeFormModal()"
+      (saved)="onEventSaved()">
+    </app-event-form>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="eventsListModalOpen" (click)="closeEventsListModal()">
+    <section class="modal-panel events-list-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Events</p>
+          <h2>Events List</h2>
+          <p class="subtitle">All events currently managed in EspritConnect.</p>
+        </div>
+        <button type="button" class="icon-button" (click)="closeEventsListModal()" aria-label="Close events list">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="loading-state compact" *ngIf="isEventsListLoading">
+        <div class="spinner"></div>
+        <p>Loading events...</p>
+      </div>
+
+      <div class="admin-table-wrap" *ngIf="!isEventsListLoading">
+        <table class="admin-events-table">
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th>Organizer</th>
+              <th>Status</th>
+              <th class="actions-column">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let event of eventsList; trackBy: trackEvent">
+              <td><strong>{{ event.titre }}</strong></td>
+              <td>{{ event.type || '-' }}</td>
+              <td>{{ event.dateDebut | date:'mediumDate' }}</td>
+              <td>{{ event.entrepriseNom || 'Not assigned' }}</td>
+              <td><span class="status-badge" [ngClass]="(event.status || 'UPCOMING').toLowerCase()">{{ event.status }}</span></td>
+              <td class="table-actions">
+                <button type="button" class="table-action-link" (click)="viewEvent(event)">View</button>
+                <button type="button" class="table-action-link" (click)="editEvent(event)">Edit</button>
+                <button type="button" class="table-action-link danger" (click)="deleteEvent(event)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="empty-state compact" *ngIf="eventsList.length === 0">
+          <i class="bi bi-calendar2-x"></i>
+          <p>No events available.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="showArchiveModal" (click)="closeArchiveModal()">
+    <section class="modal-panel events-list-modal archive-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Events</p>
+          <h2>Archived Events</h2>
+          <p class="subtitle">Completed events that have already taken place.</p>
+        </div>
+        <button type="button" class="icon-button" (click)="closeArchiveModal()" aria-label="Close archive">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="loading-state compact" *ngIf="archiveLoading">
+        <div class="spinner"></div>
+        <p>Loading archived events...</p>
+      </div>
+
+      <div class="admin-table-wrap" *ngIf="!archiveLoading && !archiveError">
+        <table class="admin-events-table" *ngIf="archivedEvents.length > 0">
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Category</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Organizer</th>
+              <th>Participants</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let event of archivedEvents">
+              <td><strong>{{ event.titre }}</strong></td>
+              <td>{{ event.type || '-' }}</td>
+              <td>{{ event.dateDebut | date:'mediumDate' }}</td>
+              <td>{{ event.dateFin | date:'mediumDate' }}</td>
+              <td>{{ event.entrepriseNom || 'Not assigned' }}</td>
+              <td>{{ event.nombreParticipants || 0 }}</td>
+              <td><span class="status-badge completed">{{ event.status }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="empty-state compact" *ngIf="!archiveLoading && archivedEvents.length === 0">
+          <i class="bi bi-archive"></i>
+          <p>No archived events yet.</p>
+        </div>
+      </div>
+
+      <div class="error-state" *ngIf="archiveError">
+        <p>{{ archiveError }}</p>
+      </div>
+    </section>
+  </div>
+
+  <app-event-details
+    *ngIf="selectedEvent"
+    [modalMode]="true"
+    [event]="selectedEvent"
+    (closed)="closeDetailsModal()"
+    (edited)="openEditEvent($event)"
+    (deleted)="deleteEvent($event)">
+  </app-event-details>
+
+  <div class="modal-backdrop delete-modal-backdrop" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+    <section class="modal-panel delete-modal-panel" (click)="$event.stopPropagation()">
+      <div class="delete-modal-header">
+        <div>
+          <p class="eyebrow">Events</p>
+          <h2>Cancel Event</h2>
+          <p class="subtitle">Notify participants before removing this event.</p>
+        </div>
+        <button type="button" class="icon-button" (click)="closeDeleteModal()" aria-label="Close">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="delete-modal-body" *ngIf="deleteTargetEvent">
+        <div class="delete-event-info">
+          <div class="info-row">
+            <span class="info-label">Event</span>
+            <span class="info-value">{{ deleteTargetEvent.titre }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Participants to notify</span>
+            <span class="info-value participants-count">{{ deleteTargetEvent.nombreParticipants || 0 }} participant(s)</span>
+          </div>
+        </div>
+
+        <div class="delete-form-section">
+          <div class="form-group">
+            <label for="deleteEmailSubject">Email Subject</label>
+            <input id="deleteEmailSubject" type="text" [(ngModel)]="deleteEmailSubject" [disabled]="emailSent || emailSending" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="deleteEmailContent">Email Message</label>
+            <textarea id="deleteEmailContent" rows="8" [(ngModel)]="deleteEmailContent" [disabled]="emailSent || emailSending" class="form-control textarea-large"></textarea>
+          </div>
+        </div>
+
+        <div class="delete-status" *ngIf="emailError">
+          <i class="bi bi-exclamation-circle"></i>
+          <span>{{ emailError }}</span>
+        </div>
+
+        <div class="delete-status success" *ngIf="emailSentSuccess">
+          <i class="bi bi-check-circle"></i>
+          <span>Cancellation email sent successfully.</span>
+        </div>
+
+        <div class="delete-modal-footer">
+          <button type="button" class="btn-secondary" (click)="closeDeleteModal()" [disabled]="emailSending">Cancel</button>
+          <div class="footer-actions">
+            <button type="button" class="btn-primary" (click)="sendCancellationEmail()" [disabled]="emailSent || emailSending">
+              <span *ngIf="!emailSending">Send Cancellation Email</span>
+              <span *ngIf="emailSending">Sending...</span>
+            </button>
+            <button type="button" class="btn-danger" (click)="confirmDelete()" [disabled]="!emailSent || emailSending">
+              Delete Event
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </div>
