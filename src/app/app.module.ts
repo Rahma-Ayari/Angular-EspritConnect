@@ -44,6 +44,7 @@ import { AIChatbotComponent } from './frontoffice/support/ai-chatbot.component';
 import { ReportContentComponent } from './frontoffice/support/report-content.component';
 import { ModerationQueueComponent } from './backoffice/intelligence/moderation-queue.component';
 import { HomepageComponent } from './homepage/homepage.component';
+import { CaptchaComponent } from './shared/captcha/captcha.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +72,8 @@ import { HomepageComponent } from './homepage/homepage.component';
     AIChatbotComponent,
     ReportContentComponent,
     ModerationQueueComponent,
-    HomepageComponent
+    HomepageComponent,
+    CaptchaComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,138 @@
+<div class="captcha-wrapper">
+  <!-- INITIAL CHECKBOX -->
+  <div class="captcha-checkbox-container" *ngIf="!captchaInitiated">
+    <label class="captcha-checkbox-label">
+      <input
+        type="checkbox"
+        class="captcha-checkbox-input"
+        (change)="onCaptchaCheckboxChange()"
+      />
+      <span class="captcha-checkbox-text">Je ne suis pas un robot</span>
+      <div class="captcha-logo">
+        <span class="captcha-logo-text">reCAPTCHA</span>
+        <span class="captcha-logo-subtext">Esprit</span>
+      </div>
+    </label>
+  </div>
+
+  <!-- CAPTCHA CHALLENGE -->
+  <div *ngIf="captchaInitiated" class="captcha-content" [class.loading]="loading">
+    <ng-container *ngIf="!loading; else loadingTpl">
+      <div class="captcha-header">
+        <div class="captcha-badge">
+          <i class="bi bi-shield-check"></i>
+          CAPTCHA Hybride Esprit
+        </div>
+        <button type="button" class="captcha-refresh" (click)="loadCaptcha()" [disabled]="verifying" title="Nouveau défi">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+      </div>
+
+      <p class="captcha-question" *ngIf="challenge">{{ challenge.question }}</p>
+
+      <!-- IMAGE -->
+      <div class="captcha-grid" *ngIf="captchaType === 'IMAGE' && challenge?.images">
+        <button
+          type="button"
+          class="captcha-image-btn"
+          *ngFor="let img of challenge?.images"
+          [class.selected]="isImageSelected(img.id)"
+          (click)="toggleImageSelection(img.id)"
+          [disabled]="isVerified"
+        >
+          <img [src]="img.url" [alt]="img.label || 'Option'" loading="lazy" />
+        </button>
+      </div>
+
+      <!-- LOGO -->
+      <div class="captcha-grid captcha-grid-logos" *ngIf="captchaType === 'LOGO' && challenge?.images">
+        <button
+          type="button"
+          class="captcha-image-btn logo-btn"
+          *ngFor="let img of challenge?.images"
+          [class.selected]="isImageSelected(img.id)"
+          (click)="toggleImageSelection(img.id)"
+          [disabled]="isVerified"
+        >
+          <img [src]="img.url" [alt]="img.label || 'Logo'" loading="lazy" />
+        </button>
+      </div>
+
+      <!-- QUESTION -->
+      <div class="captcha-options" *ngIf="captchaType === 'QUESTION' && challenge?.options">
+        <button
+          type="button"
+          class="captcha-option-btn"
+          *ngFor="let opt of challenge?.options"
+          [class.selected]="selectedOptionId === opt.id"
+          (click)="selectOption(opt.id)"
+          [disabled]="isVerified"
+        >
+          <img *ngIf="opt.imageUrl" [src]="opt.imageUrl" [alt]="opt.text" />
+          <span>{{ opt.text }}</span>
+        </button>
+      </div>
+
+      <!-- PUZZLE -->
+      <div class="captcha-puzzle" *ngIf="captchaType === 'PUZZLE' && challenge?.puzzleData as pd">
+        <div
+          class="puzzle-board"
+          [style.width.px]="pd.canvasWidth"
+          [style.height.px]="pd.canvasHeight"
+        >
+          <img class="puzzle-bg" [src]="pd.backgroundUrl" alt="Puzzle Esprit" />
+          <div
+            class="puzzle-hole"
+            *ngIf="!(puzzleX === slotX && puzzleY === slotY)"
+            [style.left.px]="slotX"
+            [style.top.px]="slotY"
+            [style.width.px]="pd.pieceWidth"
+            [style.height.px]="pd.pieceHeight"
+          ></div>
+          <div
+            class="puzzle-piece"
+            [class.fitted]="puzzleX === slotX && puzzleY === slotY"
+            [style.left.px]="puzzleX"
+            [style.top.px]="puzzleY"
+            [style.width.px]="pd.pieceWidth"
+            [style.height.px]="pd.pieceHeight"
+            [style.backgroundImage]="'url(' + pd.pieceUrl + ')'"
+            [style.backgroundPosition]="-pd.slotX + 'px ' + -pd.slotY + 'px'"
+            [style.backgroundSize]="pd.canvasWidth + 'px ' + pd.canvasHeight + 'px'"
+            [style.backgroundRepeat]="'no-repeat'"
+            (pointerdown)="onPuzzlePointerDown($event)"
+            (pointermove)="onPuzzlePointerMove($event)"
+            (pointerup)="onPuzzlePointerUp($event)"
+            (pointercancel)="onPuzzlePointerUp($event)"
+          ></div>
+        </div>
+        <p class="puzzle-hint">Glissez la pièce rouge vers l'emplacement manquant.</p>
+      </div>
+
+      <div class="captcha-error" *ngIf="errorMessage" role="alert">
+        <i class="bi bi-exclamation-circle"></i> {{ errorMessage }}
+      </div>
+
+      <div class="captcha-success" *ngIf="isVerified" role="status">
+        <i class="bi bi-check-circle-fill"></i> CAPTCHA validé
+      </div>
+
+      <button
+        type="button"
+        class="captcha-verify-btn"
+        *ngIf="!isVerified"
+        (click)="verifyCaptcha()"
+        [disabled]="verifying"
+      >
+        <span *ngIf="!verifying">Valider</span>
+        <span *ngIf="verifying" class="spinner"></span>
+      </button>
+    </ng-container>
+
+    <ng-template #loadingTpl>
+      <div class="captcha-loading">
+        <span class="spinner"></span>
+      </div>
+    </ng-template>
+  </div>
+</div>

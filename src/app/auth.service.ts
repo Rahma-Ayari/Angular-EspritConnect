@@ -10,6 +10,8 @@ import { SocialAuthService } from '@abacritt/angularx-social-login';
 export interface LoginRequest {
   email: string;
   password: string;
+  captchaId?: number;
+  captchaToken?: string;
 }
 
 export interface RegisterRequest {
@@ -25,6 +27,8 @@ export interface RegisterRequest {
   domaine?: string;
   disponibleMentorat?: boolean;
   entrepriseActuelle?: string;
+  captchaId?: number;
+  captchaToken?: string;
 }
 
 export interface RegisterResponse {
@@ -237,8 +241,8 @@ export class AuthService {
   }
 
   // ── Forgot / Reset Password ───────────────────────────────────────────────
-  forgotPassword(email: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.API}/forgot-password`, { email });
+  forgotPassword(email: string, captchaId: number, captchaToken: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.API}/forgot-password`, { email, captchaId, captchaToken });
   }
 
   resetPassword(token: string, newPassword: string): Observable<{ message: string }> {

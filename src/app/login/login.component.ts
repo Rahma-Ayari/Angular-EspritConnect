@@ -4,6 +4,7 @@ import { AuthService } from '../auth.service';
 import { environment } from '../../environments/environment';
 import { SocialAuthService } from '@abacritt/angularx-social-login';
 import { Subscription } from 'rxjs';
+import { CaptchaVerifiedState } from '../shared/captcha/captcha.models';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -22,6 +23,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   lockoutSeconds = 0;
   isAccountLocked = false;
   lockoutCountdown = '';
+  captchaVerified = false;
+  captchaState: CaptchaVerifiedState | null = null;
   private lockoutInterval: any;
   private googleAuthSub!: Subscription;
   private isProcessingGoogleLogin = false;
@@ -87,7 +90,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    if (this.loginForm.invalid || this.isAccountLocked) {
+    if (this.loginForm.invalid || this.isAccountLocked || !this.captchaVerified || !this.captchaState) {
       this.loginForm.markAllAsTouched();
       return;
     }
@@ -97,7 +100,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     const { email, password, rememberMe } = this.loginForm.value;
     const deviceToken = this.authService.getDeviceToken() || undefined;
 
-    this.authService.login({ email, password }, deviceToken, !!rememberMe).subscribe({
+    this.authService.login({
+      email,
+      password,
+      captchaId: this.captchaState.captchaId,
+      captchaToken: this.captchaState.captchaToken
+    }, deviceToken, !!rememberMe).subscribe({
       next: (res) => {
         this.isLoading = false;
         if (res.mfaRequired) {
@@ -125,10 +133,20 @@ export class LoginComponent implements OnInit, OnDestroy {
         } else if (err.status === 403 && err.error?.code === 'EMAIL_NOT_VERIFIED') {
           this.errorMessage = err.error?.message || 'Veuillez vérifier votre email.';
         } else {
-          this.errorMessage = err.error?.message || 'Email ou mot de passe incorrect.';
+          this.errorMessage = err.error?.error || err.error?.message || 'Email ou mot de passe incorrect.';
         }
       }
     });
+  }
+
+  onCaptchaVerified(state: CaptchaVerifiedState): void {
+    this.captchaVerified = true;
+    this.captchaState = state;
+  }
+
+  onCaptchaReset(): void {
+    this.captchaVerified = false;
+    this.captchaState = null;
   }
 
   startLockoutCountdown(): void {
