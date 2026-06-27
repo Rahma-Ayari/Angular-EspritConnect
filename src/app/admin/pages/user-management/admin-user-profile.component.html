@@ -1,0 +1,179 @@
+<div class="profile-container">
+  <div class="profile-header-premium">
+    <div class="header-titles">
+      <h1 class="profile-title">Profil utilisateur</h1>
+      <p class="profile-subtitle">Consultation en lecture seule des informations du profil</p>
+    </div>
+  </div>
+
+  <div class="save-message error" *ngIf="error">
+    <i class="bi bi-exclamation-circle-fill"></i>
+    {{ error }}
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement du profil...</p>
+  </div>
+
+  <div class="profile-grid" *ngIf="!isLoading && !error">
+    <div class="profile-col-main">
+      <div class="premium-card photo-card">
+        <div class="photo-container">
+          <div class="photo-wrapper">
+            <img [src]="profile.photo || getPlaceholderImage()" alt="Photo de profil" class="profile-photo" (error)="onImageError($event)">
+          </div>
+          <div class="photo-info">
+            <h2>{{ profile.prenom }} {{ profile.nomProprietaire }}</h2>
+            <p class="user-role">{{ profile.userId }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="premium-card">
+        <h2 class="card-title">
+          <div class="icon-wrapper primary"><i class="bi bi-person"></i></div>
+          Informations Personnelles
+        </h2>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Email</label>
+            <input type="email" [value]="profile.userId" disabled class="form-control disabled">
+          </div>
+          <div class="form-group">
+            <label>Nom</label>
+            <input type="text" [value]="profile.nomProprietaire" disabled class="form-control" placeholder="Nom">
+          </div>
+          <div class="form-group">
+            <label>Prénom</label>
+            <input type="text" [value]="profile.prenom" disabled class="form-control" placeholder="Prénom">
+          </div>
+          <div class="form-group">
+            <label>Téléphone</label>
+            <input type="tel" [value]="profile.telephone" disabled class="form-control" placeholder="Téléphone">
+          </div>
+          <div class="form-group">
+            <label>Date de Naissance</label>
+            <input type="date" [value]="profile.dateNaissance" disabled class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Genre</label>
+            <input type="text" [value]="profile.genre" disabled class="form-control" placeholder="Genre">
+          </div>
+        </div>
+      </div>
+
+      <div class="premium-card">
+        <h2 class="card-title">
+          <div class="icon-wrapper secondary"><i class="bi bi-geo-alt"></i></div>
+          Adresse
+        </h2>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Adresse complète</label>
+            <input type="text" [value]="profile.adresse" disabled class="form-control" placeholder="Adresse">
+          </div>
+          <div class="form-group">
+            <label>Ville</label>
+            <input type="text" [value]="profile.ville" disabled class="form-control" placeholder="Ville">
+          </div>
+          <div class="form-group">
+            <label>Code Postal</label>
+            <input type="text" [value]="profile.codePostal" disabled class="form-control" placeholder="Code Postal">
+          </div>
+          <div class="form-group full-width">
+            <label>Pays</label>
+            <input type="text" [value]="profile.pays" disabled class="form-control" placeholder="Pays">
+          </div>
+        </div>
+      </div>
+
+      <div class="premium-card" *ngIf="profile.typeProprietaire">
+        <h2 class="card-title">
+          <div class="icon-wrapper accent"><i class="bi bi-card-list"></i></div>
+          Informations d'inscription ({{ profile.typeProprietaire }})
+        </h2>
+
+        <div class="form-grid" *ngIf="profile.typeProprietaire === 'ETUDIANT'">
+          <div class="form-group">
+            <label>Filière</label>
+            <input type="text" [value]="profile.filiere" disabled class="form-control" placeholder="Filière">
+          </div>
+          <div class="form-group">
+            <label>Niveau</label>
+            <input type="text" [value]="profile.niveau" disabled class="form-control" placeholder="Niveau">
+          </div>
+        </div>
+
+        <div class="form-grid" *ngIf="profile.typeProprietaire === 'ALUMNI'">
+          <div class="form-group">
+            <label>Année de promotion</label>
+            <input type="number" [value]="profile.anneePromotion" disabled class="form-control" placeholder="Année">
+          </div>
+          <div class="form-group">
+            <label>Domaine</label>
+            <input type="text" [value]="profile.domaine" disabled class="form-control" placeholder="Domaine">
+          </div>
+          <div class="form-group">
+            <label>Entreprise actuelle</label>
+            <input type="text" [value]="profile.entrepriseActuelle" disabled class="form-control" placeholder="Entreprise actuelle">
+          </div>
+          <div class="form-group full-width checkbox-group-premium">
+            <label class="checkbox-container">
+              <input type="checkbox" [checked]="profile.disponibleMentorat" disabled>
+              <span class="checkmark"></span>
+              Disponible pour le mentorat
+            </label>
+          </div>
+        </div>
+
+        <div class="form-grid" *ngIf="profile.typeProprietaire === 'ENTREPRISE'">
+          <div class="form-group">
+            <label>Registre de Commerce</label>
+            <input type="text" [value]="profile.registreCommerce" disabled class="form-control" placeholder="Registre">
+          </div>
+          <div class="form-group">
+            <label>Secteur d'activité</label>
+            <input type="text" [value]="profile.secteurActivite" disabled class="form-control" placeholder="Secteur">
+          </div>
+          <div class="form-group full-width">
+            <label>Description de l'entreprise</label>
+            <textarea [value]="profile.descriptionEntreprise" disabled class="form-control textarea" rows="3" placeholder="Description"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="premium-card">
+        <h2 class="card-title">
+          <div class="icon-wrapper accent"><i class="bi bi-briefcase"></i></div>
+          Profil Professionnel
+        </h2>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Biographie</label>
+            <textarea [value]="profile.bio" disabled class="form-control textarea" rows="4" placeholder="Biographie"></textarea>
+          </div>
+          <div class="form-group">
+            <label>LinkedIn</label>
+            <input type="url" [value]="profile.lienLinkedIn" disabled class="form-control" placeholder="LinkedIn">
+          </div>
+          <div class="form-group">
+            <label>GitHub</label>
+            <input type="url" [value]="profile.lienGitHub" disabled class="form-control" placeholder="GitHub">
+          </div>
+          <div class="form-group full-width">
+            <label>Site Web / Portfolio</label>
+            <input type="url" [value]="profile.siteWeb" disabled class="form-control" placeholder="Site Web">
+          </div>
+        </div>
+      </div>
+
+      <div class="premium-card security-card">
+        <div class="info-alert">
+          <i class="bi bi-shield-lock"></i>
+          La consultation du profil se fait en lecture seule. Les paramètres 2FA ne sont pas affichés pour l’administrateur.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

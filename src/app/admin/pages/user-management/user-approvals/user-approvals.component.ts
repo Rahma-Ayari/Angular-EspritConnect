@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { UserApprovalService } from '../../../../services/user-approval.service';
 import { User, UserApprovalStats, ApprovalSettings, NewUserRequest, SmartMailingSettings, NotificationMode } from '../../../../models/user.model';
 import { Subject } from 'rxjs';
@@ -86,7 +87,15 @@ export class UserApprovalsComponent implements OnInit {
 
   private searchSubject = new Subject<string>();
 
-  constructor(private userApprovalService: UserApprovalService) {}
+  constructor(
+    private userApprovalService: UserApprovalService,
+    private router: Router
+  ) {}
+
+  openUserProfile(user: User): void {
+    // Le champ userId dans la table Profil correspond à l'email de l'utilisateur
+    this.router.navigate(['/admin/user-management/user-profile', encodeURIComponent(user.email)]);
+  }
 
   ngOnInit(): void {
     this.loadPendingUsers();

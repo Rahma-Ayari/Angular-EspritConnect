@@ -8,6 +8,7 @@ import { SharedLayoutModule } from '../shared/shared-layout.module';
 import { AdminLayoutComponent } from './layout/admin-layout/admin-layout.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { UserApprovalsComponent } from './pages/user-management/user-approvals/user-approvals.component';
+import { AdminUserProfileComponent } from './pages/user-management/admin-user-profile.component';
 import { EnterpriseVerificationComponent } from './pages/enterprise-verification/enterprise-verification.component';
 import { AdminGeneralSettingsComponent } from '../admin-general-settings/admin-general-settings.component';
 import { AdminRegionalSettingsComponent } from '../admin-regional-settings/admin-regional-settings.component';
@@ -21,6 +22,7 @@ import { JobsImportComponent } from './pages/jobs/jobs-import.component';
     AdminLayoutComponent,
     DashboardComponent,
     UserApprovalsComponent,
+    AdminUserProfileComponent,
     EnterpriseVerificationComponent,
     AdminGeneralSettingsComponent,
     AdminRegionalSettingsComponent,
