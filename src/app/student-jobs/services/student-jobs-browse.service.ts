@@ -14,7 +14,7 @@ export class StudentJobsBrowseService {
       location: filter.location,
       contractType: filter.contractType,
       status: ['ACTIVE' as JobStatus],
-      sortBy: filter.sortBy || 'recent',
+      sortBy: filter.sortBy === 'match' ? 'recent' : (filter.sortBy || 'recent'),
       sortOrder: filter.sortOrder || 'desc',
       page: filter.page || 1,
       limit: filter.limit || 10
@@ -46,6 +46,21 @@ export class StudentJobsBrowseService {
         if (filter.company) {
           const c = filter.company.toLowerCase();
           data = data.filter((j) => (j.companyName || '').toLowerCase().includes(c));
+        }
+        if (filter.domain) {
+          const d = filter.domain.toLowerCase();
+          data = data.filter(
+            (j) =>
+              (j.department || '').toLowerCase().includes(d) ||
+              (j.description || '').toLowerCase().includes(d)
+          );
+        }
+        if (filter.experienceLevel?.length) {
+          data = data.filter((j) => filter.experienceLevel!.includes(j.experienceLevel));
+        }
+        if (filter.location) {
+          const loc = filter.location.toLowerCase();
+          data = data.filter((j) => (j.location || '').toLowerCase().includes(loc));
         }
 
         return { data, total: data.length };

@@ -59,6 +59,16 @@
   color: var(--sj-muted);
 }
 
+.deadline {
+  font-size: 0.8rem;
+  color: var(--sj-muted);
+}
+
+.deadline.urgent {
+  color: #ea580c;
+  font-weight: 600;
+}
+
 .job-title {
   margin: 0.75rem 0 0.25rem;
   font-size: 1.2rem;

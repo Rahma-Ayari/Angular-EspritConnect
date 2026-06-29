@@ -1,0 +1,243 @@
+@import '../../styles/student-jobs.shared.css';
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--sj-muted);
+}
+
+.step span {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--sj-border);
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.step.active span,
+.step.done span {
+  background: var(--sj-red);
+  border-color: var(--sj-red);
+  color: #fff;
+}
+
+.step-line {
+  width: 32px;
+  height: 2px;
+  background: var(--sj-border);
+  margin: 0 0.35rem;
+}
+
+.step-line.done {
+  background: var(--sj-red);
+}
+
+.studio-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.main-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.drop-zone {
+  padding: 2rem;
+  text-align: center;
+  border: 2px dashed var(--sj-border);
+}
+
+.drop-zone i {
+  font-size: 2.5rem;
+  color: var(--sj-muted);
+}
+
+.drop-zone .muted {
+  color: var(--sj-muted);
+  font-size: 0.9rem;
+}
+
+.browse-btn {
+  display: inline-block;
+  margin: 1rem 0.5rem 0 0;
+  cursor: pointer;
+}
+
+.templates, .editor, .export-panel, .ats-card {
+  padding: 1.25rem;
+}
+
+.template-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.template-card {
+  border: 2px solid var(--sj-border);
+  border-radius: 10px;
+  padding: 0.75rem;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+}
+
+.template-card.selected {
+  border-color: var(--sj-red);
+}
+
+.template-card .preview {
+  height: 80px;
+  background: #f3f4f6;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.template-card span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--sj-muted);
+}
+
+.contact-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.contact-row input,
+.section-head input,
+.optimizer-row select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--sj-border);
+  border-radius: 8px;
+}
+
+.section-block {
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--sj-border);
+  border-radius: 10px;
+  padding: 0.75rem;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.drag-handle {
+  color: var(--sj-muted);
+  cursor: grab;
+}
+
+.section-block textarea {
+  width: 100%;
+  border: 1px solid var(--sj-border);
+  border-radius: 8px;
+  padding: 0.5rem;
+  resize: vertical;
+}
+
+.optimizer-row {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.export-btns {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.preview-text {
+  background: #f9fafb;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  max-height: 300px;
+  overflow: auto;
+}
+
+.donut {
+  --pct: 50%;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 0.75rem;
+  border-radius: 50%;
+  background: conic-gradient(var(--sj-red) var(--pct), #eee 0);
+  display: grid;
+  place-items: center;
+}
+
+.donut span {
+  width: 76px;
+  height: 76px;
+  background: #fff;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.ats-score {
+  text-align: center;
+}
+
+.metric {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.5rem 0;
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+.metric .bar {
+  height: 6px;
+  background: #f3f4f6;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.metric .fill {
+  height: 100%;
+  background: #16a34a;
+  border-radius: 999px;
+}
+
+.tips {
+  text-align: left;
+  font-size: 0.85rem;
+  padding-left: 1.1rem;
+}
+
+@media (max-width: 900px) {
+  .studio-grid { grid-template-columns: 1fr; }
+  .contact-row { grid-template-columns: 1fr; }
+}

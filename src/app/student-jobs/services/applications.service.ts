@@ -11,6 +11,10 @@ import { StudentContextService } from './student-context.service';
 export interface ApplyPayload {
   offreId: number;
   lettreMotivation?: string;
+  fichierId?: number;
+  yearsExperience?: number;
+  willingToRelocate?: boolean;
+  availabilityDate?: string;
 }
 
 @Injectable({ providedIn: 'root' })

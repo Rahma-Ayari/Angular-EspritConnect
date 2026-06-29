@@ -3,12 +3,14 @@ import { ContractType, ExperienceLevel, JobOffer, WorkMode } from '../../jobs/mo
 export interface StudentJobFilter {
   search?: string;
   location?: string;
+  domain?: string;
   workMode?: WorkMode[];
   contractType?: ContractType[];
+  experienceLevel?: ExperienceLevel[];
   skills?: string[];
   salaryMin?: number;
   company?: string;
-  sortBy?: 'recent' | 'title' | 'deadline';
+  sortBy?: 'recent' | 'title' | 'deadline' | 'match';
   sortOrder?: 'asc' | 'desc';
   page?: number;
   limit?: number;
@@ -35,12 +37,23 @@ export interface MatchBreakdown {
 }
 
 export type ApplicationUiStatus =
+  | 'SAVED'
   | 'APPLIED'
   | 'UNDER_REVIEW'
   | 'INTERVIEW'
   | 'TECHNICAL_TEST'
   | 'ACCEPTED'
   | 'REJECTED';
+
+export interface KanbanCard {
+  id: string;
+  offreId: number;
+  jobTitle: string;
+  companyName: string;
+  dateLabel?: string;
+  uiStatus: ApplicationUiStatus;
+  isSavedOnly?: boolean;
+}
 
 export interface JobApplication {
   id: number;
@@ -91,13 +104,23 @@ export interface CareerRecommendationResult {
 }
 
 export const APPLICATION_STATUS_LABELS: Record<ApplicationUiStatus, string> = {
+  SAVED: 'Saved',
   APPLIED: 'Applied',
   UNDER_REVIEW: 'Under Review',
-  INTERVIEW: 'Interview Scheduled',
+  INTERVIEW: 'Interview',
   TECHNICAL_TEST: 'Technical Test',
   ACCEPTED: 'Accepted',
   REJECTED: 'Rejected'
 };
+
+export const KANBAN_COLUMNS: ApplicationUiStatus[] = [
+  'SAVED',
+  'APPLIED',
+  'UNDER_REVIEW',
+  'INTERVIEW',
+  'ACCEPTED',
+  'REJECTED'
+];
 
 export function mapApplicationUiStatus(backend: string, appliedAt?: string): ApplicationUiStatus {
   if (backend === 'ACCEPTEE') return 'ACCEPTED';

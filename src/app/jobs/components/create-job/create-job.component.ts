@@ -324,7 +324,8 @@ export class CreateJobComponent implements OnInit, OnDestroy {
       salaryMin: [null],
       salaryMax: [null],
       duration: [''],
-      deadline: ['', Validators.required]
+      deadline: ['', Validators.required],
+      applicationUrl: ['']
     });
 
     // Step 3: Skills
@@ -392,7 +393,8 @@ export class CreateJobComponent implements OnInit, OnDestroy {
       salaryMin: job.salaryMin,
       salaryMax: job.salaryMax,
       duration: job.duration,
-      deadline: new Date(job.deadline).toISOString().split('T')[0]
+      deadline: new Date(job.deadline).toISOString().split('T')[0],
+      applicationUrl: job.applicationUrl || ''
     });
 
     this.step3Form.patchValue({

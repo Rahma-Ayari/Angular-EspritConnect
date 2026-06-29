@@ -18,6 +18,7 @@ export interface JobOffer {
   responsibilities: string;
   requirements: string;
   benefits: string;
+  applicationUrl?: string;
   status: JobStatus;
   applicationCount: number;
   createdAt?: Date | string;

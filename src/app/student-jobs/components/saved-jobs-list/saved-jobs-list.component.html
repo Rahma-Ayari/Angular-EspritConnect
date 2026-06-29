@@ -1,13 +1,20 @@
 <div class="saved-list">
-  <article class="saved-item sj-card" *ngFor="let job of jobs">
-    <div>
+  <article class="saved-item sj-card" *ngFor="let job of jobs" [class.expired]="isExpired(job)">
+    <div class="item-main">
       <h3>{{ job.title }}</h3>
       <p>{{ job.companyName }} · {{ job.location }}</p>
+      <span class="expiry-warn" *ngIf="isExpiringSoon(job)">
+        <i class="bi bi-exclamation-triangle"></i> Closes in {{ daysUntilDeadline(job) }} days
+      </span>
+      <span class="expiry-warn expired" *ngIf="isExpired(job)">
+        <i class="bi bi-x-circle"></i> Application deadline passed
+      </span>
     </div>
     <div class="actions">
       <a class="sj-btn-outline" [routerLink]="['/dashboard/jobs', job.id]">View</a>
-      <a class="sj-btn-primary" [routerLink]="['/dashboard/jobs', job.id]">Apply</a>
-      <button type="button" class="text-btn" (click)="remove.emit(job.id!)">Remove</button>
+      <a class="sj-btn-primary" [routerLink]="['/dashboard/jobs', job.id]" *ngIf="!isExpired(job)">Apply</a>
+      <button type="button" class="text-btn" (click)="shareJob(job)" title="Share"><i class="bi bi-share"></i></button>
+      <button type="button" class="text-btn danger" (click)="remove.emit(job.id!)">Remove</button>
     </div>
   </article>
   <p *ngIf="!jobs.length" class="empty">No saved jobs. Save offers from Discover Jobs.</p>

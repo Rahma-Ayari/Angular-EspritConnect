@@ -193,6 +193,20 @@
             class="form-control"
           />
         </div>
+
+        <div class="form-group full-width">
+          <label>External Application URL</label>
+          <input
+            type="url"
+            formControlName="applicationUrl"
+            class="form-control"
+            placeholder="https://forms.gle/... or company careers link"
+          />
+          <small class="form-hint">
+            Leave empty for in-platform Easy Apply. If filled (e.g. a Google Form or the
+            original job posting), candidates are redirected to this form to apply.
+          </small>
+        </div>
       </div>
     </form>
 

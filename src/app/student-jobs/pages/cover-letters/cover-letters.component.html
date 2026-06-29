@@ -1,0 +1,66 @@
+<div class="sj-page cover-letters-page">
+  <header class="sj-page-header">
+    <h1>Cover Letter Studio</h1>
+    <p>Generate tailored cover letters with AI in minutes.</p>
+  </header>
+
+  <div class="stepper">
+    <div class="step" [class.done]="step > 1" [class.active]="step === 1"><span>✓</span> Choose Template</div>
+    <div class="step-line" [class.done]="step > 1"></div>
+    <div class="step" [class.done]="step > 2" [class.active]="step === 2"><span>2</span> Fill Details</div>
+    <div class="step-line" [class.done]="step > 2"></div>
+    <div class="step" [class.active]="step === 3"><span>3</span> Generate &amp; Export</div>
+  </div>
+
+  <div class="cl-grid">
+    <div class="main-col">
+      <section class="sj-card" *ngIf="step === 1">
+        <h3>Choose Template</h3>
+        <div class="template-row">
+          <button type="button" *ngFor="let t of templates" class="template-card"
+            [class.selected]="selectedTemplate === t.id" (click)="selectTemplate(t.id)">
+            <div class="doc-preview" [style.border-top-color]="t.color"></div>
+            <strong>{{ t.name }}</strong>
+          </button>
+        </div>
+      </section>
+
+      <section class="sj-card form-card" *ngIf="step >= 2">
+        <h3>Application Details</h3>
+        <label>JOB TITLE</label>
+        <input [(ngModel)]="jobTitle" placeholder="Front-End Developer" />
+        <label>COMPANY NAME</label>
+        <input [(ngModel)]="companyName" placeholder="Esprit NX" />
+        <label>ADDITIONAL NOTES (optional)</label>
+        <textarea [(ngModel)]="additionalNotes" rows="3" placeholder="Highlight your React project..."></textarea>
+        <button type="button" class="sj-btn-primary" (click)="generate()" [disabled]="loading">
+          <i class="bi bi-stars"></i> Generate with AI
+        </button>
+      </section>
+    </div>
+
+    <aside class="preview-col">
+      <div class="sj-card preview-card">
+        <h3>Preview</h3>
+        <app-ai-result-panel
+          [loading]="loading"
+          [error]="error"
+          [provider]="provider"
+          [copyText]="letter"
+          acceptLabel=""
+          (regenerate)="regenerate()">
+          <div class="empty-preview" *ngIf="!letter && !loading">
+            <i class="bi bi-pencil-square"></i>
+            <p>Fill in the details and click "Generate with AI"</p>
+          </div>
+          <textarea *ngIf="letter" class="letter-editor" [(ngModel)]="letter" rows="16"></textarea>
+          <p class="typing" *ngIf="typingLetter && loading">{{ typingLetter }}<span class="cursor">|</span></p>
+        </app-ai-result-panel>
+        <div class="export-row" *ngIf="letter && !loading">
+          <button type="button" class="sj-btn-primary" (click)="exportPdf()">Export PDF</button>
+          <button type="button" class="sj-btn-outline" (click)="exportDocx()">Export DOCX</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>

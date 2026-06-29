@@ -62,8 +62,20 @@
     </div>
 
     <aside class="side-col">
+      <div class="ai-match-box sj-card">
+        <app-ai-result-panel
+          [loading]="aiMatchLoading"
+          [error]="aiMatchError"
+          [provider]="aiMatch?.provider || ''"
+          [showActions]="!!aiMatch"
+          acceptLabel=""
+          (regenerate)="loadAiMatch(true)">
+          <app-ai-job-match-panel [result]="aiMatch" [loading]="aiMatchLoading"></app-ai-job-match-panel>
+        </app-ai-result-panel>
+      </div>
+
       <app-match-score-card
-        *ngIf="match"
+        *ngIf="match && !aiMatch"
         [match]="match"
         [applying]="applying"
         [saved]="saved"
@@ -72,14 +84,31 @@
         (share)="share()">
       </app-match-score-card>
 
-      <div class="apply-box sj-card" *ngIf="!applySuccess">
-        <label>Cover letter (optional)</label>
-        <textarea [(ngModel)]="coverLetter" rows="4" placeholder="Why are you a great fit?"></textarea>
+      <div class="apply-actions sj-card" *ngIf="aiMatch || match">
+        <button type="button" class="sj-btn-primary full" (click)="apply()" [disabled]="applySuccess">
+          <ng-container *ngIf="isExternalApply">
+            <i class="bi bi-box-arrow-up-right"></i> Apply on company site
+          </ng-container>
+          <ng-container *ngIf="!isExternalApply">
+            <i class="bi bi-lightning-charge-fill" *ngIf="!applySuccess"></i>
+            {{ applySuccess ? 'Applied' : 'Easy Apply' }}
+          </ng-container>
+        </button>
+        <p class="external-hint" *ngIf="isExternalApply">
+          <i class="bi bi-info-circle"></i> This job redirects to an external application form.
+        </p>
+        <div class="action-row">
+          <button type="button" class="icon-action" (click)="toggleSave()" [class.active]="saved">
+            <i class="bi" [class.bi-bookmark-fill]="saved" [class.bi-bookmark]="!saved"></i> Save
+          </button>
+          <button type="button" class="icon-action" (click)="share()"><i class="bi bi-share"></i> Share</button>
+        </div>
         <p class="error" *ngIf="applyError">{{ applyError }}</p>
       </div>
+
       <div class="success sj-card" *ngIf="applySuccess">
         <i class="bi bi-check-circle"></i>
-        <p>Application submitted successfully!</p>
+        <p>Application submitted successfully! A confirmation email is on its way.</p>
         <a routerLink="/dashboard/jobs/applications">View my applications</a>
       </div>
 
@@ -93,6 +122,13 @@
     </aside>
   </div>
 </div>
+
+<app-apply-modal
+  *ngIf="showApplyModal && job"
+  [job]="job"
+  (closed)="closeApplyModal()"
+  (applied)="onApplied()">
+</app-apply-modal>
 
 <div *ngIf="loading" class="loading-state">
   <div class="sj-skeleton" style="height: 320px"></div>
