@@ -3,12 +3,12 @@
     <div class="welcome-strip">
       <div class="welcome-left">
         <p class="welcome-label">{{ greeting }},</p>
-        <h1 class="welcome-name">{{ user?.nom || 'Étudiant' }} 👋</h1>
-        <p class="welcome-sub">Votre snapshot carrière du jour</p>
+        <h1 class="welcome-name">{{ user?.nom || 'Student' }} 👋</h1>
+        <p class="welcome-sub">Your career snapshot for today</p>
       </div>
       <div class="welcome-actions">
         <button class="btn-ghost" type="button"><i class="bi bi-chat-dots"></i> AI Assistant</button>
-        <a class="btn-primary" routerLink="/profile"><i class="bi bi-person-check"></i> Mon Profil &amp; Sécurité</a>
+        <a class="btn-primary" routerLink="/profile"><i class="bi bi-person-check"></i> My Profile &amp; Security</a>
       </div>
     </div>
 
@@ -39,7 +39,7 @@
               <i class="bi bi-graph-up-arrow"></i>
               Career Readiness Score
             </h2>
-            <p class="card-sub">Vous dépassez 68% des étudiants. Objectif : 90%</p>
+            <p class="card-sub">You outperform 68% of students. Goal: 90%</p>
           </div>
         </div>
 
@@ -81,7 +81,7 @@
 
       <div class="card">
         <div class="card-header-row">
-          <h2 class="card-title"><i class="bi bi-briefcase"></i> Opportunités recommandées</h2>
+          <h2 class="card-title"><i class="bi bi-briefcase"></i> Recommended opportunities</h2>
           <a class="see-all" routerLink="/dashboard/jobs/discover">View all jobs <i class="bi bi-arrow-right"></i></a>
         </div>
         <div class="opportunities-list">
@@ -105,7 +105,7 @@
               <div class="match-circle" [style.border-color]="getMatchColor(o.match)">
                 <span [style.color]="getMatchColor(o.match)">{{ o.match }}%</span>
               </div>
-              <button class="btn-apply" type="button">Postuler</button>
+              <button class="btn-apply" type="button">Apply</button>
             </div>
           </div>
         </div>
@@ -118,20 +118,20 @@
           <div class="ai-icon"><i class="bi bi-stars"></i></div>
           <div>
             <h3 class="ai-title">AI Career Assistant</h3>
-            <p class="ai-sub">Recommandations personnalisées</p>
+            <p class="ai-sub">Personalized recommendations</p>
           </div>
         </div>
         <p class="ai-text">
-          Basé sur votre profil et activité récente, je recommande de vous concentrer sur les rôles
-          <a class="ai-link">Frontend Development</a>. Vous avez de solides compétences React.
+          Based on your profile and recent activity, I recommend focusing on
+          <a class="ai-link">Frontend Development</a> roles. You have strong React skills.
         </p>
-        <button class="btn-ai" type="button">Analyser mon profil <i class="bi bi-arrow-right"></i></button>
+        <button class="btn-ai" type="button">Analyze my profile <i class="bi bi-arrow-right"></i></button>
       </div>
 
       <div class="card">
         <div class="card-header-row">
-          <h2 class="card-title"><i class="bi bi-calendar-event"></i> Événements</h2>
-          <a class="see-all" routerLink="/events">Tous <i class="bi bi-arrow-right"></i></a>
+          <h2 class="card-title"><i class="bi bi-calendar-event"></i> Events</h2>
+          <a class="see-all" routerLink="/events">All <i class="bi bi-arrow-right"></i></a>
         </div>
         <div class="events-list">
           <div class="event-item" *ngFor="let e of upcomingEvents">
@@ -140,13 +140,13 @@
               <p class="event-title">{{ e.title }}</p>
               <p class="event-date">{{ e.date }}</p>
             </div>
-            <button class="btn-event" type="button">S'inscrire</button>
+            <button class="btn-event" type="button">Register</button>
           </div>
         </div>
       </div>
 
       <div class="card skills-card">
-        <h2 class="card-title"><i class="bi bi-patch-check"></i> Mes compétences clés</h2>
+        <h2 class="card-title"><i class="bi bi-patch-check"></i> My key skills</h2>
         <div class="skills-list">
           <div class="skill-row" *ngFor="let s of [
             {name:'Angular', pct:80, color:'#CC0000'},

@@ -1,12 +1,12 @@
 <div class="step">
   <div class="step__grid">
     <div class="field">
-      <label class="field__label">Catégorie <span class="field__req">*</span></label>
+      <label class="field__label">Category <span class="field__req">*</span></label>
       <select class="field__input" [ngModel]="state.value.category?.id" (ngModelChange)="setCategory($event)">
-        <option [ngValue]="undefined" disabled>Choisir une thématique...</option>
+        <option [ngValue]="undefined" disabled>Choose a topic...</option>
         <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
       </select>
-      <p class="field__hint">La catégorie aide les autres étudiants à vous trouver plus vite.</p>
+      <p class="field__hint">The category helps other students find you faster.</p>
     </div>
 
     <div class="field">
@@ -28,19 +28,19 @@
             [checked]="state.value.allowMentions === false"
             (change)="state.patch({ allowMentions: false })"
           />
-          Désactiver les mentions
+          Disable mentions
         </label>
       </div>
-      <p class="field__hint">Cette option est UI-only pour le moment (pas encore côté backend).</p>
+      <p class="field__hint">This option is UI-only for now (not yet on the backend).</p>
     </div>
 
     <div class="field field--full">
-      <label class="field__label">Étiquettes (Tags)</label>
+      <label class="field__label">Tags</label>
       <div class="tags-input">
         <input
           class="field__input"
           type="text"
-          placeholder="Ex: alternance, génie-logiciel, club..."
+          placeholder="E.g. apprenticeship, software-engineering, club..."
           [(ngModel)]="tagInput"
           (keyup.enter)="addTag()"
         />
@@ -52,13 +52,13 @@
           <button type="button" class="tag__x" (click)="removeTag(t)">×</button>
         </span>
       </div>
-      <p class="field__hint">Appuyez sur Entrée pour ajouter rapidement un tag.</p>
+      <p class="field__hint">Press Enter to quickly add a tag.</p>
     </div>
   </div>
 
   <div class="step__actions">
-    <button type="button" class="btn btn--ghost" (click)="back.emit()">Retour</button>
-    <button type="button" class="btn btn-gradient-red" (click)="next.emit()" [disabled]="!canContinue()">Continuer</button>
+    <button type="button" class="btn btn--ghost" (click)="back.emit()">Back</button>
+    <button type="button" class="btn btn-gradient-red" (click)="next.emit()" [disabled]="!canContinue()">Continue</button>
   </div>
 </div>
 

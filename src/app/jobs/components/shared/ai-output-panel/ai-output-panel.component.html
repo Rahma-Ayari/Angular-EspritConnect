@@ -1,0 +1,36 @@
+<div class="ai-output-panel">
+  <div class="ai-output-header">
+    <span class="ai-badge">{{ poweredBy }}</span>
+    <span class="ai-cached" *ngIf="cached">Cached</span>
+  </div>
+
+  <div class="ai-skeleton" *ngIf="loading">
+    <div class="skeleton-line"></div>
+    <div class="skeleton-line"></div>
+    <div class="skeleton-line short"></div>
+    <div class="skeleton-line"></div>
+    <div class="skeleton-line medium"></div>
+  </div>
+
+  <div class="ai-empty" *ngIf="!loading && !hasContent">
+    <i class="bi bi-stars"></i>
+    <p>{{ emptyMessage }}</p>
+  </div>
+
+  <div class="ai-content" *ngIf="!loading && hasContent">
+    <p class="ai-disclaimer" *ngIf="disclaimer">{{ disclaimer }}</p>
+    <ng-content></ng-content>
+  </div>
+
+  <div class="ai-actions" *ngIf="showActions && hasContent && !loading">
+    <button type="button" class="btn-ai-action" (click)="regenerate.emit()">
+      <i class="bi bi-arrow-clockwise"></i> Regenerate
+    </button>
+    <button type="button" class="btn-ai-action" (click)="copy.emit()">
+      <i class="bi bi-clipboard"></i> Copy
+    </button>
+    <button type="button" class="btn-ai-action btn-ai-accept" (click)="accept.emit()">
+      <i class="bi bi-check-lg"></i> {{ acceptLabel }}
+    </button>
+  </div>
+</div>

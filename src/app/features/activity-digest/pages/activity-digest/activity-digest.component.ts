@@ -47,7 +47,7 @@ export class ActivityDigestComponent implements OnInit {
 
   // ── Définition des sections (pour la liste de checkboxes) ──
   sectionsList: SectionDef[] = [
-    { key: 'businessDirectoryPosts', label: 'Business directory posts', desc: 'Publications du répertoire des entreprises' },
+    { key: 'businessDirectoryPosts', label: 'Business directory posts', desc: 'Business directory posts' },
     { key: 'recentlyJoinedMembers', label: 'Recently Joined Members', desc: 'Nouveaux membres inscrits récemment' },
     { key: 'latestEvents',           label: 'Latest Events',           desc: 'Derniers événements publiés' },
     { key: 'latestFeedPosts',        label: 'Latest Feed Posts',       desc: 'Derniers posts du fil d\'actualité' },
@@ -71,7 +71,7 @@ export class ActivityDigestComponent implements OnInit {
     this.digestService.getConfig().subscribe({
       next: (dto: DigestConfigResponseDTO) => this.applyDTO(dto),
       error: (err) => {
-        console.warn('Config non trouvée, utilisation des valeurs par défaut', err);
+        console.warn('Config non trouvée, using default values', err);
       }
     });
 
@@ -81,7 +81,7 @@ export class ActivityDigestComponent implements OnInit {
         this.mailingLists = lists;
       },
       error: (err) => {
-        console.warn('Impossible de charger les listes de diffusion. Mode démo activé.', err);
+        console.warn('Unable to load mailing lists. Demo mode enabled.', err);
         this.mailingLists = [
           { id: 1, name: 'Students Group' },
           { id: 2, name: 'Teacher/Staff Group' },
@@ -133,7 +133,7 @@ export class ActivityDigestComponent implements OnInit {
     (this.config.sections as any)[key] = value;
   }
 
-  // ── Sauvegarder la configuration ──
+  // ── Save configurationuration ──
   saveConfig(): void {
     this.saving = true;
     this.clearMessages();
@@ -153,26 +153,26 @@ export class ActivityDigestComponent implements OnInit {
       next: (res) => {
         this.applyDTO(res);
         this.saving = false;
-        this.showSuccess('Configuration sauvegardée avec succès !');
+        this.showSuccess('Configuration saved successfully!');
       },
       error: (err) => {
         console.error(err);
         this.saving = false;
-        this.showError('Erreur lors de la sauvegarde. Vérifiez que le backend est lancé.');
+        this.showError('Error saving. Check that the backend is running.');
       }
     });
   }
 
-  // ── Envoyer le digest immédiatement ──
+  // ── Send le digest immédiatement ──
   sendNow(): void {
     if (!this.config.mailingListId) {
-      this.showError("Veuillez d'abord sélectionner une liste de diffusion destinataire.");
+      this.showError("Please select a recipient mailing list first.");
       return;
     }
 
     const selectedListName = this.mailingLists.find(l => l.id == this.config.mailingListId)?.name || 'la liste sélectionnée';
 
-    if (!confirm(`Envoyer le digest maintenant aux membres de "${selectedListName}" ?`)) return;
+    if (!confirm(`Send le digest maintenant aux membres de "${selectedListName}" ?`)) return;
     
     this.sending = true;
     this.clearMessages();
@@ -205,33 +205,33 @@ export class ActivityDigestComponent implements OnInit {
             this.sending = false;
             // Récupère le message d'erreur du serveur s'il existe
             const serverError = err.error?.message || err.error || "";
-            this.showError("Erreur lors de l'envoi : " + (serverError ? serverError : "Veuillez vérifier votre configuration de serveur SMTP (Gmail App Password) dans application.properties."));
+            this.showError("Error sending: " + (serverError ? serverError : "Please check your SMTP server configuration (Gmail App Password) in application.properties."));
           }
         });
       },
       error: (err) => {
         console.error(err);
         this.sending = false;
-        this.showError("Erreur lors de l'enregistrement automatique de la configuration avant l'envoi.");
+        this.showError("Error auto-saving configuration before send.");
       }
     });
   }
 
-  // ── Réinitialiser le template ──
+  // ── Reset le template ──
   resetTemplate(): void {
-    if (!confirm('Réinitialiser la configuration aux valeurs par défaut ?')) return;
+    if (!confirm('Reset configuration to default values?')) return;
     this.digestService.resetTemplate().subscribe({
       next: (res) => {
         this.applyDTO(res);
-        this.showSuccess('Configuration réinitialisée.');
+        this.showSuccess('Configuration reset.');
       },
-      error: () => this.showError('Erreur lors de la réinitialisation.')
+      error: () => this.showError('Error resetting.')
     });
   }
 
   // ── Vider le template ──
   clearTemplate(): void {
-    if (!confirm('Vider le template HTML ? Cette action est irréversible.')) return;
+    if (!confirm('Vider le template HTML ? This action cannot be undone.')) return;
     this.digestService.clearTemplate().subscribe({
       next: () => {
         this.config.templateHtml = '';
@@ -240,11 +240,11 @@ export class ActivityDigestComponent implements OnInit {
         this.config.mailingListId = undefined;
         this.showSuccess('Template vidé.');
       },
-      error: () => this.showError('Erreur lors du vidage.')
+      error: () => this.showError('Error clearing.')
     });
   }
 
-  // ── Charger l'aperçu ──
+  // ── Load preview ──
   loadPreview(): void {
     this.loadingPreview = true;
     this.previewHtml = '';
@@ -263,8 +263,8 @@ export class ActivityDigestComponent implements OnInit {
           (typeof err?.error === 'string' ? err.error : '');
         this.showError(
           backendMessage
-            ? `Impossible de générer l'aperçu : ${backendMessage}`
-            : "Impossible de générer l'aperçu. Vérifiez les logs backend."
+            ? `Unable to generate preview: ${backendMessage}`
+            : "Unable to generate preview. Check backend logs."
         );
       }
     });
@@ -348,7 +348,7 @@ export class ActivityDigestComponent implements OnInit {
             iframe.style.height = '667px'; // Mobile viewport height
           }
         } catch (e) {
-          console.warn('Erreur lors de l\'ajustement de la hauteur de l\'iframe :', e);
+          console.warn('Error adjusting iframe height:', e);
         }
       }
     }, 50);

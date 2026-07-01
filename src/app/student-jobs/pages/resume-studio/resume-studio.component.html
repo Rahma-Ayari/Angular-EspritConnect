@@ -1,0 +1,136 @@
+<div class="sj-page resume-studio" *ngIf="resume">
+  <header class="sj-page-header">
+    <h1>Resume Studio</h1>
+    <p>Build an ATS-optimized resume with AI assistance.</p>
+  </header>
+
+  <div class="stepper">
+    <div class="step" [class.done]="step > 1" [class.active]="step === 1"><span>1</span> Import CV</div>
+    <div class="step-line" [class.done]="step > 1"></div>
+    <div class="step" [class.done]="step > 2" [class.active]="step === 2"><span>2</span> Template</div>
+    <div class="step-line" [class.done]="step > 2"></div>
+    <div class="step" [class.done]="step > 3" [class.active]="step === 3"><span>3</span> Edit &amp; Generate</div>
+    <div class="step-line" [class.done]="step > 3"></div>
+    <div class="step" [class.active]="step === 4"><span>4</span> Export</div>
+  </div>
+
+  <div class="studio-grid">
+    <div class="main-col">
+      <div class="sj-card drop-zone" *ngIf="step <= 2">
+        <i class="bi bi-cloud-upload"></i>
+        <p><strong>Drop your resume here or browse</strong></p>
+        <p class="muted">Supports TXT, PDF, and DOCX — AI auto-extracts all sections into the template.</p>
+        <label class="sj-btn-primary browse-btn">
+          Browse Files
+          <input type="file" accept=".txt,.pdf,.doc,.docx" (change)="onFileSelected($event)" hidden />
+        </label>
+        <button type="button" class="sj-btn-outline" (click)="runReview()" [disabled]="reviewLoading">Analyze with AI</button>
+        <button type="button" class="sj-btn-outline skip-btn" (click)="step = 2" *ngIf="step === 1">Start from scratch</button>
+      </div>
+
+      <div class="sj-card templates" *ngIf="step >= 2">
+        <h3>Your Resume Template</h3>
+        <p class="muted template-intro">All resumes are generated with the ESPRIT Science &amp; Engineering layout.</p>
+        <div class="single-template">
+          <div class="template-preview-wrap">
+            <img [src]="templatePreview" [alt]="template.name + ' resume template preview'" class="template-preview-img" />
+          </div>
+          <div class="template-meta">
+            <strong>{{ template.name }}</strong>
+            <span>{{ template.description }}</span>
+            <ul class="template-features">
+              <li>Two-column STEM layout</li>
+              <li>Contact, experience, education &amp; certificates</li>
+              <li>Export-ready PDF matching the official design</li>
+            </ul>
+          </div>
+        </div>
+        <button type="button" class="sj-btn-primary" (click)="continueToEditor()">Continue to Editor</button>
+      </div>
+
+      <div class="sj-card editor" *ngIf="step >= 3">
+        <h3>Edit Resume</h3>
+        <p class="muted editor-hint">Fill in your details — the export will match the Science &amp; Engineering template.</p>
+        <div class="contact-row header-row">
+          <input [(ngModel)]="resume.fullName" placeholder="Full name" (blur)="saveSection()" />
+          <input [(ngModel)]="resume.jobTitle" placeholder="Job title (e.g. Software Engineering Student)" (blur)="saveSection()" />
+        </div>
+        <div class="contact-row">
+          <input [(ngModel)]="resume.email" placeholder="Email" (blur)="saveSection()" />
+          <input [(ngModel)]="resume.phone" placeholder="Phone" (blur)="saveSection()" />
+          <input [(ngModel)]="resume.address" placeholder="Address" (blur)="saveSection()" />
+          <input [(ngModel)]="resume.portfolio" placeholder="Portfolio / LinkedIn URL" (blur)="saveSection()" />
+        </div>
+        <div class="section-block" *ngFor="let sec of sortedSections(); let i = index"
+          draggable="true" (dragstart)="onDragStart(i)" (dragover)="$event.preventDefault()" (drop)="onDrop(i)">
+          <div class="section-head">
+            <i class="bi bi-grip-vertical drag-handle"></i>
+            <input [(ngModel)]="sec.title" (blur)="saveSection()" />
+          </div>
+          <textarea [(ngModel)]="sec.content" rows="5" (blur)="saveSection()"
+            [placeholder]="sec.type === 'experience' ? 'Role | 2024–2025\nCompany name\n• Achievement with metrics\n• Another bullet point' : 'Content...'"></textarea>
+        </div>
+        <div class="optimizer-row">
+          <select [(ngModel)]="selectedJobId">
+            <option [ngValue]="undefined">Optimize for job...</option>
+            <option *ngFor="let j of jobs" [ngValue]="j.id">{{ j.title }}</option>
+          </select>
+          <button type="button" class="sj-btn-primary" (click)="optimizeForJob()" [disabled]="!selectedJobId || optimizeLoading">
+            AI Optimize
+          </button>
+        </div>
+        <button type="button" class="sj-btn-outline" (click)="step = 4">Go to Export</button>
+      </div>
+
+      <div class="sj-card export-panel" *ngIf="step >= 4">
+        <h3>Export Resume</h3>
+        <p class="muted">Download your resume in the Science &amp; Engineering template.</p>
+        <div class="export-btns">
+          <button type="button" class="sj-btn-primary" (click)="exportPdf()"><i class="bi bi-file-pdf"></i> PDF</button>
+          <button type="button" class="sj-btn-outline" (click)="exportDocx()"><i class="bi bi-file-word"></i> DOCX</button>
+        </div>
+        <div class="live-preview">
+          <h4>Preview</h4>
+          <div class="preview-frame" [innerHTML]="previewHtml"></div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="side-col">
+      <div class="sj-card ats-card">
+        <h3><i class="bi bi-bar-chart"></i> ATS Score</h3>
+        <app-ai-result-panel
+          [loading]="reviewLoading || importLoading || optimizeLoading"
+          [error]="aiError"
+          [provider]="aiProvider"
+          [copyText]="plainText"
+          [acceptLabel]="optimizeResult ? 'Accept Suggestions' : ''"
+          (regenerate)="runReview()"
+          (accept)="acceptOptimization()">
+          <div class="ats-score" *ngIf="reviewResult && !optimizeResult">
+            <div class="donut" [style.--pct]="reviewResult.atsScore + '%'">
+              <span>{{ reviewResult.atsScore }}%</span>
+            </div>
+            <p><strong>{{ reviewResult.atsLabel }}</strong></p>
+            <div class="metric" *ngFor="let m of [
+              { l: 'Keywords', v: 100 - (reviewResult.keywordGaps?.length || 0) * 5 },
+              { l: 'Formatting', v: 100 - (reviewResult.formattingIssues?.length || 0) * 10 },
+              { l: 'Content', v: reviewResult.atsScore }
+            ]">
+              <span>{{ m.l }}</span>
+              <div class="bar"><div class="fill" [style.width.%]="m.v"></div></div>
+            </div>
+            <ul class="tips" *ngIf="reviewResult.suggestions?.length">
+              <li *ngFor="let s of reviewResult.suggestions">{{ s }}</li>
+            </ul>
+          </div>
+          <div *ngIf="optimizeResult">
+            <p><strong>Optimized for: {{ optimizeResult.jobTitle }}</strong></p>
+            <p>{{ optimizeResult.optimizedSummary }}</p>
+            <ul><li *ngFor="let b of optimizeResult.improvedBulletPoints">{{ b }}</li></ul>
+          </div>
+        </app-ai-result-panel>
+      </div>
+    </aside>
+  </div>
+</div>

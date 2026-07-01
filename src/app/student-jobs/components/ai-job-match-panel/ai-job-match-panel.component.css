@@ -1,0 +1,132 @@
+@import '../../styles/student-jobs.shared.css';
+
+.match-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.overall {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+  border-radius: 12px;
+}
+
+.ring {
+  --pct: 50%;
+  --color: #16a34a;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: conic-gradient(var(--color) var(--pct), #e5e7eb 0);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.ring span {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--sj-text);
+}
+
+.overall h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.overall .label {
+  margin: 0.15rem 0;
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.overall .rec {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--sj-muted);
+}
+
+.breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 40px;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.bar {
+  height: 8px;
+  background: #f3f4f6;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bar .fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+
+.pct {
+  text-align: right;
+  font-weight: 600;
+  color: var(--sj-muted);
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.skills-grid h4,
+.suggestions h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: var(--sj-muted);
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  margin: 0 0.25rem 0.25rem 0;
+}
+
+.tag.match {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.tag.miss {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.suggestions ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.9rem;
+  color: var(--sj-text);
+}
+
+@media (max-width: 600px) {
+  .skills-grid { grid-template-columns: 1fr; }
+}

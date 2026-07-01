@@ -42,8 +42,8 @@ export class VerificationStatusComponent implements OnInit {
     'Construction et BTP',
     'Transport et Logistique',
     'Tourisme et Hôtellerie',
-    'Éducation et Formation',
-    'Services aux entreprises',
+    'Éducation et Education',
+    'Services aux companies',
     'Autre'
   ];
 
@@ -79,7 +79,7 @@ export class VerificationStatusComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Erreur lors du chargement du statut de vérification';
+        this.error = 'Error loading verification status';
         this.loading = false;
         console.error(err);
       }
@@ -152,7 +152,7 @@ export class VerificationStatusComponent implements OnInit {
 
   submitVerification(): void {
     if (!this.selectedFile) {
-      this.error = 'Veuillez sélectionner un document';
+      this.error = 'Please select a document';
       return;
     }
 
@@ -175,12 +175,12 @@ export class VerificationStatusComponent implements OnInit {
       next: (data) => {
         this.verification = data;
         this.selectedFile = null;
-        this.success = 'Document soumis avec succès. Votre demande est en cours de vérification.';
+        this.success = 'Document submitted successfully. Your request is under verification.';
         this.submitting = false;
         this.updateConfidenceScore();
       },
       error: (err) => {
-        this.error = err.error?.message || 'Erreur lors de la soumission du document';
+        this.error = err.error?.message || 'Error submitting document';
         this.submitting = false;
         console.error(err);
       }

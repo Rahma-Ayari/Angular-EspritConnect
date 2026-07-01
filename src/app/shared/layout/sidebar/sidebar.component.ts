@@ -30,7 +30,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   };
 
   currentUser = {
-    nom: 'Utilisateur',
+    nom: 'User',
     email: 'user@esprit.tn'
   };
 
@@ -97,14 +97,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   get userRoleLabel(): string {
     if (this.userRole === 'ADMIN' && this.currentMode !== 'admin') {
-      return this.currentMode === 'alumni' ? 'Preview Alumni' : 'Preview Étudiant';
+      return this.currentMode === 'alumni' ? 'Preview Alumni' : 'Preview Student';
     }
     switch (this.userRole) {
-      case 'ETUDIANT': return 'Étudiant';
+      case 'ETUDIANT': return 'Student';
       case 'ALUMNI': return 'Alumni';
-      case 'ENTREPRISE': return 'Entreprise';
-      case 'ADMIN': return 'Administrateur';
-      default: return 'Utilisateur';
+      case 'ENTREPRISE': return 'Company';
+      case 'ADMIN': return 'Administrator';
+      default: return 'User';
     }
   }
 

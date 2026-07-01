@@ -1,0 +1,85 @@
+<div class="apply-overlay" (click)="close()">
+  <div class="apply-dialog" (click)="$event.stopPropagation()">
+    <div class="apply-header">
+      <div>
+        <h3>Apply to {{ job.title }}</h3>
+        <p class="apply-sub">{{ job.companyName || 'EspritConnect' }}</p>
+      </div>
+      <button class="icon-btn" type="button" (click)="close()" aria-label="Close">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="apply-body">
+      <!-- Resume -->
+      <section class="apply-section">
+        <h4><i class="bi bi-file-earmark-person"></i> Resume <span class="req">*</span></h4>
+
+        <div *ngIf="loadingCvs" class="muted">Loading your resumes…</div>
+
+        <div class="cv-list" *ngIf="!loadingCvs && cvs.length">
+          <label class="cv-item" *ngFor="let cv of cvs" [class.selected]="selectedCvId === cv.idFichier">
+            <input type="radio" name="cv" [value]="cv.idFichier" [(ngModel)]="selectedCvId" />
+            <i class="bi bi-file-earmark-text"></i>
+            <span class="cv-name">{{ cv.nom }}</span>
+            <span class="cv-size">{{ fileSize(cv.taille) }}</span>
+            <a class="cv-view" [href]="resumeFiles.fileUrl(cv.url)" target="_blank" rel="noopener"
+               (click)="$event.stopPropagation()">View</a>
+          </label>
+        </div>
+
+        <p class="muted" *ngIf="!loadingCvs && !cvs.length">
+          No resume on file yet. Upload one to continue.
+        </p>
+
+        <label class="upload-btn">
+          <i class="bi bi-upload"></i>
+          {{ uploading ? 'Uploading…' : 'Upload new resume' }}
+          <input type="file" accept=".pdf,.doc,.docx,.txt" (change)="onUpload($event)" hidden [disabled]="uploading" />
+        </label>
+      </section>
+
+      <!-- Standard questions -->
+      <section class="apply-section">
+        <h4><i class="bi bi-list-check"></i> A few quick questions</h4>
+
+        <div class="q-grid">
+          <div class="q-field">
+            <label>Years of experience</label>
+            <input type="number" min="0" max="50" [(ngModel)]="yearsExperience" placeholder="e.g. 1" />
+          </div>
+
+          <div class="q-field">
+            <label>Earliest availability</label>
+            <input type="date" [(ngModel)]="availabilityDate" />
+          </div>
+
+          <div class="q-field">
+            <label>Willing to relocate?</label>
+            <select [(ngModel)]="willingToRelocate">
+              <option [ngValue]="null">Select…</option>
+              <option [ngValue]="true">Yes</option>
+              <option [ngValue]="false">No</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="q-field full">
+          <label>Message to recruiter (optional)</label>
+          <textarea rows="3" [(ngModel)]="message"
+                    placeholder="Briefly say why you're a great fit…"></textarea>
+        </div>
+      </section>
+
+      <p class="apply-error" *ngIf="error">{{ error }}</p>
+    </div>
+
+    <div class="apply-footer">
+      <button class="btn-ghost" type="button" (click)="close()" [disabled]="submitting">Cancel</button>
+      <button class="btn-primary" type="button" (click)="submit()" [disabled]="submitting || uploading">
+        <i class="bi bi-send" *ngIf="!submitting"></i>
+        {{ submitting ? 'Submitting…' : 'Submit application' }}
+      </button>
+    </div>
+  </div>
+</div>

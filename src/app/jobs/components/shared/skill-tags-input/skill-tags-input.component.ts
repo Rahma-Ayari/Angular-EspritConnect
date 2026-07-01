@@ -14,7 +14,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   ]
 })
 export class SkillTagsInputComponent implements ControlValueAccessor {
-  @Input() placeholder = 'Ajouter une compétence...';
+  @Input() placeholder = 'Add a skill...';
   @Input() maxTags = 20;
   @Input() suggestions: string[] = [];
   @Output() tagsChange = new EventEmitter<string[]>();

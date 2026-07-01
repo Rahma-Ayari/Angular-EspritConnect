@@ -3,9 +3,9 @@
   <!-- En-tête -->
   <div class="page-header">
     <div>
-      <h1 class="page-title">Tableau de bord Forum</h1>
+      <h1 class="page-title">Dashboard Forum</h1>
       <p class="page-subtitle">
-        Modérez les publications signalées, supervisez l'activité et gérez les interactions entre les étudiants, alumni et enseignants d'Esprit.
+        Moderate reported posts, supervise activity, and manage interactions between Esprit students, alumni, and faculty.
       </p>
     </div>
   </div>
@@ -23,7 +23,7 @@
   <!-- Loading State -->
   <div class="preview-loading" *ngIf="loading" style="padding: 60px 0;">
     <div class="spinner"></div>
-    <p>Chargement des statistiques et alertes de modération...</p>
+    <p>Loading statistics and moderation alerts...</p>
   </div>
 
   <ng-container *ngIf="!loading">
@@ -47,7 +47,7 @@
           <svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>
         </div>
         <div>
-          <div style="font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Réponses</div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Replies</div>
           <div style="font-size: 26px; font-weight: 800; color: var(--ink); line-height: 1.1; margin-top: 4px;">{{ stats.totalReplies }}</div>
         </div>
       </div>
@@ -73,28 +73,28 @@
           <svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
         </div>
         <div>
-          <div style="font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Catégories</div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Categories</div>
           <div style="font-size: 26px; font-weight: 800; color: var(--ink); line-height: 1.1; margin-top: 4px;">{{ stats.totalCategories }}</div>
         </div>
       </div>
 
     </div>
 
-    <!-- Layout principal : Modération à gauche, répartition à droite -->
+    <!-- Layout principal : Modération à gauche, breakdown à droite -->
     <div class="digest-layout">
       
       <!-- Colonne de Gauche : Modération du contenu signalé -->
       <div class="digest-col-left" style="flex: 2;">
         
-        <!-- Publications signalées -->
+        <!-- Posts signalées -->
         <div class="dcard" style="margin-bottom: 24px;">
           <div class="dcard__header">
             <div class="dcard__header-icon" style="background: var(--red-light); color: var(--red);">
               <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
             </div>
             <div>
-              <h2 class="dcard__title">Discussions signalées</h2>
-              <p class="dcard__hint">Publications à modérer de toute urgence</p>
+              <h2 class="dcard__title">Reported discussions</h2>
+              <p class="dcard__hint">Posts requiring urgent moderation</p>
             </div>
           </div>
 
@@ -131,13 +131,13 @@
                     </td>
                     <td style="text-align: right;">
                       <div style="display: inline-flex; gap: 8px;">
-                        <button class="btn btn--sm btn--blue" (click)="approvePost(post)" title="Valider / Ignorer le signalement">
+                        <button class="btn btn--sm btn--blue" (click)="approvePost(post)" title="Confirm / Ignore report">
                           <svg viewBox="0 0 24 24" width="13" height="13"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                          Approuver
+                          Approve
                         </button>
-                        <button class="btn btn--sm btn--primary" (click)="deletePost(post)" title="Supprimer définitivement">
+                        <button class="btn btn--sm btn--primary" (click)="deletePost(post)" title="Delete permanently">
                           <svg viewBox="0 0 24 24" width="13" height="13"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-                          Supprimer
+                          Delete
                         </button>
                       </div>
                     </td>
@@ -148,21 +148,21 @@
 
             <div *ngIf="reportedPosts.length === 0" style="text-align: center; padding: 32px 0; color: var(--muted);">
               <svg viewBox="0 0 24 24" width="48" height="48" style="color: var(--green); margin-bottom: 12px;"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-              <p style="font-weight: 600; color: var(--ink);">Aucune discussion signalée !</p>
-              <p style="font-size: 12px; margin-top: 4px;">Le forum est parfaitement sain.</p>
+              <p style="font-weight: 600; color: var(--ink);">No reported discussions!</p>
+              <p style="font-size: 12px; margin-top: 4px;">The forum is perfectly healthy.</p>
             </div>
           </div>
         </div>
 
-        <!-- Commentaires signalés -->
+        <!-- Reported comments -->
         <div class="dcard">
           <div class="dcard__header">
             <div class="dcard__header-icon" style="background: var(--red-light); color: var(--red);">
               <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
             </div>
             <div>
-              <h2 class="dcard__title">Commentaires signalés</h2>
-              <p class="dcard__hint">Réponses inappropriées à modérer</p>
+              <h2 class="dcard__title">Reported comments</h2>
+              <p class="dcard__hint">Replies inappropriées à modérer</p>
             </div>
           </div>
 
@@ -189,7 +189,7 @@
                     <td style="max-width: 250px;">
                       <div style="font-size: 13px; color: var(--ink-2); font-style: italic;">"{{ reply.content }}"</div>
                       <div style="font-size: 11px; color: var(--muted); margin-top: 4px;" *ngIf="reply.post">
-                        Sur le post : <strong>{{ reply.post.title }}</strong>
+                        On post: <strong>{{ reply.post.title }}</strong>
                       </div>
                     </td>
                     <td>
@@ -199,13 +199,13 @@
                     </td>
                     <td style="text-align: right;">
                       <div style="display: inline-flex; gap: 8px;">
-                        <button class="btn btn--sm btn--blue" (click)="approveReply(reply)" title="Valider / Ignorer le signalement">
+                        <button class="btn btn--sm btn--blue" (click)="approveReply(reply)" title="Confirm / Ignore report">
                           <svg viewBox="0 0 24 24" width="13" height="13"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                          Approuver
+                          Approve
                         </button>
-                        <button class="btn btn--sm btn--primary" (click)="deleteReply(reply)" title="Supprimer définitivement">
+                        <button class="btn btn--sm btn--primary" (click)="deleteReply(reply)" title="Delete permanently">
                           <svg viewBox="0 0 24 24" width="13" height="13"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-                          Supprimer
+                          Delete
                         </button>
                       </div>
                     </td>
@@ -216,15 +216,15 @@
 
             <div *ngIf="reportedReplies.length === 0" style="text-align: center; padding: 32px 0; color: var(--muted);">
               <svg viewBox="0 0 24 24" width="48" height="48" style="color: var(--green); margin-bottom: 12px;"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-              <p style="font-weight: 600; color: var(--ink);">Aucun commentaire signalé !</p>
-              <p style="font-size: 12px; margin-top: 4px;">Les échanges sont courtois et constructifs.</p>
+              <p style="font-weight: 600; color: var(--ink);">No reported comments!</p>
+              <p style="font-size: 12px; margin-top: 4px;">Conversations are courteous and constructive.</p>
             </div>
           </div>
         </div>
 
       </div>
 
-      <!-- Colonne de Droite : Répartition de l'activité par profil -->
+      <!-- Colonne de Droite : Activity breakdown by profile -->
       <div class="digest-col-right" style="flex: 1;">
         <div class="dcard">
           <div class="dcard__header">
@@ -232,8 +232,8 @@
               <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
             </div>
             <div>
-              <h2 class="dcard__title">Activité par profil</h2>
-              <p class="dcard__hint">Publications et réponses postées</p>
+              <h2 class="dcard__title">Activity by profile</h2>
+              <p class="dcard__hint">Posts and replies published</p>
             </div>
           </div>
 
@@ -261,7 +261,7 @@
             </div>
 
             <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); line-height: 1.5;">
-              <strong>Rôle de l'Admin :</strong> L'espace forum favorise la synergie entre les étudiants qui s'informent, les alumni qui partagent leur expérience professionnelle, et les enseignants qui guident académiquement.
+              <strong>Role de l'Admin :</strong> The forum fosters synergy between students seeking information, alumni sharing professional experience, and faculty providing academic guidance.
             </div>
           </div>
 

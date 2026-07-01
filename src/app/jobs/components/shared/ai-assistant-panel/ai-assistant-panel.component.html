@@ -5,6 +5,7 @@
         <i class="bi bi-stars"></i>
       </div>
       <h2>AI Assistant</h2>
+      <span class="ai-powered-badge" *ngIf="aiProvider">{{ poweredBy }}</span>
     </div>
     <button type="button" class="btn-close" (click)="onClose()">
       <i class="bi bi-x-lg"></i>
@@ -122,7 +123,7 @@
       type="button"
       class="btn-regenerate"
       [disabled]="isGenerating || !canGenerate"
-      (click)="regenerateContent()">
+      (click)="regenerateContent(true)">
       <i class="bi" [ngClass]="hasGeneratedOnce ? 'bi-arrow-clockwise' : 'bi-stars'"></i>
       {{ hasGeneratedOnce ? 'Regenerate Content' : 'Generate Content' }}
     </button>

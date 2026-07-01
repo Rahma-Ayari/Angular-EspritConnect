@@ -8,7 +8,7 @@
     <div>
       <h1 class="page-title">Automatic Emails</h1>
       <p class="page-subtitle">
-        Contactez automatiquement les utilisateurs lors d'événements importants.
+        Automatically contact users during important events.
       </p>
     </div>
   </div>
@@ -26,7 +26,7 @@
   <!-- ── Loader ── -->
   <div class="ae-loader" *ngIf="loading">
     <div class="spinner"></div>
-    <p>Chargement…</p>
+    <p>Loading…</p>
   </div>
 
   <!-- ── Contenu principal ── -->
@@ -41,12 +41,12 @@
         <div class="ae-card__info">
           <h2 class="ae-card__title">Birthday Email</h2>
           <p class="ae-card__desc">
-            Envoie automatiquement un email le jour de l'anniversaire des utilisateurs.
-            <button class="ae-link-btn" (click)="showPreview = true">Aperçu de l'email</button>
+            Automatically sends an email on users' birthdays.
+            <button class="ae-link-btn" (click)="showPreview = true">Email preview</button>
           </p>
           <span class="badge" [class.badge--green]="settings.active" [class.badge--red]="!settings.active">
             <span class="badge-dot"></span>
-            {{ settings.active ? 'Activé' : 'Désactivé' }}
+            {{ settings.active ? 'Enabled' : 'Disabled' }}
           </span>
           <span class="ae-last-run" *ngIf="settings.lastRunAt">
             Dernier envoi : {{ settings.lastRunAt | date:'dd MMM yyyy' }}
@@ -63,9 +63,9 @@
       <!-- Corps de config (toujours visible) -->
       <div class="ae-card__body">
 
-        <!-- Sujet -->
+        <!-- Subject -->
         <div class="field">
-          <label class="field__label">Sujet de l'email <span class="field__req">*</span></label>
+          <label class="field__label">Email subject <span class="field__req">*</span></label>
           <input class="field__input" type="text" [(ngModel)]="settings.subject"
                  placeholder="Happy Birthday from EspritConnect!"/>
         </div>
@@ -76,7 +76,7 @@
           <select class="field__input ae-select" [(ngModel)]="settings.sendHour">
             <option *ngFor="let h of hours" [value]="h">{{ formatHour(h) }}</option>
           </select>
-          <p class="field__hint">L'email sera envoyé chaque jour à cette heure pour les utilisateurs dont c'est l'anniversaire.</p>
+          <p class="field__hint">The email will be sent daily at this time for users whose birthday it is.</p>
         </div>
 
         <!-- Template HTML -->
@@ -84,9 +84,9 @@
           <label class="field__label">Template HTML du message</label>
           <textarea class="field__input field__textarea ae-textarea"
                     [(ngModel)]="settings.templateHtml"
-                    placeholder="<p>Bonjour {{nom}}, joyeux anniversaire !</p>"
+                    placeholder="<p>Hello {{nom}}, happy birthday!</p>"
                     rows="6"></textarea>
-          <p class="field__hint">Utilisez <code class="ae-code">&#123;&#123;nom&#125;&#125;</code> pour insérer le prénom du destinataire.</p>
+          <p class="field__hint">Utilisez <code class="ae-code">&#123;&#123;nom&#125;&#125;</code> to insert the recipient's first name.</p>
         </div>
 
         <!-- Actions -->
@@ -99,12 +99,12 @@
 
           <button class="btn btn--ghost" (click)="showPreview = true">
             <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
-            Aperçu
+            Preview
           </button>
 
           <button class="btn btn--ghost" (click)="showTestForm = !showTestForm">
             <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-            Envoyer un test
+            Send a test
           </button>
         </div>
 
@@ -117,16 +117,16 @@
                      placeholder="vous@esprit.tn" (keyup.enter)="sendTest()"/>
             </div>
             <div class="field" style="margin-bottom:12px">
-              <label class="field__label">Prénom de démonstration</label>
+              <label class="field__label">First name de démonstration</label>
               <input class="field__input" type="text" [(ngModel)]="testName"
                      placeholder="John"/>
             </div>
             <div class="ae-test-form__actions">
               <button class="btn btn--primary btn--sm" (click)="sendTest()" [disabled]="sendingTest || !testEmail">
                 <span class="spinner spinner--sm" *ngIf="sendingTest" style="border-top-color:#fff"></span>
-                {{ sendingTest ? 'Envoi…' : 'Envoyer' }}
+                {{ sendingTest ? 'Envoi…' : 'Send' }}
               </button>
-              <button class="btn btn--ghost btn--sm" (click)="showTestForm = false">Annuler</button>
+              <button class="btn btn--ghost btn--sm" (click)="showTestForm = false">Cancel</button>
             </div>
           </div>
         </div>
@@ -142,22 +142,22 @@
           <span>Comment ça fonctionne</span>
         </div>
         <ul class="ae-info-card__list">
-          <li>Le scheduler vérifie chaque jour à l'heure configurée.</li>
-          <li>Les utilisateurs dont c'est l'anniversaire reçoivent l'email.</li>
-          <li>Utilisez <code class="ae-code">&#123;&#123;nom&#125;&#125;</code> dans le template pour personnaliser.</li>
-          <li>Désactivez le toggle pour suspendre les envois.</li>
+          <li>The scheduler checks daily at the configured time.</li>
+          <li>Users whose birthday it is receive the email.</li>
+          <li>Utilisez <code class="ae-code">&#123;&#123;nom&#125;&#125;</code> in the template to personalize.</li>
+          <li>Disable the toggle to pause sends.</li>
         </ul>
       </div>
     </div>
 
   </div><!-- /layout -->
 
-  <!-- ── Modal Aperçu ── -->
+  <!-- ── Modal Preview ── -->
   <div class="ae-modal" *ngIf="showPreview">
     <div class="ae-modal__backdrop" (click)="showPreview = false"></div>
     <div class="ae-modal__box">
       <div class="ae-modal__header">
-        <h3 class="ae-modal__title">Aperçu — Birthday Email</h3>
+        <h3 class="ae-modal__title">Preview — Birthday Email</h3>
         <button class="btn btn--ghost btn--sm btn--icon" (click)="showPreview = false">
           <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>

@@ -5,8 +5,10 @@ import {
   JobOffer,
   ContractType,
   WorkMode,
+  ExperienceLevel,
   CONTRACT_TYPE_LABELS,
-  WORK_MODE_LABELS
+  WORK_MODE_LABELS,
+  EXPERIENCE_LEVEL_LABELS
 } from '../../../jobs/models/job.model';
 import { StudentJobsBrowseService } from '../../services/student-jobs-browse.service';
 import { MatchScoreService } from '../../services/match-score.service';
@@ -29,11 +31,24 @@ export class DiscoverJobsComponent implements OnInit {
   limit = 8;
   profile?: StudentProfile;
   showFilters = false;
+  activeChip = 'all';
 
   readonly contractLabels = CONTRACT_TYPE_LABELS;
   readonly workModeLabels = WORK_MODE_LABELS;
+  readonly experienceLabels = EXPERIENCE_LEVEL_LABELS;
   readonly contractOptions = Object.keys(CONTRACT_TYPE_LABELS) as ContractType[];
   readonly workModeOptions = Object.keys(WORK_MODE_LABELS) as WorkMode[];
+  readonly experienceOptions = Object.keys(EXPERIENCE_LEVEL_LABELS) as ExperienceLevel[];
+
+  readonly quickChips = [
+    { id: 'all', label: 'All Jobs' },
+    { id: 'STAGE', label: 'Internship' },
+    { id: 'PFE', label: 'PFE' },
+    { id: 'EMPLOI', label: 'Full-Time' },
+    { id: 'REMOTE', label: 'Remote' },
+    { id: 'HYBRID', label: 'Hybrid' },
+    { id: 'ON_SITE', label: 'On-Site' }
+  ];
 
   contractLabel(type: ContractType): string {
     return this.contractLabels[type];
@@ -55,8 +70,10 @@ export class DiscoverJobsComponent implements OnInit {
     this.filterForm = this.fb.group({
       search: [''],
       location: [''],
+      domain: [''],
       workMode: [''],
       contractType: [''],
+      experienceLevel: [''],
       skills: [''],
       salaryMin: [''],
       company: [''],
@@ -76,6 +93,18 @@ export class DiscoverJobsComponent implements OnInit {
     this.loadJobs();
   }
 
+  applyChip(chipId: string): void {
+    this.activeChip = chipId;
+    this.filterForm.patchValue({
+      contractType: ['STAGE', 'PFE', 'EMPLOI'].includes(chipId) ? chipId : '',
+      workMode: ['REMOTE', 'HYBRID', 'ON_SITE'].includes(chipId) ? chipId : ''
+    });
+    if (chipId === 'all') {
+      this.filterForm.patchValue({ contractType: '', workMode: '' });
+    }
+    this.searchNow();
+  }
+
   loadJobs(): void {
     this.loading = true;
     const v = this.filterForm.value;
@@ -83,8 +112,10 @@ export class DiscoverJobsComponent implements OnInit {
       .search({
         search: v.search || undefined,
         location: v.location || undefined,
+        domain: v.domain || undefined,
         workMode: v.workMode ? [v.workMode] : undefined,
         contractType: v.contractType ? [v.contractType] : undefined,
+        experienceLevel: v.experienceLevel ? [v.experienceLevel] : undefined,
         skills: v.skills
           ? v.skills.split(',').map((s: string) => s.trim()).filter(Boolean)
           : undefined,
@@ -96,7 +127,15 @@ export class DiscoverJobsComponent implements OnInit {
       })
       .subscribe({
         next: (res) => {
-          this.jobs = res.data;
+          let data = res.data;
+          if (v.sortBy === 'match' && this.profile) {
+            data = [...data].sort(
+              (a, b) =>
+                (this.matchScore.calculate(b, this.profile!).overall) -
+                (this.matchScore.calculate(a, this.profile!).overall)
+            );
+          }
+          this.jobs = data;
           this.total = res.total;
           this.computeMatches();
           this.loading = false;

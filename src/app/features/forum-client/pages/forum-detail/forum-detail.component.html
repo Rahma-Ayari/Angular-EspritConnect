@@ -4,16 +4,16 @@
       <line x1="19" y1="12" x2="5" y2="12"></line>
       <polyline points="12 19 5 12 12 5"></polyline>
     </svg>
-    Retour aux discussions
+    Back aux discussions
   </a>
 
   <!-- DÉTAIL DU POST -->
   <div class="card post-detail-card" *ngIf="post && !loading">
     <div class="detail-header">
       <span class="category-badge-detail" [style.background-color]="post.category?.color + '15'" [style.color]="post.category?.color || '#dc2626'">
-        {{ post.category?.name || 'Général' }}
+        {{ post.category?.name || 'General' }}
       </span>
-      <span class="detail-date">Créé le {{ post.createdAt | date:'dd MMMM yyyy à HH:mm' }}</span>
+      <span class="detail-date">Created on {{ post.createdAt | date:'dd MMMM yyyy, HH:mm' }}</span>
     </div>
 
     <h1 class="detail-title">{{ post.title }}</h1>
@@ -42,7 +42,7 @@
 
   <div class="card loading" *ngIf="loading">
     <div class="spinner"></div>
-    <p>Chargement de la discussion...</p>
+    <p>Loading discussion...</p>
   </div>
 
   <!-- SECTION RÉPONSES -->
@@ -51,21 +51,21 @@
 
     <!-- Ajouter une réponse -->
     <div class="card add-reply-card">
-      <label class="field__label">Participer à la discussion</label>
+      <label class="field__label">Join the discussion</label>
       <textarea 
         class="field__input field__textarea" 
         [(ngModel)]="newReply" 
-        placeholder="Partagez votre point de vue ou apportez une réponse constructive..."
+        placeholder="Share your perspective or provide a constructive reply..."
       ></textarea>
       <div class="reply-actions">
         <button class="btn btn-gradient-red" (click)="submitReply()" [disabled]="submitting || !newReply.trim()">
           <span class="spinner spinner--sm spinner--white" *ngIf="submitting"></span>
-          Envoyer la réponse
+          Send reply
         </button>
       </div>
     </div>
 
-    <!-- Fil des réponses -->
+    <!-- Fil des replies -->
     <div class="replies-list" *ngIf="post.replies?.length">
       <div class="reply-timeline-connector"></div>
       
@@ -86,7 +86,7 @@
                   {{ getRoleLabel(rep.authorRole) }}
                 </span>
               </div>
-              <div class="reply-date">Répondu le {{ rep.createdAt | date:'dd MMM yyyy, HH:mm' }}</div>
+              <div class="reply-date">Replied on {{ rep.createdAt | date:'dd MMM yyyy, HH:mm' }}</div>
             </div>
           </div>
         </div>
@@ -97,7 +97,7 @@
     <!-- Si aucun commentaire -->
     <div class="empty-replies card" *ngIf="!post.replies?.length">
       <span class="empty-replies-emoji">💬</span>
-      <p>Aucune réponse pour le moment. Soyez le premier à répondre à ce sujet !</p>
+      <p>No replies yet. Be the first to reply to this topic!</p>
     </div>
   </div>
 </div>

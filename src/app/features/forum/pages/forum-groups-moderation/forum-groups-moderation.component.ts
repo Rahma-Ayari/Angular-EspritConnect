@@ -24,12 +24,12 @@ export class ForumGroupsModerationComponent implements OnInit {
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (groups) => (this.pendingGroups = groups),
-        error: (err) => console.error('Erreur chargement des groupes en attente', err)
+        error: (err) => console.error('Error chargement des groupes en attente', err)
       });
   }
 
   approveGroup(groupId: number): void {
-    if (!confirm('Approuver la création de ce groupe de discussion ?')) return;
+    if (!confirm('Approve creation of this discussion group?')) return;
     
     this.api.approveGroup(groupId).subscribe({
       next: () => {
@@ -38,13 +38,13 @@ export class ForumGroupsModerationComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        alert('Erreur lors de l\'approbation du groupe.');
+        alert('Error approving group.');
       }
     });
   }
 
   rejectGroup(groupId: number): void {
-    if (!confirm('Rejeter la création de ce groupe de discussion ?')) return;
+    if (!confirm('Reject creation of this discussion group?')) return;
 
     this.api.rejectGroup(groupId).subscribe({
       next: () => {
@@ -53,7 +53,7 @@ export class ForumGroupsModerationComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        alert('Erreur lors du rejet du groupe.');
+        alert('Error rejecting group.');
       }
     });
   }

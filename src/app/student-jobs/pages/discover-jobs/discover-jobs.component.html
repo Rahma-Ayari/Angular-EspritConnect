@@ -1,8 +1,9 @@
 <div class="sj-page discover-page">
-  <header class="sj-page-header">
-    <h1>Discover Jobs</h1>
-    <p>Find your next opportunity.</p>
-  </header>
+  <section class="hero-banner">
+    <span class="hero-badge"><i class="bi bi-stars"></i> AI-Powered Career Center</span>
+    <h1>Find Your Next Opportunity</h1>
+    <p>Discover personalized internships and jobs powered by AI. Every match is scored, explained, and optimized for you.</p>
+  </section>
 
   <div class="search-panel sj-card">
     <form [formGroup]="filterForm" (ngSubmit)="searchNow()">
@@ -10,37 +11,48 @@
         <i class="bi bi-search"></i>
         <input type="text" formControlName="search" placeholder="Search by job title, company, or keyword..." />
         <button type="submit" class="sj-btn-primary">Search</button>
-      </div>
-      <div class="filter-pills">
-        <button type="button" class="pill" (click)="showFilters = !showFilters">
+        <button type="button" class="sj-btn-outline filter-btn" (click)="showFilters = !showFilters">
           <i class="bi bi-funnel"></i> Filters
         </button>
-        <select formControlName="location" class="pill-select">
-          <option value="">Location</option>
-          <option value="Tunis">Tunis</option>
-          <option value="Remote">Remote</option>
-          <option value="Sfax">Sfax</option>
-        </select>
-        <select formControlName="workMode" class="pill-select">
+      </div>
+
+      <div class="quick-chips">
+        <button type="button" *ngFor="let chip of quickChips" class="chip"
+          [class.active]="activeChip === chip.id" (click)="applyChip(chip.id)">
+          {{ chip.label }}
+        </button>
+      </div>
+
+      <div class="advanced-filters" *ngIf="showFilters">
+        <input type="text" formControlName="location" placeholder="Location" />
+        <input type="text" formControlName="domain" placeholder="Domain / Debytment" />
+        <input type="text" formControlName="skills" placeholder="Skills (comma sebyated)" />
+        <input type="text" formControlName="company" placeholder="Company name" />
+        <select formControlName="workMode">
           <option value="">Work Mode</option>
           <option *ngFor="let w of workModeOptions" [value]="w">{{ workModeLabel(w) }}</option>
         </select>
-        <select formControlName="contractType" class="pill-select">
+        <select formControlName="contractType">
           <option value="">Contract Type</option>
           <option *ngFor="let c of contractOptions" [value]="c">{{ contractLabel(c) }}</option>
         </select>
-        <select formControlName="sortBy" class="pill-select">
+        <select formControlName="experienceLevel">
+          <option value="">Experience Level</option>
+          <option *ngFor="let e of experienceOptions" [value]="e">{{ experienceLabels[e] }}</option>
+        </select>
+        <input type="number" formControlName="salaryMin" placeholder="Min salary (TND)" />
+        <select formControlName="sortBy">
           <option value="recent">Sort: Recent</option>
           <option value="title">Sort: Title</option>
           <option value="deadline">Sort: Deadline</option>
+          <option value="match">Sort: Best Match</option>
         </select>
       </div>
-      <div class="advanced-filters" *ngIf="showFilters">
-        <input type="text" formControlName="skills" placeholder="Skills (comma separated)" />
-        <input type="number" formControlName="salaryMin" placeholder="Min salary (TND)" />
-        <input type="text" formControlName="company" placeholder="Company name" />
-      </div>
     </form>
+  </div>
+
+  <div class="results-header" *ngIf="!loading">
+    <span>Showing {{ jobs.length }} opportunities</span>
   </div>
 
   <div class="results" *ngIf="loading">

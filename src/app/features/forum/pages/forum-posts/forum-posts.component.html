@@ -3,9 +3,9 @@
   <!-- En-tête -->
   <div class="page-header">
     <div>
-      <h1 class="page-title">Gestion des Publications</h1>
+      <h1 class="page-title">Post Management</h1>
       <p class="page-subtitle">
-        Supervisez les fils de discussion, répondez officiellement aux questions des étudiants et modérez ou épinglez les publications pertinentes.
+        Supervise discussion threads, reply officially to student questions, and moderate or pin relevant posts.
       </p>
     </div>
   </div>
@@ -25,49 +25,49 @@
     
     <!-- Recherche -->
     <div style="flex: 1; min-width: 200px; position: relative;">
-      <input type="text" class="field__input" [(ngModel)]="searchText" (ngModelChange)="onFilterChange()" placeholder="Rechercher par titre, contenu..." style="padding-left: 36px; padding-top: 8px; padding-bottom: 8px; font-size: 13px;"/>
+      <input type="text" class="field__input" [(ngModel)]="searchText" (ngModelChange)="onFilterChange()" placeholder="Search by title, content..." style="padding-left: 36px; padding-top: 8px; padding-bottom: 8px; font-size: 13px;"/>
       <svg viewBox="0 0 24 24" width="15" height="15" style="position: absolute; left: 12px; top: 12px; color: var(--muted-2);">
         <path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
       </svg>
     </div>
 
-    <!-- Catégorie -->
+    <!-- Category -->
     <div style="min-width: 160px;">
       <select class="field__input" [(ngModel)]="selectedCategory" (change)="onFilterChange()" style="padding-top: 8px; padding-bottom: 8px; font-size: 13px; cursor: pointer;">
-        <option [value]="undefined">Toutes les catégories</option>
+        <option [value]="undefined">All categories</option>
         <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
       </select>
     </div>
 
-    <!-- Auteur Rôle -->
+    <!-- Auteur Role -->
     <div style="min-width: 140px;">
       <select class="field__input" [(ngModel)]="selectedRole" (change)="onFilterChange()" style="padding-top: 8px; padding-bottom: 8px; font-size: 13px; cursor: pointer;">
-        <option value="">Tous les profils</option>
-        <option value="ETUDIANT">Étudiants</option>
+        <option value="">All profiles</option>
+        <option value="ETUDIANT">Students</option>
         <option value="ALUMNI">Alumni</option>
         <option value="ENSEIGNANT">Enseignants</option>
-        <option value="ADMIN">Administrateurs</option>
+        <option value="ADMIN">Administrators</option>
       </select>
     </div>
 
-    <!-- Uniquement Signalés -->
+    <!-- Uniquement Reported -->
     <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;" (click)="showOnlyReported = !showOnlyReported; onFilterChange()">
       <div class="toggle toggle--sm" [class.toggle--on]="showOnlyReported" style="width: 36px; height: 20px;">
         <div class="toggle__thumb" style="width: 14px; height: 14px; top: 3px; left: 3px;" [style.transform]="showOnlyReported ? 'translateX(16px)' : 'none'"></div>
       </div>
-      <span style="font-size: 12.5px; font-weight: 700; color: var(--ink-3);">Signalés</span>
+      <span style="font-size: 12.5px; font-weight: 700; color: var(--ink-3);">Reported</span>
     </div>
 
-    <!-- Réinitialiser -->
+    <!-- Reset -->
     <button class="btn btn--sm btn--ghost" (click)="clearFilters()">
-      Réinitialiser
+      Reset
     </button>
   </div>
 
   <!-- Loading State -->
   <div class="preview-loading" *ngIf="loading" style="padding: 60px 0;">
     <div class="spinner"></div>
-    <p>Chargement des publications...</p>
+    <p>Loading posts...</p>
   </div>
 
   <!-- Table des Posts -->
@@ -76,20 +76,20 @@
       <table>
         <thead>
           <tr>
-            <th style="width: 50px;"></th> <!-- Épinglé -->
-            <th>Sujet / Publication</th>
-            <th>Catégorie</th>
+            <th style="width: 50px;"></th> <!-- Pinned -->
+            <th>Subject / Publication</th>
+            <th>Category</th>
             <th>Auteur</th>
             <th style="text-align: center;">Vues</th>
-            <th style="text-align: center;">Réponses</th>
-            <th>Date de création</th>
+            <th style="text-align: center;">Replies</th>
+            <th>Created date</th>
             <th style="text-align: right;">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let post of posts" [style.background]="post.reported ? 'rgba(215,40,47,0.02)' : 'none'">
             
-            <!-- Icone Épinglé ou standard -->
+            <!-- Icone Pinned ou standard -->
             <td style="text-align: center;">
               <button type="button" (click)="togglePin(post)" style="background: transparent; border: none; cursor: pointer; color: var(--muted-2);"
                       [style.color]="post.pinned ? 'var(--amber)' : 'var(--muted-2)'" [title]="post.pinned ? 'Désépingler de l\'accueil' : 'Épingler au sommet'">
@@ -97,11 +97,11 @@
               </button>
             </td>
 
-            <!-- Sujet & Extrait -->
+            <!-- Subject & Extrait -->
             <td style="max-width: 320px;">
               <div style="display: flex; align-items: center; gap: 8px;">
-                <span class="badge badge--red" *ngIf="post.reported" style="padding: 1px 6px; font-size: 9px; font-weight: 800;">Signalé</span>
-                <span class="badge badge--amber" *ngIf="post.pinned" style="padding: 1px 6px; font-size: 9px; font-weight: 800;">Épinglé</span>
+                <span class="badge badge--red" *ngIf="post.reported" style="padding: 1px 6px; font-size: 9px; font-weight: 800;">Reported</span>
+                <span class="badge badge--amber" *ngIf="post.pinned" style="padding: 1px 6px; font-size: 9px; font-weight: 800;">Pinned</span>
                 <a (click)="openDetailModal(post)" style="font-weight: 700; color: var(--ink); text-decoration: none; cursor: pointer;" class="post-title-link">
                   {{ post.title }}
                 </a>
@@ -111,7 +111,7 @@
               </div>
             </td>
 
-            <!-- Catégorie -->
+            <!-- Category -->
             <td>
               <span class="badge" [style.background]="'var(--' + post.category.color + '-muted)'" [style.color]="'var(--' + post.category.color + ')'">
                 {{ post.category.name }}
@@ -132,14 +132,14 @@
               {{ post.viewsCount }}
             </td>
 
-            <!-- Réponses -->
+            <!-- Replies -->
             <td style="text-align: center; font-variant-numeric: tabular-nums;">
               <span style="font-weight: 700; color: var(--ink);">{{ post.replies?.length || 0 }}</span>
             </td>
 
             <!-- Date -->
             <td style="color: var(--muted); font-size: 12px; white-space: nowrap;">
-              {{ post.createdAt | date:'dd MMM yyyy à HH:mm' }}
+              {{ post.createdAt | date:'dd MMM yyyy, HH:mm' }}
             </td>
 
             <!-- Actions -->
@@ -149,7 +149,7 @@
                   Consulter
                 </button>
                 <button class="btn btn--sm btn--ghost" style="color: var(--red); border-color: rgba(215,40,47,0.15);" (click)="deletePost(post)">
-                  Supprimer
+                  Delete
                 </button>
               </div>
             </td>
@@ -165,11 +165,11 @@
     <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--line-2); display: inline-grid; place-items: center; color: var(--muted-2); margin-bottom: 16px;">
       <svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
     </div>
-    <h3 style="font-size: 16px; font-weight: 700; color: var(--ink);">Aucune publication trouvée</h3>
+    <h3 style="font-size: 16px; font-weight: 700; color: var(--ink);">No posts found</h3>
     <p style="color: var(--muted); font-size: 13.5px; max-width: 400px; margin: 8px auto 20px;">
-      Essayez de modifier vos filtres ou de faire une autre recherche pour trouver des discussions.
+      Try adjusting your filters or searching again to find discussions.
     </p>
-    <button class="btn btn--ghost" (click)="clearFilters()">Effacer les filtres</button>
+    <button class="btn btn--ghost" (click)="clearFilters()">Clear filters</button>
   </div>
 
   <!-- MODAL FIL DE DISCUSSION DÉTAILLÉ & MODÉRATION (Drawer latéral large) -->
@@ -194,11 +194,11 @@
         <div class="alert alert--error" *ngIf="selectedPost?.reported" style="margin-bottom: 8px;">
           <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
           <div style="flex: 1;">
-            <div>Cette publication a été signalée par la communauté.</div>
+            <div>This post was reported by the community.</div>
             <div style="font-size: 11.5px; font-weight: 500; margin-top: 2px;">Motif : <strong>{{ selectedPost?.reportReason }}</strong></div>
           </div>
           <button class="btn btn--sm btn--blue" style="background: #fff; border: 1px solid var(--red);" (click)="approvePost(selectedPost!)">
-            Valider / Ignorer
+            Confirm / Ignorer
           </button>
         </div>
 
@@ -228,7 +228,7 @@
             </div>
           </div>
 
-          <!-- Contenu du message -->
+          <!-- Message content -->
           <div style="font-size: 13.5px; color: var(--ink-2); line-height: 1.65; white-space: pre-wrap;">{{ selectedPost!.content }}</div>
 
           <!-- Footer stats -->
@@ -239,7 +239,7 @@
 
         </div>
 
-        <!-- Zone des Réponses / Commentaires -->
+        <!-- Zone des Replies / Commentaires -->
         <div>
           <h3 style="font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">
             Fils de discussion ({{ selectedPost!.replies?.length || 0 }})
@@ -276,7 +276,7 @@
                   <span style="font-size: 11px; color: var(--muted);">{{ rep.createdAt | date:'dd MMM à HH:mm' }}</span>
                   <!-- Bouton suppression commentaire -->
                   <button type="button" (click)="deleteReply(rep)" style="background: transparent; border: none; cursor: pointer; color: var(--muted-2); transition: color var(--transition);"
-                          onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--muted-2)'" title="Supprimer ce commentaire">
+                          onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--muted-2)'" title="Delete ce commentaire">
                     <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
                   </button>
                 </div>
@@ -285,7 +285,7 @@
               <!-- Alerte signalement commentaire -->
               <div *ngIf="rep.reported" style="background: var(--red-light); color: var(--red-dark); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
                 <span>⚠️ Commentaire signalé : <strong>{{ rep.reportReason }}</strong></span>
-                <button class="btn btn--sm btn--blue" style="padding: 2px 8px; font-size: 10px; background: #fff;" (click)="approveReply(rep)">Valider</button>
+                <button class="btn btn--sm btn--blue" style="padding: 2px 8px; font-size: 10px; background: #fff;" (click)="approveReply(rep)">Confirm</button>
               </div>
 
               <!-- Corps commentaire -->
@@ -297,7 +297,7 @@
 
             <!-- Fils vide -->
             <div *ngIf="!selectedPost!.replies || selectedPost!.replies.length === 0" style="text-align: center; padding: 24px 0; color: var(--muted); border: 1.5px dashed var(--line); border-radius: var(--radius-sm);">
-              Aucun commentaire pour le moment.
+              No comments yet.
             </div>
 
           </div>
@@ -309,8 +309,8 @@
       <div style="padding: 20px 24px; border-top: 1px solid var(--line); background: var(--surface-2); border-bottom-left-radius: var(--radius); border-bottom-right-radius: var(--radius);">
         <div style="display: flex; gap: 12px; align-items: flex-end;">
           <div style="flex: 1;">
-            <label class="field__label" style="margin-bottom: 6px;">Réponse officielle de l'Administration</label>
-            <textarea class="field__input" [(ngModel)]="newReplyContent" rows="2" placeholder="Saisissez une réponse officielle en tant que Direction Générale Esprit..." style="font-size: 13px; resize: none; min-height: 54px;"></textarea>
+            <label class="field__label" style="margin-bottom: 6px;">Official Administration reply</label>
+            <textarea class="field__input" [(ngModel)]="newReplyContent" rows="2" placeholder="Enter an official reply as Esprit General Management..." style="font-size: 13px; resize: none; min-height: 54px;"></textarea>
           </div>
           <button class="btn btn--primary" (click)="submitReply()" [disabled]="submittingReply || !newReplyContent.trim()" style="padding-top: 12px; padding-bottom: 12px;">
             <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>

@@ -1,0 +1,41 @@
+<div class="top-matches-panel">
+  <div class="panel-header">
+    <h3>Top Matched Candidates</h3>
+    <span class="badge-new" *ngIf="selectedOffreId">AI</span>
+  </div>
+
+  <div class="matches-skeleton" *ngIf="loading">
+    <div class="match-skeleton" *ngFor="let _ of [1,2,3]">
+      <div class="sk-avatar"></div>
+      <div class="sk-lines">
+        <div class="sk-line"></div>
+        <div class="sk-line short"></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="empty-hint" *ngIf="!loading && !selectedOffreId">
+    Select a job offer to see AI-matched candidates.
+  </p>
+
+  <p class="empty-hint" *ngIf="!loading && selectedOffreId && displayCandidates.length === 0">
+    No applicants yet for this offer.
+  </p>
+
+  <ul class="matches-list" *ngIf="!loading && displayCandidates.length > 0">
+    <li
+      *ngFor="let candidate of displayCandidates"
+      class="match-item"
+      (click)="selectCandidate(candidate)">
+      <div class="match-avatar">{{ initials(candidate) }}</div>
+      <div class="match-info">
+        <strong>{{ candidate.etudiantNom }}</strong>
+        <span class="match-role">{{ candidate.filiere || 'Candidate' }}</span>
+        <div class="match-bar">
+          <div class="match-fill" [style.width.%]="scoreFor(candidate)"></div>
+        </div>
+      </div>
+      <span class="match-score">{{ scoreFor(candidate) }}%</span>
+    </li>
+  </ul>
+</div>

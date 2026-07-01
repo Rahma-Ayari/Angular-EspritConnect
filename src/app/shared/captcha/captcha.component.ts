@@ -68,7 +68,7 @@ export class CaptchaComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.error?.error || 'Impossible de charger le CAPTCHA.';
+        this.errorMessage = err.error?.error || 'Unable to load CAPTCHA.';
       }
     });
   }
@@ -145,7 +145,7 @@ export class CaptchaComponent implements OnInit {
 
     const answers = this.buildAnswers();
     if (answers.length === 0) {
-      this.errorMessage = 'Veuillez compléter le défi CAPTCHA.';
+      this.errorMessage = 'Please complete the CAPTCHA challenge.';
       return;
     }
 
@@ -166,12 +166,12 @@ export class CaptchaComponent implements OnInit {
           };
           this.verified.emit(this.verifiedState);
         } else {
-          this.errorMessage = res.message || 'Validation échouée.';
+          this.errorMessage = res.message || 'Validation failed.';
         }
       },
       error: (err) => {
         this.verifying = false;
-        this.errorMessage = err.error?.error || 'Réponse incorrecte.';
+        this.errorMessage = err.error?.error || 'Incorrect answer.';
         if (err.error?.code === 'CAPTCHA_MAX_ATTEMPTS' || err.error?.code === 'CAPTCHA_EXPIRED') {
           this.loadCaptcha();
         }

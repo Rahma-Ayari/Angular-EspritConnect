@@ -46,7 +46,7 @@ export class MailingListsComponent implements OnInit {
   editDesc     = '';
   editSaving   = false;
 
-  // ── Membres ──
+  // ── Members ──
   membersListId:   number | null = null;
   membersListName  = '';
   members:         MailingListMember[] = [];
@@ -82,14 +82,14 @@ export class MailingListsComponent implements OnInit {
         this.lists.unshift(created);
         this.resetCreateForm();
         this.creating = false;
-        this.success('Liste créée avec succès !');
+        this.success('List created successfully!');
       },
       error: () => {
         // Simulation locale si backend absent
         this.lists.unshift({ id: Date.now(), name: this.newListName, description: this.newListDesc, membersCount: 0 });
         this.resetCreateForm();
         this.creating = false;
-        this.success('Liste créée (mode démo).');
+        this.success('List created (demo mode).');
       }
     });
   }
@@ -122,7 +122,7 @@ export class MailingListsComponent implements OnInit {
         if (idx !== -1) this.lists[idx] = { ...this.lists[idx], ...updated };
         this.cancelEdit();
         this.editSaving = false;
-        this.success('Liste modifiée !');
+        this.success('List updated!');
       },
       error: () => {
         // Simulation locale
@@ -130,19 +130,19 @@ export class MailingListsComponent implements OnInit {
         if (idx !== -1) { this.lists[idx].name = this.editName; this.lists[idx].description = this.editDesc; }
         this.cancelEdit();
         this.editSaving = false;
-        this.success('Liste modifiée (mode démo).');
+        this.success('List updated (demo mode).');
       }
     });
   }
 
   /** Supprime une liste */
   deleteList(id: number): void {
-    if (!confirm('Supprimer cette liste de diffusion ? Cette action est irréversible.')) return;
+    if (!confirm('Delete this mailing list? This action cannot be undone.')) return;
 
     this.http.delete(`${this.base}/api/email-communications/mailing-lists/${id}`)
       .subscribe({
-        next:  () => { this.lists = this.lists.filter(l => l.id !== id); this.success('Liste supprimée.'); },
-        error: () => { this.lists = this.lists.filter(l => l.id !== id); this.success('Liste supprimée (mode démo).'); }
+        next:  () => { this.lists = this.lists.filter(l => l.id !== id); this.success('List deleted.'); },
+        error: () => { this.lists = this.lists.filter(l => l.id !== id); this.success('List deleted (demo mode).'); }
       });
   }
 
@@ -169,7 +169,7 @@ export class MailingListsComponent implements OnInit {
     a.download = `${listName.replace(/\s+/g, '_')}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    this.success(`Export CSV de "${listName}" téléchargé !`);
+    this.success(`CSV export of "${listName}" downloaded!`);
   }
 
   /** Ouvre le panneau membres */
