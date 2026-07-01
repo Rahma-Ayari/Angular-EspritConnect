@@ -4,27 +4,27 @@
 
     <div *ngIf="state === 'loading'" class="status-box loading">
       <div class="spinner"></div>
-      <p>Vérification de votre email en cours…</p>
+      <p>Verifying your email…</p>
     </div>
 
     <div *ngIf="state === 'success'" class="status-box success">
       <i class="bi bi-check-circle-fill"></i>
       <h1>{{ message }}</h1>
-      <p>Vous pouvez maintenant vous connecter une fois votre compte approuvé par l'administrateur.</p>
-      <button type="button" class="btn-primary" (click)="goToLogin()">Se connecter</button>
+      <p>You can now log in once your account is approved by an administrator.</p>
+      <button type="button" class="btn-primary" (click)="goToLogin()">Log in</button>
     </div>
 
     <div *ngIf="state === 'expired'" class="status-box error">
       <i class="bi bi-clock-history"></i>
       <h1>{{ message }}</h1>
       <p>Demandez un nouvel email depuis la page d'inscription ou contactez le support.</p>
-      <button type="button" class="btn-secondary" (click)="goToLogin()">Retour à la connexion</button>
+      <button type="button" class="btn-secondary" (click)="goToLogin()">Back to log in</button>
     </div>
 
     <div *ngIf="state === 'invalid' || state === 'missing'" class="status-box error">
       <i class="bi bi-x-circle-fill"></i>
       <h1>{{ message }}</h1>
-      <button type="button" class="btn-secondary" (click)="goToLogin()">Retour à la connexion</button>
+      <button type="button" class="btn-secondary" (click)="goToLogin()">Back to log in</button>
     </div>
   </div>
 </div>

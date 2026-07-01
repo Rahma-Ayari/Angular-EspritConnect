@@ -18,7 +18,7 @@ export class AIChatbotComponent implements AfterViewChecked, OnInit {
   messages: { sender: 'user' | 'bot', content: string, timestamp: Date }[] = [
     {
       sender: 'bot',
-      content: 'Bonjour ! Je suis votre assistant ESPRIT Connect. Posez-moi vos questions sur la carrière, la plateforme, les événements, le mentorat ou autre chose.',
+      content: "Hello! I'm your ESPRIT Connect assistant. Ask me about careers, the platform, events, mentoring, or anything else.",
       timestamp: new Date()
     }
   ];
@@ -69,7 +69,7 @@ export class AIChatbotComponent implements AfterViewChecked, OnInit {
     this.messages = [
       {
         sender: 'bot',
-        content: 'Historique effacé. Comment puis-je vous aider ?',
+        content: 'History cleared. How can I help you?',
         timestamp: new Date()
       }
     ];
@@ -116,7 +116,7 @@ export class AIChatbotComponent implements AfterViewChecked, OnInit {
       error: () => {
         this.messages.push({
           sender: 'bot',
-          content: 'Désolé, je n\'arrive pas à joindre le serveur. Vérifiez votre connexion et réessayez.',
+          content: "Sorry, I can't reach the server. Check your connection and try again.",
           timestamp: new Date()
         });
         this.isTyping = false;

@@ -6,7 +6,7 @@
     </svg>
     <input 
       type="text" 
-      placeholder="Rechercher des sujets, groupes ou cours..."
+      placeholder="Search topics, groups, or courses..."
       [(ngModel)]="searchQuery"
       (keyup.enter)="onSearch()"
     >
@@ -59,7 +59,7 @@
               <polyline points="16 17 21 12 16 7"></polyline>
               <line x1="21" y1="12" x2="9" y2="12"></line>
             </svg>
-            Déconnexion
+            Log out
           </button>
         </div>
       </div>
@@ -68,26 +68,15 @@
     <!-- Admin previewing front office -->
     <ng-container *ngIf="showAdminPreviewBar">
       <span class="user-badge" [style.background-color]="currentMode === 'student' ? '#10b981' : '#3b82f6'">
-        {{ currentMode === 'student' ? 'VUE ÉTUDIANT (PREVIEW)' : 'VUE ALUMNI (PREVIEW)' }}
+        {{ currentMode === 'student' ? 'STUDENT VIEW (PREVIEW)' : 'ALUMNI VIEW (PREVIEW)' }}
       </span>
       <button class="back-admin-btn" (click)="switchTo('admin')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="back-icon">
           <polyline points="15 18 9 12 15 6"></polyline>
         </svg>
-        Retour Administration
+        Back to Admin
       </button>
     </ng-container>
 
-    <!-- Affichage en mode Utilisateur réel (Étudiant / Alumni / Entreprise) -->
-    <ng-container *ngIf="userRole !== 'ADMIN'">
-      <span
-        class="user-badge"
-        [class.user-badge--clickable]="userRole === 'ENTREPRISE'"
-        [style.background-color]="userRole === 'ALUMNI' ? '#3b82f6' : userRole === 'ENTREPRISE' ? '#8b5cf6' : '#10b981'"
-        (click)="userRole === 'ENTREPRISE' && goToEnterpriseJobs()"
-      >
-        {{ userViewLabel }}
-      </span>
-    </ng-container>
   </div>
 </header>

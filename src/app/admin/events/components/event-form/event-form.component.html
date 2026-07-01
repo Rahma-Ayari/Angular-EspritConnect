@@ -134,11 +134,11 @@
         <label for="entrepriseId">Organizer</label>
         <select id="entrepriseId" formControlName="entrepriseId">
           <option [ngValue]="null">No enterprise organizer</option>
-          <option *ngFor="let entreprise of entreprises" [ngValue]="entreprise.idEntreprise">
+          <option *ngFor="let entreprise of companies" [ngValue]="entreprise.idEntreprise">
             {{ entreprise.nom }}
           </option>
         </select>
-        <span class="field-hint" *ngIf="entreprises.length === 0">Enterprise list unavailable or not authorized.</span>
+        <span class="field-hint" *ngIf="companies.length === 0">Enterprise list unavailable or not authorized.</span>
       </div>
 
       <div class="field full">

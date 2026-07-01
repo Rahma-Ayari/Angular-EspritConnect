@@ -43,7 +43,7 @@ export class ForumPostsComponent implements OnInit {
         this.loadPosts();
       },
       error: () => {
-        this.errorMsg = "Impossible de charger les catégories.";
+        this.errorMsg = "Unable to load categories.";
         this.loading = false;
       }
     });
@@ -64,7 +64,7 @@ export class ForumPostsComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.errorMsg = "Impossible de charger les publications.";
+        this.errorMsg = "Unable to load posts.";
         this.loading = false;
       }
     });
@@ -87,9 +87,9 @@ export class ForumPostsComponent implements OnInit {
     this.forumService.togglePinPost(post.id).subscribe({
       next: (updatedPost) => {
         post.pinned = updatedPost.pinned;
-        this.showSuccess(post.pinned ? "Publication épinglée au sommet !" : "Publication désépinglée.");
+        this.showSuccess(post.pinned ? "Post pinned to top!" : "Post unpinned.");
       },
-      error: () => this.showError("Erreur lors de l'épinglage.")
+      error: () => this.showError("Error pinning post.")
     });
   }
 
@@ -97,13 +97,13 @@ export class ForumPostsComponent implements OnInit {
     if (!post.id || !confirm(`Voulez-vous vraiment supprimer définitivement la publication "${post.title}" ?`)) return;
     this.forumService.deletePost(post.id).subscribe({
       next: () => {
-        this.showSuccess("Publication supprimée avec succès.");
+        this.showSuccess("Post deleted successfully.");
         if (this.selectedPost?.id === post.id) {
           this.closeDetailModal();
         }
         this.loadPosts();
       },
-      error: () => this.showError("Erreur lors de la suppression.")
+      error: () => this.showError("Error deleting post.")
     });
   }
 
@@ -113,9 +113,9 @@ export class ForumPostsComponent implements OnInit {
       next: () => {
         post.reported = false;
         post.reportReason = undefined;
-        this.showSuccess("Le signalement a été résolu et archivé.");
+        this.showSuccess("Report resolved and archived.");
       },
-      error: () => this.showError("Erreur lors de la validation.")
+      error: () => this.showError("Error validating post.")
     });
   }
 
@@ -130,7 +130,7 @@ export class ForumPostsComponent implements OnInit {
         this.newReplyContent = '';
         this.showDetailModal = true;
       },
-      error: () => this.showError("Impossible de charger le fil de discussion.")
+      error: () => this.showError("Unable to load discussion thread.")
     });
   }
 
@@ -145,7 +145,7 @@ export class ForumPostsComponent implements OnInit {
 
     const payload: ForumReply = {
       content: this.newReplyContent.trim(),
-      authorName: "Direction Générale Esprit",
+      authorName: "Direction Generale Esprit",
       authorEmail: "admin.connect@esprit.tn",
       authorRole: "ADMIN",
       reported: false
@@ -160,12 +160,12 @@ export class ForumPostsComponent implements OnInit {
         }
         this.newReplyContent = '';
         this.submittingReply = false;
-        this.showSuccess("Votre réponse officielle a été publiée !");
+        this.showSuccess("Your official reply was published!");
         // Recharge le post liste en arrière plan
         this.loadPosts();
       },
       error: () => {
-        this.showError("Impossible d'ajouter la réponse.");
+        this.showError("Unable to add reply.");
         this.submittingReply = false;
       }
     });
@@ -181,7 +181,7 @@ export class ForumPostsComponent implements OnInit {
         this.showSuccess("Commentaire supprimé.");
         this.loadPosts();
       },
-      error: () => this.showError("Erreur lors de la suppression du commentaire.")
+      error: () => this.showError("Error deleting comment.")
     });
   }
 
@@ -191,19 +191,19 @@ export class ForumPostsComponent implements OnInit {
       next: () => {
         reply.reported = false;
         reply.reportReason = undefined;
-        this.showSuccess("Signalement du commentaire résolu.");
+        this.showSuccess("Comment report resolved.");
       },
-      error: () => this.showError("Erreur lors de la résolution du commentaire.")
+      error: () => this.showError("Error resolving comment.")
     });
   }
 
   getRoleLabel(role: string): string {
     const labels: Record<string, string> = {
-      'ETUDIANT': 'Étudiant',
+      'ETUDIANT': 'Student',
       'ALUMNI': 'Alumni',
       'ENSEIGNANT': 'Enseignant',
       'ADMIN': 'Admin',
-      'ENTREPRISE': 'Entreprise'
+      'ENTREPRISE': 'Company'
     };
     return labels[role] || role;
   }

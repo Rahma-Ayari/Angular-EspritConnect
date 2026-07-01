@@ -16,7 +16,7 @@
           </span>
         </div>
         <div class="post-card__date">
-          {{ post.createdAt | date:'dd MMM yyyy à HH:mm' }}
+          {{ post.createdAt | date:'dd MMM yyyy, HH:mm' }}
         </div>
       </div>
     </div>
@@ -28,7 +28,7 @@
 
   <div class="post-card__body">
     <h3 class="post-card__title">
-      <span class="pin-icon" *ngIf="post.pinned" title="Message important épinglé">📌</span>
+      <span class="pin-icon" *ngIf="post.pinned" title="Important pinned message">📌</span>
       {{ post.title }}
     </h3>
     <p class="post-card__excerpt">
@@ -45,7 +45,7 @@
         </svg>
         <span>{{ post.viewsCount || 0 }}</span>
       </span>
-      <span class="stat-item" title="Réponses">
+      <span class="stat-item" title="Replies">
         <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
         </svg>

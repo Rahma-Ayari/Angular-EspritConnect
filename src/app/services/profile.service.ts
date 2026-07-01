@@ -27,7 +27,7 @@ export interface Profile {
   filiere?: string;
   anneePromotion?: number;
   domaine?: string;
-  disponibleMentorat?: boolean;
+  disponibleMentoring?: boolean;
   entrepriseActuelle?: string;
   registreCommerce?: string;
   secteurActivite?: string;
@@ -41,7 +41,7 @@ const ALLOWED_FIELDS: (keyof Profile)[] = [
   'prenom', 'telephone', 'adresse', 'ville', 'pays', 'codePostal',
   'siteWeb', 'dateNaissance', 'genre', 'nomProprietaire',
   'niveau', 'filiere', 'anneePromotion', 'domaine',
-  'disponibleMentorat', 'entrepriseActuelle',
+  'disponibleMentoring', 'entrepriseActuelle',
   'registreCommerce', 'secteurActivite', 'descriptionEntreprise'
 ];
 

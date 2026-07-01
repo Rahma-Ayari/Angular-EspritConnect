@@ -51,7 +51,7 @@ export class StudentForumComponent implements OnInit {
   categories: ForumCategory[] = [];
   filteredPosts: ForumPost[] = [];
 
-  // Filtres actifs
+  // Filters actifs
   selectedCategoryId: number | null = null;
   searchQuery: string = '';
   loading: boolean = false;
@@ -62,7 +62,7 @@ export class StudentForumComponent implements OnInit {
   isSubmitting: boolean = false;
   creationSuccess: boolean = false;
 
-  // Modèle pour le nouveau groupe/discussion
+  // Template pour le nouveau groupe/discussion
   newGroup = {
     title: '',
     website: '',
@@ -107,7 +107,7 @@ export class StudentForumComponent implements OnInit {
           this.newGroup.categoryId = data[0].id;
         }
       },
-      error: (err) => console.error('Erreur chargement catégories:', err)
+      error: (err) => console.error('Error chargement catégories:', err)
     });
   }
 
@@ -125,7 +125,7 @@ export class StudentForumComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Erreur chargement posts:', err);
+        console.error('Error chargement posts:', err);
         // Fallback mock en cas de problème de connexion backend
         this.posts = this.getMockPosts();
         this.applyFilters();
@@ -226,7 +226,7 @@ export class StudentForumComponent implements OnInit {
     this.newGroup.tags = this.newGroup.tags.filter(t => t !== tag);
   }
 
-  // --- Gestion Étape 3 (Membres) ---
+  // --- Gestion Étape 3 (Members) ---
   filterSuggestions(): void {
     this.showSuggestions = this.memberSearchQuery.trim().length > 0;
   }
@@ -269,7 +269,7 @@ export class StudentForumComponent implements OnInit {
     }
     if (this.newGroup.members.length > 0) {
       formattedContent += `<div style="margin-top: 15px; font-size: 13px; color: #555;">` +
-        `<strong>Membres invités :</strong> ` + 
+        `<strong>Members invités :</strong> ` + 
         this.newGroup.members.map(m => `${m.name} (${m.role})`).join(', ') + 
         `</div>`;
     }
@@ -298,7 +298,7 @@ export class StudentForumComponent implements OnInit {
         this.creationSuccess = true;
       },
       error: (err) => {
-        console.error('Erreur création post:', err);
+        console.error('Error création post:', err);
         // Simulation locale si le backend n'a pas répondu
         this.posts.unshift({
           id: Date.now(),
@@ -330,7 +330,7 @@ export class StudentForumComponent implements OnInit {
         id: 1,
         title: 'Groupe d\'étude Réseaux de Neurones et Deep Learning',
         content: 'Bonjour à tous ! Nous créons un groupe d\'entraide pour le cours de Deep Learning. L\'objectif est de réviser les TD et de collaborer sur le projet de fin de semestre.',
-        category: { id: 1, name: 'Génie Logiciel', color: 'blue' },
+        category: { id: 1, name: 'Software Engineering', color: 'blue' },
         authorName: 'Ahmed Ayedi',
         authorEmail: 'ahmed@esprit.tn',
         authorRole: 'ETUDIANT',
@@ -341,9 +341,9 @@ export class StudentForumComponent implements OnInit {
       },
       {
         id: 2,
-        title: 'Préparation des entretiens pour l\'Alternance 2026',
+        title: 'Prébyation des entretiens pour l\'Apprenticeship 2026',
         content: 'Partage de ressources, questions classiques de codage (Leetcode) et simulations d\'entretiens techniques pour décrocher une alternance en cycle d\'ingénieur.',
-        category: { id: 2, name: 'Alternance', color: 'green' },
+        category: { id: 2, name: 'Apprenticeship', color: 'green' },
         authorName: 'Safa Bennasr',
         authorEmail: 'safa@esprit.tn',
         authorRole: 'ETUDIANT',

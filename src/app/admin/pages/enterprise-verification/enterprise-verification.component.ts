@@ -78,7 +78,7 @@ export class EnterpriseVerificationComponent implements OnInit {
       this.applyFilters();
       this.loading = false;
     }).catch(err => {
-      this.error = 'Erreur lors du chargement des données';
+      this.error = 'Error loading data';
       this.loading = false;
       console.error(err);
     });
@@ -184,7 +184,7 @@ export class EnterpriseVerificationComponent implements OnInit {
 
   viewDocument(enterprise: EnterpriseVerification): void {
     if (!enterprise.hasDocument) {
-      this.error = 'Aucun document disponible';
+      this.error = 'No document available';
       return;
     }
 
@@ -194,7 +194,7 @@ export class EnterpriseVerificationComponent implements OnInit {
         window.open(url, '_blank');
       },
       error: (err) => {
-        this.error = 'Erreur lors du téléchargement du document';
+        this.error = 'Error downloading document';
         console.error(err);
       }
     });
@@ -210,7 +210,7 @@ export class EnterpriseVerificationComponent implements OnInit {
         this.autoVerifyResult = result;
       },
       error: (err) => {
-        this.error = 'Erreur lors de la vérification automatique';
+        this.error = 'Error during automatic verification';
         this.showAutoVerifyModal = false;
         console.error(err);
       }
@@ -245,13 +245,13 @@ export class EnterpriseVerificationComponent implements OnInit {
       this.verificationNotes
     ).subscribe({
       next: () => {
-        this.success = 'Entreprise approuvée avec succès';
+        this.success = 'Company approved successfully';
         this.closeVerifyModal();
         this.loadData();
         this.actionLoading = false;
       },
       error: (err) => {
-        this.error = err.error?.message || 'Erreur lors de l\'approbation';
+        this.error = err.error?.message || 'Error during approval';
         this.actionLoading = false;
         console.error(err);
       }
@@ -268,13 +268,13 @@ export class EnterpriseVerificationComponent implements OnInit {
       this.verificationNotes
     ).subscribe({
       next: () => {
-        this.success = 'Entreprise refusée';
+        this.success = 'Company rejected';
         this.closeVerifyModal();
         this.loadData();
         this.actionLoading = false;
       },
       error: (err) => {
-        this.error = err.error?.message || 'Erreur lors du refus';
+        this.error = err.error?.message || 'Error during rejection';
         this.actionLoading = false;
         console.error(err);
       }
@@ -308,7 +308,7 @@ export class EnterpriseVerificationComponent implements OnInit {
         this.actionLoading = false;
       },
       error: (err) => {
-        this.error = err.error?.message || 'Erreur lors de la demande de re-soumission';
+        this.error = err.error?.message || 'Error requesting resubmission';
         this.actionLoading = false;
         console.error(err);
       }

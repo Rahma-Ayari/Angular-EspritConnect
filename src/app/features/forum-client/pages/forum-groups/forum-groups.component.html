@@ -2,15 +2,15 @@
   <!-- Header -->
   <header class="groups-header">
     <div class="header-left">
-      <h1 class="title">Groupes d'Échange ESPRIT</h1>
-      <p class="subtitle">Posez vos questions, partagez vos opportunités et échangez avec les membres d'ESPRIT.</p>
+      <h1 class="title">ESPRIT Exchange Groups</h1>
+      <p class="subtitle">Ask questions, share opportunities, and connect with ESPRIT members.</p>
     </div>
     <button class="btn btn-primary btn-create" (click)="openCreate()">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="12" y1="5" x2="12" y2="19"></line>
         <line x1="5" y1="12" x2="19" y2="12"></line>
       </svg>
-      Proposer un groupe
+      Propose a group
     </button>
   </header>
 
@@ -18,10 +18,10 @@
   <div class="groups-filter-bar">
     <div class="tabs">
       <button class="tab-btn" [class.active]="activeTab === 'explore'" (click)="activeTab = 'explore'">
-        Explorer les Groupes
+        Explore Groups
       </button>
       <button class="tab-btn" [class.active]="activeTab === 'my-groups'" (click)="activeTab = 'my-groups'">
-        Mes Groupes ({{ myGroups.length }})
+        Mes Groups ({{ myGroups.length }})
       </button>
     </div>
     <div class="search-box">
@@ -29,45 +29,45 @@
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
-      <input type="text" [(ngModel)]="searchText" placeholder="Rechercher un groupe..." />
+      <input type="text" [(ngModel)]="searchText" placeholder="Search for a group..." />
     </div>
   </div>
 
   <!-- Loading State -->
   <div class="loading-state" *ngIf="loading">
     <div class="spinner"></div>
-    <p>Chargement des groupes...</p>
+    <p>Loading groups...</p>
   </div>
 
   <!-- Empty state -->
   <div class="empty-state" *ngIf="!loading && activeTab === 'explore' && getFilteredActiveGroups().length === 0">
     <div class="empty-icon">👥</div>
-    <h3>Aucun groupe actif trouvé</h3>
-    <p>Soyez le premier à proposer un groupe thématique !</p>
-    <button class="btn btn-primary mt-4" (click)="openCreate()">Créer un groupe</button>
+    <h3>No active groups found</h3>
+    <p>Be the first to propose a topic group!</p>
+    <button class="btn btn-primary mt-4" (click)="openCreate()">Create a group</button>
   </div>
 
   <div class="empty-state" *ngIf="!loading && activeTab === 'my-groups' && getFilteredMyGroups().length === 0">
     <div class="empty-icon">🔒</div>
-    <h3>Vous n'avez rejoint aucun groupe</h3>
-    <p>Explorez la liste des groupes publics et rejoignez-les ou demandez l'accès aux groupes privés.</p>
-    <button class="btn btn-outline mt-4" (click)="activeTab = 'explore'">Explorer les groupes</button>
+    <h3>You haven't joined any groups</h3>
+    <p>Browse public groups and join them, or request access to private groups.</p>
+    <button class="btn btn-outline mt-4" (click)="activeTab = 'explore'">Explore groups</button>
   </div>
 
   <!-- Groups Grid -->
   <div class="groups-grid" *ngIf="!loading && activeTab === 'explore' && getFilteredActiveGroups().length > 0">
-    <div class="group-card" *ngFor="let group of getFilteredActiveGroups()" (click)="group.id && memberships[group.id] && memberships[group.id].status === 'APPROVED' ? visitGroup(group.id) : null">
+    <div class="group-card" *ngFor="let group of getFilteredActiveGroups()" (click)="group.id && memberships[group.id]?.status === 'APPROVED' ? visitGroup(group.id) : null">
       <div class="card-header">
         <span class="visibility-badge" [class.private]="group.private">
-          {{ group.private ? '🔒 Privé' : '🌐 Public' }}
+          {{ group.private ? '🔒 Private' : '🌐 Public' }}
         </span>
         <span class="status-badge" *ngIf="group.id && memberships[group.id]">
-          {{ memberships[group.id].role === 'OWNER' ? 'Propriétaire' : 'Membre' }}
+          {{ memberships[group.id].role === 'OWNER' ? 'Owner' : 'Member' }}
         </span>
       </div>
       <div class="card-body">
         <h3 class="group-title">{{ group.name }}</h3>
-        <p class="group-desc">{{ group.description || 'Aucune description fournie pour ce groupe.' }}</p>
+        <p class="group-desc">{{ group.description || 'No description provided for this group.' }}</p>
       </div>
       <div class="card-footer">
         <div class="creator-info">
@@ -75,17 +75,17 @@
           <span class="creator-name">Par {{ group.creatorName }}</span>
         </div>
         <div class="actions">
-          <button class="btn btn-sm btn-outline" *ngIf="group.id && memberships[group.id] && memberships[group.id].status === 'APPROVED'" (click)="group.id && visitGroup(group.id)">
+          <button class="btn btn-sm btn-outline" *ngIf="group.id && memberships[group.id]?.status === 'APPROVED'" (click)="group.id && visitGroup(group.id)">
             Visiter
           </button>
           <button class="btn btn-sm btn-primary" *ngIf="group.id && !memberships[group.id]" (click)="joinGroup(group, $event)">
-            {{ group.private ? 'Demander l\'accès' : 'Rejoindre' }}
+            {{ group.private ? 'Request access' : 'Join' }}
           </button>
-          <button class="btn btn-sm btn-disabled" *ngIf="group.id && memberships[group.id] && memberships[group.id].status === 'PENDING'" disabled>
-            En attente
+          <button class="btn btn-sm btn-disabled" *ngIf="group.id && memberships[group.id]?.status === 'PENDING'" disabled>
+            Pending
           </button>
-          <button class="btn btn-sm btn-disabled" *ngIf="group.id && memberships[group.id] && memberships[group.id].status === 'REJECTED'" disabled>
-            Refusé
+          <button class="btn btn-sm btn-disabled" *ngIf="group.id && memberships[group.id]?.status === 'REJECTED'" disabled>
+            Rejected
           </button>
         </div>
       </div>
@@ -96,15 +96,15 @@
     <div class="group-card" *ngFor="let group of getFilteredMyGroups()" (click)="group.id && visitGroup(group.id)">
       <div class="card-header">
         <span class="visibility-badge" [class.private]="group.private">
-          {{ group.private ? '🔒 Privé' : '🌐 Public' }}
+          {{ group.private ? '🔒 Private' : '🌐 Public' }}
         </span>
         <span class="status-badge">
-          {{ group.id && memberships[group.id] && memberships[group.id].role === 'OWNER' ? '👑 Propriétaire' : 'Membre' }}
+          {{ group.id && memberships[group.id]?.role === 'OWNER' ? '👑 Owner' : 'Member' }}
         </span>
       </div>
       <div class="card-body">
         <h3 class="group-title">{{ group.name }}</h3>
-        <p class="group-desc">{{ group.description || 'Aucune description fournie pour ce groupe.' }}</p>
+        <p class="group-desc">{{ group.description || 'No description provided for this group.' }}</p>
       </div>
       <div class="card-footer">
         <div class="creator-info">
@@ -124,7 +124,7 @@
   <div class="modal-backdrop" *ngIf="showCreateModal">
     <div class="modal-card">
       <div class="modal-header">
-        <h2>Proposer un nouveau groupe</h2>
+        <h2>Propose a new group</h2>
         <button class="close-btn" (click)="closeCreate()">&times;</button>
       </div>
       <div class="modal-body">
@@ -134,13 +134,13 @@
         </div>
         <div class="form-group">
           <label for="desc">Description</label>
-          <textarea id="desc" [(ngModel)]="groupDescription" rows="4" placeholder="Objectifs et thématiques du groupe..."></textarea>
+          <textarea id="desc" [(ngModel)]="groupDescription" rows="4" placeholder="Group goals and topics..."></textarea>
         </div>
         <div class="form-group checkbox-group">
           <input type="checkbox" id="private" [(ngModel)]="isPrivate" />
           <label for="private" class="checkbox-label">
-            <strong>Groupe privé (Approbation requise)</strong>
-            <span>Les membres doivent demander l'accès et être approuvés par vous pour voir les posts et y participer.</span>
+            <strong>Private group (Approval required)</strong>
+            <span>Members must request access and be approved by you to view and participate in posts.</span>
           </label>
         </div>
         <div class="error-banner" *ngIf="errorMsg">
@@ -148,9 +148,9 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-outline" (click)="closeCreate()" [disabled]="saving">Annuler</button>
+        <button class="btn btn-outline" (click)="closeCreate()" [disabled]="saving">Cancel</button>
         <button class="btn btn-primary" (click)="submitGroup()" [disabled]="saving">
-          {{ saving ? 'Création...' : 'Soumettre' }}
+          {{ saving ? 'Creating...' : 'Submit' }}
         </button>
       </div>
     </div>

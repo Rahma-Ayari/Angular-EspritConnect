@@ -1,55 +1,204 @@
 @import '../../styles/student-jobs.shared.css';
 
-.tab-bar {
+.assistant-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.assistant-header h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.75rem;
+}
+
+.assistant-header p {
+  margin: 0;
+  color: var(--sj-muted);
+}
+
+.powered-badge {
+  font-size: 0.8rem;
+  color: var(--sj-red);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.feature-card {
+  overflow: hidden;
+  border: 1px solid var(--sj-border);
+}
+
+.feature-card.flagship {
+  border-top: 3px solid #16a34a;
+}
+
+.flagship-banner {
+  background: #16a34a;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+}
+
+.card-toggle {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  text-align: left;
+  padding: 1.25rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  align-items: flex-start;
+}
+
+.icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-size: 1.1rem;
+}
+
+.icon-circle.red { background: var(--sj-red-soft); color: var(--sj-red); }
+.icon-circle.purple { background: #f3e8ff; color: #7c3aed; }
+.icon-circle.blue { background: #dbeafe; color: #2563eb; }
+.icon-circle.green { background: #dcfce7; color: #16a34a; }
+
+.card-toggle h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+.card-toggle p {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: var(--sj-muted);
+  line-height: 1.45;
+}
+
+.tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: 0.35rem;
 }
 
-.tab-bar button {
-  border: 1px solid var(--sj-border);
-  background: #fff;
-  padding: 0.5rem 1rem;
+.tags span {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 999px;
+  background: var(--sj-red-soft);
+  color: var(--sj-red);
+}
+
+.tags.purple span { background: #f3e8ff; color: #7c3aed; }
+.tags.blue span { background: #dbeafe; color: #2563eb; }
+.tags.green span { background: #dcfce7; color: #16a34a; }
+
+.chevron {
+  margin-left: auto;
+  color: var(--sj-muted);
+  transition: transform 0.2s;
+}
+
+.feature-card.expanded .chevron {
+  transform: rotate(180deg);
+}
+
+.card-body {
+  padding: 0 1.25rem 1.25rem;
+  border-top: 1px solid var(--sj-border);
+}
+
+.card-body textarea,
+.card-body select,
+.query-row input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--sj-border);
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+}
+
+.upload-link {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: var(--sj-red);
   cursor: pointer;
+  margin-bottom: 0.75rem;
 }
 
-.tab-bar button.active {
-  background: var(--sj-red);
-  color: #fff;
-  border-color: var(--sj-red);
+.letter-snippet {
+  white-space: pre-wrap;
+  font-size: 0.85rem;
+  background: #f9fafb;
+  padding: 0.75rem;
+  border-radius: 8px;
+  max-height: 200px;
+  overflow: auto;
 }
 
-.tab-panel {
+.quick-query {
   padding: 1.25rem;
 }
 
-.file-name {
-  color: var(--sj-muted);
-  font-size: 0.9rem;
+.quick-query h3 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.letter-output {
+.query-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.query-row input {
+  flex: 1;
+  margin: 0;
+}
+
+.prompt-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.prompt-chips button {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--sj-border);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.prompt-chips button:hover {
+  border-color: var(--sj-red);
+  color: var(--sj-red);
+}
+
+.typing-answer {
   white-space: pre-wrap;
-  background: #fafafa;
-  border-radius: 10px;
-  padding: 1rem;
-  margin-top: 1rem;
-  line-height: 1.5;
-  border: 1px solid var(--sj-border);
+  line-height: 1.6;
 }
 
-.qa-blocks ul {
-  padding-left: 1.25rem;
-}
-
-.tab-panel select {
-  display: block;
-  width: 100%;
-  max-width: 400px;
-  margin: 0.5rem 0 1rem;
-  padding: 0.5rem;
-  border-radius: 8px;
-  border: 1px solid var(--sj-border);
+@media (max-width: 800px) {
+  .feature-grid { grid-template-columns: 1fr; }
+  .assistant-header { flex-direction: column; gap: 0.5rem; }
 }

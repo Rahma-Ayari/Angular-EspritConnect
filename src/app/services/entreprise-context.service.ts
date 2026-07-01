@@ -18,7 +18,7 @@ export class EntrepriseContextService {
   getEntrepriseId(): Observable<number> {
     if (!this.entrepriseId$) {
       this.entrepriseId$ = this.http
-        .get<EntrepriseMe>(`${environment.apiUrl}/entreprises/me`)
+        .get<EntrepriseMe>(`${environment.apiUrl}/companies/me`)
         .pipe(
           map((e) => {
             if (!e?.idEntreprise) {

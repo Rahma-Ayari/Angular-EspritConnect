@@ -4,7 +4,7 @@
   <header class="page-header">
     <div class="logo-container">
       <img src="https://esprit.tn/assets/images/esprit-logo.png" alt="Esprit Logo" class="esprit-logo">
-      <div class="tagline">Se former autrement</div>
+      <div class="tagline">Learn differently</div>
       <div class="univ-logo">HONORIS UNITED UNIVERSITIES</div>
     </div>
   </header>
@@ -16,12 +16,12 @@
       <div class="stepper-horizontal">
         <div class="step active">
           <div class="step-circle">1</div>
-          <div class="step-text">Profil de base</div>
+          <div class="step-text">Basic profile</div>
         </div>
         <div class="step-line"></div>
         <div class="step disabled">
           <div class="step-circle">2</div>
-          <div class="step-text">Profil avancé</div>
+          <div class="step-text">Advanced profile</div>
         </div>
         <div class="step-line"></div>
         <div class="step disabled">
@@ -36,8 +36,8 @@
       </div>
 
       <div class="verification-box">
-        <h1>Vérification du e-mail</h1>
-        <p class="intro">Nous devons être certains que cet e-mail est bien le vôtre. Veuillez cliquer sur le lien que nous avons envoyé à</p>
+        <h1>Email verification</h1>
+        <p class="intro">We need to confirm this email belongs to you. Please click the link we sent to</p>
         
         <p class="email-address">{{ email }}</p>
         
@@ -45,17 +45,17 @@
         <p class="resend-feedback success" *ngIf="resendMessage">{{ resendMessage }}</p>
         <p class="resend-feedback error" *ngIf="resendError">{{ resendError }}</p>
         <a *ngIf="verificationUrl" [href]="verificationUrl" class="resend-link" style="display:block; margin-top: 10px;">
-          Ouvrir directement le lien de vérification
+          Open verification link directly
         </a>
 
-        <p class="footer-note">Si vous ne voyez pas cet e-mail dans votre boîte de réception, vérifiez votre dossier de courrier indésirable.</p>
+        <p class="footer-note">If you don't see this email in your inbox, check your spam folder.</p>
         
         <div class="admin-notice">
           <i class="bi bi-clock-history"></i>
-          Votre compte est en attente de validation par l'administrateur.
+          Your account is pending approval by an administrator.
         </div>
 
-        <button class="btn-login" (click)="goToLogin()">Retour à la connexion</button>
+        <button class="btn-login" (click)="goToLogin()">Back to log in</button>
       </div>
 
     </div>

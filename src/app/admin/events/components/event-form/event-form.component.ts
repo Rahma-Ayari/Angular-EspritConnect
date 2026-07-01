@@ -34,7 +34,7 @@ export class EventFormComponent implements OnInit {
   error: string | null = null;
   success: string | null = null;
   imagePreview: string | null = null;
-  entreprises: EntrepriseOption[] = [];
+  companies: EntrepriseOption[] = [];
   eventTypes: EventType[] = [];
   showTypeCreator = false;
   typeCreatorForm!: FormGroup;
@@ -277,14 +277,14 @@ export class EventFormComponent implements OnInit {
     this.error = null;
 
     const sources = {
-      entreprises: this.eventService.getEntreprises().pipe(catchError(() => of([] as EntrepriseOption[]))),
+      companies: this.eventService.getEntreprises().pipe(catchError(() => of([] as EntrepriseOption[]))),
       eventTypes: this.eventService.getEventTypes(true)
     };
 
     if (this.isEdit && this.eventId) {
       forkJoin({ ...sources, event: this.eventService.getEventById(this.eventId) }).subscribe({
-        next: ({ entreprises, eventTypes, event }) => {
-          this.entreprises = entreprises;
+        next: ({ companies, eventTypes, event }) => {
+          this.companies = companies;
           this.eventTypes = eventTypes;
           this.patchEvent(event);
           this.isLoading = false;
@@ -295,8 +295,8 @@ export class EventFormComponent implements OnInit {
     }
 
     forkJoin(sources).subscribe({
-      next: ({ entreprises, eventTypes }) => {
-        this.entreprises = entreprises;
+      next: ({ companies, eventTypes }) => {
+        this.companies = companies;
         this.eventTypes = eventTypes;
         this.isLoading = false;
       },
