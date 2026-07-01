@@ -19,12 +19,46 @@
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
       </svg>
     </button>
-    <button class="icon-btn notification" title="Notifications">
+    <div class="notification-menu" *ngIf="showAdminControls">
+      <button class="icon-btn notification" title="Notifications" (click)="toggleNotifications($event)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span class="badge" *ngIf="unreadNotificationsCount > 0">{{ unreadNotificationsCount }}</span>
+      </button>
+
+      <div class="notifications-dropdown" *ngIf="showNotifications">
+        <div class="notifications-header">
+          <span>Notifications</span>
+          <button type="button" class="mark-all-btn" (click)="markAllNotificationsAsRead($event)" *ngIf="notifications.length > 0">
+            Tout marquer lu
+          </button>
+        </div>
+
+        <div class="notifications-empty" *ngIf="notifications.length === 0">
+          Aucune notification.
+        </div>
+
+        <button
+          type="button"
+          class="notification-item"
+          *ngFor="let notification of notifications"
+          [class.unread]="!notification.lue"
+          (click)="markNotificationAsRead(notification, $event)">
+          <div class="notification-content">{{ notification.contenu }}</div>
+          <div class="notification-meta">
+            <span class="notification-type">{{ notification.type }}</span>
+            <span>{{ formatNotificationDate(notification.dateEnvoi) }}</span>
+          </div>
+        </button>
+      </div>
+    </div>
+    <button class="icon-btn notification" title="Notifications" *ngIf="!showAdminControls">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
         <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
       </svg>
-      <span class="badge" *ngIf="showAdminControls && pendingApprovalsCount > 0">{{ pendingApprovalsCount }}</span>
     </button>
 
     <!-- Affichage en mode Admin -->
