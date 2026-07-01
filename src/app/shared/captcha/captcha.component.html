@@ -21,9 +21,9 @@
       <div class="captcha-header">
         <div class="captcha-badge">
           <i class="bi bi-shield-check"></i>
-          CAPTCHA Hybrid Esprit
+          CAPTCHA Hybride Esprit
         </div>
-        <button type="button" class="captcha-refresh" (click)="loadCaptcha()" [disabled]="verifying" title="New challenge">
+        <button type="button" class="captcha-refresh" (click)="loadCaptcha()" [disabled]="verifying" title="Nouveau défi">
           <i class="bi bi-arrow-clockwise"></i>
         </button>
       </div>
@@ -106,7 +106,7 @@
             (pointercancel)="onPuzzlePointerUp($event)"
           ></div>
         </div>
-        <p class="puzzle-hint">Drag the red piece to the missing spot.</p>
+        <p class="puzzle-hint">Glissez la pièce rouge vers l'emplacement manquant.</p>
       </div>
 
       <div class="captcha-error" *ngIf="errorMessage" role="alert">
@@ -114,7 +114,7 @@
       </div>
 
       <div class="captcha-success" *ngIf="isVerified" role="status">
-        <i class="bi bi-check-circle-fill"></i> CAPTCHA verified
+        <i class="bi bi-check-circle-fill"></i> CAPTCHA validé
       </div>
 
       <button
@@ -124,7 +124,7 @@
         (click)="verifyCaptcha()"
         [disabled]="verifying"
       >
-        <span *ngIf="!verifying">Confirm</span>
+        <span *ngIf="!verifying">Valider</span>
         <span *ngIf="verifying" class="spinner"></span>
       </button>
     </ng-container>

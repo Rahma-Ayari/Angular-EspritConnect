@@ -1,7 +1,7 @@
 <div class="dashboard-container">
   <div class="welcome-section">
-    <h1>Welcome, {{ currentUser?.nom || 'Company' }}</h1>
-    <p>Manage your company account and job postings</p>
+    <h1>Bienvenue, {{ currentUser?.nom || 'Entreprise' }}</h1>
+    <p>Gérez votre compte entreprise et vos offres d'emploi</p>
   </div>
 
   <div class="stats-grid">
@@ -15,11 +15,11 @@
         </ng-container>
       </div>
       <div class="stat-content">
-        <span class="stat-label">Verification status</span>
+        <span class="stat-label">Statut de vérification</span>
         <span class="stat-value" *ngIf="verification" [ngClass]="getStatusClass(verification.verificationStatus)">
           {{ getStatusLabel(verification.verificationStatus) }}
         </span>
-        <span class="stat-value" *ngIf="!verification">Loading...</span>
+        <span class="stat-value" *ngIf="!verification">Chargement...</span>
       </div>
       <a routerLink="/entreprise/verification" class="stat-action">
         Voir détails →
@@ -29,18 +29,18 @@
     <div class="stat-card">
       <div class="stat-icon offers">📋</div>
       <div class="stat-content">
-        <span class="stat-label">Published offers</span>
+        <span class="stat-label">Offres publiées</span>
         <span class="stat-value">0</span>
       </div>
       <a routerLink="/entreprise/jobs/all" class="stat-action">
-        Manage offers →
+        Gérer les offres →
       </a>
     </div>
 
     <div class="stat-card">
       <div class="stat-icon candidates">👥</div>
       <div class="stat-content">
-        <span class="stat-label">Applications received</span>
+        <span class="stat-label">Candidatures reçues</span>
         <span class="stat-value">0</span>
       </div>
       <a routerLink="/entreprise/jobs/all" class="stat-action">
@@ -53,11 +53,11 @@
     <div class="alert alert-warning">
       <span class="alert-icon">⚠️</span>
       <div class="alert-content">
-        <strong>Verification required</strong>
-        <p>To publish job offers, please verify your company account first.</p>
+        <strong>Vérification requise</strong>
+        <p>Pour publier des offres d'emploi, veuillez d'abord faire vérifier votre compte entreprise.</p>
       </div>
       <a routerLink="/entreprise/verification" class="btn btn-primary">
-        Submit la vérification
+        Soumettre la vérification
       </a>
     </div>
   </div>
@@ -66,8 +66,8 @@
     <div class="alert alert-info">
       <span class="alert-icon">⏳</span>
       <div class="alert-content">
-        <strong>Verification in progress</strong>
-        <p>Your verification request is under review. You will be notified once it has been processed.</p>
+        <strong>Vérification en cours</strong>
+        <p>Votre demande de vérification est en cours d'examen. Vous serez notifié dès qu'elle sera traitée.</p>
       </div>
     </div>
   </div>
@@ -76,12 +76,12 @@
     <div class="alert alert-error">
       <span class="alert-icon">✗</span>
       <div class="alert-content">
-        <strong>Verification rejected</strong>
+        <strong>Vérification refusée</strong>
         <p *ngIf="verification?.verificationNotes">{{ verification?.verificationNotes }}</p>
-        <p *ngIf="!verification?.verificationNotes">Your verification request was rejected. Please submit new documents.</p>
+        <p *ngIf="!verification?.verificationNotes">Votre demande de vérification a été refusée. Veuillez soumettre de nouveaux documents.</p>
       </div>
       <a routerLink="/entreprise/verification" class="btn btn-primary">
-        Submit à nouveau
+        Soumettre à nouveau
       </a>
     </div>
   </div>
@@ -91,7 +91,7 @@
     <div class="actions-grid">
       <a routerLink="/entreprise/jobs/create" class="action-card">
         <span class="action-icon">➕</span>
-        <span class="action-label">Publish une offre</span>
+        <span class="action-label">Publier une offre</span>
       </a>
       <a routerLink="/entreprise/jobs/all" class="action-card">
         <span class="action-icon">📊</span>
@@ -99,7 +99,7 @@
       </a>
       <a routerLink="/entreprise/profil" class="action-card">
         <span class="action-icon">⚙️</span>
-        <span class="action-label">Edit my profile</span>
+        <span class="action-label">Modifier mon profil</span>
       </a>
     </div>
   </div>

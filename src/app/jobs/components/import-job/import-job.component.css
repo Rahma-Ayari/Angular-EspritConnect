@@ -103,14 +103,6 @@
   margin: -8px 0 16px 0;
 }
 
-.hint-warn {
-  color: #B45309;
-  background: #FFFBEB;
-  border: 1px solid #FDE68A;
-  border-radius: 8px;
-  padding: 10px 12px;
-}
-
 .error-banner {
   background: #FEF2F2;
   border: 1px solid #FECACA;

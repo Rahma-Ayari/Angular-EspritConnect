@@ -56,7 +56,7 @@ export class ForumGroupsComponent implements OnInit, OnDestroy {
   getCurrentUserName(): string {
     const mode = this.viewMode.getCurrentMode();
     if (mode === 'alumni') return 'Alumni Demo';
-    if (mode === 'student') return 'Student Demo';
+    if (mode === 'student') return 'Étudiant Demo';
     return 'Admin Esprit';
   }
 
@@ -71,7 +71,7 @@ export class ForumGroupsComponent implements OnInit, OnDestroy {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error chargement groupes actifs', err);
+        console.error('Erreur chargement groupes actifs', err);
         this.loading = false;
       }
     });
@@ -80,7 +80,7 @@ export class ForumGroupsComponent implements OnInit, OnDestroy {
       next: (groups) => {
         this.myGroups = groups;
       },
-      error: (err) => console.error('Error chargement mes groupes', err)
+      error: (err) => console.error('Erreur chargement mes groupes', err)
     });
 
     this.api.getUserMemberships(email).subscribe({
@@ -92,7 +92,7 @@ export class ForumGroupsComponent implements OnInit, OnDestroy {
           }
         });
       },
-      error: (err) => console.error('Error chargement adhésions', err)
+      error: (err) => console.error('Erreur chargement adhésions', err)
     });
   }
 
@@ -153,11 +153,11 @@ export class ForumGroupsComponent implements OnInit, OnDestroy {
         next: () => {
           this.closeCreate();
           this.refreshData();
-          alert('Your group creation request was submitted and is pending admin approval.');
+          alert('Votre demande de création de groupe a été soumise avec succès et est en attente de validation par l\'administration.');
         },
         error: (err) => {
           console.error(err);
-          this.errorMsg = err.error?.message || 'Error creating group.';
+          this.errorMsg = err.error?.message || 'Erreur lors de la création du groupe.';
         }
       });
   }
@@ -170,14 +170,14 @@ export class ForumGroupsComponent implements OnInit, OnDestroy {
       next: (m) => {
         this.refreshData();
         if (m.status === 'APPROVED') {
-          alert(`Congratulations! You joined the group "${group.name}".`);
+          alert(`Félicitations ! Vous avez rejoint le groupe "${group.name}".`);
         } else {
-          alert(`Your membership request for the private group "${group.name}" is pending approval by its moderator.`);
+          alert(`Votre demande d'adhésion pour le groupe privé "${group.name}" est en attente d'approbation par son modérateur.`);
         }
       },
       error: (err) => {
         console.error(err);
-        alert(err.error?.message || 'Error attempting to join.');
+        alert(err.error?.message || 'Erreur lors de la tentative d\'adhésion.');
       }
     });
   }

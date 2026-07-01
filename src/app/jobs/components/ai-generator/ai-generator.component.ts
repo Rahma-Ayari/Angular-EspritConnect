@@ -2,7 +2,6 @@ import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil, switchMap } from 'rxjs';
 import { JobAIService } from '../../services/job-ai.service';
-import { poweredByText } from '../../ai/providers/gemini.provider';
 import { JobsService } from '../../services/jobs.service';
 import { EntrepriseContextService } from '../../../services/entreprise-context.service';
 import { navigateJobs } from '../../jobs-router.util';
@@ -45,8 +44,6 @@ export class AiGeneratorComponent implements OnDestroy {
   successMessage = '';
 
   generatedContent: AIGenerateResponse | null = null;
-  aiProvider?: string;
-  aiCached = false;
 
   readonly contractTypes = Object.keys(CONTRACT_TYPE_LABELS) as ContractType[];
   readonly experienceLevels = Object.keys(EXPERIENCE_LEVEL_LABELS) as ExperienceLevel[];
@@ -90,7 +87,7 @@ export class AiGeneratorComponent implements OnDestroy {
     this.successMessage = '';
   }
 
-  generate(forceRefresh = false): void {
+  generate(): void {
     if (!this.canGenerate || this.isGenerating) return;
 
     this.isGenerating = true;
@@ -104,7 +101,7 @@ export class AiGeneratorComponent implements OnDestroy {
         outputLanguage: this.outputLanguage
       };
 
-      this.aiService.improveJobDescription(request, forceRefresh)
+      this.aiService.improveJobDescription(request)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => this.handleGenerationSuccess(response),
@@ -122,32 +119,12 @@ export class AiGeneratorComponent implements OnDestroy {
       outputLanguage: this.outputLanguage
     };
 
-    this.aiService.generateJobDescription(request, forceRefresh)
+    this.aiService.generateJobDescription(request)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => this.handleGenerationSuccess(response),
         error: (error) => this.handleGenerationError(error)
       });
-  }
-
-  regenerate(): void {
-    this.generate(true);
-  }
-
-  copyGenerated(): void {
-    if (!this.generatedContent) return;
-    const text = [
-      this.generatedContent.description,
-      this.generatedContent.responsibilities,
-      this.generatedContent.requirements,
-      this.generatedContent.benefits,
-      this.generatedContent.recruitmentText
-    ].filter(Boolean).join('\n\n');
-    navigator.clipboard.writeText(text);
-  }
-
-  get poweredBy(): string {
-    return poweredByText(this.aiProvider);
   }
 
   acceptAndSave(): void {
@@ -206,10 +183,8 @@ export class AiGeneratorComponent implements OnDestroy {
     navigateJobs(this.router, this.route, ['all']);
   }
 
-  private handleGenerationSuccess(response: AIGenerateResponse & { provider?: string; cached?: boolean }): void {
+  private handleGenerationSuccess(response: AIGenerateResponse): void {
     this.generatedContent = response;
-    this.aiProvider = response.provider;
-    this.aiCached = !!response.cached;
     this.hasGenerated = true;
     this.isGenerating = false;
     if (!this.title.trim() && response.suggestedTitle) {

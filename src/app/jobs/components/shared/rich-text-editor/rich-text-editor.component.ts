@@ -14,7 +14,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   ]
 })
 export class RichTextEditorComponent implements ControlValueAccessor {
-  @Input() placeholder = 'Write here...';
+  @Input() placeholder = 'Écrivez ici...';
   @Input() minHeight = '200px';
   @Output() valueChange = new EventEmitter<string>();
 

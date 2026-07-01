@@ -9,7 +9,6 @@ import {
   OUTPUT_LANGUAGE_LABELS,
   OutputLanguage
 } from '../../../models/job.model';
-import { poweredByText } from '../../../ai/providers/gemini.provider';
 
 @Component({
   selector: 'app-ai-assistant-panel',
@@ -26,8 +25,6 @@ export class AIAssistantPanelComponent implements OnDestroy {
   isGenerating = false;
   hasGeneratedOnce = false;
   generatedContent: AIGenerateResponse | null = null;
-  aiProvider?: string;
-  aiCached = false;
   errorMessage = '';
   additionalPrompt = '';
   outputLanguage: OutputLanguage = 'en';
@@ -50,7 +47,7 @@ export class AIAssistantPanelComponent implements OnDestroy {
     return this.additionalPrompt.trim().length > 0 || this.hasStructuredInputs;
   }
 
-  regenerateContent(forceRefresh = false): void {
+  regenerateContent(): void {
     if (!this.canGenerate || this.isGenerating) return;
 
     this.isGenerating = true;
@@ -67,13 +64,11 @@ export class AIAssistantPanelComponent implements OnDestroy {
       outputLanguage: this.outputLanguage
     };
 
-    this.aiService.generateJobDescription(request, forceRefresh)
+    this.aiService.generateJobDescription(request)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           this.generatedContent = response;
-          this.aiProvider = response.provider;
-          this.aiCached = !!response.cached;
           this.hasGeneratedOnce = true;
           this.isGenerating = false;
         },
@@ -83,10 +78,6 @@ export class AIAssistantPanelComponent implements OnDestroy {
           this.errorMessage = error.error?.message || 'Failed to generate content. Please try again.';
         }
       });
-  }
-
-  get poweredBy(): string {
-    return poweredByText(this.aiProvider);
   }
 
   copyContent(): void {

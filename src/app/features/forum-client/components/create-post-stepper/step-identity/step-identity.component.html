@@ -7,13 +7,13 @@
         type="text"
         [(ngModel)]="state.value.title"
         (ngModelChange)="state.patch({ title: $event })"
-        placeholder="E.g. Tips to ace my apprenticeship interview"
+        placeholder="Ex: Conseils pour réussir mon entretien d'alternance"
       />
-      <p class="field__hint">Choose a short, clear, and precise title.</p>
+      <p class="field__hint">Choisissez un titre court, clair et précis.</p>
     </div>
 
     <div class="field">
-      <label class="field__label">Website (optional)</label>
+      <label class="field__label">Site web (optionnel)</label>
       <input
         class="field__input"
         type="text"
@@ -24,31 +24,31 @@
     </div>
 
     <div class="field field--full">
-      <label class="field__label">Your message <span class="field__req">*</span></label>
+      <label class="field__label">Votre message <span class="field__req">*</span></label>
       <textarea
         class="field__input field__textarea"
         [(ngModel)]="state.value.content"
         (ngModelChange)="state.patch({ content: $event })"
-        placeholder="Explain your question or experience share with details..."
+        placeholder="Expliquez votre question ou votre partage d'expérience avec des détails..."
       ></textarea>
-      <p class="field__hint">Tip: be specific (context, constraints, what you have already tried).</p>
+      <p class="field__hint">Astuce : soyez concret (contexte, contraintes, ce que vous avez déjà essayé).</p>
     </div>
 
     <div class="field field--full">
-      <label class="field__label">Banner (optional)</label>
+      <label class="field__label">Bannière (optionnel)</label>
       <div class="upload">
         <input type="file" accept="image/*" (change)="onCoverSelected($event)" />
         <span class="upload__meta" *ngIf="state.value.coverImageFile">
-          Selected file: {{ state.value.coverImageFile.name }}
+          Fichier sélectionné : {{ state.value.coverImageFile.name }}
         </span>
       </div>
-      <p class="field__hint">Banner is not yet sent to the backend (preview only).</p>
+      <p class="field__hint">La bannière n'est pas encore envoyée au backend (aperçu uniquement).</p>
     </div>
   </div>
 
   <div class="step__actions">
     <button type="button" class="btn btn-gradient-red" (click)="next.emit()" [disabled]="!canContinue()">
-      Continue
+      Continuer
     </button>
   </div>
 </div>

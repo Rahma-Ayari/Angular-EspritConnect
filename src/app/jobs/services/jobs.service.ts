@@ -29,7 +29,6 @@ export class JobsService {
       if (filter.status?.length) params = params.set('status', filter.status.join(','));
       if (filter.department) params = params.set('department', filter.department);
       if (filter.location) params = params.set('location', filter.location);
-      if (filter.entrepriseId != null) params = params.set('entrepriseId', filter.entrepriseId.toString());
       if (filter.sortBy) params = params.set('sortBy', filter.sortBy);
       if (filter.sortOrder) params = params.set('sortOrder', filter.sortOrder);
       if (filter.page) params = params.set('page', filter.page.toString());

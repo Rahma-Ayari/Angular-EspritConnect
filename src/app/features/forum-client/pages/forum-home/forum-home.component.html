@@ -3,23 +3,23 @@
   <div class="page-header">
     <div class="header-main-info">
       <div class="title-row">
-        <h1 class="page-title">Forum</h1>
-        <span class="chip-premium" *ngIf="viewMode.getCurrentMode() === 'student' && userRole !== 'ENTREPRISE'">Student Space</span>
-        <span class="chip-premium entreprise" *ngIf="userRole === 'ENTREPRISE'">Company Space</span>
-        <span class="chip-premium alumni" *ngIf="viewMode.getCurrentMode() === 'alumni'">Alumni Network</span>
+        <h1 class="page-title">Espace Forum</h1>
+        <span class="chip-premium" *ngIf="viewMode.getCurrentMode() === 'student' && userRole !== 'ENTREPRISE'">Espace Étudiant</span>
+        <span class="chip-premium entreprise" *ngIf="userRole === 'ENTREPRISE'">Espace Entreprise</span>
+        <span class="chip-premium alumni" *ngIf="viewMode.getCurrentMode() === 'alumni'">Réseau Alumni</span>
       </div>
-      <p class="page-subtitle" style="white-space: nowrap;">Ask questions, share opportunities, and connect with ESPRIT members.</p>
+      <p class="page-subtitle" style="white-space: nowrap;">Posez vos questions, partagez vos opportunités et échangez avec les membres d'ESPRIT.</p>
     </div>
 
     <button class="btn btn--primary btn-gradient-red" (click)="openCreate()">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
         <path d="M12 5v14M5 12h14"></path>
       </svg>
-      Start a discussion
+      Lancer une discussion
     </button>
   </div>
 
-  <!-- SI UN TAB DE SERVICE (Internships / Mentoring) EST SÉLECTIONNÉ -->
+  <!-- SI UN TAB DE SERVICE (Stages / Mentorat) EST SÉLECTIONNÉ -->
   <div class="coming-soon-container card" *ngIf="activeTab">
     <div class="coming-soon-content">
       <div class="illustration-box">
@@ -27,16 +27,16 @@
         <span class="coming-soon-emoji" *ngIf="activeTab === 'aide'">🤝</span>
       </div>
       <h2 class="coming-soon-title">
-        {{ activeTab === 'stages' ? 'Internships & Job Offers ESPRIT' : 'Help & Mentoring' }}
+        {{ activeTab === 'stages' ? 'Offres & Stages ESPRIT' : 'Aide & Mentorat' }}
       </h2>
       <p class="coming-soon-desc">
-        This platform dedicated to {{ activeTab === 'stages' ? 'internships and job offers' : 'mentoring programs between students and alumni' }} is currently under development.
+        Cette plateforme dédiée aux {{ activeTab === 'stages' ? 'stages et offres d\'emploi' : 'programmes de mentorat entre étudiants et anciens' }} est actuellement en cours de développement.
       </p>
       <div class="coming-soon-meta">
-        <span class="badge-soon">Version 2.0 (Coming soon)</span>
+        <span class="badge-soon">Version 2.0 (Bientôt disponible)</span>
       </div>
       <button class="btn btn--secondary" (click)="clearActiveTab()">
-        Back to General Forum
+        Retourner au Forum Général
       </button>
     </div>
   </div>
@@ -51,7 +51,7 @@
             type="text"
             [(ngModel)]="searchText"
             (input)="onSearch()"
-            placeholder="Search discussions by keywords..."
+            placeholder="Rechercher une discussion par mots-clés..."
           />
           <svg viewBox="0 0 24 24" width="18" height="18" class="search-icon">
             <path fill="currentColor"
@@ -61,26 +61,26 @@
 
         <div class="sort-bar">
           <div class="filter-category-select">
-            <span class="sort-label">Category:</span>
+            <span class="sort-label">Catégorie :</span>
             <div class="select-wrapper">
               <select [ngModel]="selectedCategoryId" (ngModelChange)="filterByCategory($event)">
-                <option [ngValue]="undefined">All topics</option>
+                <option [ngValue]="undefined">Toutes les thématiques</option>
                 <option *ngFor="let cat of categories" [ngValue]="cat.id">{{ cat.name }}</option>
               </select>
             </div>
           </div>
 
           <div class="sort-options-container">
-            <span class="sort-label">Sort by:</span>
+            <span class="sort-label">Trier par :</span>
             <div class="sort-options">
               <button class="sort-btn" [class.sort-btn--active]="activeSort === 'date'" (click)="setSort('date')">
-                Recent
+                Récents
               </button>
               <button class="sort-btn" [class.sort-btn--active]="activeSort === 'likes'" (click)="setSort('likes')">
-                Popularity
+                Populaires
               </button>
               <button class="sort-btn" [class.sort-btn--active]="activeSort === 'views'" (click)="setSort('views')">
-                Views
+                Vus
               </button>
             </div>
           </div>
@@ -92,18 +92,18 @@
         <div class="filter-banner-text">
           <span class="filter-emoji">🔍</span>
           <span>
-            Showing topics matching: 
-            <strong>{{ activeFilter === 'mine' ? 'My Contributions' : 'My Favorites' }}</strong>
+            Affichage des sujets correspondant à : 
+            <strong>{{ activeFilter === 'mine' ? 'Mes contributions' : 'Mes favoris' }}</strong>
           </span>
         </div>
         <button class="btn-clear-filter" (click)="clearActiveFilter()">
-          Reset filter ×
+          Réinitialiser le filtre ×
         </button>
       </div>
 
       <div class="preview-loading" *ngIf="loading">
         <div class="spinner"></div>
-        <p>Loading forum topics...</p>
+        <p>Chargement des sujets du forum...</p>
       </div>
 
       <!-- LISTE DES CARTES DES POSTS -->
@@ -118,9 +118,9 @@
         <!-- ZONE VIDE -->
         <div class="empty-state card" *ngIf="posts.length === 0">
           <div class="empty-icon">💬</div>
-          <h3>No discussions found</h3>
-          <p>No topics match these criteria. Be the first to start the conversation!</p>
-          <button class="btn btn--primary btn-gradient-red btn--sm" (click)="openCreate()">Start a discussion</button>
+          <h3>Aucune discussion trouvée</h3>
+          <p>Il n'y a aucun sujet correspondant à ces critères. Soyez le premier à lancer la conversation !</p>
+          <button class="btn btn--primary btn-gradient-red btn--sm" (click)="openCreate()">Lancer une discussion</button>
         </div>
       </div>
     </section>
@@ -138,7 +138,7 @@
       <div class="modal-footer" *ngIf="saving">
         <div class="saving">
           <span class="spinner spinner--sm spinner--red"></span>
-          Publishing your topic...
+          Publication de votre sujet en cours...
         </div>
       </div>
     </div>

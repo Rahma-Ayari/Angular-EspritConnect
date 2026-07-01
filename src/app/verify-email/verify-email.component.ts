@@ -31,13 +31,13 @@ export class VerifyEmailComponent implements OnInit {
     this.authService.verifyEmail(token).subscribe({
       next: () => {
         this.state = 'success';
-        this.message = 'Your account has been verified.';
+        this.message = 'Votre compte a été vérifié.';
       },
       error: (err) => {
         const code = err.error?.code;
         if (code === 'EXPIRED_TOKEN') {
           this.state = 'expired';
-          this.message = 'Link expired.';
+          this.message = 'Lien expiré.';
         } else {
           this.state = 'invalid';
           this.message = err.error?.message || 'Lien invalide.';

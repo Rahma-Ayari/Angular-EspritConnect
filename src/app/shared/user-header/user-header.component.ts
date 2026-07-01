@@ -10,9 +10,9 @@ export class UserHeaderComponent implements OnInit {
   searchQuery = '';
   showDropdown = false;
   notifications = [
-    { id: 1, message: 'New opportunity available', time: '2 min' },
-    { id: 2, message: 'Your profile was viewed', time: '1 h' },
-    { id: 3, message: 'Event tomorrow at 2 PM', time: '3 h' }
+    { id: 1, message: 'Nouvelle opportunité disponible', time: '2 min' },
+    { id: 2, message: 'Votre profil a été vu', time: '1 h' },
+    { id: 3, message: 'Événement demain à 14h', time: '3 h' }
   ];
 
   constructor(private authService: AuthService) {}

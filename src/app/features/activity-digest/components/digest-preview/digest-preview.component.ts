@@ -5,7 +5,7 @@ import { Component, Input } from '@angular/core';
   template: `
     <div class="dp-wrap">
       <iframe *ngIf="html" [srcdoc]="html" class="dp-frame" sandbox="allow-same-origin"></iframe>
-      <div *ngIf="!html" class="dp-empty">No preview available</div>
+      <div *ngIf="!html" class="dp-empty">Aucun aperçu disponible</div>
     </div>
   `,
   styles: [`

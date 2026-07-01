@@ -5,28 +5,28 @@
       <line x1="19" y1="12" x2="5" y2="12"></line>
       <polyline points="12 19 5 12 12 5"></polyline>
     </svg>
-    Back aux groupes
+    Retour aux groupes
   </a>
 
   <!-- CASE 1: Private group AND not approved member -->
   <div class="locked-view" *ngIf="group.private && !isApprovedMember">
     <div class="locked-card">
       <div class="locked-icon">🔒</div>
-      <h2>Private Group: {{ group.name }}</h2>
+      <h2>Groupe Privé : {{ group.name }}</h2>
       <p class="locked-desc">
-        This group is private. You must be an approved member to view discussions and participate.
+        Ce groupe est privé. Vous devez être membre approuvé pour voir les discussions et participer aux échanges.
       </p>
       
       <div class="creator-badge">
-        <span>Creator: <strong>{{ group.creatorName }}</strong></span>
+        <span>Créateur : <strong>{{ group.creatorName }}</strong></span>
       </div>
 
       <div class="locked-actions">
         <button class="btn btn-primary" *ngIf="!isPendingMember" (click)="joinGroup()">
-          Request access au groupe
+          Demander l'accès au groupe
         </button>
         <button class="btn btn-disabled" *ngIf="isPendingMember" disabled>
-          Access request pending approval
+          Demande d'accès en attente d'approbation
         </button>
       </div>
     </div>
@@ -40,27 +40,27 @@
         <div class="hero-left">
           <div class="meta-row">
             <span class="visibility-badge" [class.private]="group.private">
-              {{ group.private ? '🔒 Private Group' : '🌐 Public Group' }}
+              {{ group.private ? '🔒 Groupe Privé' : '🌐 Groupe Public' }}
             </span>
             <span class="role-badge" *ngIf="isApprovedMember">
-              {{ currentUserRole === 'OWNER' ? '👑 Owner' : 'Member' }}
+              {{ currentUserRole === 'OWNER' ? '👑 Propriétaire' : 'Membre' }}
             </span>
           </div>
           <h1 class="group-name">{{ group.name }}</h1>
-          <p class="group-desc">{{ group.description || 'No description provided.' }}</p>
+          <p class="group-desc">{{ group.description || 'Aucune description fournie.' }}</p>
         </div>
         
         <div class="hero-right">
           <button class="btn btn-outline btn-leave" *ngIf="isApprovedMember && currentUserRole !== 'OWNER'" (click)="leaveGroup()">
-            Leave group
+            Quitter le groupe
           </button>
         </div>
       </div>
 
       <div class="hero-footer">
-        <span class="meta-item">Created by <strong>{{ group.creatorName }}</strong></span>
-        <span class="meta-sebyator">•</span>
-        <span class="meta-item">Members : <strong>{{ members.length }}</strong></span>
+        <span class="meta-item">Créé par <strong>{{ group.creatorName }}</strong></span>
+        <span class="meta-separator">•</span>
+        <span class="meta-item">Membres : <strong>{{ members.length }}</strong></span>
       </div>
     </header>
 
@@ -70,10 +70,10 @@
         💬 Discussions
       </button>
       <button class="detail-tab-btn" [class.active]="activeSubTab === 'members'" (click)="activeSubTab = 'members'">
-        👥 Members ({{ members.length }})
+        👥 Membres ({{ members.length }})
       </button>
       <button class="detail-tab-btn" [class.active]="activeSubTab === 'moderation'" *ngIf="isOwnerOrModerator" (click)="activeSubTab = 'moderation'">
-        🛡️ Moderation ({{ pendingMembers.length }})
+        🛡️ Modération ({{ pendingMembers.length }})
       </button>
     </div>
 
@@ -82,22 +82,22 @@
       <div class="discussion-header">
         <h2>Discussions actives</h2>
         <button class="btn btn-primary" *ngIf="isApprovedMember" (click)="openPostModal()">
-          + New topic
+          + Nouveau sujet
         </button>
       </div>
 
       <!-- Loading posts -->
       <div class="loading-state" *ngIf="loadingPosts">
         <div class="spinner"></div>
-        <p>Loading messages...</p>
+        <p>Chargement des messages...</p>
       </div>
 
       <!-- Empty state -->
       <div class="empty-state" *ngIf="!loadingPosts && posts.length === 0">
         <div class="empty-icon">💬</div>
-        <h3>No discussion topics</h3>
-        <p>Be the first to start a discussion in this group!</p>
-        <button class="btn btn-primary mt-4" *ngIf="isApprovedMember" (click)="openPostModal()">New topic</button>
+        <h3>Aucun sujet de discussion</h3>
+        <p>Soyez le premier à lancer la discussion dans ce groupe !</p>
+        <button class="btn btn-primary mt-4" *ngIf="isApprovedMember" (click)="openPostModal()">Nouveau sujet</button>
       </div>
 
       <!-- Posts List -->
@@ -116,7 +116,7 @@
           <div class="post-right">
             <div class="stat">
               <span class="num">{{ post.viewsCount || 0 }}</span>
-              <span class="lbl">views</span>
+              <span class="lbl">vues</span>
             </div>
             <div class="stat">
               <span class="num">{{ post.likesCount || 0 }}</span>
@@ -129,7 +129,7 @@
 
     <!-- MEMBERS TAB -->
     <div class="tab-content" *ngIf="activeSubTab === 'members'">
-      <h2>Member list</h2>
+      <h2>Liste des membres</h2>
       
       <div class="loading-state" *ngIf="loadingMembers">
         <div class="spinner"></div>
@@ -146,7 +146,7 @@
           </div>
           <div class="member-right">
             <span class="role-badge" [class.owner]="m.role === 'OWNER'">
-              {{ m.role === 'OWNER' ? '👑 Owner' : m.role === 'MODERATOR' ? '🛡️ Moderator' : 'Member' }}
+              {{ m.role === 'OWNER' ? '👑 Propriétaire' : m.role === 'MODERATOR' ? '🛡️ Modérateur' : 'Membre' }}
             </span>
           </div>
         </div>
@@ -155,7 +155,7 @@
 
     <!-- MODERATION TAB -->
     <div class="tab-content" *ngIf="activeSubTab === 'moderation'">
-      <h2>Pending membership requests</h2>
+      <h2>Demandes d'adhésion en attente</h2>
 
       <div class="loading-state" *ngIf="loadingPending">
         <div class="spinner"></div>
@@ -163,8 +163,8 @@
 
       <div class="empty-state" *ngIf="!loadingPending && pendingMembers.length === 0">
         <div class="empty-icon">✓</div>
-        <h3>All requests have been processed</h3>
-        <p>There are no pending membership requests for this group.</p>
+        <h3>Toutes les demandes ont été traitées</h3>
+        <p>Il n'y a aucune demande d'adhésion en attente pour ce groupe.</p>
       </div>
 
       <div class="members-list" *ngIf="!loadingPending && pendingMembers.length > 0">
@@ -181,7 +181,7 @@
               Accepter
             </button>
             <button class="btn btn-sm btn-reject" (click)="pm.id && rejectMember(pm.id)">
-              Reject
+              Refuser
             </button>
           </div>
         </div>
@@ -193,12 +193,12 @@
   <div class="modal-backdrop" *ngIf="showPostModal">
     <div class="modal-card">
       <div class="modal-header">
-        <h2>Post in group</h2>
+        <h2>Publier dans le groupe</h2>
         <button class="close-btn" (click)="closePostModal()">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label for="category">Category <span class="required">*</span></label>
+          <label for="category">Catégorie <span class="required">*</span></label>
           <select id="category" [(ngModel)]="selectedCategoryId">
             <option *ngFor="let cat of categories" [value]="cat.id">
               {{ cat.name }}
@@ -206,21 +206,21 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="title">Subject <span class="required">*</span></label>
-          <input type="text" id="title" [(ngModel)]="postTitle" placeholder="Enter your topic title..." />
+          <label for="title">Sujet <span class="required">*</span></label>
+          <input type="text" id="title" [(ngModel)]="postTitle" placeholder="Entrez le titre de votre sujet..." />
         </div>
         <div class="form-group">
           <label for="content">Contenu <span class="required">*</span></label>
-          <textarea id="content" [(ngModel)]="postContent" rows="6" placeholder="Write your message here..."></textarea>
+          <textarea id="content" [(ngModel)]="postContent" rows="6" placeholder="Rédigez votre message ici..."></textarea>
         </div>
         <div class="error-banner" *ngIf="postError">
           {{ postError }}
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-outline" (click)="closePostModal()" [disabled]="submittingPost">Cancel</button>
+        <button class="btn btn-outline" (click)="closePostModal()" [disabled]="submittingPost">Annuler</button>
         <button class="btn btn-primary" (click)="submitPost()" [disabled]="submittingPost">
-          {{ submittingPost ? 'Publication...' : 'Publish' }}
+          {{ submittingPost ? 'Publication...' : 'Publier' }}
         </button>
       </div>
     </div>

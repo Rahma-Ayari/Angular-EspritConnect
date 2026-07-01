@@ -1,122 +1,53 @@
 <div class="sj-page assistant-page">
-  <header class="assistant-header">
-    <div>
-      <h1>AI Career Assistant</h1>
-      <p>Your personal AI-powered career coach, available 24/7.</p>
-    </div>
-    <span class="powered-badge"><i class="bi bi-magic"></i> Powered by AI</span>
+  <header class="sj-page-header">
+    <h1>AI Career Assistant</h1>
+    <p>Improve your employability with AI-powered coaching.</p>
   </header>
 
-  <div class="feature-grid">
-    <article class="feature-card sj-card" [class.expanded]="expanded === 'resume'">
-      <button type="button" class="card-toggle" (click)="toggle('resume')">
-        <div class="icon-circle red"><i class="bi bi-file-earmark-text"></i></div>
-        <div>
-          <h3>Resume Review</h3>
-          <p>Upload your resume and get instant AI feedback: strengths, weaknesses, ATS score, and actionable improvement suggestions.</p>
-          <div class="tags"><span>Strengths analysis</span><span>ATS Score</span><span>Keyword gaps</span><span>Format check</span></div>
-        </div>
-        <i class="bi bi-chevron-down chevron"></i>
-      </button>
-      <div class="card-body" *ngIf="expanded === 'resume'">
-        <textarea [(ngModel)]="resumeText" rows="6" placeholder="Paste resume text or upload below..."></textarea>
-        <label class="upload-link">Upload file <input type="file" accept=".txt,.pdf,.doc,.docx" (change)="onCvFile($event)" hidden /></label>
-        <app-ai-result-panel [loading]="loading" [error]="error" [provider]="provider" (regenerate)="runReview()">
-          <div *ngIf="reviewResult">
-            <p><strong>ATS Score: {{ reviewResult.atsScore }}%</strong> — {{ reviewResult.atsLabel }}</p>
-            <ul><li *ngFor="let s of reviewResult.suggestions">{{ s }}</li></ul>
-          </div>
-        </app-ai-result-panel>
-        <button type="button" class="sj-btn-primary" (click)="runReview()" [disabled]="loading">Analyze Resume</button>
-      </div>
-    </article>
-
-    <article class="feature-card sj-card" [class.expanded]="expanded === 'advice'">
-      <button type="button" class="card-toggle" (click)="toggle('advice')">
-        <div class="icon-circle purple"><i class="bi bi-lightbulb"></i></div>
-        <div>
-          <h3>Career Advice</h3>
-          <p>Ask any career question and receive personalized, data-driven guidance tailored to your profile and goals.</p>
-          <div class="tags purple"><span>Goal planning</span><span>Skill roadmaps</span><span>Market insights</span></div>
-        </div>
-        <i class="bi bi-chevron-down chevron"></i>
-      </button>
-      <div class="card-body" *ngIf="expanded === 'advice'">
-        <textarea [(ngModel)]="question" rows="3" placeholder="Ask your career coach..."></textarea>
-        <app-ai-result-panel [loading]="loading" [error]="error" [provider]="provider" [copyText]="adviceResult?.answer || ''" (regenerate)="runAdvice()">
-          <p class="typing-answer" *ngIf="typingText || adviceResult">{{ typingText || adviceResult?.answer }}</p>
-        </app-ai-result-panel>
-        <button type="button" class="sj-btn-primary" (click)="runAdvice()" [disabled]="loading">Get Advice</button>
-      </div>
-    </article>
-
-    <article class="feature-card sj-card" [class.expanded]="expanded === 'interview'">
-      <button type="button" class="card-toggle" (click)="toggle('interview')">
-        <div class="icon-circle blue"><i class="bi bi-cpu"></i></div>
-        <div>
-          <h3>Interview Preparation</h3>
-          <p>Generate tailored interview questions and preparation tips for technical, HR, and behavioral rounds.</p>
-          <div class="tags blue"><span>Technical Q&amp;A</span><span>Behavioral questions</span><span>Interview tips</span></div>
-        </div>
-        <i class="bi bi-chevron-down chevron"></i>
-      </button>
-      <div class="card-body" *ngIf="expanded === 'interview'">
-        <select [(ngModel)]="selectedJobId">
-          <option [ngValue]="undefined">Select job context</option>
-          <option *ngFor="let j of jobs" [ngValue]="j.id">{{ j.title }}</option>
-        </select>
-        <app-ai-result-panel [loading]="loading" [error]="error" [provider]="provider" (regenerate)="runInterview()">
-          <div *ngIf="interviewResult">
-            <h4>Technical</h4>
-            <ul><li *ngFor="let q of interviewResult.technicalQuestions">{{ q }}</li></ul>
-            <h4>Behavioral</h4>
-            <ul><li *ngFor="let q of interviewResult.behavioralQuestions">{{ q }}</li></ul>
-            <h4>HR</h4>
-            <ul><li *ngFor="let q of interviewResult.hrQuestions">{{ q }}</li></ul>
-          </div>
-        </app-ai-result-panel>
-        <button type="button" class="sj-btn-primary" (click)="runInterview()" [disabled]="loading">Generate Questions</button>
-      </div>
-    </article>
-
-    <article class="feature-card sj-card flagship" [class.expanded]="expanded === 'optimizer'">
-      <div class="flagship-banner">★ Flagship Feature</div>
-      <button type="button" class="card-toggle" (click)="toggle('optimizer')">
-        <div class="icon-circle green"><i class="bi bi-bullseye"></i></div>
-        <div>
-          <h3>Application Optimizer</h3>
-          <p>Select a job and let AI optimize your resume, generate a cover letter, and calculate your match score.</p>
-          <div class="tags green"><span>Resume optimization</span><span>Cover letter gen</span><span>Match score</span></div>
-        </div>
-        <i class="bi bi-chevron-down chevron"></i>
-      </button>
-      <div class="card-body" *ngIf="expanded === 'optimizer'">
-        <select [(ngModel)]="selectedJobId">
-          <option [ngValue]="undefined">Select target job</option>
-          <option *ngFor="let j of jobs" [ngValue]="j.id">{{ j.title }} — {{ j.companyName }}</option>
-        </select>
-        <textarea [(ngModel)]="resumeText" rows="5" placeholder="Paste your resume..."></textarea>
-        <app-ai-result-panel [loading]="loading" [error]="error" [provider]="provider" (regenerate)="runOptimizer()">
-          <div *ngIf="optimizerResult">
-            <p><strong>{{ optimizerResult.matchScore }}% — {{ optimizerResult.matchLabel }}</strong></p>
-            <p>Readiness: {{ optimizerResult.readinessScore }}%</p>
-            <p>{{ optimizerResult.recommendation }}</p>
-            <pre class="letter-snippet">{{ optimizerResult.coverLetter }}</pre>
-          </div>
-        </app-ai-result-panel>
-        <button type="button" class="sj-btn-primary" (click)="runOptimizer()" [disabled]="loading">Optimize Application</button>
-      </div>
-    </article>
+  <div class="tab-bar">
+    <button type="button" [class.active]="activeTab === 'cv'" (click)="activeTab = 'cv'">CV Review</button>
+    <button type="button" [class.active]="activeTab === 'cover'" (click)="activeTab = 'cover'">Cover Letter</button>
+    <button type="button" [class.active]="activeTab === 'interview'" (click)="activeTab = 'interview'">Interview Prep</button>
+    <button type="button" [class.active]="activeTab === 'career'" (click)="activeTab = 'career'; loadCareer()">Career Tips</button>
   </div>
 
-  <section class="quick-query sj-card">
-    <h3><i class="bi bi-robot"></i> Quick AI Query</h3>
-    <div class="query-row">
-      <input [(ngModel)]="quickPrompt" placeholder="Ask your AI career coach anything..." (keyup.enter)="runAdvice()" />
-      <button type="button" class="sj-btn-primary" (click)="runAdvice()" [disabled]="loading"><i class="bi bi-send"></i> Ask</button>
+  <div class="tab-panel sj-card" *ngIf="activeTab === 'cv'">
+    <app-cv-uploader (fileSelected)="onCvSelected($event)"></app-cv-uploader>
+    <p *ngIf="cvFileName" class="file-name">Analyzing: {{ cvFileName }}</p>
+    <div class="sj-skeleton" *ngIf="cvLoading" style="height:120px"></div>
+    <app-ai-insights-panel *ngIf="cvResult && !cvLoading" [cvReview]="cvResult"></app-ai-insights-panel>
+  </div>
+
+  <div class="tab-panel sj-card" *ngIf="activeTab === 'cover'">
+    <app-cover-letter-generator
+      [jobs]="jobs"
+      [(selectedJobId)]="selectedJobId"
+      (generate)="generateCover()">
+    </app-cover-letter-generator>
+    <div class="sj-skeleton" *ngIf="coverLoading" style="height:100px"></div>
+    <pre class="letter-output typing" *ngIf="typingCover">{{ typingCover }}</pre>
+  </div>
+
+  <div class="tab-panel sj-card" *ngIf="activeTab === 'interview'">
+    <label>Select a job context</label>
+    <select [(ngModel)]="selectedJobId">
+      <option [ngValue]="undefined">Choose job</option>
+      <option *ngFor="let j of jobs" [ngValue]="j.id">{{ j.title }}</option>
+    </select>
+    <button type="button" class="sj-btn-primary" (click)="generateInterview()">Generate questions</button>
+    <div class="sj-skeleton" *ngIf="interviewLoading" style="height:120px"></div>
+    <div *ngIf="interviewResult && !interviewLoading" class="qa-blocks">
+      <h3>HR Questions</h3>
+      <ul><li *ngFor="let q of interviewResult.hrQuestions">{{ q }}</li></ul>
+      <h3>Technical Questions</h3>
+      <ul><li *ngFor="let q of interviewResult.technicalQuestions">{{ q }}</li></ul>
+      <h3>Role-specific Questions</h3>
+      <ul><li *ngFor="let q of interviewResult.roleQuestions">{{ q }}</li></ul>
     </div>
-    <div class="prompt-chips">
-      <button type="button" *ngFor="let p of suggestedPrompts" (click)="runAdvice(p)">{{ p }}</button>
-    </div>
-  </section>
+  </div>
+
+  <div class="tab-panel sj-card" *ngIf="activeTab === 'career'">
+    <div class="sj-skeleton" *ngIf="careerLoading" style="height:140px"></div>
+    <app-ai-insights-panel *ngIf="careerResult && !careerLoading" [career]="careerResult"></app-ai-insights-panel>
+  </div>
 </div>

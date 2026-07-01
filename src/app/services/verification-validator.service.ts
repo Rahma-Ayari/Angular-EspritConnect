@@ -37,49 +37,49 @@ export class VerificationValidatorService {
 
   validateBusinessRegistrationNumber(rcNumber: string): ValidationResult {
     if (!rcNumber || rcNumber.trim() === '') {
-      return { isValid: false, message: 'Registration number is required' };
+      return { isValid: false, message: 'Le numéro d\'immatriculation est requis' };
     }
 
     const cleaned = rcNumber.trim().toUpperCase().replace(/\s+/g, '');
     
     if (this.RC_PATTERN.test(cleaned)) {
-      return { isValid: true, message: 'Valid RC format' };
+      return { isValid: true, message: 'Format RC valide' };
     }
 
     if (this.TAX_NUMBER_PATTERN.test(rcNumber.trim())) {
-      return { isValid: true, message: 'Valid tax ID format' };
+      return { isValid: true, message: 'Format matricule fiscal valide' };
     }
 
     return { 
       isValid: false, 
-      message: 'Invalid format. Use RC format (e.g. B1234567890) or tax ID (e.g. 1234567/A/M/000)' 
+      message: 'Format invalide. Utilisez le format RC (ex: B1234567890) ou MF (ex: 1234567/A/M/000)' 
     };
   }
 
   validateWebsite(url: string): ValidationResult {
     if (!url || url.trim() === '') {
-      return { isValid: true, message: 'Optional' };
+      return { isValid: true, message: 'Optionnel' };
     }
 
     if (this.WEBSITE_PATTERN.test(url.trim())) {
-      return { isValid: true, message: 'Valid URL' };
+      return { isValid: true, message: 'URL valide' };
     }
 
-    return { isValid: false, message: 'Invalid URL' };
+    return { isValid: false, message: 'URL invalide' };
   }
 
   validateDescription(description: string): ValidationResult {
     if (!description || description.trim() === '') {
-      return { isValid: true, message: 'Optional' };
+      return { isValid: true, message: 'Optionnel' };
     }
 
     if (description.trim().length >= 50) {
-      return { isValid: true, message: 'Sufficient description' };
+      return { isValid: true, message: 'Description suffisante' };
     }
 
     return { 
       isValid: false, 
-      message: `Description too short (${description.trim().length}/50 characters minimum)` 
+      message: `Description trop courte (${description.trim().length}/50 caractères minimum)` 
     };
   }
 
@@ -94,7 +94,7 @@ export class VerificationValidatorService {
     let totalScore = 0;
 
     breakdown.push({
-      criteria: 'Supporting document provided',
+      criteria: 'Document justificatif fourni',
       points: hasDocument ? this.POINTS_DOCUMENT : 0,
       maxPoints: this.POINTS_DOCUMENT,
       passed: hasDocument
@@ -103,7 +103,7 @@ export class VerificationValidatorService {
 
     const hasSector = !!(sector && sector.trim() !== '');
     breakdown.push({
-      criteria: 'Industry sector provided',
+      criteria: 'Secteur d\'activité renseigné',
       points: hasSector ? this.POINTS_SECTOR : 0,
       maxPoints: this.POINTS_SECTOR,
       passed: hasSector
@@ -112,7 +112,7 @@ export class VerificationValidatorService {
 
     const rcValidation = this.validateBusinessRegistrationNumber(rcNumber);
     breakdown.push({
-      criteria: 'Valid RC/Tax ID format',
+      criteria: 'Format RC/Matricule Fiscal valide',
       points: rcValidation.isValid ? this.POINTS_RC_FORMAT : 0,
       maxPoints: this.POINTS_RC_FORMAT,
       passed: rcValidation.isValid
@@ -122,7 +122,7 @@ export class VerificationValidatorService {
     const websiteValidation = this.validateWebsite(website);
     const hasValidWebsite = !!(website && website.trim() !== '' && websiteValidation.isValid);
     breakdown.push({
-      criteria: 'Valid website',
+      criteria: 'Site web valide',
       points: hasValidWebsite ? this.POINTS_WEBSITE : 0,
       maxPoints: this.POINTS_WEBSITE,
       passed: hasValidWebsite
@@ -131,7 +131,7 @@ export class VerificationValidatorService {
 
     const hasDescription = !!(description && description.trim().length >= 50);
     breakdown.push({
-      criteria: 'Detailed description (50+ characters)',
+      criteria: 'Description détaillée (50+ caractères)',
       points: hasDescription ? this.POINTS_DESCRIPTION : 0,
       maxPoints: this.POINTS_DESCRIPTION,
       passed: hasDescription
@@ -143,13 +143,13 @@ export class VerificationValidatorService {
 
     if (totalScore >= this.THRESHOLD_APPROVE && hasDocument) {
       recommendation = 'APPROVE';
-      recommendationText = 'Sufficient score with document provided. Approval recommended.';
+      recommendationText = 'Score suffisant avec document fourni. Approbation recommandée.';
     } else if (totalScore >= this.THRESHOLD_MANUAL_REVIEW) {
       recommendation = 'MANUAL_REVIEW';
-      recommendationText = 'Average score. Manual verification recommended.';
+      recommendationText = 'Score moyen. Vérification manuelle recommandée.';
     } else {
       recommendation = 'INSUFFICIENT';
-      recommendationText = 'Insufficient score. Additional information required.';
+      recommendationText = 'Score insuffisant. Informations complémentaires requises.';
     }
 
     return {

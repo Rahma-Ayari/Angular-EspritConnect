@@ -233,7 +233,7 @@
           <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
           </svg>
-          <span class="label">Forum</span>
+          <span class="label">Espace Forum</span>
           <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.rotated]="expandedMenus['forum']">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
@@ -242,25 +242,25 @@
           <li>
             <a routerLink="/forum/dashboard" routerLinkActive="active">
               <span class="submenu-dot"></span>
-              <span class="label">Dashboard</span>
+              <span class="label">Tableau de bord</span>
             </a>
           </li>
           <li>
             <a routerLink="/forum/categories" routerLinkActive="active">
               <span class="submenu-dot"></span>
-              <span class="label">Categories</span>
+              <span class="label">Catégories</span>
             </a>
           </li>
           <li>
             <a routerLink="/forum/posts" routerLinkActive="active">
               <span class="submenu-dot"></span>
-              <span class="label">Post Management</span>
+              <span class="label">Gestion des posts</span>
             </a>
           </li>
           <li>
             <a routerLink="/admin/groups-moderation" routerLinkActive="active">
               <span class="submenu-dot"></span>
-              <span class="label">Group Moderation</span>
+              <span class="label">Modération des Groupes</span>
             </a>
           </li>
         </ul>
@@ -319,7 +319,7 @@
             <circle cx="12" cy="8" r="6"></circle>
             <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
           </svg>
-          <span class="label">My Badges</span>
+          <span class="label">Mes badges</span>
         </a>
       </li>
 
@@ -331,7 +331,7 @@
             <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"></path>
             <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
           </svg>
-          <span class="label">Help &amp; Support</span>
+          <span class="label">Aide &amp; Support</span>
           <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.rotated]="expandedMenus['support']">
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
@@ -340,7 +340,7 @@
           <li>
             <a routerLink="/support" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
               <span class="submenu-dot"></span>
-              <span class="label">My Tickets</span>
+              <span class="label">Mes tickets</span>
             </a>
           </li>
           <li>
@@ -352,13 +352,13 @@
           <li>
             <a routerLink="/support/report" routerLinkActive="active">
               <span class="submenu-dot"></span>
-              <span class="label">Report Content</span>
+              <span class="label">Signaler un contenu</span>
             </a>
           </li>
         </ul>
       </li>
 
-      <!-- Groups -->
+      <!-- Groupes -->
       <li>
         <a routerLink="/user/forum/groups" routerLinkActive="active">
           <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -367,7 +367,7 @@
             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
           </svg>
-          <span class="label">Groups</span>
+          <span class="label">Groupes</span>
         </a>
       </li>
 
@@ -386,25 +386,25 @@
           <li>
             <a routerLink="/user/forum" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
               <span class="submenu-dot"></span>
-              <span class="label">Browse Posts</span>
+              <span class="label">Explorer les posts</span>
             </a>
           </li>
           <li>
             <a routerLink="/user/forum" [queryParams]="{action: 'create'}" routerLinkActive="active">
               <span class="submenu-dot"></span>
-              <span class="label">Create Post</span>
+              <span class="label">Créer un post</span>
             </a>
           </li>
           <li>
             <a routerLink="/user/forum" [queryParams]="{filter: 'mine'}" routerLinkActive="active">
               <span class="submenu-dot"></span>
-              <span class="label">My Contributions</span>
+              <span class="label">Mes contributions</span>
             </a>
           </li>
           <li>
             <a routerLink="/user/forum" [queryParams]="{filter: 'liked'}" routerLinkActive="active">
               <span class="submenu-dot"></span>
-              <span class="label">My Favorites</span>
+              <span class="label">Mes favoris</span>
             </a>
           </li>
         </ul>
@@ -430,7 +430,7 @@
             <line x1="8" y1="2" x2="8" y2="6"></line>
             <line x1="3" y1="10" x2="21" y2="10"></line>
           </svg>
-          <span class="label">Events</span>
+          <span class="label">Événements</span>
         </a>
       </li>
     </ul>
@@ -443,7 +443,7 @@
         <span class="user-footer-name">{{ currentUser.nom }}</span>
         <span class="user-footer-role">{{ userRoleLabel }}</span>
       </div>
-      <button type="button" class="logout-btn" (click)="logout()" title="Log out" aria-label="Log out">
+      <button type="button" class="logout-btn" (click)="logout()" title="Déconnexion" aria-label="Déconnexion">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
           <polyline points="16 17 21 12 16 7"></polyline>

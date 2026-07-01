@@ -58,11 +58,11 @@ export class UserApprovalsComponent implements OnInit {
   pendingNotificationsCount: number = 0;
   processingNotifications: boolean = false;
   notificationModes: { value: NotificationMode; label: string; description: string }[] = [
-    { value: 'IMMEDIATE', label: 'Immediate', description: 'An email is sent for each new registration' },
-    { value: 'BATCHED', label: 'Batched', description: 'Les emails sont regroupés après un certain nombre d\'inscriptions' },
-    { value: 'HOURLY_DIGEST', label: 'Hourly digest', description: 'A summary email is sent every hour' },
-    { value: 'DAILY_DIGEST', label: 'Daily digest', description: 'A summary email is sent once per day' },
-    { value: 'SMART', label: 'Smart (recommended)', description: 'Le système adapte automatiquement le mode selon le volume d\'inscriptions' }
+    { value: 'IMMEDIATE', label: 'Immédiat', description: 'Un email est envoyé pour chaque nouvelle inscription' },
+    { value: 'BATCHED', label: 'Groupé', description: 'Les emails sont regroupés après un certain nombre d\'inscriptions' },
+    { value: 'HOURLY_DIGEST', label: 'Résumé horaire', description: 'Un email récapitulatif est envoyé toutes les heures' },
+    { value: 'DAILY_DIGEST', label: 'Résumé quotidien', description: 'Un email récapitulatif est envoyé une fois par jour' },
+    { value: 'SMART', label: 'Intelligent (recommandé)', description: 'Le système adapte automatiquement le mode selon le volume d\'inscriptions' }
   ];
 
   // Add Users Tab properties
@@ -320,7 +320,7 @@ export class UserApprovalsComponent implements OnInit {
   }
 
   declineUser(user: User): void {
-    if (confirm(`Are you sure you want to reject ${user.nom} ?`)) {
+    if (confirm(`Êtes-vous sûr de vouloir refuser ${user.nom} ?`)) {
       this.userApprovalService.declineUser(user.id).subscribe({
         next: () => {
           this.removeUserFromList(user.id);
@@ -335,7 +335,7 @@ export class UserApprovalsComponent implements OnInit {
   }
 
   deleteUser(user: User): void {
-    if (confirm(`Are you sure you want to delete ${user.nom} ? This action cannot be undone.`)) {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer ${user.nom} ? Cette action est irréversible.`)) {
       this.userApprovalService.deleteUser(user.id).subscribe({
         next: () => {
           this.removeUserFromList(user.id);
@@ -369,7 +369,7 @@ export class UserApprovalsComponent implements OnInit {
   bulkDecline(): void {
     if (this.selectedUsers.size === 0) return;
     
-    if (confirm(`Are you sure you want to reject ${this.selectedUsers.size} users?`)) {
+    if (confirm(`Êtes-vous sûr de vouloir refuser ${this.selectedUsers.size} utilisateurs ?`)) {
       const userIds = Array.from(this.selectedUsers);
       this.userApprovalService.bulkDecline(userIds).subscribe({
         next: () => {
@@ -391,7 +391,7 @@ export class UserApprovalsComponent implements OnInit {
       Email: u.email,
       Role: u.role,
       Affiliation: u.affiliation,
-      'Date Sign Up': this.formatDate(u.registrationDate),
+      'Date Inscription': this.formatDate(u.registrationDate),
       Status: u.status
     }));
     
@@ -666,7 +666,7 @@ export class UserApprovalsComponent implements OnInit {
       },
       error: (err) => {
         this.addUserLoading = false;
-        this.addUserError = err.error?.message || 'Failed to add user. Please try again.';
+        this.addUserError = err.error?.message || 'Échec de l\'ajout de l\'utilisateur. Veuillez réessayer.';
         console.error('Failed to add user:', err);
       }
     });
@@ -674,19 +674,19 @@ export class UserApprovalsComponent implements OnInit {
 
   validateNewUser(): boolean {
     if (!this.newUser.nom.trim()) {
-      this.addUserError = 'Last name is required.';
+      this.addUserError = 'Le nom est requis.';
       return false;
     }
     if (!this.newUser.email.trim()) {
-      this.addUserError = 'Email is required.';
+      this.addUserError = 'L\'email est requis.';
       return false;
     }
     if (!this.isValidEmail(this.newUser.email)) {
-      this.addUserError = 'Email is not valid.';
+      this.addUserError = 'L\'email n\'est pas valide.';
       return false;
     }
     if (!this.newUser.role) {
-      this.addUserError = 'Role is required.';
+      this.addUserError = 'Le rôle est requis.';
       return false;
     }
     return true;
@@ -740,7 +740,7 @@ export class UserApprovalsComponent implements OnInit {
       this.processCSV(content);
     };
     reader.onerror = () => {
-      this.importErrors = ['Error reading file.'];
+      this.importErrors = ['Erreur lors de la lecture du fichier.'];
     };
     reader.readAsText(this.importFile);
   }
@@ -868,7 +868,7 @@ export class UserApprovalsComponent implements OnInit {
       next: (result) => {
         this.isImporting = false;
         this.importSuccess = true;
-        this.importResultMessage = `${result.successCount} user(s) imported successfully.`;
+        this.importResultMessage = `${result.successCount} utilisateur(s) importé(s) avec succès.`;
         
         if (result.errors && result.errors.length > 0) {
           this.importErrors = result.errors;
@@ -886,7 +886,7 @@ export class UserApprovalsComponent implements OnInit {
       },
       error: (err) => {
         this.isImporting = false;
-        this.importErrors = [err.error?.message || 'Failed de l\'importation. Veuillez réessayer.'];
+        this.importErrors = [err.error?.message || 'Échec de l\'importation. Veuillez réessayer.'];
         console.error('Failed to import users:', err);
       }
     });

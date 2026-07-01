@@ -29,7 +29,7 @@ export class ResetPasswordComponent implements OnInit {
     this.token = this.route.snapshot.queryParamMap.get('token');
     
     if (!this.token) {
-      this.errorMessage = 'Reset token missing or invalid.';
+      this.errorMessage = 'Jeton de réinitialisation manquant ou invalide.';
     }
 
     this.resetPasswordForm = this.fb.group({
@@ -72,12 +72,12 @@ export class ResetPasswordComponent implements OnInit {
     this.authService.resetPassword(this.token, newPassword).subscribe({
       next: (response) => {
         this.isLoading = false;
-        this.successMessage = response.message || 'Password reset successfully.';
+        this.successMessage = response.message || 'Mot de passe réinitialisé avec succès.';
         this.resetPasswordForm.reset();
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage = err.error?.message || 'An error occurred. The token may have expired.';
+        this.errorMessage = err.error?.message || 'Une erreur est survenue. Le jeton est peut-être expiré.';
       }
     });
   }

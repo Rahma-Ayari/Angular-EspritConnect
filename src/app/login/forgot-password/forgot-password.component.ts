@@ -51,12 +51,12 @@ export class ForgotPasswordComponent implements OnInit {
     ).subscribe({
       next: (response) => {
         this.isLoading = false;
-        this.successMessage = response.message || 'Reset link sent.';
+        this.successMessage = response.message || 'Lien de réinitialisation envoyé.';
       },
       error: (err) => {
         this.isLoading = false;
-        // Optional : ne pas afficher d'erreur spécifique pour ne pas divulguer l'existence des emails
-        this.errorMessage = err.error?.error || err.error?.message || 'An error occurred. Please try again.';
+        // Optionnel : ne pas afficher d'erreur spécifique pour ne pas divulguer l'existence des emails
+        this.errorMessage = err.error?.error || err.error?.message || 'Une erreur est survenue. Veuillez réessayer.';
       }
     });
   }

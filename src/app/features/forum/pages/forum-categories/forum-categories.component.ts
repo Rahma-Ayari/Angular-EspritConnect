@@ -30,7 +30,7 @@ export class ForumCategoriesComponent implements OnInit {
   availableColors = ['blue', 'purple', 'green', 'amber', 'red'];
   availableIcons = [
     { name: 'settings', label: 'Technologie' },
-    { name: 'briefcase', label: 'Career / Final project' },
+    { name: 'briefcase', label: 'Carrière / PFE' },
     { name: 'home', label: 'Vie estudiantine' },
     { name: 'hand', label: 'Orientation' },
     { name: 'users', label: 'Social' }
@@ -69,7 +69,7 @@ export class ForumCategoriesComponent implements OnInit {
         });
       },
       error: () => {
-        this.errorMsg = "Unable to load forum categories.";
+        this.errorMsg = "Impossible de charger les catégories du forum.";
         this.loading = false;
       }
     });
@@ -117,13 +117,13 @@ export class ForumCategoriesComponent implements OnInit {
       // Update
       this.forumService.updateCategory(this.editingCategory.id, payload).subscribe({
         next: () => {
-          this.showSuccess("Category mise à jour avec succès !");
+          this.showSuccess("Catégorie mise à jour avec succès !");
           this.saving = false;
           this.closeModal();
           this.loadCategories();
         },
         error: (err) => {
-          this.showError(err.error?.message || "Error updating category.");
+          this.showError(err.error?.message || "Erreur lors de la modification de la catégorie.");
           this.saving = false;
         }
       });
@@ -131,13 +131,13 @@ export class ForumCategoriesComponent implements OnInit {
       // Create
       this.forumService.createCategory(payload).subscribe({
         next: () => {
-          this.showSuccess("Category créée avec succès !");
+          this.showSuccess("Catégorie créée avec succès !");
           this.saving = false;
           this.closeModal();
           this.loadCategories();
         },
         error: (err) => {
-          this.showError(err.error?.message || "Error creating category.");
+          this.showError(err.error?.message || "Erreur lors de la création de la catégorie.");
           this.saving = false;
         }
       });
@@ -145,14 +145,14 @@ export class ForumCategoriesComponent implements OnInit {
   }
 
   deleteCategory(cat: ForumCategory): void {
-    if (!cat.id || !confirm(`Do you really want to delete the category "${cat.name}" ? All associated posts will be permanently deleted.`)) return;
+    if (!cat.id || !confirm(`Voulez-vous vraiment supprimer la catégorie "${cat.name}" ? Tous les posts associés seront définitivement supprimés.`)) return;
     
     this.forumService.deleteCategory(cat.id).subscribe({
       next: () => {
-        this.showSuccess("Category supprimée avec succès !");
+        this.showSuccess("Catégorie supprimée avec succès !");
         this.loadCategories();
       },
-      error: () => this.showError("Error deleting category.")
+      error: () => this.showError("Erreur lors de la suppression de la catégorie.")
     });
   }
 

@@ -2,7 +2,7 @@
   <div class="header-left">
     <div class="search-box">
       <i class="bi bi-search"></i>
-      <input type="text" placeholder="Search jobs, people, posts…" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" />
+      <input type="text" placeholder="Rechercher emplois, personnes, posts…" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" />
     </div>
   </div>
   <div class="header-right">
@@ -29,11 +29,11 @@
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" routerLink="/profile" (click)="showDropdown = false">
           <i class="bi bi-person"></i>
-          My Profile
+          Mon Profil
         </a>
         <a class="dropdown-item">
           <i class="bi bi-gear"></i>
-          Settings
+          Paramètres
         </a>
         <a class="dropdown-item">
           <i class="bi bi-bell"></i>
@@ -42,7 +42,7 @@
         <div class="dropdown-divider"></div>
         <button class="dropdown-item logout" (click)="logout()">
           <i class="bi bi-box-arrow-right"></i>
-          Log out
+          Déconnexion
         </button>
       </div>
     </div>

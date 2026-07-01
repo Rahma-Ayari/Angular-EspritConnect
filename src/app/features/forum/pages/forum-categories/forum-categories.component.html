@@ -3,14 +3,14 @@
   <!-- En-tête -->
   <div class="page-header">
     <div>
-      <h1 class="page-title">Categories du Forum</h1>
+      <h1 class="page-title">Catégories du Forum</h1>
       <p class="page-subtitle">
-        Create and organize forum topic spaces to effectively segment discussions among students, alumni, and faculty.
+        Créez et organisez les espaces thématiques du forum pour segmenter efficacement les discussions des étudiants, alumni et enseignants.
       </p>
     </div>
     <button class="btn btn--primary" (click)="openCreateModal()">
       <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-      Add a category
+      Ajouter une catégorie
     </button>
   </div>
 
@@ -27,10 +27,10 @@
   <!-- Loading State -->
   <div class="preview-loading" *ngIf="loading" style="padding: 60px 0;">
     <div class="spinner"></div>
-    <p>Loading topic categories...</p>
+    <p>Chargement des catégories thématiques...</p>
   </div>
 
-  <!-- Grille des Categories -->
+  <!-- Grille des Catégories -->
   <div class="digest-layout" *ngIf="!loading && categories.length > 0" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
     
     <div class="card" *ngFor="let cat of categories" style="display: flex; flex-direction: column; height: 100%; border-radius: var(--radius); overflow: hidden;">
@@ -63,11 +63,11 @@
         <div style="display: flex; gap: 10px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line-2);">
           <button class="btn btn--sm btn--ghost" style="flex: 1;" (click)="openEditModal(cat)">
             <svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-            Edit
+            Modifier
           </button>
           <button class="btn btn--sm btn--ghost" style="color: var(--red); border-color: rgba(215,40,47,0.15);" (click)="deleteCategory(cat)">
             <svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-            Delete
+            Supprimer
           </button>
         </div>
 
@@ -80,9 +80,9 @@
     <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--line-2); display: inline-grid; place-items: center; color: var(--muted-2); margin-bottom: 16px;">
       <svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
     </div>
-    <h3 style="font-size: 16px; font-weight: 700; color: var(--ink);">No topic categories</h3>
-    <p style="color: var(--muted); font-size: 13.5px; max-width: 400px; margin: 8px auto 20px;">Create your first category so students and faculty can start exchanging.</p>
-    <button class="btn btn--primary" (click)="openCreateModal()">Create a category</button>
+    <h3 style="font-size: 16px; font-weight: 700; color: var(--ink);">Aucune catégorie thématique</h3>
+    <p style="color: var(--muted); font-size: 13.5px; max-width: 400px; margin: 8px auto 20px;">Créez votre première catégorie pour permettre aux étudiants et enseignants de commencer à échanger.</p>
+    <button class="btn btn--primary" (click)="openCreateModal()">Créer une catégorie</button>
   </div>
 
   <!-- MODAL AJOUT / ÉDITION (Premium Glassmorphism Backdrop) -->
@@ -92,7 +92,7 @@
       <!-- En-tête Modal -->
       <div class="modal-header">
         <h2 style="font-size: 16px; font-weight: 800; color: var(--ink);">
-          {{ editingCategory ? 'Edit category' : 'Create a new category' }}
+          {{ editingCategory ? 'Modifier la catégorie' : 'Créer une nouvelle catégorie' }}
         </h2>
         <button class="modal-close-btn" (click)="closeModal()">&times;</button>
       </div>
@@ -102,14 +102,14 @@
         
         <!-- Nom -->
         <div class="field">
-          <label class="field__label">Category name <span class="field__req">*</span></label>
-          <input type="text" class="field__input" [(ngModel)]="name" maxlength="98" placeholder="e.g. Software Engineering & Programming"/>
+          <label class="field__label">Nom de la catégorie <span class="field__req">*</span></label>
+          <input type="text" class="field__input" [(ngModel)]="name" maxlength="98" placeholder="ex. Génie Logiciel & Programmation"/>
         </div>
 
         <!-- Description -->
         <div class="field">
           <label class="field__label">Description</label>
-          <textarea class="field__input field__textarea" [(ngModel)]="description" maxlength="250" placeholder="Briefly describe the topics covered in this category..."></textarea>
+          <textarea class="field__input field__textarea" [(ngModel)]="description" maxlength="250" placeholder="Décrivez succinctement les sujets abordés dans cette thématique..."></textarea>
         </div>
 
         <!-- Palette de couleurs premium -->
@@ -129,7 +129,7 @@
 
         <!-- Liste des icônes disponibles -->
         <div class="field">
-          <label class="field__label">Illustrative icon</label>
+          <label class="field__label">Icône illustrative</label>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-top: 6px;">
             <button *ngFor="let ic of availableIcons"
                     type="button"
@@ -149,10 +149,10 @@
 
       <!-- Actions Modal -->
       <div style="padding: 16px 20px; border-top: 1px solid var(--line-2); background: var(--surface-2); display: flex; justify-content: flex-end; gap: 12px; border-bottom-left-radius: var(--radius); border-bottom-right-radius: var(--radius);">
-        <button class="btn btn--ghost btn--sm" (click)="closeModal()">Cancel</button>
+        <button class="btn btn--ghost btn--sm" (click)="closeModal()">Annuler</button>
         <button class="btn btn--primary btn--sm" (click)="saveCategory()" [disabled]="saving">
           <span class="spinner spinner--sm" *ngIf="saving" style="border-top-color:#fff; margin-right: 6px;"></span>
-          {{ saving ? 'Saving...' : 'Save' }}
+          {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
         </button>
       </div>
 

@@ -151,7 +151,7 @@ export class AdminRegistrationSettingsComponent implements OnInit {
     if (http?.status === 500) {
       return 'Server error while loading registration settings. Check Spring logs.';
     }
-    return 'Unable to load registration settings.';
+    return "Impossible de charger les parametres d'inscription.";
   }
 
   private scheduleEditorSync(): void {

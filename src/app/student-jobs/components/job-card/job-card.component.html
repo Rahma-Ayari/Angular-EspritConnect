@@ -9,9 +9,6 @@
         <i class="bi bi-share"></i>
       </button>
       <span class="posted"><i class="bi bi-clock"></i> {{ postedLabel }}</span>
-      <span class="deadline" *ngIf="deadlineLabel" [class.urgent]="isClosingSoon">
-        <i class="bi bi-calendar-event"></i> {{ deadlineLabel }}
-      </span>
     </div>
   </div>
 

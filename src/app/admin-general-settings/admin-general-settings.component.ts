@@ -42,11 +42,11 @@ export class AdminGeneralSettingsComponent implements OnInit {
       },
       error: (err: { status?: number }) => {
         if (err?.status === 0) {
-          this.error = `Unable to reach API (${environment.backendBaseUrl}). Start Spring Boot on port 8089.`;
+          this.error = `Impossible de joindre l'API (${environment.backendBaseUrl}). Démarrez Spring Boot sur le port 8089.`;
         } else if (err?.status === 500) {
-          this.error = 'Server error. Check Spring and MySQL logs (EspritConnecttest database).';
+          this.error = 'Erreur serveur. Vérifiez les logs Spring et MySQL (base EspritConnecttest).';
         } else {
-          this.error = 'Unable to load settings.';
+          this.error = 'Impossible de charger les paramètres.';
         }
         this.loading = false;
       }

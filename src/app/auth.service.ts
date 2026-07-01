@@ -25,7 +25,7 @@ export interface RegisterRequest {
   photo?: string;
   anneePromotion?: number;
   domaine?: string;
-  disponibleMentoring?: boolean;
+  disponibleMentorat?: boolean;
   entrepriseActuelle?: string;
   captchaId?: number;
   captchaToken?: string;

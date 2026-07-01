@@ -64,7 +64,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           error: (err) => {
             this.isLoading = false;
             this.isProcessingGoogleLogin = false;
-            this.errorMessage = err.error?.message || 'Error signing in with Google.';
+            this.errorMessage = err.error?.message || 'Erreur lors de la connexion avec Google.';
           }
         });
       }
@@ -122,18 +122,18 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.remainingAttempts = 0;
           this.lockoutSeconds = err.error?.lockoutSeconds || 900;
           this.startLockoutCountdown();
-          this.errorMessage = err.error?.message || 'Your account is temporarily locked.';
+          this.errorMessage = err.error?.message || 'Votre compte est temporairement verrouillé.';
         } else if (err.status === 401) {
           this.remainingAttempts = err.error?.remainingAttempts !== undefined ? err.error.remainingAttempts : 5;
           if (this.remainingAttempts < 5) {
-            this.errorMessage = `Incorrect email or password. You have ${this.remainingAttempts} attempt(s) remaining.`;
+            this.errorMessage = `Email ou mot de passe incorrect. Il vous reste ${this.remainingAttempts} tentative(s).`;
           } else {
-            this.errorMessage = err.error?.message || 'Incorrect email or password.';
+            this.errorMessage = err.error?.message || 'Email ou mot de passe incorrect.';
           }
         } else if (err.status === 403 && err.error?.code === 'EMAIL_NOT_VERIFIED') {
-          this.errorMessage = err.error?.message || 'Please verify your email.';
+          this.errorMessage = err.error?.message || 'Veuillez vérifier votre email.';
         } else {
-          this.errorMessage = err.error?.error || err.error?.message || 'Incorrect email or password.';
+          this.errorMessage = err.error?.error || err.error?.message || 'Email ou mot de passe incorrect.';
         }
       }
     });
@@ -190,7 +190,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     if (!this.mfaPendingToken) {
       this.isLoading = false;
-      this.errorMessage = '2FA session expired. Please sign in again with your password.';
+      this.errorMessage = 'Session 2FA expirée. Veuillez vous reconnecter avec votre mot de passe.';
       return;
     }
 
@@ -201,7 +201,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage = err.error?.message || 'Two-factor authentication code incorrect or expired.';
+        this.errorMessage = err.error?.message || 'Code double authentification incorrect ou expiré.';
       }
     });
   }
