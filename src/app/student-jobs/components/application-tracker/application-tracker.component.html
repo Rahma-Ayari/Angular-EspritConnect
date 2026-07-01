@@ -4,7 +4,7 @@
       <tr>
         <th>Job</th>
         <th>Company</th>
-        <th>Applied</th>
+        <th>Date</th>
         <th>Status</th>
       </tr>
     </thead>
@@ -13,20 +13,37 @@
         <td><a [routerLink]="['/dashboard/jobs', a.offreId]">{{ a.jobTitle || 'Job #' + a.offreId }}</a></td>
         <td>{{ a.companyName || '—' }}</td>
         <td>{{ a.dateCandidature | date:'mediumDate' }}</td>
-        <td><span class="status-pill">{{ statusLabels[a.uiStatus] }}</span></td>
+        <td><span class="status-pill" [style.background]="columnColor(a.uiStatus)">{{ statusLabels[a.uiStatus] }}</span></td>
       </tr>
     </tbody>
   </table>
-  <p *ngIf="!applications.length" class="empty">No applications yet.</p>
+  <p *ngIf="!applications.length && !kanbanCards.length" class="empty">No applications yet. <a routerLink="/dashboard/jobs/discover">Discover jobs</a></p>
 </div>
 
 <div class="tracker kanban-view" *ngIf="view === 'kanban'">
-  <div class="column" *ngFor="let col of columns">
-    <h4>{{ statusLabels[col] }}</h4>
-    <article class="kanban-card sj-card" *ngFor="let a of byStatus(col)">
-      <strong>{{ a.jobTitle || 'Job' }}</strong>
-      <p>{{ a.companyName }}</p>
-      <small>{{ a.dateCandidature | date:'shortDate' }}</small>
+  <div class="column" *ngFor="let col of columns" [style.--col-color]="columnColor(col)">
+    <div class="col-header">
+      <span class="dot"></span>
+      <h4>{{ statusLabels[col] }}</h4>
+      <span class="count">{{ byStatus(col).length }}</span>
+    </div>
+    <article class="kanban-card sj-card" *ngFor="let card of byStatus(col)" (click)="openJob.emit(card.offreId)">
+      <div class="card-top">
+        <div class="avatar">{{ initials(card.companyName) }}</div>
+        <div>
+          <strong>{{ card.jobTitle }}</strong>
+          <p>{{ card.companyName }}</p>
+        </div>
+      </div>
+      <div class="progress-bar" *ngIf="col !== 'SAVED' && col !== 'REJECTED'"></div>
+      <footer>
+        <span *ngIf="!card.isSavedOnly"><i class="bi bi-calendar3"></i> {{ card.dateLabel | date:'mediumDate' }}</span>
+        <span *ngIf="card.isSavedOnly"><i class="bi bi-bookmark"></i> Saved</span>
+        <span class="status-tag">{{ statusLabels[col] }}</span>
+      </footer>
     </article>
+    <button type="button" class="add-slot" *ngIf="col === 'SAVED'" routerLink="/dashboard/jobs/saved">
+      <i class="bi bi-plus"></i>
+    </button>
   </div>
 </div>

@@ -30,7 +30,7 @@ export class EntrepriseProfileComponent implements OnInit, OnDestroy {
   readonly docTypes = [
     { value: 'REGISTRE_COMMERCE', label: 'Registre de commerce' },
     { value: 'CERTIFICAT_FISCAL', label: 'Certificat fiscal' },
-    { value: 'ID_REPRESENTANT', label: 'Pièce identité représentant' },
+    { value: 'ID_REPRESENTANT', label: 'Representative ID document' },
     { value: 'AUTRE', label: 'Autre justificatif' }
   ];
 
@@ -93,7 +93,7 @@ export class EntrepriseProfileComponent implements OnInit, OnDestroy {
           this.loadVerification();
         },
         error: () => {
-          this.error = 'Impossible de charger le profil de l\'entreprise.';
+          this.error = 'Unable to load company profile.';
           this.loading = false;
         }
       });
@@ -108,7 +108,7 @@ export class EntrepriseProfileComponent implements OnInit, OnDestroy {
           this.loading = false;
         },
         error: () => {
-          this.error = 'Impossible de charger les données de vérification.';
+          this.error = 'Unable to load verification data.';
           this.loading = false;
         }
       });
@@ -135,7 +135,7 @@ export class EntrepriseProfileComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (profile) => {
           this.savingProfile = false;
-          this.success = 'Le profil a été mis à jour avec succès.';
+          this.success = 'Profile updated successfully.';
           this.profileForm.patchValue({
             nom: profile.nom,
             email: profile.email,
@@ -146,7 +146,7 @@ export class EntrepriseProfileComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.savingProfile = false;
-          this.error = err.error?.message || 'Erreur lors de la mise à jour du profil.';
+          this.error = err.error?.message || 'Error updating profile.';
         }
       });
   }
@@ -172,7 +172,7 @@ export class EntrepriseProfileComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.savingDocs = false;
-          this.success = 'Document enregistré dans votre dossier.';
+          this.success = 'Document saved to your folder.';
           this.selectedFileName = '';
           this.loadVerification();
         },
@@ -205,10 +205,10 @@ export class EntrepriseProfileComponent implements OnInit, OnDestroy {
 
   verificationLabel(status?: string): string {
     switch (status) {
-      case 'VERIFIED': return 'Vérifiée';
+      case 'VERIFIED': return 'Verifiede';
       case 'PENDING_REVIEW': return 'En revue admin';
-      case 'REJECTED': return 'Refusée';
-      default: return 'Documents requis';
+      case 'REJECTED': return 'Rejectede';
+      default: return 'Required documents';
     }
   }
 

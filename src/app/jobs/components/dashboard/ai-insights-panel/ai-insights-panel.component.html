@@ -1,0 +1,34 @@
+<div class="ai-insights-panel">
+  <div class="panel-header">
+    <h3>AI Recruitment Insights</h3>
+    <span class="ai-badge">{{ poweredBy }}</span>
+  </div>
+
+  <div class="insights-skeleton" *ngIf="loading">
+    <div class="sk-line" *ngFor="let _ of [1,2,3]"></div>
+  </div>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <ng-container *ngIf="!loading && insights">
+    <p class="insights-summary">{{ insights.summary }}</p>
+    <ul class="insights-list">
+      <li *ngFor="let item of insights.insights">
+        <i class="bi bi-lightbulb"></i>
+        {{ item }}
+      </li>
+    </ul>
+    <ul class="recommendations" *ngIf="insights.recommendations?.length">
+      <li *ngFor="let rec of insights.recommendations">{{ rec }}</li>
+    </ul>
+  </ng-container>
+
+  <div class="panel-actions" *ngIf="!loading && insights">
+    <button type="button" (click)="regenerate()">
+      <i class="bi bi-arrow-clockwise"></i> Regenerate
+    </button>
+    <button type="button" (click)="copyInsights()">
+      <i class="bi bi-clipboard"></i> Copy
+    </button>
+  </div>
+</div>

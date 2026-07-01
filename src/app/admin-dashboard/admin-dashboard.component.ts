@@ -62,7 +62,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         error: () => {
           this.dashboardData = null;
           this.statCards = [];
-          this.error = 'Impossible de charger les donnees du dashboard.';
+          this.error = 'Unable to load dashboard data.';
           this.loading = false;
         }
       });
@@ -96,7 +96,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     req.pipe(takeUntil(this.destroy$)).subscribe({
       next: () => this.loadDashboard(),
       error: () => {
-        this.error = 'Impossible de valider cet élément.';
+        this.error = 'Unable to approve this item.';
       }
     });
   }
@@ -112,7 +112,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     req.pipe(takeUntil(this.destroy$)).subscribe({
       next: () => this.loadDashboard(),
       error: () => {
-        this.error = 'Impossible de refuser cet élément.';
+        this.error = 'Unable to reject this item.';
       }
     });
   }
@@ -133,7 +133,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           this.showingAllApprovals = !this.showingAllApprovals;
         },
         error: () => {
-          this.error = 'Impossible de charger les utilisateurs en attente.';
+          this.error = 'Unable to load pending users.';
         }
       });
   }

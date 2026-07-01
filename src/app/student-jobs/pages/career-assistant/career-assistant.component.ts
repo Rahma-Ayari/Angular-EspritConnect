@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { JobOffer } from '../../../jobs/models/job.model';
-import { AiCareerService } from '../../services/ai-career.service';
+import { StudentAiService } from '../../services/student-ai.service';
+import { ResumeStorageService } from '../../services/resume-storage.service';
 import { StudentJobsBrowseService } from '../../services/student-jobs-browse.service';
-import { StudentContextService } from '../../services/student-context.service';
 import {
-  CareerRecommendationResult,
-  CoverLetterResult,
-  CvReviewResult,
-  InterviewPrepResult,
-  StudentProfile
-} from '../../models/student-job.model';
+  StudentApplicationOptimizerResult,
+  StudentCareerAdviceResult,
+  StudentInterviewPrepResult,
+  StudentResumeReviewResult
+} from '../../models/student-ai.model';
+
+type FeatureId = 'resume' | 'advice' | 'interview' | 'optimizer' | null;
 
 @Component({
   selector: 'app-career-assistant',
@@ -17,96 +19,161 @@ import {
   styleUrls: ['./career-assistant.component.css']
 })
 export class CareerAssistantComponent implements OnInit {
-  activeTab: 'cv' | 'cover' | 'interview' | 'career' = 'cv';
-  profile?: StudentProfile;
+  expanded: FeatureId = null;
   jobs: JobOffer[] = [];
   selectedJobId?: number;
+  resumeText = '';
+  question = '';
+  quickPrompt = '';
 
-  cvLoading = false;
-  cvResult?: CvReviewResult;
-  cvFileName = '';
+  loading = false;
+  error = '';
+  provider = '';
 
-  coverLoading = false;
-  coverResult?: CoverLetterResult;
-  typingCover = '';
+  reviewResult?: StudentResumeReviewResult;
+  adviceResult?: StudentCareerAdviceResult;
+  interviewResult?: StudentInterviewPrepResult;
+  optimizerResult?: StudentApplicationOptimizerResult;
+  typingText = '';
 
-  interviewLoading = false;
-  interviewResult?: InterviewPrepResult;
-
-  careerLoading = false;
-  careerResult?: CareerRecommendationResult;
+  readonly suggestedPrompts = [
+    'How can I improve my resume?',
+    'Best tech companies in Tunisia for interns',
+    'How to prepare for a React interview?'
+  ];
 
   constructor(
-    private ai: AiCareerService,
-    private studentContext: StudentContextService,
-    private browse: StudentJobsBrowseService
+    private studentAi: StudentAiService,
+    private browse: StudentJobsBrowseService,
+    private resumeStorage: ResumeStorageService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.studentContext.getProfile().subscribe((p) => (this.profile = p));
-    this.browse.search({ limit: 20, page: 1 }).subscribe((res) => (this.jobs = res.data));
+    this.browse.search({ limit: 30, page: 1 }).subscribe((r) => (this.jobs = r.data));
+    const saved = this.resumeStorage.load();
+    if (saved) this.resumeText = this.resumeStorage.toPlainText(saved);
   }
 
-  onCvSelected(file: File): void {
-    this.cvFileName = file.name;
-    this.cvLoading = true;
-    this.ai.reviewCV(file.name).subscribe({
-      next: (r) => {
-        this.cvResult = r;
-        this.cvLoading = false;
+  toggle(id: FeatureId): void {
+    this.expanded = this.expanded === id ? null : id;
+    this.error = '';
+  }
+
+  onCvFile(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const isText = file.type === 'text/plain' || file.name.toLowerCase().endsWith('.txt');
+    if (isText) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.resumeText = String(reader.result || '');
+        input.value = '';
+      };
+      reader.readAsText(file);
+      return;
+    }
+
+    this.loading = true;
+    this.error = '';
+    this.studentAi.extractResume(file).subscribe({
+      next: (res) => {
+        this.resumeText = res.text || '';
+        this.loading = false;
+        input.value = '';
+        if (!this.resumeText.trim()) {
+          this.error = 'No readable text found in this file. It may be a scanned image.';
+        }
       },
-      error: () => (this.cvLoading = false)
+      error: (e) => {
+        this.error = e.message;
+        this.loading = false;
+        input.value = '';
+      }
     });
   }
 
-  generateCover(): void {
-    if (!this.profile || !this.selectedJobId) return;
+  runReview(): void {
+    if (!this.resumeText.trim()) {
+      this.error = 'Upload or paste your resume first.';
+      return;
+    }
+    this.callAi(() => this.studentAi.reviewResume(this.resumeText), (r) => {
+      this.reviewResult = r as StudentResumeReviewResult;
+    });
+  }
+
+  runAdvice(prompt?: string): void {
+    const q = prompt || this.question || this.quickPrompt;
+    if (!q.trim()) return;
+    this.callAi(() => this.studentAi.careerAdvice(q), (r) => {
+      this.adviceResult = r as StudentCareerAdviceResult;
+      this.typewriter((r as StudentCareerAdviceResult).answer);
+    });
+  }
+
+  runInterview(): void {
     const job = this.jobs.find((j) => j.id === this.selectedJobId);
-    if (!job) return;
-    this.coverLoading = true;
-    this.typingCover = '';
-    this.ai.generateCoverLetter(job, this.profile).subscribe({
-      next: (r) => {
-        this.coverResult = r;
-        this.typewriter(r.letter);
-        this.coverLoading = false;
-      },
-      error: () => (this.coverLoading = false)
-    });
+    if (!job) {
+      this.error = 'Select a job to generate interview questions.';
+      return;
+    }
+    this.callAi(
+      () =>
+        this.studentAi.interviewPreparation({
+          offreId: job.id,
+          jobTitle: job.title,
+          jobDescription: job.description
+        }),
+      (r) => (this.interviewResult = r as StudentInterviewPrepResult)
+    );
   }
 
-  generateInterview(): void {
-    const job = this.jobs.find((j) => j.id === this.selectedJobId) || this.jobs[0];
-    if (!job) return;
-    this.interviewLoading = true;
-    this.ai.generateInterviewQuestions(job).subscribe({
-      next: (r) => {
-        this.interviewResult = r;
-        this.interviewLoading = false;
-      },
-      error: () => (this.interviewLoading = false)
-    });
+  runOptimizer(): void {
+    if (!this.selectedJobId || !this.resumeText.trim()) {
+      this.error = 'Select a job and provide your resume.';
+      return;
+    }
+    this.callAi(
+      () => this.studentAi.applicationOptimizer(this.selectedJobId!, this.resumeText),
+      (r) => (this.optimizerResult = r as StudentApplicationOptimizerResult)
+    );
   }
 
-  loadCareer(): void {
-    if (!this.profile) return;
-    this.careerLoading = true;
-    this.ai.recommendCareerPath(this.profile).subscribe({
+  goToResumeStudio(): void {
+    this.router.navigate(['/dashboard/jobs/resume-studio']);
+  }
+
+  goToCoverLetters(): void {
+    this.router.navigate(['/dashboard/jobs/cover-letters']);
+  }
+
+  private callAi<T extends { provider?: string }>(fn: () => import('rxjs').Observable<T>, onSuccess: (r: T) => void): void {
+    this.loading = true;
+    this.error = '';
+    fn().subscribe({
       next: (r) => {
-        this.careerResult = r;
-        this.careerLoading = false;
+        this.provider = r.provider || '';
+        onSuccess(r);
+        this.loading = false;
       },
-      error: () => (this.careerLoading = false)
+      error: (e) => {
+        this.error = e.message;
+        this.loading = false;
+      }
     });
   }
 
   private typewriter(text: string): void {
     let i = 0;
+    this.typingText = '';
     const step = () => {
       if (i <= text.length) {
-        this.typingCover = text.slice(0, i);
+        this.typingText = text.slice(0, i);
         i += 3;
-        setTimeout(step, 12);
+        setTimeout(step, 8);
       }
     };
     step();

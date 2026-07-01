@@ -82,7 +82,7 @@ export class ForumHomeComponent implements OnInit, OnDestroy {
   loadCategories(): void {
     this.api.getCategories().subscribe({
       next: (res) => (this.categories = res),
-      error: (err) => console.error('Erreur chargement catégories', err)
+      error: (err) => console.error('Error chargement catégories', err)
     });
   }
 
@@ -96,7 +96,7 @@ export class ForumHomeComponent implements OnInit, OnDestroy {
           this.allPosts = res;
           this.applyFiltersAndSort();
         },
-        error: (err) => console.error('Erreur chargement posts', err)
+        error: (err) => console.error('Error chargement posts', err)
       });
   }
 
@@ -179,7 +179,7 @@ export class ForumHomeComponent implements OnInit, OnDestroy {
     this.showCreateModal = false;
     this.createState.reset();
     
-    // Clean up query param if they cancel
+    // Clean up query byam if they cancel
     if (this.route.snapshot.queryParams['action'] === 'create') {
       this.router.navigate([], {
         relativeTo: this.route,
@@ -219,7 +219,7 @@ export class ForumHomeComponent implements OnInit, OnDestroy {
       title: draft.title.trim(),
       content: composedContent,
       category: { id: draft.category.id },
-      authorName: authorRole === 'ALUMNI' ? 'Alumni Demo' : 'Étudiant Demo',
+      authorName: authorRole === 'ALUMNI' ? 'Alumni Demo' : 'Student Demo',
       authorEmail: authorRole === 'ALUMNI' ? 'alumni.demo@esprit.tn' : 'etudiant.demo@esprit.tn',
       authorRole
     };
@@ -232,7 +232,7 @@ export class ForumHomeComponent implements OnInit, OnDestroy {
           this.closeCreate();
           this.loadPosts();
         },
-        error: (err) => console.error('Erreur création post', err)
+        error: (err) => console.error('Error création post', err)
       });
   }
 }

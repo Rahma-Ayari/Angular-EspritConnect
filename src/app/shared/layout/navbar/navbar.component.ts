@@ -38,16 +38,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     return this.userRole === 'ADMIN' && this.currentMode !== 'admin';
   }
 
-  get userViewLabel(): string {
-    if (this.userRole === 'ALUMNI' || this.currentMode === 'alumni') {
-      return 'VUE ALUMNI';
-    }
-    if (this.userRole === 'ENTREPRISE') {
-      return 'VUE ENTREPRISE';
-    }
-    return 'VUE ÉTUDIANT';
-  }
-
   ngOnInit(): void {
     this.userRole = this.authService.getRole();
 
@@ -197,7 +187,4 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
   }
 
-  goToEnterpriseJobs(): void {
-    this.router.navigate(['/entreprise/jobs/all']);
-  }
 }

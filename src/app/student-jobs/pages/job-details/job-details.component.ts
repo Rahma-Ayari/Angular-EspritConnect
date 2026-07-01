@@ -6,7 +6,10 @@ import { MatchScoreService } from '../../services/match-score.service';
 import { SavedJobsService } from '../../services/saved-jobs.service';
 import { ApplicationsService } from '../../services/applications.service';
 import { StudentContextService } from '../../services/student-context.service';
+import { StudentAiService } from '../../services/student-ai.service';
+import { ResumeStorageService } from '../../services/resume-storage.service';
 import { MatchBreakdown, StudentProfile } from '../../models/student-job.model';
+import { StudentJobMatchResult } from '../../models/student-ai.model';
 
 @Component({
   selector: 'app-job-details',
@@ -16,11 +19,15 @@ import { MatchBreakdown, StudentProfile } from '../../models/student-job.model';
 export class JobDetailsComponent implements OnInit {
   job?: JobOffer;
   match?: MatchBreakdown;
+  aiMatch?: StudentJobMatchResult;
+  aiMatchLoading = false;
+  aiMatchError = '';
   profile?: StudentProfile;
   loading = true;
   applying = false;
   applyError = '';
   applySuccess = false;
+  showApplyModal = false;
   similar: JobOffer[] = [];
   coverLetter = '';
 
@@ -34,14 +41,19 @@ export class JobDetailsComponent implements OnInit {
     private matchScore: MatchScoreService,
     private savedJobs: SavedJobsService,
     private applications: ApplicationsService,
-    private studentContext: StudentContextService
+    private studentContext: StudentContextService,
+    private studentAi: StudentAiService,
+    private resumeStorage: ResumeStorageService
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.studentContext.getProfile().subscribe((p) => {
       this.profile = p;
-      if (this.job) this.match = this.matchScore.calculate(this.job, p);
+      if (this.job) {
+        this.match = this.matchScore.calculate(this.job, p);
+        this.loadAiMatch();
+      }
     });
 
     this.browse.getJob(id).subscribe({
@@ -49,12 +61,31 @@ export class JobDetailsComponent implements OnInit {
         this.job = job;
         if (this.profile) {
           this.match = this.matchScore.calculate(job, this.profile);
+          this.loadAiMatch();
         }
         this.loading = false;
         this.loadSimilar();
       },
       error: () => {
         this.loading = false;
+      }
+    });
+  }
+
+  loadAiMatch(force = false): void {
+    if (!this.job?.id) return;
+    this.aiMatchLoading = true;
+    this.aiMatchError = '';
+    const saved = this.resumeStorage.load();
+    const resumeText = saved ? this.resumeStorage.toPlainText(saved) : undefined;
+    this.studentAi.jobMatch(this.job.id, resumeText, force).subscribe({
+      next: (r) => {
+        this.aiMatch = r;
+        this.aiMatchLoading = false;
+      },
+      error: (e) => {
+        this.aiMatchError = e.message;
+        this.aiMatchLoading = false;
       }
     });
   }
@@ -102,22 +133,31 @@ export class JobDetailsComponent implements OnInit {
     }
   }
 
+  get isExternalApply(): boolean {
+    return !!this.job?.applicationUrl && this.job.applicationUrl.trim().length > 0;
+  }
+
   apply(): void {
     if (!this.job?.id) return;
-    this.applying = true;
     this.applyError = '';
-    this.applications
-      .apply({ offreId: this.job.id, lettreMotivation: this.coverLetter || undefined })
-      .subscribe({
-        next: () => {
-          this.applySuccess = true;
-          this.applying = false;
-        },
-        error: (err) => {
-          this.applyError = err?.message || err?.error?.error || 'Could not submit application';
-          this.applying = false;
-        }
-      });
+
+    // External apply: redirect to the company's real application form.
+    if (this.isExternalApply) {
+      window.open(this.job!.applicationUrl!.trim(), '_blank', 'noopener');
+      return;
+    }
+
+    // Easy apply: open the in-platform application popup.
+    this.showApplyModal = true;
+  }
+
+  closeApplyModal(): void {
+    this.showApplyModal = false;
+  }
+
+  onApplied(): void {
+    this.showApplyModal = false;
+    this.applySuccess = true;
   }
 
   goToJob(id?: number): void {

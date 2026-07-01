@@ -1,20 +1,20 @@
 <div class="moderation-container">
   <header class="mod-header">
-    <h1 class="title">Modération des Groupes</h1>
-    <p class="subtitle">Validez ou refusez les demandes de création de groupes de discussion soumises par les membres d'ESPRIT.</p>
+    <h1 class="title">Group Moderation</h1>
+    <p class="subtitle">Approve or reject group creation requests submitted by ESPRIT members.</p>
   </header>
 
   <!-- Loading State -->
   <div class="loading-state" *ngIf="loading">
     <div class="spinner"></div>
-    <p>Chargement des demandes en attente...</p>
+    <p>Loading pending requests...</p>
   </div>
 
   <!-- Empty State -->
   <div class="empty-state" *ngIf="!loading && pendingGroups.length === 0">
     <div class="empty-icon">🎉</div>
-    <h3>Aucune demande en attente</h3>
-    <p>Toutes les demandes de création de groupes ont été traitées.</p>
+    <h3>No pending requests</h3>
+    <p>All group creation requests have been processed.</p>
   </div>
 
   <!-- Pending Groups Grid -->
@@ -23,19 +23,19 @@
       <div class="card-left">
         <div class="meta-row">
           <span class="visibility-badge" [class.private]="group.private">
-            {{ group.private ? '🔒 Privé' : '🌐 Public' }}
+            {{ group.private ? '🔒 Private' : '🌐 Public' }}
           </span>
           <span class="date-badge" *ngIf="group.createdAt">
             Proposé le {{ group.createdAt | date:'short' }}
           </span>
         </div>
         <h2 class="group-name">{{ group.name }}</h2>
-        <p class="group-desc">{{ group.description || 'Aucune description fournie.' }}</p>
+        <p class="group-desc">{{ group.description || 'No description provided.' }}</p>
         
         <div class="creator-box">
           <span class="avatar-mini">{{ group.creatorName.substring(0, 2).toUpperCase() }}</span>
           <div class="creator-details">
-            <span class="label">Proposé par :</span>
+            <span class="label">Submitted by:</span>
             <span class="val"><strong>{{ group.creatorName }}</strong> ({{ group.creatorEmail }})</span>
           </div>
         </div>
@@ -43,7 +43,7 @@
 
       <div class="card-right actions">
         <button class="btn btn-approve" *ngIf="group.id" (click)="approveGroup(group.id)">
-          Approuver
+          Approve
         </button>
         <button class="btn btn-reject" *ngIf="group.id" (click)="rejectGroup(group.id)">
           Rejeter
