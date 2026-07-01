@@ -55,6 +55,10 @@ export class UserEventsService {
     });
   }
 
+  deleteEvent(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
   private buildParams(filters: UserEventFilters): HttpParams {
     let params = new HttpParams();
 

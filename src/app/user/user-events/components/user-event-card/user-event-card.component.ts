@@ -9,12 +9,22 @@ import { UserEvent } from '../../models/user-event.model';
   styleUrls: ['./user-event-card.component.css']
 })
 export class UserEventCardComponent {
-
   @Input() event!: UserEvent;
 
   @Output() view = new EventEmitter<number>();
+  @Output() deleteEvent = new EventEmitter<UserEvent>();
+
+  imageFailed = false;
+
+  get hasImage(): boolean {
+    return !!this.event.imageUrl && !this.imageFailed;
+  }
 
   constructor(private router: Router) {}
+
+  onImageError(): void {
+    this.imageFailed = true;
+  }
 
   openDetails(): void {
     if (!this.event.idEvenement) {
@@ -22,5 +32,9 @@ export class UserEventCardComponent {
     }
 
     this.router.navigate(['/events', this.event.idEvenement]);
+  }
+
+  onDelete(): void {
+    this.deleteEvent.emit(this.event);
   }
 }

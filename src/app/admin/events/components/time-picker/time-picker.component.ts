@@ -23,7 +23,9 @@ export class TimePickerComponent implements OnChanges, OnInit {
   selectedPeriod: 'AM' | 'PM' = 'AM';
 
   ngOnInit(): void {
-    this.emitValue();
+    if (this.value && this.value.trim()) {
+      this.emitValue();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {

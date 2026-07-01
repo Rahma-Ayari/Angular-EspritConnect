@@ -24,7 +24,6 @@ import { environment } from '../../../../environments/environment';
 export class EventService {
   private readonly apiRoot = environment.apiUrl;
   private readonly apiUrl = `${this.apiRoot}/evenements`;
-  private readonly typesUrl = `${this.apiRoot}/evenement-types`;
 
   constructor(private http: HttpClient) {}
 
@@ -114,27 +113,15 @@ export class EventService {
   }
 
   getEntreprises(): Observable<EntrepriseOption[]> {
-    return this.http.get<EntrepriseOption[]>(`${this.apiRoot}/entreprises`);
+    return this.http.get<EntrepriseOption[]>(`${this.apiUrl}/entreprises`);
   }
 
   getEventTypes(activeOnly = false): Observable<EventType[]> {
-    return this.http.get<EventType[]>(activeOnly ? `${this.typesUrl}/active` : this.typesUrl);
+    return this.http.get<EventType[]>(`${this.apiUrl}/types${activeOnly ? '/active' : ''}`);
   }
 
   getEventTypeById(id: number): Observable<EventType> {
-    return this.http.get<EventType>(`${this.typesUrl}/${id}`);
-  }
-
-  createEventType(type: EventType): Observable<EventType> {
-    return this.http.post<EventType>(this.typesUrl, type);
-  }
-
-  updateEventType(id: number, type: EventType): Observable<EventType> {
-    return this.http.put<EventType>(`${this.typesUrl}/${id}`, type);
-  }
-
-  deleteEventType(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.typesUrl}/${id}`);
+    return this.http.get<EventType>(`${this.apiUrl}/types/${id}`);
   }
 
   uploadEventImage(file: File): Observable<HttpEvent<{ imageUrl: string }>> {
@@ -144,6 +131,18 @@ export class EventService {
       observe: 'events',
       reportProgress: true
     });
+  }
+
+  createEventType(type: EventType): Observable<EventType> {
+    return this.http.post<EventType>(`${this.apiUrl}/types`, type);
+  }
+
+  updateEventType(id: number, type: EventType): Observable<EventType> {
+    return this.http.put<EventType>(`${this.apiUrl}/types/${id}`, type);
+  }
+
+  deleteEventType(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/types/${id}`);
   }
 
   private buildParams(filters: EventFilters | Record<string, string | undefined>): HttpParams {

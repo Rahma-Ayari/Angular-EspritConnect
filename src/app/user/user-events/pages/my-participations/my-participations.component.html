@@ -17,8 +17,8 @@
   <div class="events-grid" *ngIf="!loading && !error">
     <article class="event-card" *ngFor="let item of participations">
       <div class="event-media">
-        <img *ngIf="item.evenement.imageUrl" [src]="item.evenement.imageUrl" alt="">
-        <div class="image-placeholder" *ngIf="!item.evenement.imageUrl">
+        <img *ngIf="hasImage(item)" [src]="item.evenement.imageUrl | backendUrl" [alt]="item.evenement.titre" (error)="markImageFailed(item)">
+        <div class="image-placeholder" *ngIf="!hasImage(item)">
           <i class="bi bi-calendar-event"></i>
         </div>
       </div>

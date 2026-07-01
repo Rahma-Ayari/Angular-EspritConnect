@@ -2,6 +2,8 @@ export const environment = {
   production: false,
   apiUrl: 'http://localhost:8089/espritconnect/api',
   backendBaseUrl: 'http://localhost:8089/espritconnect',
+  backendOrigin: 'http://localhost:8089',
+  contextPath: '/espritconnect',
   frontApi: 'http://localhost:8089/espritconnect/api/front',
   backApi: 'http://localhost:8089/espritconnect/api/back',
   devAuth: {

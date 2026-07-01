@@ -1,4 +1,10 @@
 <div class="events-admin-page">
+  <!-- Toast Notification -->
+  <div class="toast" *ngIf="toast" [class.toast-success]="toast.type === 'success'" [class.toast-error]="toast.type === 'error'">
+    <i class="bi" [ngClass]="toast.type === 'success' ? 'bi-check-circle' : 'bi-exclamation-circle'"></i>
+    {{ toast.message }}
+  </div>
+
   <div class="page-header">
     <div>
       <p class="eyebrow">Events</p>
@@ -58,85 +64,84 @@
         </button>
       </div>
 
-      <div class="loading-state" *ngIf="pageLoading">
+      <div class="loading-state" *ngIf="isLoading">
         <div class="spinner"></div>
         <p>Loading events...</p>
       </div>
 
-      <div class="error-state" *ngIf="!pageLoading && error">
+      <div class="error-state" *ngIf="!isLoading && error">
         <i class="bi bi-exclamation-triangle"></i>
         <p>{{ error }}</p>
         <button type="button" (click)="loadDashboard()">Retry</button>
       </div>
 
-      <div class="admin-table-wrap" *ngIf="!pageLoading && !error && currentPageEvents.length > 0">
-        <table class="admin-events-table">
-          <thead>
-            <tr>
-              <th class="image-column">Image</th>
-              <th>Event</th>
-              <th>Date & time</th>
-              <th>Location</th>
-              <th>Organizer</th>
-              <th>Capacity</th>
-              <th>Status</th>
-              <th class="actions-column">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let event of currentPageEvents; trackBy: trackEvent">
-              <td class="image-cell">
-                <img *ngIf="event.imageUrl" [src]="event.imageUrl" [alt]="event.titre">
-                <div class="image-placeholder" *ngIf="!event.imageUrl">
-                  <i class="bi bi-calendar-event"></i>
-                </div>
-              </td>
-              <td>
-                <strong>{{ event.titre }}</strong>
-                <span *ngIf="event.type">{{ event.type }}</span>
-              </td>
-              <td>
-                {{ event.dateDebut | date:'mediumDate' }} · {{ event.heureDebut }}
-              </td>
-              <td>
-                <span *ngIf="event.online" class="online-pill">
-                  <i class="bi bi-globe"></i>
-                  Online
-                </span>
-                <span *ngIf="!event.online">{{ event.lieu || 'Not specified' }}</span>
-              </td>
-              <td>{{ event.entrepriseNom || 'Not assigned' }}</td>
-              <td>{{ event.unlimitedParticipants ? 'Unlimited' : (event.capacite || 0) }}</td>
-              <td><span class="status-badge" [ngClass]="(event.status || 'UPCOMING').toLowerCase()">{{ event.status }}</span></td>
-              <td class="table-actions">
-                <button type="button" class="action-btn" title="View details" (click)="viewEvent(event)">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button type="button" class="action-btn edit" title="Edit event" (click)="editEvent(event)">
-                  <i class="bi bi-pencil"></i>
-                </button>
-                <button type="button" class="action-btn delete" title="Delete event" (click)="deleteEvent(event)">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+<div class="admin-table-wrap" *ngIf="!isLoading && !error && events.length > 0">
+         <table class="admin-events-table">
+           <thead>
+             <tr>
+               <th class="image-column">Image</th>
+               <th>Event</th>
+               <th>Date & time</th>
+               <th>Location</th>
+               <th>Organizer</th>
+               <th>Capacity</th>
+               <th>Status</th>
+               <th class="actions-column">Actions</th>
+             </tr>
+           </thead>
+           <tbody>
+             <tr *ngFor="let event of events; trackBy: trackEvent">
+               <td class="image-cell">
+                 <img *ngIf="event.imageUrl" [src]="event.imageUrl | backendUrl" [alt]="event.titre">
+                 <div class="image-placeholder" *ngIf="!event.imageUrl">
+                   <i class="bi bi-calendar-event"></i>
+                 </div>
+               </td>
+               <td>
+                 <strong>{{ event.titre }}</strong>
+                 <span *ngIf="event.type">{{ event.type }}</span>
+               </td>
+               <td>
+                 {{ event.dateDebut | date:'mediumDate' }} · {{ event.heureDebut }}
+               </td>
+               <td>
+                 <span *ngIf="event.online" class="online-pill">
+                   <i class="bi bi-globe"></i>
+                   Online
+                 </span>
+                 <span *ngIf="!event.online">{{ event.lieu || 'Not specified' }}</span>
+               </td>
+               <td>{{ event.entrepriseNom || 'Not assigned' }}</td>
+               <td>{{ event.unlimitedParticipants ? 'Unlimited' : (event.capacite || 0) }}</td>
+               <td><span class="status-badge" [ngClass]="(event.status || 'UPCOMING').toLowerCase()">{{ event.status }}</span></td>
+               <td class="table-actions">
+                 <button type="button" class="action-btn" title="View details" (click)="viewEvent(event)">
+                   <i class="bi bi-eye"></i>
+                 </button>
+                 <button type="button" class="action-btn edit" title="Edit event" (click)="editEvent(event)">
+                   <i class="bi bi-pencil"></i>
+                 </button>
+                 <button type="button" class="action-btn delete" title="Delete event" (click)="deleteEvent(event)">
+                   <i class="bi bi-trash"></i>
+                 </button>
+               </td>
+             </tr>
+           </tbody>
+         </table>
+         <div class="pagination-bar" *ngIf="totalPages > 1">
+           <button type="button" class="page-btn" (click)="previousPage()" [disabled]="page === 0">Previous</button>
+           <span class="page-info">Page {{ page + 1 }} of {{ totalPages }} ({{ totalElements }} total)</span>
+           <button type="button" class="page-btn" (click)="nextPage()" [disabled]="page + 1 >= totalPages">Next</button>
+         </div>
+       </div>
 
-      <div class="empty-state" *ngIf="!pageLoading && !error && currentPageEvents.length === 0">
+      <div class="empty-state" *ngIf="!isLoading && !error && events.length === 0">
         <div class="empty-icon">
           <i class="bi bi-calendar2-x"></i>
         </div>
         <h3>No events found</h3>
         <p>Create your first event or adjust the current filters.</p>
         <button type="button" class="btn-primary" (click)="openCreateEvent()">Create Event</button>
-      </div>
-
-      <div class="pagination-bar" *ngIf="paginatedTotalPages > 1">
-        <button type="button" class="page-btn" (click)="previousPage()" [disabled]="paginatedPage === 0">Previous</button>
-        <span class="page-info">Page {{ paginatedPage + 1 }} of {{ paginatedTotalPages }}</span>
-        <button type="button" class="page-btn" (click)="nextPage()" [disabled]="paginatedPage + 1 >= paginatedTotalPages">Next</button>
       </div>
     </section>
 
@@ -170,40 +175,45 @@
         <p>Loading events...</p>
       </div>
 
-      <div class="admin-table-wrap" *ngIf="!isEventsListLoading">
-        <table class="admin-events-table">
-          <thead>
-            <tr>
-              <th>Event</th>
-              <th>Type</th>
-              <th>Date</th>
-              <th>Organizer</th>
-              <th>Status</th>
-              <th class="actions-column">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let event of eventsList; trackBy: trackEvent">
-              <td><strong>{{ event.titre }}</strong></td>
-              <td>{{ event.type || '-' }}</td>
-              <td>{{ event.dateDebut | date:'mediumDate' }}</td>
-              <td>{{ event.entrepriseNom || 'Not assigned' }}</td>
-              <td><span class="status-badge" [ngClass]="(event.status || 'UPCOMING').toLowerCase()">{{ event.status }}</span></td>
-              <td class="table-actions">
-                <button type="button" class="table-action-link" (click)="viewEvent(event)">View</button>
-                <button type="button" class="table-action-link" (click)="editEvent(event)">Edit</button>
-                <button type="button" class="table-action-link danger" (click)="deleteEvent(event)">Delete</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="empty-state compact" *ngIf="eventsList.length === 0">
-          <i class="bi bi-calendar2-x"></i>
-          <p>No events available.</p>
-        </div>
-      </div>
-    </section>
-  </div>
+<div class="admin-table-wrap" *ngIf="!isEventsListLoading">
+         <table class="admin-events-table">
+           <thead>
+             <tr>
+               <th>Event</th>
+               <th>Type</th>
+               <th>Date</th>
+               <th>Organizer</th>
+               <th>Status</th>
+               <th class="actions-column">Actions</th>
+             </tr>
+           </thead>
+           <tbody>
+             <tr *ngFor="let event of eventsList; trackBy: trackEvent">
+               <td><strong>{{ event.titre }}</strong></td>
+               <td>{{ event.type || '-' }}</td>
+               <td>{{ event.dateDebut | date:'mediumDate' }}</td>
+               <td>{{ event.entrepriseNom || 'Not assigned' }}</td>
+               <td><span class="status-badge" [ngClass]="(event.status || 'UPCOMING').toLowerCase()">{{ event.status }}</span></td>
+               <td class="table-actions">
+                 <button type="button" class="table-action-link" (click)="viewEvent(event)">View</button>
+                 <button type="button" class="table-action-link" (click)="editEvent(event)">Edit</button>
+                 <button type="button" class="table-action-link danger" (click)="deleteEvent(event)">Delete</button>
+               </td>
+             </tr>
+           </tbody>
+         </table>
+         <div class="empty-state compact" *ngIf="eventsList.length === 0">
+           <i class="bi bi-calendar2-x"></i>
+           <p>No events available.</p>
+         </div>
+         <div class="pagination-bar" *ngIf="eventsListTotalPages > 1">
+           <button type="button" class="page-btn" (click)="eventsListPreviousPage()" [disabled]="eventsListPage === 0">Previous</button>
+           <span class="page-info">Page {{ eventsListPage + 1 }} of {{ eventsListTotalPages }} ({{ eventsListTotal }} total)</span>
+           <button type="button" class="page-btn" (click)="eventsListNextPage()" [disabled]="eventsListPage + 1 >= eventsListTotalPages">Next</button>
+         </div>
+       </div>
+     </section>
+   </div>
 
   <div class="modal-backdrop" *ngIf="showArchiveModal" (click)="closeArchiveModal()">
     <section class="modal-panel events-list-modal archive-modal" (click)="$event.stopPropagation()">

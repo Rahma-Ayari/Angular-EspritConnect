@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { EventService } from '../../services/event.service';
 import { Event, EventStats } from '../../models/event.model';
-import { ArchiveEvent, PageResponse } from '../../models/event.model';
+import { ArchiveEvent } from '../../models/event.model';
 
 @Component({
   selector: 'app-event-dashboard',
@@ -20,13 +20,7 @@ export class EventDashboardComponent implements OnInit {
   showArchiveModal = false;
   archiveLoading = false;
   archiveError: string | null = null;
-
-  paginatedPage = 0;
-  paginatedSize = 7;
-  paginatedTotal = 0;
-  paginatedTotalPages = 0;
-  currentPageEvents: Event[] = [];
-  pageLoading = false;
+  toast: { message: string; type: 'success' | 'error' } | null = null;
 
   searchQuery = '';
   selectedStatus = '';
@@ -38,6 +32,16 @@ export class EventDashboardComponent implements OnInit {
   eventsListModalOpen = false;
 
   readonly statuses = ['ACTIVE', 'UPCOMING', 'CANCELLED', 'COMPLETED'];
+
+  eventsListPage = 0;
+  eventsListPageSize = 1000;
+  eventsListTotal = 0;
+  eventsListTotalPages = 0;
+
+  page = 0;
+  pageSize = 4;
+  totalElements = 0;
+  totalPages = 0;
 
   showDeleteModal = false;
   deleteTargetEvent: Event | null = null;
@@ -61,20 +65,23 @@ export class EventDashboardComponent implements OnInit {
     this.loadEvents();
     this.loadStats();
     this.loadEventTypes();
-    this.loadPaginatedEvents();
   }
 
   loadEvents(): void {
     this.isLoading = true;
     this.error = null;
 
-    this.eventService.getAllEvents({
-      search: this.searchQuery,
-      status: this.selectedStatus,
-      type: this.selectedType
-    }).subscribe({
-      next: (events) => {
-        this.events = events.filter(event => event.status !== 'COMPLETED');
+    this.eventService.getAllEventsPaged(
+      { search: this.searchQuery, status: this.selectedStatus, type: this.selectedType },
+      this.page,
+      this.pageSize
+    ).subscribe({
+      next: (page) => {
+        this.events = this.selectedStatus === 'COMPLETED'
+          ? page.content
+          : page.content.filter(event => event.status !== 'COMPLETED');
+        this.totalElements = page.totalElements;
+        this.totalPages = page.totalPages;
         this.isLoading = false;
       },
       error: (err) => {
@@ -85,28 +92,18 @@ export class EventDashboardComponent implements OnInit {
     });
   }
 
-  loadPaginatedEvents(): void {
-    this.pageLoading = true;
-    this.error = null;
+  nextPage(): void {
+    if (this.page + 1 < this.totalPages) {
+      this.page++;
+      this.loadEvents();
+    }
+  }
 
-    this.eventService.getAllEventsPaged({
-      search: this.searchQuery,
-      status: this.selectedStatus,
-      type: this.selectedType
-    }, this.paginatedPage, this.paginatedSize).subscribe({
-      next: (page) => {
-        this.currentPageEvents = page.content.filter(event => event.status !== 'COMPLETED');
-        this.paginatedTotal = page.totalElements;
-        this.paginatedTotalPages = page.totalPages;
-        this.paginatedPage = page.number;
-        this.pageLoading = false;
-      },
-      error: (err) => {
-        console.error('Failed to load paged events:', err);
-        this.error = 'Unable to load events.';
-        this.pageLoading = false;
-      }
-    });
+  previousPage(): void {
+    if (this.page > 0) {
+      this.page--;
+      this.loadEvents();
+    }
   }
 
   loadStats(): void {
@@ -130,9 +127,8 @@ export class EventDashboardComponent implements OnInit {
   }
 
   applyFilters(): void {
-    this.paginatedPage = 0;
+    this.page = 0;
     this.loadEvents();
-    this.loadPaginatedEvents();
   }
 
   resetFilters(): void {
@@ -140,35 +136,6 @@ export class EventDashboardComponent implements OnInit {
     this.selectedStatus = '';
     this.selectedType = '';
     this.applyFilters();
-  }
-
-  nextPage(): void {
-    if (this.paginatedPage + 1 < this.paginatedTotalPages) {
-      this.paginatedPage++;
-      this.loadPaginatedEvents();
-    }
-  }
-
-  previousPage(): void {
-    if (this.paginatedPage > 0) {
-      this.paginatedPage--;
-      this.loadPaginatedEvents();
-    }
-  }
-
-  goToPage(page: number): void {
-    if (page >= 0 && page < this.paginatedTotalPages) {
-      this.paginatedPage = page;
-      this.loadPaginatedEvents();
-    }
-  }
-
-  get visiblePages(): number[] {
-    const pages: number[] = [];
-    const start = Math.max(0, this.paginatedPage - 2);
-    const end = Math.min(this.paginatedTotalPages - 1, start + 4);
-    for (let i = start; i <= end; i++) pages.push(i);
-    return pages;
   }
 
   openCreateEvent(): void {
@@ -195,14 +162,55 @@ export class EventDashboardComponent implements OnInit {
     this.closeFormModal();
     this.selectedEvent = null;
     this.loadDashboard();
+    this.showToast('Event saved successfully.', 'success');
+  }
+
+  private showToast(message: string, type: 'success' | 'error'): void {
+    this.toast = { message, type };
+    setTimeout(() => this.toast = null, 4000);
+  }
+
+  eventsListNextPage(): void {
+    if (this.eventsListPage + 1 < this.eventsListTotalPages) {
+      this.eventsListPage++;
+      this.loadEventsListPage();
+    }
+  }
+
+  eventsListPreviousPage(): void {
+    if (this.eventsListPage > 0) {
+      this.eventsListPage--;
+      this.loadEventsListPage();
+    }
+  }
+
+  loadEventsListPage(): void {
+    if (!this.eventsListModalOpen) return;
+    this.isEventsListLoading = true;
+    this.eventService.getAllEventsPaged({}, this.eventsListPage, this.eventsListPageSize).subscribe({
+      next: (page) => {
+        this.eventsList = page.content;
+        this.eventsListTotal = page.totalElements;
+        this.eventsListTotalPages = page.totalPages;
+        this.isEventsListLoading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load events list page:', err);
+        this.error = 'Unable to load events list.';
+        this.isEventsListLoading = false;
+      }
+    });
   }
 
   openEventsListModal(): void {
     this.eventsListModalOpen = true;
     this.isEventsListLoading = true;
-    this.eventService.getAllEvents().subscribe({
-      next: (events) => {
-        this.eventsList = events.filter(event => event.status !== 'COMPLETED');
+    this.eventsListPage = 0;
+    this.eventService.getAllEventsPaged({}, this.eventsListPage, this.eventsListPageSize).subscribe({
+      next: (page) => {
+        this.eventsList = page.content;
+        this.eventsListTotal = page.totalElements;
+        this.eventsListTotalPages = page.totalPages;
         this.isEventsListLoading = false;
       },
       error: (err) => {
@@ -216,6 +224,9 @@ export class EventDashboardComponent implements OnInit {
   closeEventsListModal(): void {
     this.eventsListModalOpen = false;
     this.eventsList = [];
+    this.eventsListPage = 0;
+    this.eventsListTotal = 0;
+    this.eventsListTotalPages = 0;
   }
 
   openArchiveModal(): void {
@@ -312,6 +323,7 @@ Esprit Connect Team`);
 
     this.eventService.deleteEvent(this.deleteTargetEvent.idEvenement).subscribe({
       next: () => {
+        const eventName = this.deleteTargetEvent?.titre || 'Event';
         this.showDeleteModal = false;
         this.deleteTargetEvent = null;
         this.emailSentSuccess = false;
@@ -319,10 +331,12 @@ Esprit Connect Team`);
         if (this.eventsListModalOpen) {
           this.openEventsListModal();
         }
+        this.showToast(`Event "${eventName}" deleted successfully.`, 'success');
       },
       error: (err) => {
         console.error('Failed to delete event:', err);
         this.error = 'Unable to delete this event.';
+        this.showToast('Failed to delete event. Please try again.', 'error');
       }
     });
   }

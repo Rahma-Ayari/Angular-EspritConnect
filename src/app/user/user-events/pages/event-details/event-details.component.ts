@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { UserEvent } from '../../models/user-event.model';
 import { UserEventsService } from '../../services/user-events.service';
@@ -11,15 +11,17 @@ import { UserEventsService } from '../../services/user-events.service';
   styleUrls: ['./event-details.component.css']
 })
 export class EventDetailsComponent implements OnInit {
-
   event?: UserEvent;
   loading = false;
   actionLoading = false;
   error: string | null = null;
+  showDeleteModal = false;
+  deleteModalError: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private location: Location,
+    private router: Router,
     private eventsService: UserEventsService
   ) {}
 
@@ -63,6 +65,34 @@ export class EventDetailsComponent implements OnInit {
       next: () => this.refresh(),
       error: (err) => {
         this.error = err?.error?.error || 'Unable to cancel participation.';
+        this.actionLoading = false;
+      }
+    });
+  }
+
+  openDeleteModal(): void {
+    this.showDeleteModal = true;
+    this.deleteModalError = null;
+  }
+
+  closeDeleteModal(): void {
+    if (this.actionLoading) return;
+    this.showDeleteModal = false;
+    this.deleteModalError = null;
+  }
+
+  confirmDelete(): void {
+    if (!this.event?.idEvenement) return;
+    this.actionLoading = true;
+    this.deleteModalError = null;
+    this.eventsService.deleteEvent(this.event.idEvenement).subscribe({
+      next: () => {
+        this.showDeleteModal = false;
+        this.deleteModalError = null;
+        this.router.navigate(['/events']);
+      },
+      error: (err) => {
+        this.deleteModalError = err?.error?.error || 'Unable to delete this event.';
         this.actionLoading = false;
       }
     });

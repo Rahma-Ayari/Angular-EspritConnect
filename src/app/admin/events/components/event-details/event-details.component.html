@@ -35,12 +35,7 @@
 
       <article class="details-card" *ngIf="!isLoading && !error && event">
         <div class="hero-media">
-          <img
-            *ngIf="hasImage"
-            [src]="event.imageUrl || ''"
-            [alt]="event.titre"
-            (error)="onImageError()"
-          >
+          <img *ngIf="hasImage" [src]="event.imageUrl | backendUrl" [alt]="event.titre" (error)="onImageError()">
           <div class="image-placeholder" *ngIf="!hasImage">
             <i class="bi bi-calendar-event"></i>
           </div>
@@ -117,64 +112,94 @@
           </div>
         </div>
       </article>
-
-      <div class="modal-backdrop participations-backdrop" *ngIf="participationsModalOpen" (click)="closeParticipationsList()">
-        <section class="modal-panel participations-modal" (click)="$event.stopPropagation()">
-          <div class="modal-header compact-header">
-            <div>
-              <p class="eyebrow">Events</p>
-              <h2>Participations List</h2>
-              <p class="subtitle">Users participating in this event.</p>
-            </div>
-            <button type="button" class="icon-button" (click)="closeParticipationsList()" aria-label="Close participations">
-              <i class="bi bi-x-lg"></i>
-            </button>
-          </div>
-
-          <div class="loading-state compact" *ngIf="participationsLoading">
-            <div class="spinner"></div>
-            <p>Loading participations...</p>
-          </div>
-
-          <div class="error-state" *ngIf="participationsError">
-            <p>{{ participationsError }}</p>
-          </div>
-
-          <div class="admin-table-wrap" *ngIf="!participationsLoading && !participationsError">
-            <table class="admin-events-table">
-              <thead>
-                <tr>
-                  <th>User</th>
-                  <th>Email</th>
-                  <th>Joined at</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let participation of participations">
-                  <td>{{ participation.userNom || 'Unknown user' }}</td>
-                  <td>{{ participation.userEmail || '-' }}</td>
-                  <td>{{ participation.createdAt | date:'medium' }}</td>
-                  <td>
-                    <span class="status-badge" [ngClass]="(participation.status || 'APPROVED').toLowerCase()">
-                      {{ participation.status || 'APPROVED' }}
-                    </span>
-                  </td>
-                  <td class="table-actions" *ngIf="participation.status === 'PENDING_APPROVAL'">
-                    <button type="button" class="btn-approve" (click)="approveParticipation(participation)">Approve</button>
-                    <button type="button" class="btn-reject" (click)="rejectParticipation(participation)">Reject</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="empty-state compact" *ngIf="participations.length === 0">
-              <i class="bi bi-calendar2-x"></i>
-              <p>No participations yet.</p>
-            </div>
-          </div>
-        </section>
-      </div>
     </article>
   </div>
+</div>
+
+<div class="modal-backdrop participations-backdrop" *ngIf="participationsModalOpen" (click)="closeParticipationsList()">
+  <section class="modal-panel participations-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header participations-header">
+      <div class="header-content">
+        <p class="eyebrow">Event Management</p>
+        <h2>Participations List</h2>
+        <p class="subtitle">Users participating in "{{ event?.titre }}"</p>
+      </div>
+      <div class="header-meta">
+        <span class="count-chip">{{ participations.length }} participant{{ participations.length !== 1 ? 's' : '' }}</span>
+      </div>
+      <button type="button" class="icon-button close-btn" (click)="closeParticipationsList()" aria-label="Close participations">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="loading-state compact" *ngIf="participationsLoading">
+      <div class="spinner"></div>
+      <p>Loading participations...</p>
+    </div>
+
+    <div class="error-state" *ngIf="participationsError">
+      <i class="bi bi-exclamation-triangle"></i>
+      <p>{{ participationsError }}</p>
+    </div>
+
+    <div class="participations-content" *ngIf="!participationsLoading && !participationsError">
+      <div class="table-container" *ngIf="participations.length > 0">
+        <table class="participations-table">
+          <thead>
+            <tr>
+              <th class="col-user">User</th>
+              <th class="col-email">Email</th>
+              <th class="col-date">Joined</th>
+              <th class="col-status">Status</th>
+              <th class="col-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let participation of participations" class="participation-row">
+              <td class="col-user">
+                <div class="user-info">
+                  <span class="user-name">{{ participation.userNom || 'Unknown user' }}</span>
+                </div>
+              </td>
+              <td class="col-email">
+                <a href="mailto:{{ participation.userEmail }}" class="email-link">{{ participation.userEmail || '-' }}</a>
+              </td>
+              <td class="col-date">
+                <span class="date-value">{{ participation.createdAt | date:'mediumDate' }}</span>
+                <span class="time-value">{{ participation.createdAt | date:'shortTime' }}</span>
+              </td>
+              <td class="col-status">
+                <span class="status-badge" [ngClass]="(participation.status || 'APPROVED').toLowerCase()">
+                  {{ participation.status || 'APPROVED' }}
+                </span>
+              </td>
+              <td class="col-actions">
+                <div class="action-buttons" *ngIf="participation.status === 'PENDING_APPROVAL'">
+                  <button type="button" class="btn-action btn-approve" (click)="approveParticipation(participation)" title="Approve">
+                    <i class="bi bi-check-lg"></i>
+                    <span class="btn-text">Approve</span>
+                  </button>
+                  <button type="button" class="btn-action btn-reject" (click)="rejectParticipation(participation)" title="Reject">
+                    <i class="bi bi-x-lg"></i>
+                    <span class="btn-text">Reject</span>
+                  </button>
+                </div>
+                <span class="status-label" *ngIf="participation.status !== 'PENDING_APPROVAL'">—</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="empty-state participations-empty" *ngIf="participations.length === 0">
+        <div class="empty-icon">
+          <i class="bi bi-people"></i>
+        </div>
+        <h3>No Participations Yet</h3>
+        <p>Users will appear here once they join this event.</p>
+      </div>
+    </div>
+  </section>
 </div>
 
 <div class="event-details-page" *ngIf="!modalMode">
@@ -213,12 +238,7 @@
 
   <article class="details-card" *ngIf="!isLoading && !error && event">
     <div class="hero-media">
-      <img
-        *ngIf="hasImage"
-        [src]="event.imageUrl || ''"
-        [alt]="event.titre"
-        (error)="onImageError()"
-      >
+      <img *ngIf="hasImage" [src]="event.imageUrl | backendUrl" [alt]="event.titre" (error)="onImageError()">
       <div class="image-placeholder" *ngIf="!hasImage">
         <i class="bi bi-calendar-event"></i>
       </div>
@@ -287,17 +307,14 @@
           <i class="bi bi-link-45deg"></i>
           <div>
             <span>Image</span>
-            <strong>{{ event.imageUrl || 'No image URL' }}</strong>
+            <strong>{{ event.imageUrl ? (event.imageUrl | backendUrl) : 'No image URL' }}</strong>
           </div>
         </div>
       </div>
     </div>
 
     <div class="waiting-list-section" *ngIf="waitingListOpen">
-      <app-event-waiting-list
-        [event]="event"
-        (closed)="closeWaitingList()"
-        (updated)="onWaitingListUpdated()">
+      <app-event-waiting-list [event]="event" (closed)="closeWaitingList()" (updated)="onWaitingListUpdated()">
       </app-event-waiting-list>
     </div>
   </article>

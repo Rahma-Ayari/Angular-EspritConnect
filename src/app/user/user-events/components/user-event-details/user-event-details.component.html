@@ -27,7 +27,7 @@
     <section class="event-hero">
       <img
         *ngIf="hasImage"
-        [src]="eventData.imageUrl || ''"
+        [src]="eventData.imageUrl | backendUrl"
         [alt]="eventData.titre"
         (error)="onImageError()"
       >

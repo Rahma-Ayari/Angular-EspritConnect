@@ -32,6 +32,7 @@ export class EventFormComponent implements OnInit {
   isUploading = false;
   uploadProgress = 0;
   error: string | null = null;
+  success: string | null = null;
   imagePreview: string | null = null;
   entreprises: EntrepriseOption[] = [];
   eventTypes: EventType[] = [];
@@ -86,6 +87,7 @@ export class EventFormComponent implements OnInit {
     const payload = this.buildPayload();
     this.isSaving = true;
     this.error = null;
+    this.success = null;
 
     const request$ = this.isEdit && this.eventId
       ? this.eventService.updateEvent(this.eventId, payload)
@@ -94,7 +96,11 @@ export class EventFormComponent implements OnInit {
     request$.subscribe({
       next: () => {
         this.isSaving = false;
+        this.success = this.isEdit ? 'Event updated successfully.' : 'Event created successfully.';
         this.saved.emit();
+        if (this.modalMode) {
+          setTimeout(() => this.cancel(), 1500);
+        }
       },
       error: (err) => {
         console.error('Failed to save event:', err);

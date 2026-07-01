@@ -12,6 +12,7 @@ import { EventsHomeComponent } from './pages/events-home/events-home.component';
 import { EventDetailsComponent } from './pages/event-details/event-details.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MyParticipationsComponent } from './pages/my-participations/my-participations.component';
+import { BackendUrlPipe } from '../../shared/pipes/backend-url.pipe';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { MyParticipationsComponent } from './pages/my-participations/my-particip
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    UserEventsRoutingModule
+    UserEventsRoutingModule,
+    BackendUrlPipe
   ]
 })
 export class UserEventsModule { }

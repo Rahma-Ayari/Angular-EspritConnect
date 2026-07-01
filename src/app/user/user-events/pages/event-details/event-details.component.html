@@ -32,12 +32,47 @@
     <p *ngIf="event.entrepriseNom">Organizer: {{ event.entrepriseNom }}</p>
 
     <div class="actions">
-      <button type="button" class="primary" *ngIf="!event.participated" [disabled]="actionLoading" (click)="participate()">
+      <button type="button" class="primary" *ngIf="!event.participated && !event.ownedByCurrentUser" [disabled]="actionLoading" (click)="participate()">
         Participate
       </button>
       <button type="button" *ngIf="event.participated" [disabled]="actionLoading" (click)="cancelParticipation()">
         Cancel participation
       </button>
+      <button type="button" class="delete-btn" *ngIf="event.ownedByCurrentUser" [disabled]="actionLoading" (click)="openDeleteModal()">
+        Delete Event
+      </button>
     </div>
   </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+  <section class="modal-panel delete-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow">Events</p>
+        <h2>Delete Event</h2>
+        <p class="subtitle">This action cannot be undone.</p>
+      </div>
+      <button type="button" class="icon-button" (click)="closeDeleteModal()" aria-label="Close">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <p>Are you sure you want to delete "<strong>{{ event?.titre }}</strong>"? This will permanently remove the event.</p>
+
+      <div class="error-state" *ngIf="deleteModalError">
+        <i class="bi bi-exclamation-circle"></i>
+        <span>{{ deleteModalError }}</span>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-secondary" (click)="closeDeleteModal()" [disabled]="actionLoading">Cancel</button>
+      <button type="button" class="btn-danger" (click)="confirmDelete()" [disabled]="actionLoading">
+        <span *ngIf="!actionLoading">Delete Event</span>
+        <span *ngIf="actionLoading">Deleting...</span>
+      </button>
+    </div>
+  </section>
 </div>

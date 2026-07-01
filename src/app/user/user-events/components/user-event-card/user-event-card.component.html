@@ -1,11 +1,12 @@
 <div class="event-card" (click)="openDetails()">
   <div class="event-media">
     <img
-      *ngIf="event.imageUrl"
-      [src]="event.imageUrl"
+      *ngIf="hasImage"
+      [src]="event.imageUrl | backendUrl"
       [alt]="event.titre"
+      (error)="onImageError()"
     >
-    <div class="image-placeholder" *ngIf="!event.imageUrl">
+    <div class="image-placeholder" *ngIf="!hasImage">
       <i class="bi bi-calendar-event"></i>
     </div>
   </div>
@@ -21,8 +22,14 @@
     <p>{{ event.dateDebut | date:'mediumDate' }} · {{ event.heureDebut }}</p>
     <p>{{ event.unlimitedParticipants ? 'Unlimited participants' : ((event.nombreParticipants || 0) + ' / ' + event.capacite) }}</p>
 
-    <button type="button" (click)="openDetails(); $event.stopPropagation()">
-      View Details
-    </button>
+    <div class="card-actions">
+      <button type="button" (click)="openDetails(); $event.stopPropagation()">
+        View Details
+      </button>
+      <button type="button" class="delete-btn" *ngIf="event.ownedByCurrentUser" (click)="onDelete(); $event.stopPropagation()">
+        <i class="bi bi-trash"></i>
+        Delete
+      </button>
+    </div>
   </div>
 </div>

@@ -2,7 +2,7 @@
   <div class="event-media">
     <img
       *ngIf="hasImage"
-      [src]="event.imageUrl || ''"
+      [src]="event.imageUrl | backendUrl"
       [alt]="event.titre"
       (error)="onImageError()"
     >

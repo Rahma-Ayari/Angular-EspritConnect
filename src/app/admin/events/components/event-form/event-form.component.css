@@ -68,6 +68,26 @@
   margin: 0;
 }
 
+.delete-status {
+  margin: 16px 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.delete-status.success {
+  background: #ecfdf5;
+  color: #166534;
+  border-color: #a7f3d0;
+}
+
 .form-card {
   padding: 22px 24px 24px;
 }

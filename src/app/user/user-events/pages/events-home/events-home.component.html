@@ -41,7 +41,40 @@
   <div class="events-grid" *ngIf="!loading && !error">
     <app-user-event-card
       *ngFor="let event of events"
-      [event]="event">
+      [event]="event"
+      (deleteEvent)="onDeleteEvent($event)">
     </app-user-event-card>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+    <section class="modal-panel delete-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Events</p>
+          <h2>Delete Event</h2>
+          <p class="subtitle">This action cannot be undone.</p>
+        </div>
+        <button type="button" class="icon-button" (click)="closeDeleteModal()" aria-label="Close">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+      <p>Are you sure you want to delete "<strong>{{ eventToDelete?.titre }}</strong>"? This will permanently remove the event.</p>
+
+      <div class="error-state" *ngIf="deleteModalError">
+        <i class="bi bi-exclamation-circle"></i>
+        <span>{{ deleteModalError }}</span>
+      </div>
+    </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeDeleteModal()" [disabled]="actionLoading">Cancel</button>
+        <button type="button" class="btn-danger" (click)="confirmDelete()" [disabled]="actionLoading">
+          <span *ngIf="!actionLoading">Delete Event</span>
+          <span *ngIf="actionLoading">Deleting...</span>
+        </button>
+      </div>
+    </section>
   </div>
 </section>

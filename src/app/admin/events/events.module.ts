@@ -15,6 +15,7 @@ import { TimePickerComponent } from './components/time-picker/time-picker.compon
 import { EventMapComponent } from './components/event-map/event-map.component';
 import { EventWaitingListComponent } from './components/event-waiting-list/event-waiting-list.component';
 import { EventSuggestionsComponent } from './components/event-suggestions/event-suggestions.component';
+import { BackendUrlPipe } from '../../shared/pipes/backend-url.pipe';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { EventSuggestionsComponent } from './components/event-suggestions/event-
     ReactiveFormsModule,
     RouterModule,
     EventsRoutingModule,
-    TimePickerComponent
+    TimePickerComponent,
+    BackendUrlPipe
   ]
 })
 export class EventsModule {}

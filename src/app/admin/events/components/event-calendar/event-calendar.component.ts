@@ -50,7 +50,7 @@ export class EventCalendarComponent implements OnChanges {
     const first = new Date(year, month, 1);
     const startOffset = (first.getDay() + 6) % 7;
     const start = new Date(year, month, 1 - startOffset);
-    const todayKey = this.key(new Date());
+    const todayKey = this.key(this.todayDate());
 
     this.days = Array.from({ length: 42 }, (_, index) => {
       const date = new Date(start);
@@ -68,12 +68,18 @@ export class EventCalendarComponent implements OnChanges {
     this.selectedDay = this.days.find(day => day.today) || this.days.find(day => day.events.length > 0) || this.days[0];
   }
 
+  private todayDate(): Date {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  }
+
   private eventsForDate(date: Date): Event[] {
     const key = this.key(date);
     return this.events.filter(event => {
       const start = event.dateDebut || event.dateEvenement;
       if (!start) return false;
-      return start.slice(0, 10) === key;
+      const startStr = typeof start === 'string' ? start.slice(0, 10) : this.key(new Date(start));
+      return startStr === key;
     });
   }
 

@@ -35,7 +35,7 @@ export class EventDetailsComponent implements OnChanges {
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['event'] && !this.modalMode) {
+    if (changes['event']) {
       this.imageFailed = false;
       this.participations = [];
       this.participationsError = null;
@@ -132,6 +132,14 @@ export class EventDetailsComponent implements OnChanges {
 
   openWaitingList(): void {
     this.waitingListOpen = true;
+    if (this.event?.idEvenement) {
+      this.eventService.getWaitingList(this.event.idEvenement).subscribe({
+        next: (entries) => {
+          this.waitingListCount = entries.length;
+        },
+        error: () => {}
+      });
+    }
   }
 
   closeWaitingList(): void {

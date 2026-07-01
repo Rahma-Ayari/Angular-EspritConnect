@@ -11,6 +11,7 @@ export class MyParticipationsComponent implements OnInit {
   participations: UserParticipation[] = [];
   loading = false;
   error: string | null = null;
+  imageFailures = new Set<number>();
 
   constructor(private eventsService: UserEventsService) {}
 
@@ -39,5 +40,15 @@ export class MyParticipationsComponent implements OnInit {
       next: () => this.load(),
       error: (err) => this.error = err?.error?.error || 'Unable to cancel participation.'
     });
+  }
+
+  hasImage(participation: UserParticipation): boolean {
+    return !!participation.evenement.imageUrl && !this.imageFailures.has(participation.evenement.idEvenement || 0);
+  }
+
+  markImageFailed(participation: UserParticipation): void {
+    if (participation.evenement.idEvenement) {
+      this.imageFailures.add(participation.evenement.idEvenement);
+    }
   }
 }

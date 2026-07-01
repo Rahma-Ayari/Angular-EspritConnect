@@ -21,7 +21,8 @@
       </div>
     </div>
 
-    <div class="featured-panel" *ngIf="featuredEvent as featured">      <span class="featured-label">Featured</span>
+    <div class="featured-panel" *ngIf="featuredEvent as featured">
+      <span class="featured-label">Featured</span>
       <h2>{{ featured.titre }}</h2>
       <p>{{ featured.lieu }}</p>
       <div class="featured-meta">
@@ -72,7 +73,7 @@
         <div class="event-media">
           <img
             *ngIf="hasImage(event)"
-            [src]="event.imageUrl || ''"
+            [src]="event.imageUrl | backendUrl"
             [alt]="event.titre"
             (error)="markImageFailed(event)"
           >

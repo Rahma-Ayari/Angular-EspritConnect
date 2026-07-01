@@ -21,14 +21,17 @@ interface EventMatch {
   styleUrls: ['./events-home.component.css']
 })
 export class EventsHomeComponent implements OnInit {
-
   events: UserEvent[] = [];
   suggestions: CategorySuggestion[] = [];
   loading = false;
+  actionLoading = false;
   suggestionsLoading = false;
   error: string | null = null;
   search = '';
   selectedType = '';
+  showDeleteModal = false;
+  eventToDelete: UserEvent | null = null;
+  deleteModalError: string | null = null;
 
   constructor(private eventsService: UserEventsService) {}
 
@@ -75,6 +78,38 @@ export class EventsHomeComponent implements OnInit {
       error: () => {
         this.error = 'Unable to load events.';
         this.loading = false;
+      }
+    });
+  }
+
+  onDeleteEvent(event: UserEvent): void {
+    this.eventToDelete = event;
+    this.showDeleteModal = true;
+    this.deleteModalError = null;
+  }
+
+  closeDeleteModal(): void {
+    if (this.actionLoading) return;
+    this.showDeleteModal = false;
+    this.eventToDelete = null;
+    this.deleteModalError = null;
+  }
+
+  confirmDelete(): void {
+    if (!this.eventToDelete?.idEvenement) return;
+    this.actionLoading = true;
+    this.deleteModalError = null;
+    this.eventsService.deleteEvent(this.eventToDelete.idEvenement).subscribe({
+      next: () => {
+        this.events = this.events.filter(e => e.idEvenement !== this.eventToDelete?.idEvenement);
+        this.showDeleteModal = false;
+        this.eventToDelete = null;
+        this.actionLoading = false;
+        this.deleteModalError = null;
+      },
+      error: (err) => {
+        this.deleteModalError = err?.error?.error || 'Unable to delete this event.';
+        this.actionLoading = false;
       }
     });
   }
