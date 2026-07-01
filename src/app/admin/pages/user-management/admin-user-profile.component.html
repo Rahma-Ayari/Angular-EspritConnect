@@ -1,179 +1,289 @@
 <div class="profile-container">
+  <!-- Header with Back Button and modern title -->
   <div class="profile-header-premium">
     <div class="header-titles">
-      <h1 class="profile-title">Profil utilisateur</h1>
-      <p class="profile-subtitle">Consultation en lecture seule des informations du profil</p>
+      <h1 class="profile-title">Profil Utilisateur</h1>
+      <p class="profile-subtitle">Consultation des informations détaillées du membre de la plateforme</p>
     </div>
+    <button class="btn-back" [routerLink]="['/admin/user-management/approval']">
+      <i class="bi bi-arrow-left"></i>
+      Retour à la gestion
+    </button>
   </div>
 
+  <!-- Messages -->
   <div class="save-message error" *ngIf="error">
     <i class="bi bi-exclamation-circle-fill"></i>
     {{ error }}
   </div>
 
+  <!-- Loading State -->
   <div class="loading-state" *ngIf="isLoading">
     <div class="spinner"></div>
-    <p>Chargement du profil...</p>
+    <p>Chargement des données du profil...</p>
   </div>
 
-  <div class="profile-grid" *ngIf="!isLoading && !error">
-    <div class="profile-col-main">
-      <div class="premium-card photo-card">
-        <div class="photo-container">
-          <div class="photo-wrapper">
-            <img [src]="profile.photo || getPlaceholderImage()" alt="Photo de profil" class="profile-photo" (error)="onImageError($event)">
+  <!-- Main Profile Content Grid -->
+  <div class="profile-grid-new" *ngIf="!isLoading && !error">
+    
+    <!-- Left Column: Summary Card and Account Activity -->
+    <div class="profile-sidebar">
+      
+      <!-- User Card -->
+      <div class="sidebar-card">
+        <div class="avatar-container">
+          <div class="avatar-wrapper">
+            <img [src]="profile.photo || getPlaceholderImage()" alt="Photo de profil" class="avatar-img" (error)="onImageError($event)">
           </div>
-          <div class="photo-info">
-            <h2>{{ profile.prenom }} {{ profile.nomProprietaire }}</h2>
-            <p class="user-role">{{ profile.userId }}</p>
+          <h2 class="user-fullname">{{ profile.prenom }} {{ profile.nomProprietaire }}</h2>
+          <p class="user-email">{{ profile.userId }}</p>
+          
+          <!-- Dynamic Role Badges -->
+          <span class="user-badge" 
+                [class.student]="profile.typeProprietaire === 'ETUDIANT'"
+                [class.alumni]="profile.typeProprietaire === 'ALUMNI'"
+                [class.enterprise]="profile.typeProprietaire === 'ENTREPRISE'">
+            {{ profile.typeProprietaire || 'Utilisateur' }}
+          </span>
+        </div>
+
+        <!-- Social Quick Actions (Links open in new tab) -->
+        <div class="social-links" *ngIf="profile.lienLinkedIn || profile.lienGitHub || profile.siteWeb">
+          <a *ngIf="profile.lienLinkedIn" [href]="profile.lienLinkedIn" target="_blank" class="social-btn linkedin" title="LinkedIn">
+            <i class="bi bi-linkedin"></i>
+          </a>
+          <a *ngIf="profile.lienGitHub" [href]="profile.lienGitHub" target="_blank" class="social-btn github" title="GitHub">
+            <i class="bi bi-github"></i>
+          </a>
+          <a *ngIf="profile.siteWeb" [href]="profile.siteWeb" target="_blank" class="social-btn" title="Site Web / Portfolio">
+            <i class="bi bi-globe"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Connection Activity Card -->
+      <div class="activity-card">
+        <div class="card-header-new">
+          <i class="bi bi-clock-history"></i>
+          <h3>Activité du compte</h3>
+        </div>
+
+        <div class="loading-state compact" *ngIf="isLoadingActivity">
+          <div class="spinner"></div>
+          <p>Chargement...</p>
+        </div>
+
+        <div class="history-list" *ngIf="!isLoadingActivity">
+          <!-- Last Login -->
+          <div class="history-item">
+            <div class="history-label">
+              <span class="status-dot success"></span>
+              <span>Dernière connexion</span>
+            </div>
+            <div class="history-info-right">
+              <div class="history-time">{{ formatDateTime(activityInfo?.lastLoginAt) }}</div>
+              <div class="history-meta" *ngIf="activityInfo?.lastLoginIp || activityInfo?.lastLoginBrowser">
+                <span *ngIf="activityInfo?.lastLoginIp">{{ activityInfo?.lastLoginIp }}</span>
+                <span *ngIf="activityInfo?.lastLoginBrowser"> • {{ activityInfo?.lastLoginBrowser }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Last Profile Update -->
+          <div class="history-item">
+            <div class="history-label">
+              <span class="status-dot warning"></span>
+              <span>Mise à jour profil</span>
+            </div>
+            <div class="history-info-right">
+              <div class="history-time">{{ formatDateTime(activityInfo?.lastProfileUpdateAt) }}</div>
+              <div class="history-meta" *ngIf="activityInfo?.lastProfileUpdateDescription">
+                {{ activityInfo?.lastProfileUpdateDescription }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="premium-card">
-        <h2 class="card-title">
-          <div class="icon-wrapper primary"><i class="bi bi-person"></i></div>
-          Informations Personnelles
-        </h2>
-        <div class="form-grid">
-          <div class="form-group full-width">
-            <label>Email</label>
-            <input type="email" [value]="profile.userId" disabled class="form-control disabled">
-          </div>
-          <div class="form-group">
-            <label>Nom</label>
-            <input type="text" [value]="profile.nomProprietaire" disabled class="form-control" placeholder="Nom">
-          </div>
-          <div class="form-group">
-            <label>Prénom</label>
-            <input type="text" [value]="profile.prenom" disabled class="form-control" placeholder="Prénom">
-          </div>
-          <div class="form-group">
-            <label>Téléphone</label>
-            <input type="tel" [value]="profile.telephone" disabled class="form-control" placeholder="Téléphone">
-          </div>
-          <div class="form-group">
-            <label>Date de Naissance</label>
-            <input type="date" [value]="profile.dateNaissance" disabled class="form-control">
-          </div>
-          <div class="form-group">
-            <label>Genre</label>
-            <input type="text" [value]="profile.genre" disabled class="form-control" placeholder="Genre">
-          </div>
-        </div>
-      </div>
-
-      <div class="premium-card">
-        <h2 class="card-title">
-          <div class="icon-wrapper secondary"><i class="bi bi-geo-alt"></i></div>
-          Adresse
-        </h2>
-        <div class="form-grid">
-          <div class="form-group full-width">
-            <label>Adresse complète</label>
-            <input type="text" [value]="profile.adresse" disabled class="form-control" placeholder="Adresse">
-          </div>
-          <div class="form-group">
-            <label>Ville</label>
-            <input type="text" [value]="profile.ville" disabled class="form-control" placeholder="Ville">
-          </div>
-          <div class="form-group">
-            <label>Code Postal</label>
-            <input type="text" [value]="profile.codePostal" disabled class="form-control" placeholder="Code Postal">
-          </div>
-          <div class="form-group full-width">
-            <label>Pays</label>
-            <input type="text" [value]="profile.pays" disabled class="form-control" placeholder="Pays">
-          </div>
-        </div>
-      </div>
-
-      <div class="premium-card" *ngIf="profile.typeProprietaire">
-        <h2 class="card-title">
-          <div class="icon-wrapper accent"><i class="bi bi-card-list"></i></div>
-          Informations d'inscription ({{ profile.typeProprietaire }})
-        </h2>
-
-        <div class="form-grid" *ngIf="profile.typeProprietaire === 'ETUDIANT'">
-          <div class="form-group">
-            <label>Filière</label>
-            <input type="text" [value]="profile.filiere" disabled class="form-control" placeholder="Filière">
-          </div>
-          <div class="form-group">
-            <label>Niveau</label>
-            <input type="text" [value]="profile.niveau" disabled class="form-control" placeholder="Niveau">
-          </div>
-        </div>
-
-        <div class="form-grid" *ngIf="profile.typeProprietaire === 'ALUMNI'">
-          <div class="form-group">
-            <label>Année de promotion</label>
-            <input type="number" [value]="profile.anneePromotion" disabled class="form-control" placeholder="Année">
-          </div>
-          <div class="form-group">
-            <label>Domaine</label>
-            <input type="text" [value]="profile.domaine" disabled class="form-control" placeholder="Domaine">
-          </div>
-          <div class="form-group">
-            <label>Entreprise actuelle</label>
-            <input type="text" [value]="profile.entrepriseActuelle" disabled class="form-control" placeholder="Entreprise actuelle">
-          </div>
-          <div class="form-group full-width checkbox-group-premium">
-            <label class="checkbox-container">
-              <input type="checkbox" [checked]="profile.disponibleMentorat" disabled>
-              <span class="checkmark"></span>
-              Disponible pour le mentorat
-            </label>
-          </div>
-        </div>
-
-        <div class="form-grid" *ngIf="profile.typeProprietaire === 'ENTREPRISE'">
-          <div class="form-group">
-            <label>Registre de Commerce</label>
-            <input type="text" [value]="profile.registreCommerce" disabled class="form-control" placeholder="Registre">
-          </div>
-          <div class="form-group">
-            <label>Secteur d'activité</label>
-            <input type="text" [value]="profile.secteurActivite" disabled class="form-control" placeholder="Secteur">
-          </div>
-          <div class="form-group full-width">
-            <label>Description de l'entreprise</label>
-            <textarea [value]="profile.descriptionEntreprise" disabled class="form-control textarea" rows="3" placeholder="Description"></textarea>
-          </div>
-        </div>
-      </div>
-
-      <div class="premium-card">
-        <h2 class="card-title">
-          <div class="icon-wrapper accent"><i class="bi bi-briefcase"></i></div>
-          Profil Professionnel
-        </h2>
-        <div class="form-grid">
-          <div class="form-group full-width">
-            <label>Biographie</label>
-            <textarea [value]="profile.bio" disabled class="form-control textarea" rows="4" placeholder="Biographie"></textarea>
-          </div>
-          <div class="form-group">
-            <label>LinkedIn</label>
-            <input type="url" [value]="profile.lienLinkedIn" disabled class="form-control" placeholder="LinkedIn">
-          </div>
-          <div class="form-group">
-            <label>GitHub</label>
-            <input type="url" [value]="profile.lienGitHub" disabled class="form-control" placeholder="GitHub">
-          </div>
-          <div class="form-group full-width">
-            <label>Site Web / Portfolio</label>
-            <input type="url" [value]="profile.siteWeb" disabled class="form-control" placeholder="Site Web">
-          </div>
-        </div>
-      </div>
-
-      <div class="premium-card security-card">
-        <div class="info-alert">
-          <i class="bi bi-shield-lock"></i>
-          La consultation du profil se fait en lecture seule. Les paramètres 2FA ne sont pas affichés pour l’administrateur.
-        </div>
+      <!-- Security Info Banner -->
+      <div class="security-banner">
+        <i class="bi bi-shield-lock-fill"></i>
+        <span>Profil en lecture seule. Les données de sécurité sensibles (MFA/2FA, mots de passe) ne sont pas accessibles par l'administrateur.</span>
       </div>
     </div>
+
+    <!-- Right Column: Details Pane -->
+    <div class="profile-content">
+      
+      <!-- Personal Info -->
+      <div class="details-card">
+        <div class="card-header-new">
+          <i class="bi bi-person-fill"></i>
+          <h3>Informations Personnelles</h3>
+        </div>
+        
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Prénom</span>
+            <div class="info-value" [class.empty]="!profile.prenom">{{ profile.prenom || 'Non spécifié' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Nom de famille</span>
+            <div class="info-value" [class.empty]="!profile.nomProprietaire">{{ profile.nomProprietaire || 'Non spécifié' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Email Principal</span>
+            <div class="info-value">{{ profile.userId }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Téléphone</span>
+            <div class="info-value" [class.empty]="!profile.telephone">{{ profile.telephone || 'Non spécifié' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Date de Naissance</span>
+            <div class="info-value" [class.empty]="!profile.dateNaissance">
+              {{ profile.dateNaissance ? formatDateTime(profile.dateNaissance).split('à')[0] : 'Non spécifiée' }}
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Genre</span>
+            <div class="info-value" [class.empty]="!profile.genre">{{ profile.genre || 'Non spécifié' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Address / Location Info -->
+      <div class="details-card">
+        <div class="card-header-new">
+          <i class="bi bi-geo-alt-fill"></i>
+          <h3>Adresse & Localisation</h3>
+        </div>
+        
+        <div class="info-grid">
+          <div class="info-item full-width">
+            <span class="info-label">Adresse Complète</span>
+            <div class="info-value" [class.empty]="!profile.adresse">{{ profile.adresse || 'Non spécifiée' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Ville</span>
+            <div class="info-value" [class.empty]="!profile.ville">{{ profile.ville || 'Non spécifiée' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Code Postal</span>
+            <div class="info-value" [class.empty]="!profile.codePostal">{{ profile.codePostal || 'Non spécifié' }}</div>
+          </div>
+          <div class="info-item full-width">
+            <span class="info-label">Pays</span>
+            <div class="info-value" [class.empty]="!profile.pays">{{ profile.pays || 'Non spécifié' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Type Specific Details -->
+      <div class="details-card" *ngIf="profile.typeProprietaire">
+        <div class="card-header-new">
+          <i class="bi bi-card-text"></i>
+          <h3>Détails de l'Inscription ({{ profile.typeProprietaire }})</h3>
+        </div>
+
+        <!-- Student details -->
+        <div class="info-grid" *ngIf="profile.typeProprietaire === 'ETUDIANT'">
+          <div class="info-item">
+            <span class="info-label">Filière</span>
+            <div class="info-value" [class.empty]="!profile.filiere">{{ profile.filiere || 'Non spécifiée' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Niveau d'études</span>
+            <div class="info-value" [class.empty]="!profile.niveau">{{ profile.niveau || 'Non spécifié' }}</div>
+          </div>
+        </div>
+
+        <!-- Alumni details -->
+        <div class="info-grid" *ngIf="profile.typeProprietaire === 'ALUMNI'">
+          <div class="info-item">
+            <span class="info-label">Année de Promotion</span>
+            <div class="info-value" [class.empty]="!profile.anneePromotion">{{ profile.anneePromotion || 'Non spécifiée' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Domaine d'Activité</span>
+            <div class="info-value" [class.empty]="!profile.domaine">{{ profile.domaine || 'Non spécifié' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Entreprise Actuelle</span>
+            <div class="info-value" [class.empty]="!profile.entrepriseActuelle">{{ profile.entrepriseActuelle || 'Non spécifiée' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Statut Mentorat</span>
+            <div class="info-value">
+              <i class="bi" [class.bi-check-circle-fill]="profile.disponibleMentorat" [style.color]="profile.disponibleMentorat ? 'var(--success)' : 'var(--text-muted)'"></i>
+              {{ profile.disponibleMentorat ? 'Disponible pour le mentorat' : 'Non disponible / Non configuré' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Enterprise details -->
+        <div class="info-grid" *ngIf="profile.typeProprietaire === 'ENTREPRISE'">
+          <div class="info-item">
+            <span class="info-label">Registre de Commerce</span>
+            <div class="info-value" [class.empty]="!profile.registreCommerce">{{ profile.registreCommerce || 'Non spécifié' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Secteur d'Activité</span>
+            <div class="info-value" [class.empty]="!profile.secteurActivite">{{ profile.secteurActivite || 'Non spécifié' }}</div>
+          </div>
+          <div class="info-item full-width">
+            <span class="info-label">Description de l'Entreprise</span>
+            <div class="info-value bio-text" [class.empty]="!profile.descriptionEntreprise">{{ profile.descriptionEntreprise || 'Aucune description fournie.' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Professional Profile -->
+      <div class="details-card">
+        <div class="card-header-new">
+          <i class="bi bi-briefcase-fill"></i>
+          <h3>Profil Professionnel & Liens</h3>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item full-width">
+            <span class="info-label">Biographie / À propos</span>
+            <div class="info-value bio-text" [class.empty]="!profile.bio">{{ profile.bio || 'Aucune biographie rédigée.' }}</div>
+          </div>
+          
+          <div class="info-item">
+            <span class="info-label">LinkedIn</span>
+            <div class="info-value" [class.empty]="!profile.lienLinkedIn">
+              <a *ngIf="profile.lienLinkedIn" [href]="profile.lienLinkedIn" target="_blank" style="color: var(--secondary); text-decoration: none;">
+                <i class="bi bi-link-45deg"></i> Visiter le profil LinkedIn
+              </a>
+              <span *ngIf="!profile.lienLinkedIn">Non spécifié</span>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <span class="info-label">GitHub</span>
+            <div class="info-value" [class.empty]="!profile.lienGitHub">
+              <a *ngIf="profile.lienGitHub" [href]="profile.lienGitHub" target="_blank" style="color: var(--text-main); text-decoration: none;">
+                <i class="bi bi-link-45deg"></i> Visiter le profil GitHub
+              </a>
+              <span *ngIf="!profile.lienGitHub">Non spécifié</span>
+            </div>
+          </div>
+
+          <div class="info-item full-width">
+            <span class="info-label">Site Web / Portfolio</span>
+            <div class="info-value" [class.empty]="!profile.siteWeb">
+              <a *ngIf="profile.siteWeb" [href]="profile.siteWeb" target="_blank" style="color: var(--primary); text-decoration: none;">
+                <i class="bi bi-link-45deg"></i> {{ profile.siteWeb }}
+              </a>
+              <span *ngIf="!profile.siteWeb">Non spécifié</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 </div>

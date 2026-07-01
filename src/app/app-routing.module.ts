@@ -53,8 +53,13 @@ import { ProfileComponent } from './profile/profile.component';
 import { AdminUserProfileComponent } from './admin/pages/user-management/admin-user-profile.component';
 import { RoleRedirectComponent } from './role-redirect.component';
 import { HomepageComponent } from './homepage/homepage.component';
+import { ActivityHistoryComponent } from './admin/activity-history/activity-history.component';
 
 const adminShellRoutes: Routes = [
+  // User Activity Dashboard
+  { path: 'admin/user-management/user-history', component: ActivityHistoryComponent, canActivate: [AdminGuard] },
+  { path: 'admin/activity', redirectTo: 'admin/user-management/user-history', pathMatch: 'full' },
+  
   // Job & user management (from job branch)
   { path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [AdminGuard] },
   { path: 'admin/settings/general', component: AdminGeneralSettingsComponent, canActivate: [AdminGuard] },

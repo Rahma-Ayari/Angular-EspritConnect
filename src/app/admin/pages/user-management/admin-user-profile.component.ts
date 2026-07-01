@@ -1,19 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProfileService, Profile } from '../../../services/profile.service';
+import { ActivityService } from '../../../services/activity.service';
+import { UserActivityInfo } from '../../../models/user-activity-info.model';
 
 @Component({
   selector: 'app-admin-user-profile',
   templateUrl: './admin-user-profile.component.html',
-  styleUrls: ['../../../profile/profile.component.css']
+  styleUrls: ['./admin-user-profile.component.css']
 })
 export class AdminUserProfileComponent implements OnInit {
   profile: Profile = {};
+  activityInfo: UserActivityInfo | null = null;
   isLoading = false;
+  isLoadingActivity = false;
   error = '';
 
   constructor(
     private profileService: ProfileService,
+    private activityService: ActivityService,
     private route: ActivatedRoute
   ) {}
 
@@ -23,9 +28,9 @@ export class AdminUserProfileComponent implements OnInit {
       this.error = "Aucun identifiant d'utilisateur spécifié.";
       return;
     }
-    // Le paramètre est encodé (l'email contient @), on le décode
     const userId = decodeURIComponent(rawUserId);
     this.loadProfile(userId);
+    this.loadActivityInfo(userId);
   }
 
   loadProfile(userId: string): void {
@@ -43,6 +48,38 @@ export class AdminUserProfileComponent implements OnInit {
         this.error = 'Impossible de charger le profil de l’utilisateur.';
         this.isLoading = false;
       }
+    });
+  }
+
+  loadActivityInfo(email: string): void {
+    this.isLoadingActivity = true;
+    this.activityService.getUserActivityInfo(email).subscribe({
+      next: (data) => {
+        this.activityInfo = data;
+        this.isLoadingActivity = false;
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement de l’activité utilisateur', err);
+        this.activityInfo = null;
+        this.isLoadingActivity = false;
+      }
+    });
+  }
+
+  formatDateTime(value?: string): string {
+    if (!value) {
+      return 'Non disponible';
+    }
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return 'Non disponible';
+    }
+    return date.toLocaleString('fr-FR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   }
 
