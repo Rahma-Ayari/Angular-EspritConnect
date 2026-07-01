@@ -52,7 +52,7 @@ export class EventService {
   }
 
   getEntreprises(): Observable<EntrepriseOption[]> {
-    return this.http.get<EntrepriseOption[]>(`${this.apiRoot}/entreprises`);
+    return this.http.get<EntrepriseOption[]>(`${this.apiRoot}/companies`);
   }
 
   getEventTypes(activeOnly = false): Observable<EventType[]> {

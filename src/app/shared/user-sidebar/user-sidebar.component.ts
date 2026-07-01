@@ -39,9 +39,9 @@ export class UserSidebarComponent implements OnInit {
     if (!role) return '';
     switch (role.toUpperCase()) {
       case 'ALUMNI': return 'Alumni';
-      case 'ETUDIANT': return 'Étudiant';
-      case 'ADMIN': return 'Administrateur';
-      case 'ENTREPRISE': return 'Entreprise';
+      case 'ETUDIANT': return 'Student';
+      case 'ADMIN': return 'Administrator';
+      case 'ENTREPRISE': return 'Company';
       default: return role;
     }
   }

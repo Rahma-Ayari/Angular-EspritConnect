@@ -20,13 +20,13 @@ export class EntrepriseJobDashboardService {
 
   getOverview(entrepriseId: number): Observable<EntrepriseJobDashboardOverview> {
     return this.http.get<EntrepriseJobDashboardOverview>(
-      `${this.api}/entreprises/${entrepriseId}/job-dashboard`
+      `${this.api}/companies/${entrepriseId}/job-dashboard`
     );
   }
 
   getVerification(entrepriseId: number): Observable<EntrepriseVerification> {
     return this.http.get<EntrepriseVerification>(
-      `${this.api}/entreprises/${entrepriseId}/verification`
+      `${this.api}/companies/${entrepriseId}/verification`
     );
   }
 
@@ -36,14 +36,14 @@ export class EntrepriseJobDashboardService {
     fileName: string
   ): Observable<EntrepriseDocument> {
     return this.http.post<EntrepriseDocument>(
-      `${this.api}/entreprises/${entrepriseId}/verification/documents`,
+      `${this.api}/companies/${entrepriseId}/verification/documents`,
       { documentType, fileName, fileUrl: `uploaded://${fileName}` }
     );
   }
 
   submitVerification(entrepriseId: number): Observable<EntrepriseVerification> {
     return this.http.post<EntrepriseVerification>(
-      `${this.api}/entreprises/${entrepriseId}/verification/submit`,
+      `${this.api}/companies/${entrepriseId}/verification/submit`,
       {}
     );
   }
@@ -96,10 +96,10 @@ export class EntrepriseJobDashboardService {
   }
 
   getProfile(entrepriseId: number): Observable<any> {
-    return this.http.get<any>(`${this.api}/entreprises/${entrepriseId}`);
+    return this.http.get<any>(`${this.api}/companies/${entrepriseId}`);
   }
 
   updateProfile(entrepriseId: number, body: any): Observable<any> {
-    return this.http.put<any>(`${this.api}/entreprises/${entrepriseId}`, body);
+    return this.http.put<any>(`${this.api}/companies/${entrepriseId}`, body);
   }
 }

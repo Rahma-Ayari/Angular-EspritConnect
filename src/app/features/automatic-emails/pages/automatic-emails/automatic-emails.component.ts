@@ -66,7 +66,7 @@ export class AutomaticEmailsComponent implements OnInit {
     this.http.get<BirthdaySettings>(`${this.base}/api/email-communications/automatic-emails/birthday`)
       .subscribe({
         next: (data) => { this.settings = data; this.loading = false; },
-        error: ()    => { this.loading = false; /* garde les valeurs par défaut */ }
+        error: ()    => { this.loading = false; /* keeps default values */ }
       });
   }
 
@@ -88,11 +88,11 @@ export class AutomaticEmailsComponent implements OnInit {
       next: (res) => {
         this.settings = res;
         this.saving   = false;
-        this.success('Paramètres sauvegardés avec succès !');
+        this.success('Settings saved successfully!');
       },
       error: () => {
         this.saving = false;
-        this.error('Erreur lors de la sauvegarde. Vérifiez le backend.');
+        this.error('Error saving. Check the backend.');
       }
     });
   }
@@ -107,8 +107,8 @@ export class AutomaticEmailsComponent implements OnInit {
       toEmail: this.testEmail,
       nomDemo: this.testName || 'John'
     }).subscribe({
-      next: ()  => { this.sendingTest = false; this.success(`Email de test envoyé à ${this.testEmail} !`); this.showTestForm = false; },
-      error: () => { this.sendingTest = false; this.error('Échec envoi test. Vérifiez la config SMTP.'); }
+      next: ()  => { this.sendingTest = false; this.success(`Test email sent to ${this.testEmail} !`); this.showTestForm = false; },
+      error: () => { this.sendingTest = false; this.error('Test send failed. Check SMTP config.'); }
     });
   }
 

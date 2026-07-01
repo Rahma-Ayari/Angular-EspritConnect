@@ -17,8 +17,8 @@ export class JobSearchComponent implements OnInit, OnDestroy {
 
   readonly types: { value: OffreType | ''; label: string }[] = [
     { value: '', label: 'Tous types' },
-    { value: 'STAGE', label: 'Stage' },
-    { value: 'EMPLOI', label: 'Emploi' },
+    { value: 'STAGE', label: 'Internship' },
+    { value: 'EMPLOI', label: 'Job' },
     { value: 'APPRENTISSAGE', label: 'Apprentissage' }
   ];
 

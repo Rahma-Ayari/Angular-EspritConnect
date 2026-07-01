@@ -89,24 +89,40 @@ export interface ResumeSection {
 export interface ResumeData {
   templateId: string;
   fullName: string;
+  jobTitle: string;
   email: string;
   phone: string;
+  address: string;
+  portfolio: string;
   sections: ResumeSection[];
   lastUpdated?: string;
 }
 
-export const RESUME_TEMPLATES = [
-  { id: 'classic', name: 'Classic ATS', description: 'Clean single-column layout' },
-  { id: 'modern', name: 'Modern Pro', description: 'Bold headers with skill bars' },
-  { id: 'minimal', name: 'Minimal', description: 'Ultra-clean for tech roles' },
-  { id: 'academic', name: 'Academic', description: 'Education-first for students' }
-] as const;
+export const RESUME_TEMPLATE = {
+  id: 'science-engineering',
+  name: 'Science & Engineering',
+  description: 'White & black simple style — ATS-friendly layout for STEM students.'
+} as const;
 
-export const COVER_LETTER_TEMPLATES = [
-  { id: 'professional', name: 'Professional', color: '#666' },
-  { id: 'creative', name: 'Creative', color: '#cc0000' },
-  { id: 'startup', name: 'Startup', color: '#7c3aed' }
-] as const;
+export interface CoverLetterData {
+  fullName: string;
+  studentTitle: string;
+  email: string;
+  phone: string;
+  address: string;
+  jobTitle: string;
+  companyName: string;
+  salutation: string;
+  closing: string;
+  letterBody: string;
+  additionalNotes?: string;
+}
+
+export const COVER_LETTER_TEMPLATE = {
+  id: 'minimalist',
+  name: 'Black & White Minimalist',
+  description: 'Clean professional layout with signature — ideal for job applications.'
+} as const;
 
 export function matchLabelFromScore(score: number): string {
   if (score >= 85) return 'Excellent Match';

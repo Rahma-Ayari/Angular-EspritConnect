@@ -79,14 +79,42 @@ export class StudentAiService {
 
   private post<T>(path: string, body: unknown): Observable<T> {
     return this.http.post<T>(`${this.api}${path}`, body).pipe(
-      catchError((err) => {
-        const msg =
-          err?.error?.message ||
-          err?.error?.error ||
-          err?.message ||
-          'AI request failed. Check that GEMINI_API_KEY or OPENAI_API_KEY is configured.';
-        return throwError(() => new Error(msg));
-      })
+      catchError((err) => throwError(() => new Error(this.toUserMessage(err))))
     );
+  }
+
+  private toUserMessage(err: any): string {
+    const status = err?.status;
+    const body = err?.error;
+    const raw =
+      (typeof body === 'string' ? body : null) ||
+      body?.message ||
+      body?.error ||
+      err?.message ||
+      '';
+
+    if (status === 503 || /high demand|UNAVAILABLE|503/i.test(raw)) {
+      return 'The AI service is temporarily busy. Please wait a moment and try again.';
+    }
+    if (status === 429 || /rate limit|too many requests/i.test(raw)) {
+      return 'Too many AI requests right now. Please try again in a minute.';
+    }
+    if (status === 404 && /static resource/i.test(raw)) {
+      return 'This AI feature endpoint is unavailable. Please refresh the page or contact support.';
+    }
+    if (/No AI provider configured|GEMINI_API_KEY|OPENAI_API_KEY/i.test(raw)) {
+      return 'AI is not configured on the server. Set GEMINI_API_KEY or OPENAI_API_KEY.';
+    }
+
+    return this.cleanErrorText(raw) || 'AI request failed. Please try again.';
+  }
+
+  private cleanErrorText(raw: string): string {
+    return raw
+      .replace(/^\d{3}\s+\w+:\s*"/, '')
+      .replace(/"\s*$/, '')
+      .replace(/<EOL>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 }

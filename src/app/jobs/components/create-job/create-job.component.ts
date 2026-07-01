@@ -116,7 +116,7 @@ export class CreateJobComponent implements OnInit, OnDestroy {
     this.step1Form.patchValue({
       title: this.sanitizeTitle(importedJob.title),
       contractType: this.normalizeContractType(importedJob.contractType),
-      department: this.guessDepartment(description),
+      department: this.guessDebytment(description),
       experienceLevel,
       numberOfPositions: 1
     });
@@ -250,7 +250,7 @@ export class CreateJobComponent implements OnInit, OnDestroy {
     return 'EMPLOI';
   }
 
-  private guessDepartment(text: string): string {
+  private guessDebytment(text: string): string {
     const lower = text.toLowerCase();
     if (lower.includes('engineering') || lower.includes('developer') || lower.includes('software')) {
       return 'Engineering';

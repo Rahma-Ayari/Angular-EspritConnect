@@ -74,7 +74,7 @@ export class ForumGroupDetailComponent implements OnInit, OnDestroy {
   loadCategories(): void {
     this.api.getCategories().subscribe({
       next: (res) => (this.categories = res),
-      error: (err) => console.error('Erreur chargement categories', err)
+      error: (err) => console.error('Error chargement categories', err)
     });
   }
 
@@ -85,7 +85,7 @@ export class ForumGroupDetailComponent implements OnInit, OnDestroy {
       this.currentUserName = 'Alumni Demo';
     } else if (mode === 'student') {
       this.currentUserEmail = 'etudiant.demo@esprit.tn';
-      this.currentUserName = 'Étudiant Demo';
+      this.currentUserName = 'Student Demo';
     } else {
       this.currentUserEmail = 'admin.connect@esprit.tn';
       this.currentUserName = 'Admin Esprit';
@@ -105,9 +105,9 @@ export class ForumGroupDetailComponent implements OnInit, OnDestroy {
         this.checkUserRoleAndMembership();
       },
       error: (err) => {
-        console.error('Erreur chargement groupe', err);
+        console.error('Error chargement groupe', err);
         this.loading = false;
-        alert('Impossible de charger les détails du groupe.');
+        alert('Unable to load group details.');
         this.router.navigate(['/user/forum/groups']);
       }
     });
@@ -141,7 +141,7 @@ export class ForumGroupDetailComponent implements OnInit, OnDestroy {
         }
       },
       error: (err) => {
-        console.error('Erreur adhésion', err);
+        console.error('Error adhésion', err);
         this.loading = false;
       }
     });
@@ -153,7 +153,7 @@ export class ForumGroupDetailComponent implements OnInit, OnDestroy {
       .pipe(finalize(() => this.loadingPosts = false))
       .subscribe({
         next: (res) => (this.posts = res),
-        error: (err) => console.error('Erreur chargement posts du groupe', err)
+        error: (err) => console.error('Error chargement posts du groupe', err)
       });
   }
 
@@ -163,7 +163,7 @@ export class ForumGroupDetailComponent implements OnInit, OnDestroy {
       .pipe(finalize(() => this.loadingMembers = false))
       .subscribe({
         next: (res) => (this.members = res),
-        error: (err) => console.error('Erreur membres du groupe', err)
+        error: (err) => console.error('Error membres du groupe', err)
       });
   }
 
@@ -173,7 +173,7 @@ export class ForumGroupDetailComponent implements OnInit, OnDestroy {
       .pipe(finalize(() => this.loadingPending = false))
       .subscribe({
         next: (res) => (this.pendingMembers = res),
-        error: (err) => console.error('Erreur demandes adhésion', err)
+        error: (err) => console.error('Error demandes adhésion', err)
       });
   }
 
@@ -183,28 +183,28 @@ export class ForumGroupDetailComponent implements OnInit, OnDestroy {
       next: (m) => {
         this.refreshAll();
         if (m.status === 'APPROVED') {
-          alert(`Vous avez rejoint le groupe "${this.group?.name}".`);
+          alert(`You joined the group "${this.group?.name}".`);
         } else {
-          alert(`Votre demande d'adhésion pour le groupe privé "${this.group?.name}" a été soumise.`);
+          alert(`Your membership request for the private group "${this.group?.name}" has been submitted.`);
         }
       },
       error: (err) => {
         console.error(err);
-        alert(err.error?.message || 'Erreur lors de la demande d\'adhésion.');
+        alert(err.error?.message || 'Error submitting membership request.');
       }
     });
   }
 
   leaveGroup(): void {
-    if (!confirm('Êtes-vous sûr de vouloir quitter ce groupe ?')) return;
+    if (!confirm('Are you sure you want to leave this group?')) return;
     this.api.leaveGroup(this.groupId, this.currentUserEmail).subscribe({
       next: () => {
-        alert('Vous avez quitté le groupe.');
+        alert('You left the group.');
         this.router.navigate(['/user/forum/groups']);
       },
       error: (err) => {
         console.error(err);
-        alert(err.error?.message || 'Erreur lors de la tentative de départ.');
+        alert(err.error?.message || 'Error attempting to leave.');
       }
     });
   }
@@ -214,11 +214,11 @@ export class ForumGroupDetailComponent implements OnInit, OnDestroy {
       next: () => {
         this.loadPendingMembers();
         this.loadMembers();
-        alert('Membre approuvé avec succès.');
+        alert('Member approved successfully.');
       },
       error: (err) => {
         console.error(err);
-        alert('Erreur lors de l\'approbation.');
+        alert('Error during approval.');
       }
     });
   }
@@ -227,11 +227,11 @@ export class ForumGroupDetailComponent implements OnInit, OnDestroy {
     this.api.rejectMembership(this.groupId, memberId, this.currentUserEmail).subscribe({
       next: () => {
         this.loadPendingMembers();
-        alert('Demande rejetée avec succès.');
+        alert('Request rejected successfully.');
       },
       error: (err) => {
         console.error(err);
-        alert('Erreur lors du rejet.');
+        alert('Error during rejection.');
       }
     });
   }
@@ -250,7 +250,7 @@ export class ForumGroupDetailComponent implements OnInit, OnDestroy {
 
   submitPost(): void {
     if (!this.postTitle.trim() || !this.postContent.trim() || !this.selectedCategoryId) {
-      this.postError = 'Tous les champs marqués d\'une étoile sont obligatoires.';
+      this.postError = 'All fields marked with an asterisk are required.';
       return;
     }
 
@@ -278,11 +278,11 @@ export class ForumGroupDetailComponent implements OnInit, OnDestroy {
         next: () => {
           this.closePostModal();
           this.loadPosts();
-          alert('Votre sujet a été publié avec succès.');
+          alert('Your topic was published successfully.');
         },
         error: (err) => {
           console.error(err);
-          this.postError = err.error?.message || 'Erreur lors de la création du post.';
+          this.postError = err.error?.message || 'Error creating post.';
         }
       });
   }

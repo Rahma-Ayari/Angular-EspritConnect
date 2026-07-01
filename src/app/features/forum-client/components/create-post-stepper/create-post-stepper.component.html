@@ -1,15 +1,15 @@
 <div class="stepper">
   <div class="stepper__header">
     <div class="stepper__title">
-      <h2>Créer une discussion</h2>
-      <p>Un stepper premium en 3 étapes, clair et rapide.</p>
+      <h2>Create a discussion</h2>
+      <p>A premium 3-step flow, clear and fast.</p>
     </div>
     <button type="button" class="close" (click)="cancel.emit()">×</button>
   </div>
 
   <div class="stepper__steps">
     <button type="button" class="chip" [class.chip--active]="step === 1" (click)="goTo(1)">
-      <span class="dot">1</span> Identité
+      <span class="dot">1</span> Identity
     </button>
     <button
       type="button"
@@ -18,7 +18,7 @@
       (click)="goTo(2)"
       [disabled]="!(state.value.title.trim() && state.value.content.trim())"
     >
-      <span class="dot">2</span> Paramètres
+      <span class="dot">2</span> Settings
     </button>
     <button
       type="button"

@@ -35,7 +35,7 @@ export class ForumDetailComponent implements OnInit {
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (res) => (this.post = res),
-        error: (err) => console.error('Erreur chargement post', err)
+        error: (err) => console.error('Error chargement post', err)
       });
   }
 
@@ -46,7 +46,7 @@ export class ForumDetailComponent implements OnInit {
     const authorRole = this.viewMode.getCurrentMode() === 'alumni' ? 'ALUMNI' : 'ETUDIANT';
     const payload = {
       content: this.newReply.trim(),
-      authorName: authorRole === 'ALUMNI' ? 'Alumni Demo' : 'Étudiant Demo',
+      authorName: authorRole === 'ALUMNI' ? 'Alumni Demo' : 'Student Demo',
       authorEmail: authorRole === 'ALUMNI' ? 'alumni.demo@esprit.tn' : 'etudiant.demo@esprit.tn',
       authorRole
     };
@@ -59,14 +59,14 @@ export class ForumDetailComponent implements OnInit {
           this.newReply = '';
           this.loadPost(this.post!.id);
         },
-        error: (err) => console.error('Erreur ajout réponse', err)
+        error: (err) => console.error('Error ajout réponse', err)
       });
   }
 
   getRoleLabel(role: string): string {
     switch (role) {
       case 'ETUDIANT':
-        return 'Étudiant';
+        return 'Student';
       case 'ALUMNI':
         return 'Alumni';
       case 'ENSEIGNANT':
@@ -74,7 +74,7 @@ export class ForumDetailComponent implements OnInit {
       case 'ADMIN':
         return 'Admin';
       default:
-        return 'Membre';
+        return 'Member';
     }
   }
 

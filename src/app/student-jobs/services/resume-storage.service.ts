@@ -8,7 +8,7 @@ export class ResumeStorageService {
   load(): ResumeData | null {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? (JSON.parse(raw) as ResumeData) : null;
+      return raw ? this.normalize(JSON.parse(raw) as ResumeData) : null;
     } catch {
       return null;
     }
@@ -25,24 +25,45 @@ export class ResumeStorageService {
 
   createEmpty(fullName = '', email = ''): ResumeData {
     return {
-      templateId: 'classic',
+      templateId: 'science-engineering',
       fullName,
+      jobTitle: '',
       email,
       phone: '',
+      address: '',
+      portfolio: '',
       sections: [
-        this.section('summary', 'Professional Summary', '', 0),
-        this.section('education', 'Education', '', 1),
-        this.section('experience', 'Experience', '', 2),
-        this.section('projects', 'Projects', '', 3),
-        this.section('skills', 'Skills', '', 4),
-        this.section('languages', 'Languages', '', 5),
-        this.section('certificates', 'Certificates', '', 6)
+        this.section('education', 'Education', '', 0),
+        this.section('experience', 'Professional Experience', '', 1),
+        this.section('projects', 'Projects', '', 2),
+        this.section('skills', 'Skills', '', 3),
+        this.section('certificates', 'Certificates', '', 4),
+        this.section('languages', 'Languages', '', 5)
       ]
     };
   }
 
+  /** Backfill fields added after older saves were stored in localStorage. */
+  normalize(data: ResumeData): ResumeData {
+    return {
+      templateId: data.templateId || 'science-engineering',
+      fullName: data.fullName || '',
+      jobTitle: data.jobTitle || '',
+      email: data.email || '',
+      phone: data.phone || '',
+      address: data.address || '',
+      portfolio: data.portfolio || '',
+      sections: data.sections?.length ? data.sections : this.createEmpty().sections,
+      lastUpdated: data.lastUpdated
+    };
+  }
+
   toPlainText(data: ResumeData): string {
-    const lines: string[] = [data.fullName, data.email, data.phone].filter(Boolean);
+    const header = [data.fullName, data.jobTitle].filter(Boolean).join(' — ');
+    const contact = [data.email, data.phone, data.address, data.portfolio].filter(Boolean);
+    const lines: string[] = [];
+    if (header) lines.push(header);
+    if (contact.length) lines.push(contact.join(' | '));
     lines.push('');
     const sorted = [...data.sections].sort((a, b) => a.order - b.order);
     for (const s of sorted) {

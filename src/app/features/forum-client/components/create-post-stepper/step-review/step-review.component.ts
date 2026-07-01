@@ -5,7 +5,7 @@ interface MockStudent {
   id: number;
   name: string;
   email: string;
-  role: 'Modérateur' | 'Membre';
+  role: 'Moderator' | 'Member';
   invited: boolean;
 }
 
@@ -19,10 +19,10 @@ export class StepReviewComponent implements OnInit {
   @Output() submit = new EventEmitter<void>();
 
   suggestedStudents: MockStudent[] = [
-    { id: 1, name: 'Sonia Ben Ali', email: 'sonia.benali@esprit.tn', role: 'Membre', invited: false },
-    { id: 2, name: 'Firas Guesmi', email: 'firas.guesmi@esprit.tn', role: 'Modérateur', invited: false },
-    { id: 3, name: 'Yasmine Dridi', email: 'yasmine.dridi@esprit.tn', role: 'Membre', invited: false },
-    { id: 4, name: 'Malek Chaabane', email: 'malek.chaabane@esprit.tn', role: 'Membre', invited: false }
+    { id: 1, name: 'Sonia Ben Ali', email: 'sonia.benali@esprit.tn', role: 'Member', invited: false },
+    { id: 2, name: 'Firas Guesmi', email: 'firas.guesmi@esprit.tn', role: 'Moderator', invited: false },
+    { id: 3, name: 'Yasmine Dridi', email: 'yasmine.dridi@esprit.tn', role: 'Member', invited: false },
+    { id: 4, name: 'Malek Chaabane', email: 'malek.chaabane@esprit.tn', role: 'Member', invited: false }
   ];
 
   constructor(public readonly state: CreatePostStateService) {}
@@ -34,7 +34,7 @@ export class StepReviewComponent implements OnInit {
   }
 
   changeRole(student: MockStudent, roleValue: string): void {
-    student.role = roleValue as 'Modérateur' | 'Membre';
+    student.role = roleValue as 'Moderator' | 'Member';
   }
 }
 

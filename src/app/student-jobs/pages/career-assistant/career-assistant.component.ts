@@ -116,12 +116,16 @@ export class CareerAssistantComponent implements OnInit {
 
   runInterview(): void {
     const job = this.jobs.find((j) => j.id === this.selectedJobId);
+    if (!job) {
+      this.error = 'Select a job to generate interview questions.';
+      return;
+    }
     this.callAi(
       () =>
         this.studentAi.interviewPreparation({
-          offreId: job?.id,
-          jobTitle: job?.title,
-          jobDescription: job?.description
+          offreId: job.id,
+          jobTitle: job.title,
+          jobDescription: job.description
         }),
       (r) => (this.interviewResult = r as StudentInterviewPrepResult)
     );

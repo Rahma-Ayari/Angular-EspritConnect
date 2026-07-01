@@ -5,7 +5,7 @@
   </header>
 
   <div class="stepper">
-    <div class="step" [class.done]="step > 1" [class.active]="step === 1"><span>✓</span> Choose Template</div>
+    <div class="step" [class.done]="step > 1" [class.active]="step === 1"><span>1</span> Template</div>
     <div class="step-line" [class.done]="step > 1"></div>
     <div class="step" [class.done]="step > 2" [class.active]="step === 2"><span>2</span> Fill Details</div>
     <div class="step-line" [class.done]="step > 2"></div>
@@ -15,24 +15,55 @@
   <div class="cl-grid">
     <div class="main-col">
       <section class="sj-card" *ngIf="step === 1">
-        <h3>Choose Template</h3>
-        <div class="template-row">
-          <button type="button" *ngFor="let t of templates" class="template-card"
-            [class.selected]="selectedTemplate === t.id" (click)="selectTemplate(t.id)">
-            <div class="doc-preview" [style.border-top-color]="t.color"></div>
-            <strong>{{ t.name }}</strong>
-          </button>
+        <h3>Your Cover Letter Template</h3>
+        <p class="muted template-intro">All cover letters use the ESPRIT Black &amp; White Minimalist layout.</p>
+        <div class="single-template">
+          <div class="template-preview-wrap">
+            <img [src]="templatePreview" [alt]="template.name + ' cover letter preview'" class="template-preview-img" />
+          </div>
+          <div class="template-meta">
+            <strong>{{ template.name }}</strong>
+            <span>{{ template.description }}</span>
+            <ul class="template-features">
+              <li>Elegant header with contact details</li>
+              <li>Professional body adapted to each job</li>
+              <li>Handwritten-style signature on export</li>
+            </ul>
+          </div>
         </div>
+        <button type="button" class="sj-btn-primary" (click)="continueToDetails()">Continue</button>
       </section>
 
       <section class="sj-card form-card" *ngIf="step >= 2">
         <h3>Application Details</h3>
-        <label>JOB TITLE</label>
-        <input [(ngModel)]="jobTitle" placeholder="Front-End Developer" />
+        <p class="muted form-hint">Choose a job or enter details manually. Student info is optional but personalizes the letter header.</p>
+
+        <label>SELECT JOB (optional)</label>
+        <select [(ngModel)]="selectedJobId" (ngModelChange)="onJobSelected()">
+          <option [ngValue]="undefined">Choose from open positions...</option>
+          <option *ngFor="let j of jobs" [ngValue]="j.id">{{ j.title }} — {{ j.companyName }}</option>
+        </select>
+
+        <label>JOB TITLE *</label>
+        <input [(ngModel)]="data.jobTitle" placeholder="Front-End Developer Intern" />
+
         <label>COMPANY NAME</label>
-        <input [(ngModel)]="companyName" placeholder="Esprit NX" />
+        <input [(ngModel)]="data.companyName" placeholder="Esprit NX" />
+
+        <div class="optional-block">
+          <h4>Your info <span class="muted">(optional — shown in letter header)</span></h4>
+          <div class="info-grid">
+            <input [(ngModel)]="data.fullName" placeholder="Full name" />
+            <input [(ngModel)]="data.studentTitle" placeholder="Your title (e.g. GL Student)" />
+            <input [(ngModel)]="data.email" placeholder="Email" />
+            <input [(ngModel)]="data.phone" placeholder="Phone" />
+            <input [(ngModel)]="data.address" placeholder="Address" class="span-2" />
+          </div>
+        </div>
+
         <label>ADDITIONAL NOTES (optional)</label>
-        <textarea [(ngModel)]="additionalNotes" rows="3" placeholder="Highlight your React project..."></textarea>
+        <textarea [(ngModel)]="data.additionalNotes" rows="3" placeholder="Highlight your React project, internship goals..."></textarea>
+
         <button type="button" class="sj-btn-primary" (click)="generate()" [disabled]="loading">
           <i class="bi bi-stars"></i> Generate with AI
         </button>
@@ -46,19 +77,23 @@
           [loading]="loading"
           [error]="error"
           [provider]="provider"
-          [copyText]="letter"
+          [copyText]="data.letterBody"
           acceptLabel=""
           (regenerate)="regenerate()">
-          <div class="empty-preview" *ngIf="!letter && !loading">
+          <div class="empty-preview" *ngIf="!hasLetter && !loading">
             <i class="bi bi-pencil-square"></i>
-            <p>Fill in the details and click "Generate with AI"</p>
+            <p>Fill in the job details and click <strong>Generate with AI</strong></p>
           </div>
-          <textarea *ngIf="letter" class="letter-editor" [(ngModel)]="letter" rows="16"></textarea>
-          <p class="typing" *ngIf="typingLetter && loading">{{ typingLetter }}<span class="cursor">|</span></p>
+          <div class="styled-preview" *ngIf="hasLetter && !loading">
+            <div class="preview-frame" [innerHTML]="previewHtml"></div>
+            <label class="edit-label">Edit letter text</label>
+            <textarea class="letter-editor" [(ngModel)]="data.letterBody" rows="10"
+              placeholder="Salutation and body paragraphs..."></textarea>
+          </div>
         </app-ai-result-panel>
-        <div class="export-row" *ngIf="letter && !loading">
-          <button type="button" class="sj-btn-primary" (click)="exportPdf()">Export PDF</button>
-          <button type="button" class="sj-btn-outline" (click)="exportDocx()">Export DOCX</button>
+        <div class="export-row" *ngIf="hasLetter && !loading">
+          <button type="button" class="sj-btn-primary" (click)="exportPdf()"><i class="bi bi-file-pdf"></i> Export PDF</button>
+          <button type="button" class="sj-btn-outline" (click)="exportDocx()"><i class="bi bi-file-word"></i> Export DOCX</button>
         </div>
       </div>
     </aside>

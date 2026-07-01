@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { StudentAiService } from '../../services/student-ai.service';
 import { ResumeStorageService } from '../../services/resume-storage.service';
+import { ResumeTemplateService } from '../../services/resume-template.service';
 import { StudentContextService } from '../../services/student-context.service';
 import {
-  RESUME_TEMPLATES,
+  RESUME_TEMPLATE,
   ResumeData,
   StudentResumeReviewResult,
   StudentResumeOptimizerResult
@@ -19,7 +21,8 @@ import { StudentJobsBrowseService } from '../../services/student-jobs-browse.ser
 export class ResumeStudioComponent implements OnInit {
   step = 1;
   resume!: ResumeData;
-  templates = RESUME_TEMPLATES;
+  template = RESUME_TEMPLATE;
+  templatePreview = '/assets/resume-templates/science-engineering-preview.png';
   jobs: JobOffer[] = [];
   selectedJobId?: number;
 
@@ -34,21 +37,29 @@ export class ResumeStudioComponent implements OnInit {
 
   constructor(
     private resumeStorage: ResumeStorageService,
+    private resumeTemplate: ResumeTemplateService,
     private studentAi: StudentAiService,
     private studentContext: StudentContextService,
-    private browse: StudentJobsBrowseService
+    private browse: StudentJobsBrowseService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
     const saved = this.resumeStorage.load();
     this.studentContext.getProfile().subscribe((p) => {
       this.resume = saved || this.resumeStorage.createEmpty(p.nom, p.email);
+      this.resume.templateId = this.template.id;
+      this.resumeStorage.save(this.resume);
     });
     this.browse.search({ limit: 30, page: 1 }).subscribe((r) => (this.jobs = r.data));
   }
 
   get plainText(): string {
     return this.resumeStorage.toPlainText(this.resume);
+  }
+
+  get previewHtml(): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(this.resumeTemplate.buildHtml(this.resume, true));
   }
 
   onFileSelected(event: Event): void {
@@ -73,7 +84,6 @@ export class ResumeStudioComponent implements OnInit {
       return;
     }
 
-    // PDF / DOCX → extract real text on the backend
     this.studentAi.extractResume(file).subscribe({
       next: (res) => {
         input.value = '';
@@ -98,9 +108,9 @@ export class ResumeStudioComponent implements OnInit {
       this.aiError = 'Add resume content first.';
       return;
     }
-    // On import, fill the editor with the actual CV content immediately.
     if (fromImport) {
       this.resume = this.resumeStorage.populateFromRawText(this.resume, resumeText);
+      this.resume.templateId = this.template.id;
       this.resumeStorage.save(this.resume);
       this.step = 2;
     }
@@ -138,9 +148,10 @@ export class ResumeStudioComponent implements OnInit {
     });
   }
 
-  selectTemplate(id: string): void {
-    this.resume.templateId = id;
+  continueToEditor(): void {
+    this.resume.templateId = this.template.id;
     this.resumeStorage.save(this.resume);
+    this.step = 3;
   }
 
   saveSection(): void {
@@ -163,28 +174,21 @@ export class ResumeStudioComponent implements OnInit {
   }
 
   exportPdf(): void {
-    const w = window.open('', '_blank');
-    if (!w) return;
-    w.document.write(`<pre style="font-family:Arial,sans-serif;padding:24px;white-space:pre-wrap">${this.escapeHtml(this.plainText)}</pre>`);
-    w.document.close();
-    w.print();
+    this.resumeTemplate.exportPdf(this.resume);
   }
 
   exportDocx(): void {
-    const blob = new Blob([this.plainText], { type: 'application/msword' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'resume.doc';
-    a.click();
-    URL.revokeObjectURL(a.href);
+    this.resumeTemplate.exportDocx(this.resume);
   }
 
   acceptOptimization(): void {
     if (!this.optimizeResult) return;
     const summary = this.optimizeResult.optimizedSummary;
     if (summary) {
-      const sec = this.resume.sections.find((s) => s.type === 'summary');
-      if (sec) sec.content = summary;
+      const sec = this.resume.sections.find((s) => s.type === 'experience');
+      if (sec && !sec.content?.trim()) {
+        sec.content = summary;
+      }
     }
     const bullets = this.optimizeResult.improvedBulletPoints;
     if (bullets?.length) {
@@ -196,9 +200,5 @@ export class ResumeStudioComponent implements OnInit {
 
   sortedSections() {
     return [...this.resume.sections].sort((a, b) => a.order - b.order);
-  }
-
-  private escapeHtml(s: string): string {
-    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 }

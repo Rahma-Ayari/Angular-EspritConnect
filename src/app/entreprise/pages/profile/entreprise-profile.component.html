@@ -1,7 +1,7 @@
 <div class="profile-container" *ngIf="!loading; else loadingTpl">
   <div class="page-header">
-    <h1>Profil Entreprise</h1>
-    <p class="subtitle">Gérez les informations publiques de votre entreprise et soumettez vos documents de vérification.</p>
+    <h1>Company Profile</h1>
+    <p class="subtitle">Manage your company's public information and submit your verification documents.</p>
   </div>
 
   <div class="alert error" *ngIf="error">{{ error }}</div>
@@ -42,10 +42,10 @@
       <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
         <div class="form-grid">
           <div class="field">
-            <label>Nom de l'entreprise</label>
+            <label>Company name</label>
             <input type="text" formControlName="nom" placeholder="Nom officiel" />
             <div class="error-msg" *ngIf="profileForm.get('nom')?.touched && profileForm.get('nom')?.invalid">
-              Le nom est obligatoire.
+              Name is required.
             </div>
           </div>
           
@@ -58,7 +58,7 @@
           </div>
 
           <div class="field">
-            <label>Secteur d'activité</label>
+            <label>Industry sector</label>
             <input type="text" formControlName="secteur" placeholder="Ex. Technologies, Finance, Services..." />
           </div>
 
@@ -69,8 +69,8 @@
         </div>
 
         <div class="field">
-          <label>Description de l'entreprise</label>
-          <textarea rows="6" formControlName="description" placeholder="Présentation générale, missions, valeurs..."></textarea>
+          <label>Company description</label>
+          <textarea rows="6" formControlName="description" placeholder="Overview, mission, values..."></textarea>
         </div>
 
         <div class="form-actions">
@@ -80,7 +80,7 @@
               <polyline points="17 21 17 13 7 13 7 21"></polyline>
               <polyline points="7 3 7 8 15 8"></polyline>
             </svg>
-            {{ savingProfile ? 'Enregistrement...' : 'Enregistrer le profil' }}
+            {{ savingProfile ? 'Saving...' : 'Save profile' }}
           </button>
         </div>
       </form>
@@ -89,16 +89,16 @@
     <!-- VERIFICATION SECTION -->
     <div class="panel-body" *ngIf="activeSection === 'verification'">
       <div class="verify-header">
-        <h2>Vérification de l'entreprise</h2>
+        <h2>Company verification</h2>
         <span class="pill" [ngClass]="verificationClass(verification?.verificationStatus)">
           {{ verificationLabel(verification?.verificationStatus) }}
         </span>
       </div>
-      <p class="hint">Pour publier des offres sur la plateforme, ESPRIT requiert une vérification légale de votre société. Veuillez soumettre les justificatifs correspondants.</p>
+      <p class="hint">To publish offers on the platform, ESPRIT requires legal verification of your company. Please submit the corresponding documents.</p>
 
       <div class="verify-grid">
         <div class="verify-form card-inner">
-          <h3>Déposer un document</h3>
+          <h3>Upload a document</h3>
           
           <label>Type de document</label>
           <select class="form-control" [(ngModel)]="selectedDocType" name="docType">
@@ -112,10 +112,10 @@
 
           <div class="verify-form-actions">
             <button type="button" class="btn-secondary" (click)="uploadDocument()" [disabled]="savingDocs || !selectedFileName">
-              Ajouter au dossier
+              Add to folder
             </button>
             <button type="button" class="btn-primary" (click)="submitVerification()" [disabled]="savingDocs || !verification?.documents?.length">
-              Soumettre pour validation admin
+              Submit for admin validation
             </button>
           </div>
         </div>
@@ -137,7 +137,7 @@
               </div>
             </li>
           </ul>
-          <p class="empty-hint" *ngIf="!verification?.documents?.length">Aucun document pour le moment.</p>
+          <p class="empty-hint" *ngIf="!verification?.documents?.length">No documents yet.</p>
           <div class="notes-panel" *ngIf="verification?.verificationNotes">
             <strong>Notes de l'administration :</strong>
             <p class="notes">{{ verification?.verificationNotes }}</p>
@@ -151,6 +151,6 @@
 <ng-template #loadingTpl>
   <div class="profile-container loading-state">
     <div class="spinner"></div>
-    <p>Chargement du profil...</p>
+    <p>Loading profile...</p>
   </div>
 </ng-template>

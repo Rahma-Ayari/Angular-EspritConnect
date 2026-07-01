@@ -35,7 +35,7 @@ export class EntrepriseProfilComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Erreur lors du chargement du profil', err);
+        console.error('Error lors du chargement du profil', err);
         this.isLoading = false;
       }
     });
@@ -64,9 +64,9 @@ export class EntrepriseProfilComponent implements OnInit {
                 setTimeout(() => this.loadProfile(), 500);
             },
             error: (err: any) => {
-                console.error('Erreur lors de la mise à jour du profil', err);
+                console.error('Error updating profile', err);
                 this.isLoading = false;
-                this.showSaveMessage('Erreur lors de la mise à jour du profil', 'error');
+                this.showSaveMessage('Error updating profile', 'error');
             }
         });
     } else {
@@ -79,9 +79,9 @@ export class EntrepriseProfilComponent implements OnInit {
                 setTimeout(() => this.loadProfile(), 500);
             },
             error: (err: any) => {
-                console.error('Erreur lors de la création du profil', err);
+                console.error('Error creating profile', err);
                 this.isLoading = false;
-                this.showSaveMessage('Erreur lors de la création du profil', 'error');
+                this.showSaveMessage('Error creating profile', 'error');
             }
         });
     }
@@ -124,7 +124,7 @@ export class EntrepriseProfilComponent implements OnInit {
     const fieldLabels: { [key: string]: string } = {
       nomProprietaire: 'Nom de l\'entreprise',
       prenom: 'Nom du responsable',
-      telephone: 'Téléphone',
+      telephone: 'Phone',
       adresse: 'Adresse',
       ville: 'Ville',
       pays: 'Pays',
@@ -151,7 +151,7 @@ export class EntrepriseProfilComponent implements OnInit {
       this.compressImage(file, 400, 400, 0.7).then((compressedBase64: string) => {
         this.profile.photo = compressedBase64;
       }).catch((err: any) => {
-        console.error('Erreur lors de la compression de l\'image', err);
+        console.error('Error lors de la compression de l\'image', err);
         // Fallback: use original file as DataURL
         const reader = new FileReader();
         reader.onload = (e: any) => {
