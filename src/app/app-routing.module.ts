@@ -50,10 +50,16 @@ import { ForumGroupsComponent } from './features/forum-client/pages/forum-groups
 import { ForumGroupDetailComponent } from './features/forum-client/pages/forum-group-detail/forum-group-detail.component';
 import { ForumGroupsModerationComponent } from './features/forum/pages/forum-groups-moderation/forum-groups-moderation.component';
 import { ProfileComponent } from './profile/profile.component';
+import { AdminUserProfileComponent } from './admin/pages/user-management/admin-user-profile.component';
 import { RoleRedirectComponent } from './role-redirect.component';
 import { HomepageComponent } from './homepage/homepage.component';
+import { ActivityHistoryComponent } from './admin/activity-history/activity-history.component';
 
 const adminShellRoutes: Routes = [
+  // User Activity Dashboard
+  { path: 'admin/user-management/user-history', component: ActivityHistoryComponent, canActivate: [AdminGuard] },
+  { path: 'admin/activity', redirectTo: 'admin/user-management/user-history', pathMatch: 'full' },
+  
   // Job & user management (from job branch)
   { path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [AdminGuard] },
   { path: 'admin/settings/general', component: AdminGeneralSettingsComponent, canActivate: [AdminGuard] },
@@ -61,6 +67,7 @@ const adminShellRoutes: Routes = [
   { path: 'admin/settings/registration', component: AdminRegistrationSettingsComponent, canActivate: [AdminGuard] },
   { path: 'admin/settings/homepage', component: AdminHomepageSettingsComponent, canActivate: [AdminGuard] },
   { path: 'admin/user-management/approval', component: UserApprovalsComponent, canActivate: [AdminGuard] },
+  { path: 'admin/user-management/user-profile/:userId', component: AdminUserProfileComponent, canActivate: [AdminGuard] },
   { path: 'admin/user-management/enterprise-verification', component: EnterpriseVerificationComponent, canActivate: [AdminGuard] },
   { path: 'admin/jobs', redirectTo: 'admin/jobs/settings', pathMatch: 'full' },
   { path: 'admin/jobs/settings', component: JobsSettingsComponent, canActivate: [AdminGuard] },

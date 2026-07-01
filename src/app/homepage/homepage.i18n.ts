@@ -94,7 +94,7 @@ export const HOMEPAGE_I18N: Record<HomepageLang, HomepageCopy> = {
       titleHighlight: 'Transforms',
       titleAfter: ' Careers',
       intro:
-        "At ESPRIT, we combine rigorous academic standards with real-world experience. Our students graduate ready to lead innovation in Tunisia and across the globe. Here's what sets us abyt.",
+        "At ESPRIT, we combine rigorous academic standards with real-world experience. Our students graduate ready to lead innovation in Tunisia and across the globe. Here's what sets us apart.",
       features: [
         {
           title: 'International Education',
@@ -183,7 +183,7 @@ export const HOMEPAGE_I18N: Record<HomepageLang, HomepageCopy> = {
       titleHighlight: 'avec ESPRIT',
       desc:
         "Rejoignez la première université privée d'ingénierie et de technologies en Tunisie. Innovez, collaborez et construisez l'avenir grâce à des programmes de pointe, des partenariats internationaux et des infrastructures de classe mondiale.",
-      statStudents: 'Students',
+      statStudents: 'Étudiants',
       statPrograms: 'Programmes',
       statPartnerships: 'Partenariats',
       statEmployment: "Taux d'emploi",
@@ -193,9 +193,9 @@ export const HOMEPAGE_I18N: Record<HomepageLang, HomepageCopy> = {
       label: 'EN CHIFFRES',
       title: 'ESPRIT en chiffres',
       stats: [
-        { title: 'Students inscrits', subtitle: 'Tous programmes confondus' },
+        { title: 'Étudiants inscrits', subtitle: 'Tous programmes confondus' },
         { title: 'Programmes académiques', subtitle: 'Ingénierie & business' },
-        { title: 'Partenaires internationaux', subtitle: 'Universités & companies' },
+        { title: 'Partenaires internationaux', subtitle: 'Universités & entreprises' },
         { title: 'Insertion professionnelle', subtitle: 'Dans les 6 mois' },
         { title: "Années d'excellence", subtitle: 'Fondée en 1999' }
       ]
@@ -209,7 +209,7 @@ export const HOMEPAGE_I18N: Record<HomepageLang, HomepageCopy> = {
         "À ESPRIT, nous allions exigence académique et expérience terrain. Nos diplômés sont prêts à innover en Tunisie et dans le monde. Voici ce qui nous distingue.",
       features: [
         {
-          title: 'Education internationale',
+          title: 'Formation internationale',
           text: 'Double diplômes et programmes d\'échange avec des universités partenaires en France, Allemagne, Canada et aux États-Unis.'
         },
         {
@@ -218,7 +218,7 @@ export const HOMEPAGE_I18N: Record<HomepageLang, HomepageCopy> = {
         },
         {
           title: 'Partenariats industriels',
-          text: 'Liens directs avec plus de 200 companies pour stages, projets et opportunités d\'emploi.'
+          text: 'Liens directs avec plus de 200 entreprises pour stages, projets et opportunités d\'emploi.'
         },
         {
           title: 'Excellence professionnelle',
@@ -230,7 +230,7 @@ export const HOMEPAGE_I18N: Record<HomepageLang, HomepageCopy> = {
     partners: {
       label: 'NOTRE RÉSEAU',
       title: 'Partenaires industriels & académiques',
-      desc: 'Building bridges entre le monde académique et l\'industrie pour un impact concret.',
+      desc: 'Créer des ponts entre le monde académique et l\'industrie pour un impact concret.',
       corporate: 'PARTENAIRES ENTREPRISES',
       academic: 'PARTENARIATS ACADÉMIQUES'
     },
@@ -255,7 +255,7 @@ export const HOMEPAGE_I18N: Record<HomepageLang, HomepageCopy> = {
         it: 'Support informatique'
       },
       copyright:
-        "© 2025 ESPRIT – École Supérieure Privée d'Ingénierie et de Technologies. All rights reserved.",
+        "© 2025 ESPRIT – École Supérieure Privée d'Ingénierie et de Technologies. Tous droits réservés.",
       privacy: 'Politique de confidentialité',
       terms: "Conditions d'utilisation",
       accessibility: 'Accessibilité',
@@ -267,12 +267,12 @@ export const HOMEPAGE_I18N: Record<HomepageLang, HomepageCopy> = {
           "ESPRIT m'a donné les bases techniques et les soft skills pour décrocher mon poste de rêve chez Microsoft. L'approche par projets et les liens avec l'industrie ont fait toute la différence.",
         name: 'Sarra Mansouri',
         role: 'Ingénieure logiciel chez Microsoft Tunisie',
-        education: 'Computer Science, promotion 2023',
+        education: 'Informatique, promotion 2023',
         initials: 'SM'
       },
       {
         quote:
-          "Le programme d'échange international m'a ouvert des portes insoupçonnées. ESPRIT m'a prébyé à travailler dans des environnements multiculturels et technologiques.",
+          "Le programme d'échange international m'a ouvert des portes insoupçonnées. ESPRIT m'a préparé à travailler dans des environnements multiculturels et technologiques.",
         name: 'Ahmed Ben Salah',
         role: 'Ingénieur systèmes embarqués chez Airbus',
         education: 'Génie électrique, promotion 2022',
@@ -280,10 +280,10 @@ export const HOMEPAGE_I18N: Record<HomepageLang, HomepageCopy> = {
       },
       {
         quote:
-          "Dès le débyt, ESPRIT m'a mis en relation avec des mentors et des projets réels. Cette expérience a été précieuse pour lancer ma startup.",
+          "Dès le départ, ESPRIT m'a mis en relation avec des mentors et des projets réels. Cette expérience a été précieuse pour lancer ma startup.",
         name: 'Leila Trabelsi',
         role: 'Fondatrice, TechStart Tunisia',
-        education: 'Computer Science, promotion 2021',
+        education: 'Informatique, promotion 2021',
         initials: 'LT'
       }
     ]

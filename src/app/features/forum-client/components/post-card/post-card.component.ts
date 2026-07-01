@@ -28,7 +28,7 @@ export class PostCardComponent {
   getRoleLabel(role: string): string {
     switch (role) {
       case 'ETUDIANT':
-        return 'Student';
+        return 'Étudiant';
       case 'ALUMNI':
         return 'Alumni';
       case 'ENSEIGNANT':
@@ -36,7 +36,7 @@ export class PostCardComponent {
       case 'ADMIN':
         return 'Admin';
       default:
-        return 'Member';
+        return 'Membre';
     }
   }
 

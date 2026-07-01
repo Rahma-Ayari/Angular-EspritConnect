@@ -131,10 +131,10 @@ export class EnterpriseVerificationService {
 
   getStatusLabel(status: VerificationStatus): string {
     const labels: Record<VerificationStatus, string> = {
-      'NOT_SUBMITTED': 'No soumis',
-      'PENDING': 'Pending',
-      'VERIFIED': 'Verified',
-      'REJECTED': 'Rejected'
+      'NOT_SUBMITTED': 'Non soumis',
+      'PENDING': 'En attente',
+      'VERIFIED': 'Vérifié',
+      'REJECTED': 'Refusé'
     };
     return labels[status] || status;
   }

@@ -23,7 +23,7 @@ export class EventFormComponent implements OnInit {
   uploadProgress = 0;
   error: string | null = null;
   imagePreview: string | null = null;
-  companies: EntrepriseOption[] = [];
+  entreprises: EntrepriseOption[] = [];
   eventTypes: EventType[] = [];
 
   readonly statuses: EventStatus[] = ['UPCOMING', 'ACTIVE', 'COMPLETED', 'CANCELLED'];
@@ -154,14 +154,14 @@ export class EventFormComponent implements OnInit {
     this.error = null;
 
     const sources = {
-      companies: this.eventService.getEntreprises().pipe(catchError(() => of([] as EntrepriseOption[]))),
+      entreprises: this.eventService.getEntreprises().pipe(catchError(() => of([] as EntrepriseOption[]))),
       eventTypes: this.eventService.getEventTypes(true)
     };
 
     if (this.isEdit && this.eventId) {
       forkJoin({ ...sources, event: this.eventService.getEventById(this.eventId) }).subscribe({
-        next: ({ companies, eventTypes, event }) => {
-          this.companies = companies;
+        next: ({ entreprises, eventTypes, event }) => {
+          this.entreprises = entreprises;
           this.eventTypes = eventTypes;
           this.patchEvent(event);
           this.isLoading = false;
@@ -172,8 +172,8 @@ export class EventFormComponent implements OnInit {
     }
 
     forkJoin(sources).subscribe({
-      next: ({ companies, eventTypes }) => {
-        this.companies = companies;
+      next: ({ entreprises, eventTypes }) => {
+        this.entreprises = entreprises;
         this.eventTypes = eventTypes;
         this.isLoading = false;
       },

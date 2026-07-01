@@ -11,12 +11,6 @@ import { ImportJobComponent } from './components/import-job/import-job.component
 import { ArchivedJobsComponent } from './components/archived-jobs/archived-jobs.component';
 import { AiGeneratorComponent } from './components/ai-generator/ai-generator.component';
 
-// Dashboard AI components
-import { TopMatchesPanelComponent } from './components/dashboard/top-matches-panel/top-matches-panel.component';
-import { CandidateDrawerComponent } from './components/dashboard/candidate-drawer/candidate-drawer.component';
-import { AiInsightsPanelComponent } from './components/dashboard/ai-insights-panel/ai-insights-panel.component';
-import { AiOutputPanelComponent } from './components/shared/ai-output-panel/ai-output-panel.component';
-
 // Shared Components
 import { JobCardComponent } from './components/shared/job-card/job-card.component';
 import { JobTableComponent } from './components/shared/job-table/job-table.component';
@@ -30,7 +24,6 @@ import { RichTextEditorComponent } from './components/shared/rich-text-editor/ri
 // Services
 import { JobsService } from './services/jobs.service';
 import { JobAIService } from './services/job-ai.service';
-import { JobsAiService } from './ai/ai.service';
 
 @NgModule({
   declarations: [
@@ -43,12 +36,6 @@ import { JobsAiService } from './ai/ai.service';
     ImportJobComponent,
     ArchivedJobsComponent,
     AiGeneratorComponent,
-
-    // Dashboard
-    TopMatchesPanelComponent,
-    CandidateDrawerComponent,
-    AiInsightsPanelComponent,
-    AiOutputPanelComponent,
     
     // Shared Components
     JobCardComponent,
@@ -68,8 +55,7 @@ import { JobsAiService } from './ai/ai.service';
   ],
   providers: [
     JobsService,
-    JobAIService,
-    JobsAiService
+    JobAIService
   ]
 })
 export class JobsModule {}

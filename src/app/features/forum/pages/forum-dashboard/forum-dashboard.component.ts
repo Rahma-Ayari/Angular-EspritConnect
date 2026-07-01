@@ -40,7 +40,7 @@ export class ForumDashboardComponent implements OnInit {
         this.loadReportedContent();
       },
       error: (err) => {
-        this.errorMsg = "Unable to load forum statistics.";
+        this.errorMsg = "Impossible de charger les statistiques du forum.";
         this.loading = false;
       }
     });
@@ -71,10 +71,10 @@ export class ForumDashboardComponent implements OnInit {
     if (!post.id) return;
     this.forumService.resolvePostReport(post.id).subscribe({
       next: () => {
-        this.showSuccess("Post report approved and resolved!");
+        this.showSuccess("Signalement de la publication approuvé et résolu !");
         this.loadData();
       },
-      error: () => this.showError("Error resolving post.")
+      error: () => this.showError("Erreur lors de la résolution de la publication.")
     });
   }
 
@@ -83,10 +83,10 @@ export class ForumDashboardComponent implements OnInit {
     if (!post.id || !confirm("Voulez-vous vraiment supprimer définitivement cette publication inappropriée ?")) return;
     this.forumService.deletePost(post.id).subscribe({
       next: () => {
-        this.showSuccess("Inappropriate post deleted successfully!");
+        this.showSuccess("Publication inappropriée supprimée avec succès !");
         this.loadData();
       },
-      error: () => this.showError("Error deleting post.")
+      error: () => this.showError("Erreur lors de la suppression de la publication.")
     });
   }
 
@@ -95,10 +95,10 @@ export class ForumDashboardComponent implements OnInit {
     if (!reply.id) return;
     this.forumService.resolveReplyReport(reply.id).subscribe({
       next: () => {
-        this.showSuccess("Comment report approved and resolved!");
+        this.showSuccess("Signalement du commentaire approuvé et résolu !");
         this.loadData();
       },
-      error: () => this.showError("Error resolving comment.")
+      error: () => this.showError("Erreur lors de la résolution du commentaire.")
     });
   }
 
@@ -110,7 +110,7 @@ export class ForumDashboardComponent implements OnInit {
         this.showSuccess("Commentaire inapproprié supprimé avec succès !");
         this.loadData();
       },
-      error: () => this.showError("Error deleting comment.")
+      error: () => this.showError("Erreur lors de la suppression du commentaire.")
     });
   }
 
@@ -123,11 +123,11 @@ export class ForumDashboardComponent implements OnInit {
 
   getRoleLabel(role: string): string {
     const labels: Record<string, string> = {
-      'ETUDIANT': 'Students',
+      'ETUDIANT': 'Étudiants',
       'ALUMNI': 'Alumni',
       'ENSEIGNANT': 'Enseignants',
-      'ADMIN': 'Administrators',
-      'ENTREPRISE': 'Companies'
+      'ADMIN': 'Administrateurs',
+      'ENTREPRISE': 'Entreprises'
     };
     return labels[role] || role;
   }

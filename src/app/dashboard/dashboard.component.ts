@@ -44,41 +44,41 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   readinessScore = 72;
   readinessTasks = [
-    { label: 'Add your portfolio projects',  gain: 12, done: false },
-    { label: 'Complete skills assessment', gain: 8,  done: false },
-    { label: 'Get 2 more recommendations', gain: 6,  done: false }
+    { label: 'Ajouter vos projets portfolio',  gain: 12, done: false },
+    { label: 'Compléter évaluation de compétences', gain: 8,  done: false },
+    { label: 'Obtenir 2 recommandations de plus', gain: 6,  done: false }
   ];
 
   stats: StatCard[] = [
-    { icon: 'bi-briefcase',    label: 'Applications',  value: '8',   delta: '+2 this month', trend: 'up',     color: '#CC0000' },
-    { icon: 'bi-eye',          label: 'Profile views',   value: '134', delta: '+18%',        trend: 'up',     color: '#7C3AED' },
-    { icon: 'bi-patch-check',  label: 'Skills',   value: '12',  delta: '+3 new', trend: 'up',   color: '#059669' },
-    { icon: 'bi-people',       label: 'Connections',    value: '47',  delta: '+5 this week',  trend: 'up',     color: '#D97706' }
+    { icon: 'bi-briefcase',    label: 'Candidatures',  value: '8',   delta: '+2 ce mois', trend: 'up',     color: '#CC0000' },
+    { icon: 'bi-eye',          label: 'Vues profil',   value: '134', delta: '+18%',        trend: 'up',     color: '#7C3AED' },
+    { icon: 'bi-patch-check',  label: 'Compétences',   value: '12',  delta: '+3 nouvelles', trend: 'up',   color: '#059669' },
+    { icon: 'bi-people',       label: 'Connexions',    value: '47',  delta: '+5 semaine',  trend: 'up',     color: '#D97706' }
   ];
 
   opportunities: Opportunity[] = [
     {
-      company: 'TechCorp', role: 'Full Stack Developer', type: 'Job',
+      company: 'TechCorp', role: 'Full Stack Developer', type: 'Emploi',
       location: 'Tunis', match: 92,
-      logo: 'TC', posted: '2 days ago',
+      logo: 'TC', posted: 'Il y a 2j',
       tags: ['React', 'Spring Boot', 'AWS']
     },
     {
-      company: 'StartupX', role: 'UX Designer Intern', type: 'Internship',
+      company: 'StartupX', role: 'UX Designer Intern', type: 'Stage',
       location: 'Lac I', match: 85,
-      logo: 'SX', posted: '1 day ago',
+      logo: 'SX', posted: 'Il y a 1j',
       tags: ['Figma', 'UX Research']
     },
     {
-      company: 'AI Labs', role: 'Data Scientist', type: 'Job',
+      company: 'AI Labs', role: 'Data Scientist', type: 'Emploi',
       location: 'Remote', match: 78,
-      logo: 'AI', posted: 'Today',
+      logo: 'AI', posted: 'Aujourd\'hui',
       tags: ['Python', 'TensorFlow', 'SQL']
     },
     {
-      company: 'Sofrecom', role: 'DevOps Engineer', type: 'Internship',
+      company: 'Sofrecom', role: 'DevOps Engineer', type: 'Stage',
       location: 'Ariana', match: 74,
-      logo: 'SF', posted: '3 days ago',
+      logo: 'SF', posted: 'Il y a 3j',
       tags: ['Docker', 'Kubernetes', 'CI/CD']
     }
   ];
@@ -115,7 +115,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private setGreeting(): void {
     const h = new Date().getHours();
-    this.greeting = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+    this.greeting = h < 12 ? 'Bonjour' : h < 18 ? 'Bon après-midi' : 'Bonsoir';
   }
 
   get circumference(): number { return 2 * Math.PI * 54; }

@@ -6,7 +6,7 @@
 
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
-    <p>Loading...</p>
+    <p>Chargement...</p>
   </div>
 
   <div *ngIf="error" class="alert alert-error">
@@ -25,7 +25,7 @@
     <!-- Status Card -->
     <div class="card status-card">
       <div class="card-header">
-        <h2>Status actuel</h2>
+        <h2>Statut actuel</h2>
       </div>
       <div class="card-body">
         <div class="status-display" *ngIf="verification">
@@ -43,7 +43,7 @@
               <span class="detail-value">{{ verification.verifiedAt | date:'dd/MM/yyyy HH:mm' }}</span>
             </div>
             <div class="detail-item" *ngIf="verification.verifiedBy">
-              <span class="detail-label">Verified by:</span>
+              <span class="detail-label">Vérifié par:</span>
               <span class="detail-value">{{ verification.verifiedBy }}</span>
             </div>
           </div>
@@ -101,7 +101,7 @@
     <div class="card form-card" 
          *ngIf="verification?.verificationStatus === 'NOT_SUBMITTED' || verification?.verificationStatus === 'REJECTED'">
       <div class="card-header">
-        <h2>Submit votre vérification</h2>
+        <h2>Soumettre votre vérification</h2>
       </div>
       <div class="card-body">
         <form (ngSubmit)="submitVerification()" class="verification-form">
@@ -139,7 +139,7 @@
 
           <!-- Company Sector -->
           <div class="form-group">
-            <label for="sector">Industry sector</label>
+            <label for="sector">Secteur d'activité</label>
             <select id="sector" 
                     [(ngModel)]="companySector"
                     name="companySector"
@@ -166,26 +166,26 @@
 
           <!-- Company Description -->
           <div class="form-group">
-            <label for="description">Company description</label>
+            <label for="description">Description de l'entreprise</label>
             <textarea id="description" 
                       [(ngModel)]="companyDescription"
                       name="companyDescription"
                       (ngModelChange)="onDescriptionChange()"
-                      placeholder="Briefly describe your company..."
+                      placeholder="Décrivez brièvement votre entreprise..."
                       rows="4"></textarea>
             <span class="form-feedback" 
                   [class.error]="!descriptionValidation.isValid" 
                   *ngIf="companyDescription">
               {{ descriptionValidation.message }}
             </span>
-            <span class="char-count">{{ companyDescription.length }}/50 characters minimum</span>
+            <span class="char-count">{{ companyDescription.length }}/50 caractères minimum</span>
           </div>
 
           <button type="submit" 
                   class="btn btn-primary" 
                   [disabled]="!canSubmit() || submitting">
-            <span *ngIf="!submitting">Submit pour vérification</span>
-            <span *ngIf="submitting">Sending...</span>
+            <span *ngIf="!submitting">Soumettre pour vérification</span>
+            <span *ngIf="submitting">Envoi en cours...</span>
           </button>
         </form>
       </div>
@@ -194,13 +194,13 @@
     <!-- Pending Info -->
     <div class="card info-card" *ngIf="verification?.verificationStatus === 'PENDING'">
       <div class="card-header">
-        <h2>Pending de vérification</h2>
+        <h2>En attente de vérification</h2>
       </div>
       <div class="card-body">
         <div class="pending-info">
           <div class="pending-icon">⏳</div>
-          <p>Your verification request is being reviewed by our team.</p>
-          <p>You will be notified once verification is complete.</p>
+          <p>Votre demande de vérification est en cours d'examen par notre équipe.</p>
+          <p>Vous serez notifié dès que la vérification sera terminée.</p>
         </div>
       </div>
     </div>
@@ -213,8 +213,8 @@
       <div class="card-body">
         <div class="verified-info">
           <div class="verified-icon">✓</div>
-          <p>Congratulations! Your company account has been verified successfully.</p>
-          <p>You now have access to all platform features.</p>
+          <p>Félicitations ! Votre compte entreprise a été vérifié avec succès.</p>
+          <p>Vous avez maintenant accès à toutes les fonctionnalités de la plateforme.</p>
         </div>
       </div>
     </div>

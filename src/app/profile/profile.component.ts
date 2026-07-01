@@ -60,7 +60,7 @@ export class ProfileComponent implements OnInit {
             this.isLoading = false;
           },
           error: (err: any) => {
-            console.error('Error lors du chargement du profil', err);
+            console.error('Erreur lors du chargement du profil', err);
             this.isLoading = false;
           }
         });
@@ -88,13 +88,13 @@ export class ProfileComponent implements OnInit {
             this.profile = data;
             this.isEditing = false;
             this.isLoading = false;
-            this.showSaveMessage('Profile updated successfully!', 'success');
+            this.showSaveMessage('Profil mis à jour avec succès!', 'success');
             setTimeout(() => this.loadProfile(), 500);
           },
           error: (err: any) => {
-            console.error('Error updating profile avec photo', err);
+            console.error('Erreur lors de la mise à jour du profil avec photo', err);
             this.isLoading = false;
-            this.showSaveMessage('Error updating profile', 'error');
+            this.showSaveMessage('Erreur lors de la mise à jour du profil', 'error');
           }
         });
       } else {
@@ -104,13 +104,13 @@ export class ProfileComponent implements OnInit {
             this.profile = data;
             this.isEditing = false;
             this.isLoading = false;
-            this.showSaveMessage('Profile updated successfully!', 'success');
+            this.showSaveMessage('Profil mis à jour avec succès!', 'success');
             setTimeout(() => this.loadProfile(), 500);
           },
           error: (err: any) => {
-            console.error('Error updating profile', err);
+            console.error('Erreur lors de la mise à jour du profil', err);
             this.isLoading = false;
-            this.showSaveMessage('Error updating profile', 'error');
+            this.showSaveMessage('Erreur lors de la mise à jour du profil', 'error');
           }
         });
       }
@@ -125,13 +125,13 @@ export class ProfileComponent implements OnInit {
             this.profile = data;
             this.isEditing = false;
             this.isLoading = false;
-            this.showSaveMessage('Profile created successfully!', 'success');
+            this.showSaveMessage('Profil créé avec succès!', 'success');
             setTimeout(() => this.loadProfile(), 500);
           },
           error: (err: any) => {
-            console.error('Error creating profile avec photo', err);
+            console.error('Erreur lors de la création du profil avec photo', err);
             this.isLoading = false;
-            this.showSaveMessage('Error creating profile', 'error');
+            this.showSaveMessage('Erreur lors de la création du profil', 'error');
           }
         });
       } else {
@@ -141,13 +141,13 @@ export class ProfileComponent implements OnInit {
             this.profile = data;
             this.isEditing = false;
             this.isLoading = false;
-            this.showSaveMessage('Profile created successfully!', 'success');
+            this.showSaveMessage('Profil créé avec succès!', 'success');
             setTimeout(() => this.loadProfile(), 500);
           },
           error: (err: any) => {
-            console.error('Error creating profile', err);
+            console.error('Erreur lors de la création du profil', err);
             this.isLoading = false;
-            this.showSaveMessage('Error creating profile', 'error');
+            this.showSaveMessage('Erreur lors de la création du profil', 'error');
           }
         });
       }
@@ -174,7 +174,7 @@ export class ProfileComponent implements OnInit {
       console.log('File selected:', file.name);
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        // Save l'image en tant que chaîne Base64 pour qu'elle soit persistante
+        // Enregistrer l'image en tant que chaîne Base64 pour qu'elle soit persistante
         this.profile.photo = e.target.result;
       };
       reader.readAsDataURL(file);
@@ -210,7 +210,7 @@ export class ProfileComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error("Error de chargement du statut 2FA", err);
+        console.error("Erreur de chargement du statut 2FA", err);
       }
     });
   }
@@ -223,7 +223,7 @@ export class ProfileComponent implements OnInit {
         this.setupData = data;
       },
       error: (err) => {
-        this.setupError = "Unable to start 2FA setup. Please try again.";
+        this.setupError = "Impossible d'initier l'activation 2FA. Veuillez réessayer.";
       }
     });
   }
@@ -240,15 +240,15 @@ export class ProfileComponent implements OnInit {
         this.loadMfaStatus();
       },
       error: (err) => {
-        this.setupError = err.error?.message || "Incorrect code. Please try again.";
+        this.setupError = err.error?.message || "Code incorrect. Veuillez réessayer.";
       }
     });
   }
 
   downloadBackupCodes(): void {
     const content = "CODES DE SECOURS ESPRITCONNECT\n" +
-                    "Keep these codes in a safe place. Each code can only be used once.\n\n" +
-                    this.backupCodes.join("\n") + "\n\nGenerated on: " + new Date().toLocaleString();
+                    "Conservez ces codes en lieu sûr. Chaque code ne peut être utilisé qu'une seule fois.\n\n" +
+                    this.backupCodes.join("\n") + "\n\nGénéré le : " + new Date().toLocaleString();
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -282,7 +282,7 @@ export class ProfileComponent implements OnInit {
         this.loginHistory = [];
       },
       error: (err) => {
-        this.disableError = err.error?.message || "Incorrect password or code.";
+        this.disableError = err.error?.message || "Mot de passe ou code incorrect.";
       }
     });
   }
@@ -293,19 +293,19 @@ export class ProfileComponent implements OnInit {
         this.loginHistory = history;
       },
       error: (err) => {
-        console.error("Error de chargement de l'historique de connexions", err);
+        console.error("Erreur de chargement de l'historique de connexions", err);
       }
     });
   }
 
   getStatusLabel(status: string): string {
     switch (status) {
-      case 'SUCCESS': return 'Success';
-      case 'SUCCESS_BACKUP': return 'Success (Secours)';
+      case 'SUCCESS': return 'Succès';
+      case 'SUCCESS_BACKUP': return 'Succès (Secours)';
       case 'PENDING_2FA': return '2FA Requis';
-      case 'FAILED_2FA': return '2FA Failed';
-      case 'FAILED_PASSWORD': return 'Wrong password';
-      case 'FAILED_DISABLED': return 'Account disabled';
+      case 'FAILED_2FA': return 'Échec 2FA';
+      case 'FAILED_PASSWORD': return 'Mot de passe erroné';
+      case 'FAILED_DISABLED': return 'Compte désactivé';
       default: return status;
     }
   }
@@ -322,25 +322,25 @@ export class ProfileComponent implements OnInit {
 
   getHumanReadableActivity(h: any): string {
     const browser = h.browser || 'un navigateur inconnu';
-    const os = h.os || 'an unknown system';
-    const location = h.location && h.location !== 'Unknown' && h.location !== 'Localhost' ? ` in ${h.location}` : '';
+    const os = h.os || 'un système inconnu';
+    const location = h.location && h.location !== 'Unknown' && h.location !== 'Localhost' ? ` à ${h.location}` : '';
     const ip = h.ipAddress ? ` (IP : ${h.ipAddress})` : '';
 
     switch (h.status) {
       case 'SUCCESS':
-        return `Successful login from ${browser} sur ${os}${location}${ip}.`;
+        return `Connexion réussie depuis ${browser} sur ${os}${location}${ip}.`;
       case 'SUCCESS_BACKUP':
-        return `Successful login via backup code from ${browser} sur ${os}${location}${ip}.`;
+        return `Connexion réussie via code de secours depuis ${browser} sur ${os}${location}${ip}.`;
       case 'PENDING_2FA':
         return `Tentative de connexion en attente de validation double facteur (2FA) depuis ${browser} sur ${os}${location}${ip}.`;
       case 'FAILED_2FA':
-        return `Two-factor authentication (2FA) validation failed from ${browser} sur ${os}${location}${ip}.`;
+        return `Échec de la validation double facteur (2FA) depuis ${browser} sur ${os}${location}${ip}.`;
       case 'FAILED_PASSWORD':
-        return `Login failed: incorrect password entered from ${browser} sur ${os}${location}${ip}.`;
+        return `Échec de connexion : mot de passe incorrect saisi depuis ${browser} sur ${os}${location}${ip}.`;
       case 'FAILED_DISABLED':
-        return `Login attempt blocked: account is disabled.${ip}`;
+        return `Tentative de connexion bloquée : le compte est désactivé.${ip}`;
       default:
-        return `Login activity (${h.status}) detected from ${browser} sur ${os}${location}${ip}.`;
+        return `Activité de connexion (${h.status}) détectée depuis ${browser} sur ${os}${location}${ip}.`;
     }
   }
 }

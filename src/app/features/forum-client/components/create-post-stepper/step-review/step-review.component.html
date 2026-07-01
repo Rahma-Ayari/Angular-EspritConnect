@@ -1,12 +1,12 @@
 <div class="step">
   <div class="review-grid">
-    <!-- Colonne Gauche : Summary du Post -->
+    <!-- Colonne Gauche : Résumé du Post -->
     <div class="review-left">
-      <h3 class="review__title">Summary before publishing</h3>
+      <h3 class="review__title">Résumé avant publication</h3>
       <div class="review__card">
         <div class="review__header-info">
           <span class="category-badge-step" [style.background-color]="state.value.category?.color + '15'" [style.color]="state.value.category?.color || '#10b981'">
-            {{ state.value.category?.name || 'No category' }}
+            {{ state.value.category?.name || 'Aucune catégorie' }}
           </span>
           <span class="website-meta" *ngIf="state.value.website">
             🔗 {{ state.value.website }}
@@ -25,10 +25,10 @@
       </div>
     </div>
 
-    <!-- Colonne Droite : Inviter des Members -->
+    <!-- Colonne Droite : Inviter des Membres -->
     <div class="review-right">
-      <h3 class="review__title">Invite contributors <span class="badge-mini-info">Recommended</span></h3>
-      <p class="review__subtitle">Add students to this discussion to sbyk conversation from the start.</p>
+      <h3 class="review__title">Inviter des contributeurs <span class="badge-mini-info">Recommandé</span></h3>
+      <p class="review__subtitle">Ajoutez des étudiants à cette discussion pour stimuler les échanges dès le départ.</p>
       
       <div class="members-invite-list">
         <div class="member-invite-item" *ngFor="let student of suggestedStudents" [class.member-invite-item--active]="student.invited">
@@ -45,8 +45,8 @@
 
           <div class="member-role-select" *ngIf="student.invited">
             <select [ngModel]="student.role" (ngModelChange)="changeRole(student, $event)">
-              <option value="Member">Member</option>
-              <option value="Moderator">Moderator</option>
+              <option value="Membre">Membre</option>
+              <option value="Modérateur">Modérateur</option>
             </select>
           </div>
         </div>
@@ -55,12 +55,12 @@
   </div>
 
   <p class="review__hint">
-    ✨ By clicking <strong>Create la discussion</strong>, your topic will be visible on the forum to all ESPRIT students.
+    ✨ En cliquant sur <strong>Créer la discussion</strong>, votre sujet sera visible sur le forum par tous les étudiants d'ESPRIT.
   </p>
 
   <div class="step__actions">
-    <button type="button" class="btn btn--ghost" (click)="back.emit()">Back</button>
-    <button type="button" class="btn btn-gradient-red" (click)="submit.emit()">Create la discussion</button>
+    <button type="button" class="btn btn--ghost" (click)="back.emit()">Retour</button>
+    <button type="button" class="btn btn-gradient-red" (click)="submit.emit()">Créer la discussion</button>
   </div>
 </div>
 

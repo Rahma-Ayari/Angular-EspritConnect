@@ -7,8 +7,8 @@
       <div class="form-card">
 
         <header class="form-header">
-          <h2>Sign Up</h2>
-          <p>Join the Esprit community</p>
+          <h2>Inscription</h2>
+          <p>Rejoignez la communauté Esprit</p>
         </header>
 
         <div class="alert-error" *ngIf="errorMessage">
@@ -26,45 +26,45 @@
                   <i *ngIf="!registerForm.get('photo')?.value" class="bi bi-camera"></i>
                   <input type="file" (change)="onPhotoSelected($event)" accept="image/*" #photoInput hidden>
                   <button type="button" class="btn-upload" (click)="photoInput.click()">
-                      {{ registerForm.get('photo')?.value ? 'Change' : 'Upload' }}
+                      {{ registerForm.get('photo')?.value ? 'Changer' : 'Téléverser' }}
                   </button>
               </div>
-              <p class="photo-label-text">Profile photo (optional)</p>
+              <p class="photo-label-text">Photo de profil (optionnelle)</p>
             </div>
 
             <div class="row">
               <div class="field" [class.field-error]="isFieldInvalid('prenom')">
-                <label>First name*</label>
+                <label>Prénom*</label>
                 <div class="input-wrap">
                   <i class="bi bi-person"></i>
                   <input type="text" formControlName="prenom" placeholder="rahma" />
                 </div>
                 <span class="error-msg" *ngIf="isFieldInvalid('prenom')">
-                  First name is required.
+                  Le prénom est requis.
                 </span>
               </div>
               <div class="field" [class.field-error]="isFieldInvalid('nom')">
-                <label>Last name*</label>
+                <label>Nom*</label>
                 <div class="input-wrap">
                   <i class="bi bi-person-badge"></i>
                   <input type="text" formControlName="nom" placeholder="Nom" />
                 </div>
                 <span class="error-msg" *ngIf="isFieldInvalid('nom')">
-                  Last name is required.
+                  Le nom est requis.
                 </span>
               </div>
             </div>
 
             <!-- Rattachement -->
             <div class="field" [class.field-error]="isFieldInvalid('typeUtilisateur')">
-              <label>Affiliation*</label>
+              <label>Rattachement*</label>
               <div class="input-wrap">
                 <i class="bi bi-person-workspace"></i>
                 <select formControlName="typeUtilisateur">
-                  <option value="ETUDIANT">Student</option>
-                  <option value="ALUMNI">Alumni</option>
-                  <option value="ENTREPRISE">Company</option>
-                  <option value="ENSEIGNANT">Faculty/Staff</option>
+                  <option value="ETUDIANT">Etudiant(e)</option>
+                  <option value="ALUMNI">Lauréat(e)</option>
+                  <option value="ENTREPRISE">Entreprise</option>
+                  <option value="ENSEIGNANT">Enseignant/Personnel</option>
                 </select>
               </div>
             </div>
@@ -76,14 +76,14 @@
                 <input type="email" formControlName="email" placeholder="prenom.nom@esprit.tn" />
               </div>
               <span class="error-msg" *ngIf="isFieldInvalid('email')">
-                <ng-container *ngIf="registerForm.get('email')?.errors?.['required']">Email is required.</ng-container>
-                <ng-container *ngIf="registerForm.get('email')?.errors?.['email']">Invalid email format.</ng-container>
+                <ng-container *ngIf="registerForm.get('email')?.errors?.['required']">L'email est requis.</ng-container>
+                <ng-container *ngIf="registerForm.get('email')?.errors?.['email']">Format email invalide.</ng-container>
               </span>
             </div>
 
             <div class="row">
               <div class="field" [class.field-error]="isFieldInvalid('password')">
-                <label>Password*</label>
+                <label>Mot de passe*</label>
                 <div class="input-wrap">
                   <i class="bi bi-lock"></i>
                   <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="••••••••" />
@@ -109,19 +109,19 @@
 
                 <span class="error-msg" *ngIf="isFieldInvalid('password')">
                   <ng-container *ngIf="registerForm.get('password')?.errors?.['required']">
-                    Password is required.
+                    Le mot de passe est requis.
                   </ng-container>
                 </span>
               </div>
               <div class="field" [class.field-error]="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched">
-                <label>Confirm*</label>
+                <label>Confirmer*</label>
                 <div class="input-wrap">
                   <i class="bi bi-shield-lock"></i>
                   <input [type]="showPassword ? 'text' : 'password'" formControlName="confirmPassword" placeholder="••••••••" />
                 </div>
                 <span class="error-msg" *ngIf="registerForm.get('confirmPassword')?.touched && (registerForm.get('confirmPassword')?.hasError('required') || registerForm.hasError('mismatch'))">
-                  <ng-container *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Please confirm your password.</ng-container>
-                  <ng-container *ngIf="!registerForm.get('confirmPassword')?.errors?.['required'] && registerForm.hasError('mismatch')">Passwords do not match.</ng-container>
+                  <ng-container *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Veuillez confirmer le mot de passe.</ng-container>
+                  <ng-container *ngIf="!registerForm.get('confirmPassword')?.errors?.['required'] && registerForm.hasError('mismatch')">Les mots de passe ne correspondent pas.</ng-container>
                 </span>
               </div>
             </div>
@@ -129,15 +129,15 @@
             <div class="form-options">
               <label class="remember">
                 <input type="checkbox" formControlName="acceptTerms" />
-                <span>I accept the terms of use</span>
+                <span>J'accepte les conditions d'utilisation</span>
               </label>
               <span class="error-msg" *ngIf="isFieldInvalid('acceptTerms')" style="display:block; margin-top:5px; margin-left: 0;">
-                You must accept the terms.
+                Vous devez accepter les conditions.
               </span>
             </div>
 
             <button type="button" class="btn-submit" (click)="nextStep()">
-              Continue
+              Continuer
             </button>
           </div>
 
@@ -147,7 +147,7 @@
             <!-- Champs Etudiant -->
             <ng-container *ngIf="registerForm.get('typeUtilisateur')?.value === 'ETUDIANT'">
               <div class="field" [class.field-error]="isFieldInvalid('niveau')">
-                <label>Level*</label>
+                <label>Niveau*</label>
                 <div class="input-wrap">
                   <i class="bi bi-bar-chart"></i>
                   <select formControlName="niveau">
@@ -159,21 +159,21 @@
               </div>
 
               <div class="field" [class.field-error]="isFieldInvalid('filiere')">
-                <label>Major*</label>
+                <label>Filière*</label>
                 <div class="input-wrap">
                   <i class="bi bi-mortarboard"></i>
                   <select formControlName="filiere">
-                    <option value="" disabled selected>Choose a major</option>
+                    <option value="" disabled selected>Choisir une filière</option>
                     <option *ngFor="let f of filieres" [value]="f">{{f}}</option>
                   </select>
                 </div>
               </div>
 
               <div class="field">
-                <label>Degree (Optional)</label>
+                <label>Diplôme (Optionnel)</label>
                 <div class="input-wrap">
                   <i class="bi bi-patch-check"></i>
-                  <input type="text" formControlName="diplome" placeholder="Degree obtained or in progress" />
+                  <input type="text" formControlName="diplome" placeholder="Diplôme obtenu ou en cours" />
                 </div>
               </div>
             </ng-container>
@@ -181,7 +181,7 @@
             <!-- Champs Alumni -->
             <ng-container *ngIf="registerForm.get('typeUtilisateur')?.value === 'ALUMNI'">
               <div class="field">
-                <label>Graduation year*</label>
+                <label>Année de promotion*</label>
                 <div class="input-wrap">
                   <i class="bi bi-calendar"></i>
                   <input type="number" formControlName="anneePromotion" placeholder="Ex: 2023" min="1990" max="2030" />
@@ -189,25 +189,25 @@
               </div>
 
               <div class="field">
-                <label>Area of expertise*</label>
+                <label>Domaine d'expertise*</label>
                 <div class="input-wrap">
                   <i class="bi bi-briefcase"></i>
-                  <input type="text" formControlName="domaine" placeholder="E.g. Web Development, Data Science..." />
+                  <input type="text" formControlName="domaine" placeholder="Ex: Développement Web, Data Science..." />
                 </div>
               </div>
 
               <div class="field">
-                <label>Current company</label>
+                <label>Entreprise actuelle</label>
                 <div class="input-wrap">
                   <i class="bi bi-building"></i>
-                  <input type="text" formControlName="entrepriseActuelle" placeholder="Company name" />
+                  <input type="text" formControlName="entrepriseActuelle" placeholder="Nom de l'entreprise" />
                 </div>
               </div>
 
               <div class="form-options">
                 <label class="remember">
-                  <input type="checkbox" formControlName="disponibleMentoring" />
-                  <span>Available for mentoring</span>
+                  <input type="checkbox" formControlName="disponibleMentorat" />
+                  <span>Disponible pour le mentorat</span>
                 </label>
               </div>
             </ng-container>
@@ -215,7 +215,7 @@
             <!-- Champs Entreprise -->
             <ng-container *ngIf="registerForm.get('typeUtilisateur')?.value === 'ENTREPRISE'">
               <div class="field">
-                <label>Company name*</label>
+                <label>Nom de l'entreprise*</label>
                 <div class="input-wrap">
                   <i class="bi bi-building"></i>
                   <input type="text" formControlName="nomEntreprise" placeholder="Ex: Acme Technologies" />
@@ -223,7 +223,7 @@
               </div>
 
               <div class="field">
-                <label>Registration number / Trade register*</label>
+                <label>Numéro d'immatriculation / Registre de Commerce*</label>
                 <div class="input-wrap">
                   <i class="bi bi-file-earmark-text"></i>
                   <input type="text" formControlName="registreCommerce" placeholder="Ex: B1234567890" />
@@ -231,7 +231,7 @@
               </div>
 
               <div class="field">
-                <label>Industry sector*</label>
+                <label>Secteur d'activité*</label>
                 <div class="input-wrap">
                   <i class="bi bi-briefcase"></i>
                   <input type="text" formControlName="secteurActivite" placeholder="Ex: Technologies, Finance, Consulting..." />
@@ -239,7 +239,7 @@
               </div>
 
               <div class="field">
-                <label>Website (optional)</label>
+                <label>Site web (optionnel)</label>
                 <div class="input-wrap">
                   <i class="bi bi-globe"></i>
                   <input type="url" formControlName="siteWeb" placeholder="https://www.exemple.tn" />
@@ -247,25 +247,25 @@
               </div>
 
               <div class="field">
-                <label>Company description</label>
+                <label>Description de l'entreprise</label>
                 <div class="input-wrap textarea-wrap">
                   <i class="bi bi-card-text"></i>
-                  <textarea formControlName="descriptionEntreprise" rows="4" placeholder="Describe your company in a few lines..." maxlength="500"></textarea>
+                  <textarea formControlName="descriptionEntreprise" rows="4" placeholder="Décrivez votre entreprise en quelques lignes..." maxlength="500"></textarea>
                 </div>
                 <span class="char-count" *ngIf="registerForm.get('descriptionEntreprise')?.value">
-                  {{ registerForm.get('descriptionEntreprise')?.value.length }}/500 characters
+                  {{ registerForm.get('descriptionEntreprise')?.value.length }}/500 caractères
                 </span>
               </div>
 
               <div class="field">
-                <label>Supporting document*</label>
-                <p class="field-hint">Trade register, business license, or any official document proving the legal existence of the company</p>
+                <label>Document justificatif*</label>
+                <p class="field-hint">Registre de commerce, patente ou tout document officiel attestant l'existence légale de l'entreprise</p>
                 <div class="file-upload-zone" [class.has-file]="documentFileName" [class.has-error]="documentFileError">
                   <input type="file" (change)="onDocumentSelected($event)" accept=".pdf,.jpg,.jpeg,.png" #documentInput hidden>
                   
                   <div class="upload-content" *ngIf="!documentFileName" (click)="documentInput.click()">
                     <i class="bi bi-cloud-arrow-up"></i>
-                    <span class="upload-text">Click to upload</span>
+                    <span class="upload-text">Cliquez pour téléverser</span>
                     <span class="upload-hint">PDF, JPG ou PNG (max. 5 Mo)</span>
                   </div>
                   
@@ -286,11 +286,11 @@
             <!-- Champs Enseignant -->
             <ng-container *ngIf="registerForm.get('typeUtilisateur')?.value === 'ENSEIGNANT'">
               <div class="field">
-                <label>Debytment*</label>
+                <label>Département*</label>
                 <div class="input-wrap">
                   <i class="bi bi-mortarboard"></i>
                   <select formControlName="filiere">
-                    <option value="" disabled selected>Choose a department</option>
+                    <option value="" disabled selected>Choisir un département</option>
                     <option *ngFor="let f of filieres" [value]="f">{{f}}</option>
                   </select>
                 </div>
@@ -303,9 +303,9 @@
             ></app-captcha>
 
             <div class="form-actions-dual">
-              <button type="button" class="btn-back" (click)="prevStep()">Back</button>
+              <button type="button" class="btn-back" (click)="prevStep()">Retour</button>
               <button type="submit" class="btn-submit" [disabled]="isLoading || !captchaVerified">
-                <span *ngIf="!isLoading">Create account</span>
+                <span *ngIf="!isLoading">Créer le compte</span>
                 <span *ngIf="isLoading" class="spinner"></span>
               </button>
             </div>
@@ -314,7 +314,7 @@
         </form>
 
         <p class="signup-row">
-          Already registered? <a routerLink="/login">Log in</a>
+          Déjà inscrit ? <a routerLink="/login">Se connecter</a>
         </p>
 
       </div>
@@ -326,13 +326,13 @@
         
         <div class="brand">
           <div class="brand-logo"><span>esprit</span></div>
-          <p class="brand-tagline">Learn differently</p>
+          <p class="brand-tagline">Se former autrement</p>
         </div>
 
         <div class="hero-text">
           <h1>Welcome to<br><span>Esprit Connect</span></h1>
           <div class="divider-line"></div>
-          <p>Your all-in-one student portal</p>
+          <p>Votre portail étudiant tout-en-un</p>
         </div>
 
         <ul class="features">
@@ -340,13 +340,13 @@
             <div class="feature-icon">
               <i class="bi bi-person"></i>
             </div>
-            <span>Basic profile</span>
+            <span>Profil de base</span>
           </li>
           <li [class.active-step]="currentStep === 2">
             <div class="feature-icon">
               <i class="bi bi-mortarboard"></i>
             </div>
-            <span>Academic profile</span>
+            <span>Profil académique</span>
           </li>
         </ul>
 

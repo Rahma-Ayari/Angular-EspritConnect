@@ -6,9 +6,9 @@
   <div class="page-header">
     <div class="header-main-info">
       <div class="digest-title-row">
-        <h1 class="page-title">Historique & Statistics</h1>
+        <h1 class="page-title">Historique & Statistiques</h1>
       </div>
-      <p class="page-subtitle">View all emails sent from the platform.</p>
+      <p class="page-subtitle">Consultez tous les emails envoyés depuis la plateforme.</p>
       <p class="digest-last-sent" *ngIf="q || typeFilter">
         <svg viewBox="0 0 24 24" width="14" height="14" class="inline-icon"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
         Filtre actif : {{ q ? ('email contient “' + q + '”') : '' }}{{ (q && typeFilter) ? ' — ' : '' }}{{ typeFilter ? typeFilter : '' }}
@@ -16,7 +16,7 @@
     </div>
     <button class="btn btn--ghost btn--sm" type="button" (click)="exportCSV()">
       <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-      Export CSV
+      Exporter CSV
     </button>
   </div>
 
@@ -39,7 +39,7 @@
           </div>
           <div>
             <div class="stat-value">{{ stats.totalSent }}</div>
-            <div class="stat-label">Success (global)</div>
+            <div class="stat-label">Succès (global)</div>
           </div>
         </div>
         <div class="stat-tile">
@@ -48,18 +48,18 @@
           </div>
           <div>
             <div class="stat-value">{{ stats.totalFailed }}</div>
-            <div class="stat-label">Faileds (global)</div>
+            <div class="stat-label">Échecs (global)</div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Filters -->
+  <!-- Filtres -->
   <div class="dcard">
     <div class="filters-grid">
       <div class="field" style="margin-bottom:0">
-        <label class="field__label">Search by email</label>
+        <label class="field__label">Rechercher par email</label>
         <input class="field__input" type="text" [(ngModel)]="q" (input)="onSearch()"
                placeholder="Ex: user@esprit.tn"/>
       </div>
@@ -74,7 +74,7 @@
 
   <div class="preview-loading" *ngIf="loading">
     <div class="loading-spinner"></div>
-    <p>Loading…</p>
+    <p>Chargement…</p>
   </div>
 
   <!-- Table -->
@@ -90,8 +90,8 @@
           <tr>
             <th>Type</th>
             <th>Destinataire</th>
-            <th>Subject</th>
-            <th>Status</th>
+            <th>Sujet</th>
+            <th>Statut</th>
             <th>Date d'envoi</th>
             <th style="width:60px"></th>
           </tr>
@@ -106,13 +106,13 @@
             <td>
               <span class="badge" [class.badge--green]="item.deliveryStatus === 'SUCCESS'" [class.badge--red]="item.deliveryStatus === 'FAILED'">
                 <span class="badge-dot"></span>
-                {{ item.deliveryStatus === 'SUCCESS' ? 'Success' : 'Failed' }}
+                {{ item.deliveryStatus === 'SUCCESS' ? 'Succès' : 'Échec' }}
               </span>
             </td>
             <td class="eh-date">{{ item.sentAt | date:'dd MMM yyyy, HH:mm' }}</td>
             <td>
               <!-- Bouton "Voir" fonctionnel — ouvre le modal -->
-              <button class="btn btn--ghost btn--sm btn--icon" (click)="viewItem(item)" title="View details">
+              <button class="btn btn--ghost btn--sm btn--icon" (click)="viewItem(item)" title="Voir les détails">
                 <svg viewBox="0 0 24 24" width="16" height="16">
                   <path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
                 </svg>
@@ -123,7 +123,7 @@
             <td colspan="6">
               <div class="eh-empty">
                 <svg viewBox="0 0 24 24" width="30" height="30"><path fill="currentColor" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                <p>No emails found.</p>
+                <p>Aucun email trouvé.</p>
               </div>
             </td>
           </tr>
@@ -156,16 +156,16 @@
       <div class="eh-modal__body">
         <div class="eh-detail-row"><span>Type</span><strong>{{ typeLabel(selectedItem.type) }}</strong></div>
         <div class="eh-detail-row"><span>Destinataire</span><strong>{{ selectedItem.toEmail }}</strong></div>
-        <div class="eh-detail-row"><span>Subject</span><strong>{{ selectedItem.subject }}</strong></div>
+        <div class="eh-detail-row"><span>Sujet</span><strong>{{ selectedItem.subject }}</strong></div>
         <div class="eh-detail-row">
-          <span>Status</span>
+          <span>Statut</span>
           <span class="badge" [class.badge--green]="selectedItem.deliveryStatus === 'SUCCESS'" [class.badge--red]="selectedItem.deliveryStatus === 'FAILED'">
-            {{ selectedItem.deliveryStatus === 'SUCCESS' ? '✓ Success' : '✗ Failed' }}
+            {{ selectedItem.deliveryStatus === 'SUCCESS' ? '✓ Succès' : '✗ Échec' }}
           </span>
         </div>
-        <div class="eh-detail-row"><span>Date</span><strong>{{ selectedItem.sentAt | date:'dd MMMM yyyy, HH:mm:ss' }}</strong></div>
+        <div class="eh-detail-row"><span>Date</span><strong>{{ selectedItem.sentAt | date:'dd MMMM yyyy à HH:mm:ss' }}</strong></div>
         <div class="eh-detail-row eh-detail-row--error" *ngIf="selectedItem.errorMessage">
-          <span>Error</span>
+          <span>Erreur</span>
           <code class="eh-error-code">{{ selectedItem.errorMessage }}</code>
         </div>
       </div>

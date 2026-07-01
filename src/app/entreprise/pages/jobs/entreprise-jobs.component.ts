@@ -25,8 +25,8 @@ export class EntrepriseJobsComponent implements OnInit, OnDestroy {
   showPostForm = false;
   
   offerTypes: { value: OffreType; label: string }[] = [
-    { value: 'EMPLOI', label: 'Job' },
-    { value: 'STAGE', label: 'Internship' },
+    { value: 'EMPLOI', label: 'Emploi' },
+    { value: 'STAGE', label: 'Stage' },
     { value: 'APPRENTISSAGE', label: 'Apprentissage' }
   ];
 
@@ -112,7 +112,7 @@ export class EntrepriseJobsComponent implements OnInit, OnDestroy {
           this.isGeneratingDescription = false;
         },
         error: (err) => {
-          this.errorMessage = 'Error generating description';
+          this.errorMessage = 'Erreur lors de la génération de la description';
           this.isGeneratingDescription = false;
         }
       });
@@ -161,7 +161,7 @@ export class EntrepriseJobsComponent implements OnInit, OnDestroy {
           }, 5000);
         },
         error: (err) => {
-          this.errorMessage = err.error?.message || 'Error lors de la publication de l\'offre';
+          this.errorMessage = err.error?.message || 'Erreur lors de la publication de l\'offre';
           this.isSubmitting = false;
         }
       });
@@ -177,7 +177,7 @@ export class EntrepriseJobsComponent implements OnInit, OnDestroy {
   }
 
   deleteOffer(id: number): void {
-    if (!confirm('Are you sure you want to delete cette offre ?')) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette offre ?')) {
       return;
     }
 

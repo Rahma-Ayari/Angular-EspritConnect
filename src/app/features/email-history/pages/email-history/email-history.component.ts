@@ -46,7 +46,7 @@ export class EmailHistoryComponent implements OnInit {
   selectedItem: EmailHistoryItem | null = null;
 
   typeOptions = [
-    { value: '',                            label: 'All types' },
+    { value: '',                            label: 'Tous les types' },
     { value: 'MESSAGE_USERS_CAMPAIGN',      label: 'Message Users Campaign' },
     { value: 'BIRTHDAY_AUTO',              label: 'Birthday Auto' },
     { value: 'BIRTHDAY_TEST',              label: 'Birthday Test' },
@@ -151,9 +151,9 @@ export class EmailHistoryComponent implements OnInit {
     return map[type] ?? type;
   }
 
-  /** CSV export of la page courante */
+  /** Export CSV de la page courante */
   exportCSV(): void {
-    const rows = [['ID', 'Type', 'Destinataire', 'Subject', 'Status', 'Date']];
+    const rows = [['ID', 'Type', 'Destinataire', 'Sujet', 'Statut', 'Date']];
     this.items.forEach(i => rows.push([
       String(i.id), i.type, i.toEmail, i.subject, i.deliveryStatus,
       new Date(i.sentAt).toLocaleDateString('fr-FR')

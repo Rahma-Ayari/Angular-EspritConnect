@@ -7,8 +7,7 @@ import {
   EntrepriseDocument,
   EntrepriseJobDashboardOverview,
   EntrepriseVerification,
-  OffreAiSuggestion,
-  OffreApplicant
+  OffreAiSuggestion
 } from '../models/job-dashboard.model';
 import { Offre, OffreRequest } from '../models/offre.model';
 
@@ -20,13 +19,13 @@ export class EntrepriseJobDashboardService {
 
   getOverview(entrepriseId: number): Observable<EntrepriseJobDashboardOverview> {
     return this.http.get<EntrepriseJobDashboardOverview>(
-      `${this.api}/companies/${entrepriseId}/job-dashboard`
+      `${this.api}/entreprises/${entrepriseId}/job-dashboard`
     );
   }
 
   getVerification(entrepriseId: number): Observable<EntrepriseVerification> {
     return this.http.get<EntrepriseVerification>(
-      `${this.api}/companies/${entrepriseId}/verification`
+      `${this.api}/entreprises/${entrepriseId}/verification`
     );
   }
 
@@ -36,14 +35,14 @@ export class EntrepriseJobDashboardService {
     fileName: string
   ): Observable<EntrepriseDocument> {
     return this.http.post<EntrepriseDocument>(
-      `${this.api}/companies/${entrepriseId}/verification/documents`,
+      `${this.api}/entreprises/${entrepriseId}/verification/documents`,
       { documentType, fileName, fileUrl: `uploaded://${fileName}` }
     );
   }
 
   submitVerification(entrepriseId: number): Observable<EntrepriseVerification> {
     return this.http.post<EntrepriseVerification>(
-      `${this.api}/companies/${entrepriseId}/verification/submit`,
+      `${this.api}/entreprises/${entrepriseId}/verification/submit`,
       {}
     );
   }
@@ -80,26 +79,11 @@ export class EntrepriseJobDashboardService {
     );
   }
 
-  /** Reliable applicant list for an offer (used by Top Matches). */
-  getApplicants(offreId: number): Observable<OffreApplicant[]> {
-    return this.http.get<OffreApplicant[]>(`${this.api}/candidatures/offre/${offreId}`);
-  }
-
-  updateApplicationStatus(
-    candidatureId: number,
-    statut: 'EN_ENTRETIEN' | 'ACCEPTEE' | 'REFUSEE'
-  ): Observable<{ id: number; statutCandidature: string }> {
-    return this.http.patch<{ id: number; statutCandidature: string }>(
-      `${this.api}/candidatures/${candidatureId}/status`,
-      { statut }
-    );
-  }
-
   getProfile(entrepriseId: number): Observable<any> {
-    return this.http.get<any>(`${this.api}/companies/${entrepriseId}`);
+    return this.http.get<any>(`${this.api}/entreprises/${entrepriseId}`);
   }
 
   updateProfile(entrepriseId: number, body: any): Observable<any> {
-    return this.http.put<any>(`${this.api}/companies/${entrepriseId}`, body);
+    return this.http.put<any>(`${this.api}/entreprises/${entrepriseId}`, body);
   }
 }

@@ -3,14 +3,12 @@ import { ContractType, ExperienceLevel, JobOffer, WorkMode } from '../../jobs/mo
 export interface StudentJobFilter {
   search?: string;
   location?: string;
-  domain?: string;
   workMode?: WorkMode[];
   contractType?: ContractType[];
-  experienceLevel?: ExperienceLevel[];
   skills?: string[];
   salaryMin?: number;
   company?: string;
-  sortBy?: 'recent' | 'title' | 'deadline' | 'match';
+  sortBy?: 'recent' | 'title' | 'deadline';
   sortOrder?: 'asc' | 'desc';
   page?: number;
   limit?: number;
@@ -37,23 +35,12 @@ export interface MatchBreakdown {
 }
 
 export type ApplicationUiStatus =
-  | 'SAVED'
   | 'APPLIED'
   | 'UNDER_REVIEW'
   | 'INTERVIEW'
   | 'TECHNICAL_TEST'
   | 'ACCEPTED'
   | 'REJECTED';
-
-export interface KanbanCard {
-  id: string;
-  offreId: number;
-  jobTitle: string;
-  companyName: string;
-  dateLabel?: string;
-  uiStatus: ApplicationUiStatus;
-  isSavedOnly?: boolean;
-}
 
 export interface JobApplication {
   id: number;
@@ -104,28 +91,22 @@ export interface CareerRecommendationResult {
 }
 
 export const APPLICATION_STATUS_LABELS: Record<ApplicationUiStatus, string> = {
-  SAVED: 'Saved',
   APPLIED: 'Applied',
   UNDER_REVIEW: 'Under Review',
-  INTERVIEW: 'Interview',
+  INTERVIEW: 'Interview Scheduled',
   TECHNICAL_TEST: 'Technical Test',
   ACCEPTED: 'Accepted',
   REJECTED: 'Rejected'
 };
 
-export const KANBAN_COLUMNS: ApplicationUiStatus[] = [
-  'SAVED',
-  'APPLIED',
-  'UNDER_REVIEW',
-  'INTERVIEW',
-  'ACCEPTED',
-  'REJECTED'
-];
-
-export function mapApplicationUiStatus(backend: string, _appliedAt?: string): ApplicationUiStatus {
+export function mapApplicationUiStatus(backend: string, appliedAt?: string): ApplicationUiStatus {
   if (backend === 'ACCEPTEE') return 'ACCEPTED';
   if (backend === 'REFUSEE') return 'REJECTED';
-  if (backend === 'EN_ENTRETIEN') return 'INTERVIEW';
-  if (backend === 'EN_ATTENTE') return 'APPLIED';
+  if (appliedAt) {
+    const days = (Date.now() - new Date(appliedAt).getTime()) / (1000 * 60 * 60 * 24);
+    if (days > 14) return 'INTERVIEW';
+    if (days > 7) return 'TECHNICAL_TEST';
+    if (days > 3) return 'UNDER_REVIEW';
+  }
   return 'APPLIED';
 }

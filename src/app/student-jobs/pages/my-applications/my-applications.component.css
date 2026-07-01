@@ -1,45 +1,27 @@
 @import '../../styles/student-jobs.shared.css';
 
-.page-header-row {
+.row-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.page-header-row h1 {
-  margin: 0 0 0.25rem;
-  font-size: 1.75rem;
-}
-
-.page-header-row p {
-  margin: 0;
-  color: var(--sj-muted);
-}
-
-.view-toggle {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
 }
 
 .view-toggle button {
-  padding: 0.4rem 1rem;
   border: 1px solid var(--sj-border);
-  border-radius: 999px;
   background: #fff;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  margin-left: 0.35rem;
   cursor: pointer;
-  font-size: 0.85rem;
 }
 
 .view-toggle button.active {
   background: var(--sj-red-soft);
   color: var(--sj-red);
-  border-color: rgba(204, 0, 0, 0.2);
-  font-weight: 600;
+  border-color: var(--sj-red);
 }
 
-@media (max-width: 600px) {
-  .page-header-row { flex-direction: column; }
+.block-skel {
+  height: 240px;
 }

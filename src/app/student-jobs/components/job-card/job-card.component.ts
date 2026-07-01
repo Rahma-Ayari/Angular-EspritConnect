@@ -42,22 +42,6 @@ export class StudentJobCardComponent {
     return `${days} days ago`;
   }
 
-  get deadlineLabel(): string {
-    if (!this.job.deadline) return '';
-    const d = new Date(this.job.deadline);
-    const daysLeft = Math.ceil((d.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-    if (daysLeft < 0) return 'Expired';
-    if (daysLeft === 0) return 'Closes today';
-    if (daysLeft <= 7) return `Closes in ${daysLeft}d`;
-    return `Deadline: ${d.toLocaleDateString()}`;
-  }
-
-  get isClosingSoon(): boolean {
-    if (!this.job.deadline) return false;
-    const daysLeft = Math.ceil((new Date(this.job.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-    return daysLeft >= 0 && daysLeft <= 7;
-  }
-
   get salaryLabel(): string {
     if (this.job.salaryMin && this.job.salaryMax) {
       return `${this.job.salaryMin}-${this.job.salaryMax} TND`;

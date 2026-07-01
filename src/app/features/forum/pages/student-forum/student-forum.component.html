@@ -4,8 +4,8 @@
   <div class="forum-hero-card">
     <div class="hero-content">
       <div class="welcome-badge">📊 ESPRIT Connect - Forum</div>
-      <h1>Student Help Space</h1>
-      <p>Discover study groups, discuss your projects, and review exams together.</p>
+      <h1>Espace d'Entraide des Étudiants</h1>
+      <p>Découvrez les groupes de travail, discutez de vos projets et révisez vos examens en communauté.</p>
     </div>
     <div class="hero-actions">
       <button class="btn btn-primary" (click)="openCreateModal()">
@@ -13,12 +13,12 @@
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-        Create a Group
+        Créer un Groupe
       </button>
     </div>
   </div>
 
-  <!-- Barre de Filters et Recherche -->
+  <!-- Barre de Filtres et Recherche -->
   <div class="filter-search-bar">
     <div class="category-chips">
       <button 
@@ -26,7 +26,7 @@
         [class.active]="selectedCategoryId === null"
         (click)="selectCategory(null)"
       >
-        All topics
+        Toutes les thématiques
       </button>
       <button 
         *ngFor="let cat of categories" 
@@ -46,7 +46,7 @@
       </svg>
       <input 
         type="text" 
-        placeholder="Search for a discussion..." 
+        placeholder="Rechercher une discussion..." 
         [(ngModel)]="searchQuery"
         (keyup)="applyFilters()"
       >
@@ -60,14 +60,14 @@
     <div class="posts-stream">
       <div *ngIf="loading" class="loading-state">
         <div class="spinner"></div>
-        <p>Loading discussion groups...</p>
+        <p>Chargement des groupes de discussion...</p>
       </div>
 
       <div *ngIf="!loading && filteredPosts.length === 0" class="empty-state">
         <div class="empty-icon">📂</div>
-        <h3>No groups found</h3>
-        <p>Be the first to start a discussion or create a study group!</p>
-        <button class="btn btn-secondary" (click)="openCreateModal()">Start a project</button>
+        <h3>Aucun groupe trouvé</h3>
+        <p>Soyez le premier à lancer une discussion ou à créer un groupe d'étude !</p>
+        <button class="btn btn-secondary" (click)="openCreateModal()">Lancer un projet</button>
       </div>
 
       <div *ngIf="!loading && filteredPosts.length > 0">
@@ -91,7 +91,7 @@
               <div class="author-avatar">{{ post.authorName.substring(0, 2).toUpperCase() }}</div>
               <div class="author-details">
                 <span class="author-name">{{ post.authorName }}</span>
-                <span class="author-role">{{ post.authorRole === 'ETUDIANT' ? 'Student' : 'Alumni' }}</span>
+                <span class="author-role">{{ post.authorRole === 'ETUDIANT' ? 'Étudiant' : 'Alumni' }}</span>
               </div>
             </div>
 
@@ -132,22 +132,22 @@
         <div class="widget-profile-avatar">SE</div>
         <div class="widget-profile-info">
           <h3>Student Esprit</h3>
-          <p class="role-pill">Engineering Program - Apprentice</p>
+          <p class="role-pill">Cycle Ingénieur - Alternante</p>
         </div>
         <div class="widget-profile-stats">
           <div class="profile-stat-box">
             <span class="num">0</span>
-            <span class="lbl">Groups</span>
+            <span class="lbl">Groupes</span>
           </div>
           <div class="profile-stat-box">
             <span class="num">12</span>
-            <span class="lbl">Likes received</span>
+            <span class="lbl">Likes reçus</span>
           </div>
         </div>
       </div>
 
       <div class="sidebar-widget categories-widget">
-        <h3>Popular Topics</h3>
+        <h3>Thématiques Populaires</h3>
         <div class="categories-list">
           <div class="cat-item" *ngFor="let cat of categories">
             <div class="cat-info">
@@ -161,7 +161,7 @@
 
       <div class="sidebar-widget rule-widget">
         <h3>Charte de conduite</h3>
-        <p>Stay polite, professional, and kind. Spam and advertising are not tolerated in this study space.</p>
+        <p>Restez poli, professionnel et favorisez la bienveillance. Le spam et la publicité ne sont pas tolérés sur cet espace d'étude.</p>
       </div>
     </div>
   </div>
@@ -174,7 +174,7 @@
       
       <!-- En-tête Modal -->
       <div class="stepper-header">
-        <h2>Create a new Group</h2>
+        <h2>Créer un nouveau Groupe</h2>
         <button class="close-btn" (click)="closeCreateModal()">&times;</button>
       </div>
 
@@ -182,17 +182,17 @@
       <div class="steps-progress-bar">
         <div class="step-indicator" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
           <div class="indicator-circle">1</div>
-          <span>Visual Identity</span>
+          <span>Identité Visuelle</span>
         </div>
         <div class="progress-line" [class.filled]="currentStep > 1"></div>
         <div class="step-indicator" [class.active]="currentStep === 2" [class.completed]="currentStep > 2">
           <div class="indicator-circle">2</div>
-          <span>Settings</span>
+          <span>Paramètres</span>
         </div>
         <div class="progress-line" [class.filled]="currentStep > 2"></div>
         <div class="step-indicator" [class.active]="currentStep === 3">
           <div class="indicator-circle">3</div>
-          <span>Members & Finalisation</span>
+          <span>Membres & Finalisation</span>
         </div>
       </div>
 
@@ -202,18 +202,18 @@
         <!-- ÉTAPE 1 : IDENTITÉ VISUELLE -->
         <div *ngIf="currentStep === 1" class="step-content animated fadeIn">
           <div class="form-group">
-            <label for="group-title">Discussion group name <span class="required">*</span></label>
+            <label for="group-title">Nom du groupe de discussion <span class="required">*</span></label>
             <input 
               type="text" 
               id="group-title" 
-              placeholder="E.g. Software Engineering Option Project 2026" 
+              placeholder="Ex: Projet Option Génie Logiciel 2026" 
               class="form-control"
               [(ngModel)]="newGroup.title"
             >
           </div>
 
           <div class="form-group">
-            <label for="group-website">Site Web / Lien externe <span class="optional">(Optional)</span></label>
+            <label for="group-website">Site Web / Lien externe <span class="optional">(Optionnel)</span></label>
             <input 
               type="text" 
               id="group-website" 
@@ -224,14 +224,14 @@
           </div>
 
           <div class="form-group">
-            <label for="group-category">Topic category <span class="required">*</span></label>
+            <label for="group-category">Catégorie thématique <span class="required">*</span></label>
             <select id="group-category" class="form-control" [(ngModel)]="newGroup.categoryId">
               <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label>Group description (Goals, topics covered) <span class="required">*</span></label>
+            <label>Description du groupe (Objectifs, thèmes abordés) <span class="required">*</span></label>
             <div class="rich-editor-toolbar">
               <button class="editor-btn" type="button"><b>B</b></button>
               <button class="editor-btn" type="button"><i>I</i></button>
@@ -241,7 +241,7 @@
             </div>
             <textarea 
               rows="5" 
-              placeholder="Describe this study group goals, target courses..." 
+              placeholder="Décrivez les objectifs de ce groupe de travail, les cours visés..." 
               class="form-control editor-textarea"
               [(ngModel)]="newGroup.content"
             ></textarea>
@@ -264,7 +264,7 @@
                   <circle cx="8.5" cy="8.5" r="1.5"></circle>
                   <polyline points="21 15 16 10 5 21"></polyline>
                 </svg>
-                <span>Cover banner</span>
+                <span>Bannière de couverture</span>
               </div>
             </div>
           </div>
@@ -273,7 +273,7 @@
         <!-- ÉTAPE 2 : PARAMÈTRES ET VISIBILITÉ -->
         <div *ngIf="currentStep === 2" class="step-content animated fadeIn">
           <div class="form-group">
-            <label>Group privacy level</label>
+            <label>Niveau de confidentialité du groupe</label>
             <div class="privacy-cards-grid">
               <div 
                 class="privacy-card" 
@@ -283,7 +283,7 @@
                 <div class="privacy-icon">🌐</div>
                 <div class="privacy-info">
                   <h4>Groupe ouvert</h4>
-                  <p>Everyone can view posts and participate freely.</p>
+                  <p>Tout le monde peut voir les publications et participer librement.</p>
                 </div>
               </div>
               <div 
@@ -293,8 +293,8 @@
               >
                 <div class="privacy-icon">🔒</div>
                 <div class="privacy-info">
-                  <h4>Closed group</h4>
-                  <p>Moderator approval is required to join the group.</p>
+                  <h4>Groupe fermé</h4>
+                  <p>L'approbation d'un modérateur est requise pour rejoindre le groupe.</p>
                 </div>
               </div>
             </div>
@@ -303,8 +303,8 @@
           <div class="form-group">
             <div class="switch-row">
               <div class="switch-label">
-                <h4>Allow group mentions</h4>
-                <p>Lets members tag the whole group for important alerts.</p>
+                <h4>Autoriser les mentions de groupe</h4>
+                <p>Permet aux membres de taguer tout le groupe pour des alertes importantes.</p>
               </div>
               <label class="toggle-switch">
                 <input type="checkbox" [(ngModel)]="newGroup.allowMemberMentions">
@@ -314,11 +314,11 @@
           </div>
 
           <div class="form-group">
-            <label>Labels and Tags (#Tags)</label>
+            <label>Étiquettes et Tags (#Tags)</label>
             <div class="tag-input-row">
               <input 
                 type="text" 
-                placeholder="Add a tag (e.g. Revision)" 
+                placeholder="Ajouter un tag (ex: Revisions)" 
                 class="form-control"
                 [(ngModel)]="tagInput"
                 (keyup.enter)="addTag()"
@@ -337,11 +337,11 @@
         <!-- ÉTAPE 3 : MEMBRES & FINALISATION -->
         <div *ngIf="currentStep === 3" class="step-content animated fadeIn">
           <div class="form-group">
-            <label>Invite students or faculty</label>
+            <label>Inviter des étudiants ou enseignants</label>
             <div class="search-member-container">
               <input 
                 type="text" 
-                placeholder="Search by name or email..." 
+                placeholder="Rechercher par nom ou email..." 
                 class="form-control"
                 [(ngModel)]="memberSearchQuery"
                 (keyup)="filterSuggestions()"
@@ -363,16 +363,16 @@
           </div>
 
           <div class="form-group">
-            <label>Members invités ({{ newGroup.members.length }})</label>
+            <label>Membres invités ({{ newGroup.members.length }})</label>
             <div class="empty-members" *ngIf="newGroup.members.length === 0">
-              No invited members yet. You can create the group and invite them later.
+              Aucun membre invité pour le moment. Vous pouvez créer le groupe et les inviter plus tard.
             </div>
             <div class="members-table-wrapper" *ngIf="newGroup.members.length > 0">
               <table class="members-table">
                 <thead>
                   <tr>
-                    <th>Member</th>
-                    <th>Role</th>
+                    <th>Membre</th>
+                    <th>Rôle</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -389,9 +389,9 @@
                     </td>
                     <td>
                       <select class="form-control table-role-select" [(ngModel)]="member.role">
-                        <option value="MEMBER">Member</option>
-                        <option value="MODERATOR">Moderator</option>
-                        <option value="ADMIN">Administrator</option>
+                        <option value="MEMBER">Membre</option>
+                        <option value="MODERATOR">Modérateur</option>
+                        <option value="ADMIN">Administrateur</option>
                       </select>
                     </td>
                     <td>
@@ -411,7 +411,7 @@
 
       </div>
 
-      <!-- Écran Success de création -->
+      <!-- Écran Succès de création -->
       <div class="success-screen animated zoomIn" *ngIf="creationSuccess">
         <div class="success-animation">
           <svg class="checkmark" viewBox="0 0 52 52">
@@ -419,9 +419,9 @@
             <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
           </svg>
         </div>
-        <h3>Congratulations!</h3>
-        <p>Discussion group <b>"{{ newGroup.title }}"</b> was created successfully and is now visible on the forum.</p>
-        <button class="btn btn-primary" (click)="closeCreateModal()">Go to group</button>
+        <h3>Félicitations !</h3>
+        <p>Le groupe de discussion <b>"{{ newGroup.title }}"</b> a été créé avec succès et est maintenant visible sur le forum.</p>
+        <button class="btn btn-primary" (click)="closeCreateModal()">Accéder au groupe</button>
       </div>
 
       <!-- Pied de page Modal (Boutons d'action) -->
@@ -431,7 +431,7 @@
           (click)="prevStep()" 
           [disabled]="currentStep === 1"
         >
-          Back
+          Retour
         </button>
         
         <button 
@@ -440,7 +440,7 @@
           *ngIf="currentStep < 3"
           [disabled]="currentStep === 1 && !newGroup.title.trim()"
         >
-          Continue
+          Continuer
         </button>
         
         <button 
@@ -449,7 +449,7 @@
           *ngIf="currentStep === 3"
           [disabled]="isSubmitting"
         >
-          {{ isSubmitting ? 'Creating...' : 'Create Group' }}
+          {{ isSubmitting ? 'Création...' : 'Créer le Groupe' }}
         </button>
       </div>
 

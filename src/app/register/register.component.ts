@@ -22,7 +22,7 @@ export class RegisterComponent implements OnInit {
   passwordStrengthText = '';
   passwordStrengthColor = '';
   niveaux = ['DEBUTANT', 'INTERMEDIAIRE', 'EXPERT']; // Based on backend enum
-  filieres = ['Computer Science', 'Civil Engineering', 'Electromechanical Engineering', 'Management', 'TIC'];
+  filieres = ['Informatique', 'Génie Civil', 'Génie Électromécanique', 'Management', 'TIC'];
   
   documentFileName = '';
   documentFileError = '';
@@ -58,7 +58,7 @@ export class RegisterComponent implements OnInit {
       // Step 2: Profile - Alumni
       anneePromotion: [null],
       domaine: [''],
-      disponibleMentoring: [false],
+      disponibleMentorat: [false],
       entrepriseActuelle: [''],
 
       // Step 2: Profile - Entreprise
@@ -118,7 +118,7 @@ export class RegisterComponent implements OnInit {
         this.passwordStrengthColor = '#52c41a'; // green
         break;
       case 4:
-        this.passwordStrengthText = 'Very strong';
+        this.passwordStrengthText = 'Très fort';
         this.passwordStrengthColor = '#2c7d0a'; // darker green
         break;
       default:
@@ -184,7 +184,7 @@ export class RegisterComponent implements OnInit {
     } else if (val.typeUtilisateur === 'ALUMNI') {
       request.anneePromotion = val.anneePromotion;
       request.domaine = val.domaine;
-      request.disponibleMentoring = val.disponibleMentoring;
+      request.disponibleMentorat = val.disponibleMentorat;
       request.entrepriseActuelle = val.entrepriseActuelle;
     } else if (val.typeUtilisateur === 'ENTREPRISE') {
       request.nomEntreprise = val.nomEntreprise;
@@ -207,7 +207,7 @@ export class RegisterComponent implements OnInit {
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage = err.error?.error || err.error?.message || "An error occurred during registration.";
+        this.errorMessage = err.error?.error || err.error?.message || "Une erreur est survenue lors de l'inscription.";
         this.currentStep = 1;
       }
     });
@@ -249,14 +249,14 @@ export class RegisterComponent implements OnInit {
       const maxSize = 5 * 1024 * 1024; // 5MB
 
       if (!allowedTypes.includes(file.type)) {
-        this.documentFileError = 'Unsupported format. Use PDF, JPG, or PNG.';
+        this.documentFileError = 'Format non supporté. Utilisez PDF, JPG ou PNG.';
         this.documentFileName = '';
         this.registerForm.patchValue({ documentJustificatif: '' });
         return;
       }
 
       if (file.size > maxSize) {
-        this.documentFileError = 'File must not exceed 5 MB.';
+        this.documentFileError = 'Le fichier ne doit pas dépasser 5 Mo.';
         this.documentFileName = '';
         this.registerForm.patchValue({ documentJustificatif: '' });
         return;

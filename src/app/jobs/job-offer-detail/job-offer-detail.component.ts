@@ -46,7 +46,7 @@ export class JobOfferDetailComponent implements OnInit, OnDestroy {
         this.loading = false;
       },
       error: () => {
-        this.error = 'Unable to load this offer.';
+        this.error = 'Impossible de charger cette offre.';
         this.loading = false;
       }
     });
@@ -71,20 +71,20 @@ export class JobOfferDetailComponent implements OnInit, OnDestroy {
     }).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.applying = false;
-        this.success = 'Application sent. The company will see your profile in the AI ranking.';
+        this.success = 'Candidature envoyée. L\'entreprise verra votre profil dans le classement IA.';
         this.applyForm.disable();
       },
       error: (err) => {
         this.applying = false;
-        this.error = err.error?.message || 'Application not possible (already applied?).';
+        this.error = err.error?.message || 'Candidature impossible (déjà postulé ?).';
       }
     });
   }
 
   typeLabel(t?: string): string {
     const map: Record<string, string> = {
-      STAGE: 'Internship',
-      EMPLOI: 'Job',
+      STAGE: 'Stage',
+      EMPLOI: 'Emploi',
       APPRENTISSAGE: 'Apprentissage'
     };
     return t ? (map[t] ?? t) : '';

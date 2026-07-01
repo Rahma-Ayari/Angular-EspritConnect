@@ -5,7 +5,7 @@
       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
       <polyline points="22 4 12 14.01 9 11.01"></polyline>
     </svg>
-    Offer published successfully!
+    Offre publiée avec succès !
   </div>
 
   <!-- Error Message -->
@@ -21,7 +21,7 @@
   <!-- Header -->
   <div class="dashboard-header">
     <div>
-      <h1>Job Offer Management</h1>
+      <h1>Gestion des Offres d'Emploi</h1>
       <p class="subtitle">Publiez et gérez vos offres d'emploi</p>
     </div>
     <button class="btn btn-primary" (click)="togglePostForm()">
@@ -29,13 +29,13 @@
         <line x1="12" y1="5" x2="12" y2="19"></line>
         <line x1="5" y1="12" x2="19" y2="12"></line>
       </svg>
-      {{ showPostForm ? 'Cancel' : 'Nouvelle Offre' }}
+      {{ showPostForm ? 'Annuler' : 'Nouvelle Offre' }}
     </button>
   </div>
 
   <!-- Post Form -->
   <div class="post-form-card" *ngIf="showPostForm">
-    <h2>Publish a New Offer</h2>
+    <h2>Publier une Nouvelle Offre</h2>
     
     <form [formGroup]="jobForm" (ngSubmit)="submitOffer()">
       <div class="form-grid">
@@ -45,10 +45,10 @@
             type="text"
             id="titre"
             formControlName="titre"
-            placeholder="E.g. Senior Full Stack Developer"
+            placeholder="Ex: Développeur Full Stack Senior"
           >
           <span class="error-text" *ngIf="jobForm.get('titre')?.touched && jobForm.get('titre')?.errors?.['required']">
-            Title is required
+            Le titre est requis
           </span>
         </div>
 
@@ -67,7 +67,7 @@
             type="text"
             id="domaine"
             formControlName="domaine"
-            placeholder="E.g. Web Development"
+            placeholder="Ex: Développement Web"
           >
         </div>
 
@@ -82,7 +82,7 @@
         </div>
 
         <div class="form-group">
-          <label for="salaire">Salaire (optional)</label>
+          <label for="salaire">Salaire (optionnel)</label>
           <input
             type="text"
             id="salaire"
@@ -92,7 +92,7 @@
         </div>
 
         <div class="form-group full-width">
-          <label for="competences">Required skills (comma-sebyated)</label>
+          <label for="competences">Compétences requises (séparées par des virgules)</label>
           <input
             type="text"
             id="competences"
@@ -113,19 +113,19 @@
             </svg>
           </div>
           <div>
-            <h3>AI Assistant - Génération de Description</h3>
-            <p>Let AI generate a professional description based on your information</p>
+            <h3>Assistant IA - Génération de Description</h3>
+            <p>Laissez l'IA générer une description professionnelle basée sur vos informations</p>
           </div>
         </div>
 
         <div class="form-group">
-          <label for="aiPrompt">Additional instructions for AI (optional)</label>
+          <label for="aiPrompt">Instructions supplémentaires pour l'IA (optionnel)</label>
           <textarea
             id="aiPrompt"
             [(ngModel)]="aiPrompt"
             [ngModelOptions]="{standalone: true}"
             rows="3"
-            placeholder="E.g. Emphasize teamwork and training opportunities..."
+            placeholder="Ex: Mettez l'accent sur le travail en équipe et les opportunités de formation..."
           ></textarea>
         </div>
 
@@ -140,7 +140,7 @@
             <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
             <line x1="12" y1="22.08" x2="12" y2="12"></line>
           </svg>
-          {{ isGeneratingDescription ? 'Generating...' : 'Generate Description with AI' }}
+          {{ isGeneratingDescription ? 'Génération en cours...' : 'Générer la Description avec IA' }}
         </button>
       </div>
 
@@ -151,13 +151,13 @@
           id="description"
           formControlName="description"
           rows="8"
-          placeholder="Describe the role, responsibilities, required qualifications..."
+          placeholder="Décrivez le poste, les responsabilités, les qualifications requises..."
         ></textarea>
         <span class="error-text" *ngIf="jobForm.get('description')?.touched && jobForm.get('description')?.errors?.['required']">
-          Description is required
+          La description est requise
         </span>
         <span class="error-text" *ngIf="jobForm.get('description')?.touched && jobForm.get('description')?.errors?.['minlength']">
-          Description must be at least 50 characters
+          La description doit contenir au moins 50 caractères
         </span>
       </div>
 
@@ -168,7 +168,7 @@
             <path d="M22 2L11 13"></path>
             <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
           </svg>
-          {{ isSubmitting ? 'Publication en cours...' : 'Publish l\'Offre' }}
+          {{ isSubmitting ? 'Publication en cours...' : 'Publier l\'Offre' }}
         </button>
       </div>
     </form>
@@ -176,7 +176,7 @@
 
   <!-- My Offers List -->
   <div class="offers-section">
-    <h2>Mes Offres Publisheds</h2>
+    <h2>Mes Offres Publiées</h2>
     
     <div class="offers-grid" *ngIf="myOffers.length > 0; else noOffers">
       <div class="offer-card" *ngFor="let offer of myOffers">
@@ -185,7 +185,7 @@
             <h3>{{ offer.titre }}</h3>
             <span class="offer-type">{{ offer.typeOffre }}</span>
           </div>
-          <button class="btn-icon-danger" (click)="deleteOffer(offer.idOffre!)" title="Delete">
+          <button class="btn-icon-danger" (click)="deleteOffer(offer.idOffre!)" title="Supprimer">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="3 6 5 6 21 6"></polyline>
               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -229,8 +229,8 @@
           <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
           <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
         </svg>
-        <h3>No published offers</h3>
-        <p>Start by publishing your first job offer</p>
+        <h3>Aucune offre publiée</h3>
+        <p>Commencez par publier votre première offre d'emploi</p>
       </div>
     </ng-template>
   </div>

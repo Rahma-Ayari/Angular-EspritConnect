@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
 export interface GeneralSettings {
-  alumniDebytmentEmail: string;
-  alumniDebytmentPhone: string;
+  alumniDepartmentEmail: string;
+  alumniDepartmentPhone: string;
   donationOptInPageEnabled: boolean;
   invitationsEventsStudent: boolean;
   invitationsEventsAlumni: boolean;

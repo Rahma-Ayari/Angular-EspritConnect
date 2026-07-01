@@ -12,7 +12,7 @@
   <!-- Loading State -->
   <div class="loading-container" *ngIf="isLoading">
     <div class="loading-spinner"></div>
-    <p>Loading profile...</p>
+    <p>Chargement du profil...</p>
   </div>
 
   <div class="profil-content" *ngIf="!isLoading">
@@ -39,38 +39,38 @@
 
         <div class="header-info">
           <div class="company-name-row">
-            <h1 *ngIf="!isEditing">{{ profile.nomProprietaire || 'Company name' }}</h1>
+            <h1 *ngIf="!isEditing">{{ profile.nomProprietaire || 'Nom de l\'entreprise' }}</h1>
             <input *ngIf="isEditing" type="text" [(ngModel)]="profile.nomProprietaire"
-                   class="inline-edit inline-edit-title" placeholder="Company name">
+                   class="inline-edit inline-edit-title" placeholder="Nom de l'entreprise">
             <span class="verified-badge" *ngIf="profile.registreCommerce">
               <i class="bi bi-patch-check-fill"></i>
             </span>
           </div>
           <p class="company-sector" *ngIf="!isEditing">
-            {{ profile.secteurActivite || 'Industry sector not provided' }}
+            {{ profile.secteurActivite || 'Secteur d\'activité non renseigné' }}
           </p>
           <input *ngIf="isEditing" type="text" [(ngModel)]="profile.secteurActivite"
-                 class="inline-edit inline-edit-subtitle" placeholder="Industry sector (ex: IT, Finance...)">
+                 class="inline-edit inline-edit-subtitle" placeholder="Secteur d'activité (ex: IT, Finance...)">
           <div class="company-location">
             <i class="bi bi-geo-alt"></i>
-            <span *ngIf="!isEditing">{{ profile.ville || 'City' }}{{ profile.pays ? ', ' + profile.pays : '' }}</span>
+            <span *ngIf="!isEditing">{{ profile.ville || 'Ville' }}{{ profile.pays ? ', ' + profile.pays : '' }}</span>
             <span *ngIf="isEditing" class="location-edit-row">
-              <input type="text" [(ngModel)]="profile.ville" class="inline-edit inline-edit-small" placeholder="City">
-              <input type="text" [(ngModel)]="profile.pays" class="inline-edit inline-edit-small" placeholder="Country">
+              <input type="text" [(ngModel)]="profile.ville" class="inline-edit inline-edit-small" placeholder="Ville">
+              <input type="text" [(ngModel)]="profile.pays" class="inline-edit inline-edit-small" placeholder="Pays">
             </span>
           </div>
         </div>
 
         <div class="header-actions">
           <button class="btn-primary-action" *ngIf="!isEditing" (click)="toggleEdit()">
-            <i class="bi bi-pencil-square"></i> Edit profile
+            <i class="bi bi-pencil-square"></i> Modifier le profil
           </button>
           <div class="edit-buttons" *ngIf="isEditing">
             <button class="btn-cancel-action" (click)="toggleEdit()">
-              <i class="bi bi-x-lg"></i> Cancel
+              <i class="bi bi-x-lg"></i> Annuler
             </button>
             <button class="btn-save-action" (click)="saveProfile()">
-              <i class="bi bi-check-lg"></i> Save
+              <i class="bi bi-check-lg"></i> Enregistrer
             </button>
           </div>
         </div>
@@ -79,7 +79,7 @@
       <!-- Completion Bar -->
       <div class="completion-section">
         <div class="completion-header">
-          <span class="completion-label">Profile completeness</span>
+          <span class="completion-label">Complétude du profil</span>
           <span class="completion-value">{{ completionPercentage }}%</span>
         </div>
         <div class="completion-bar">
@@ -90,20 +90,20 @@
         </div>
         <div class="completion-hint" *ngIf="completionPercentage < 100">
           <i class="bi bi-lightbulb"></i>
-          <span>Complete the missing fields: {{ missingFields.slice(0, 3).join(', ') }}{{ missingFields.length > 3 ? '...' : '' }}</span>
+          <span>Complétez les champs manquants : {{ missingFields.slice(0, 3).join(', ') }}{{ missingFields.length > 3 ? '...' : '' }}</span>
         </div>
       </div>
 
       <!-- Tab Navigation -->
       <div class="tab-nav">
         <button class="tab-btn" [class.active]="activeTab === 'overview'" (click)="setTab('overview')">
-          <i class="bi bi-building"></i> Overview
+          <i class="bi bi-building"></i> Vue d'ensemble
         </button>
         <button class="tab-btn" [class.active]="activeTab === 'details'" (click)="setTab('details')">
-          <i class="bi bi-card-list"></i> Details
+          <i class="bi bi-card-list"></i> Détails
         </button>
         <button class="tab-btn" [class.active]="activeTab === 'links'" (click)="setTab('links')">
-          <i class="bi bi-link-45deg"></i> Links & Contact
+          <i class="bi bi-link-45deg"></i> Liens & Contact
         </button>
       </div>
     </div>
@@ -121,15 +121,15 @@
             <div class="section-card">
               <div class="section-header">
                 <div class="section-icon-wrap primary"><i class="bi bi-info-circle"></i></div>
-                <h2>About</h2>
+                <h2>À propos</h2>
               </div>
               <div class="section-body">
                 <p class="about-text" *ngIf="!isEditing">
-                  {{ profile.descriptionEntreprise || 'No company description. Click "Edit profile" to add one.' }}
+                  {{ profile.descriptionEntreprise || 'Aucune description de l\'entreprise. Cliquez sur "Modifier le profil" pour en ajouter une.' }}
                 </p>
                 <textarea *ngIf="isEditing" [(ngModel)]="profile.descriptionEntreprise"
                           class="edit-textarea" rows="5"
-                          placeholder="Describe your company, mission, and values..."></textarea>
+                          placeholder="Décrivez votre entreprise, votre mission, vos valeurs..."></textarea>
               </div>
             </div>
 
@@ -137,15 +137,15 @@
             <div class="section-card">
               <div class="section-header">
                 <div class="section-icon-wrap accent"><i class="bi bi-person-lines-fill"></i></div>
-                <h2>Representative biography</h2>
+                <h2>Biographie du responsable</h2>
               </div>
               <div class="section-body">
                 <p class="about-text" *ngIf="!isEditing">
-                  {{ profile.bio || 'No biography provided.' }}
+                  {{ profile.bio || 'Aucune biographie renseignée.' }}
                 </p>
                 <textarea *ngIf="isEditing" [(ngModel)]="profile.bio"
                           class="edit-textarea" rows="4"
-                          placeholder="Describe the representative's background and goals..."></textarea>
+                          placeholder="Parlez du responsable, de son parcours, ses objectifs..."></textarea>
               </div>
             </div>
 
@@ -158,16 +158,16 @@
             <div class="section-card info-card">
               <div class="section-header">
                 <div class="section-icon-wrap secondary"><i class="bi bi-briefcase"></i></div>
-                <h2>Key information</h2>
+                <h2>Informations clés</h2>
               </div>
               <div class="section-body">
                 <div class="info-item">
                   <div class="info-icon"><i class="bi bi-person"></i></div>
                   <div class="info-content">
-                    <span class="info-label">Representative</span>
+                    <span class="info-label">Responsable</span>
                     <span class="info-value" *ngIf="!isEditing">{{ profile.prenom || '-' }}</span>
                     <input *ngIf="isEditing" type="text" [(ngModel)]="profile.prenom"
-                           class="inline-edit-field" placeholder="Representative name">
+                           class="inline-edit-field" placeholder="Nom du responsable">
                   </div>
                 </div>
                 <div class="info-item">
@@ -180,7 +180,7 @@
                 <div class="info-item">
                   <div class="info-icon"><i class="bi bi-telephone"></i></div>
                   <div class="info-content">
-                    <span class="info-label">Phone</span>
+                    <span class="info-label">Téléphone</span>
                     <span class="info-value" *ngIf="!isEditing">{{ profile.telephone || '-' }}</span>
                     <input *ngIf="isEditing" type="tel" [(ngModel)]="profile.telephone"
                            class="inline-edit-field" placeholder="+216 XX XXX XXX">
@@ -189,17 +189,17 @@
                 <div class="info-item">
                   <div class="info-icon"><i class="bi bi-building"></i></div>
                   <div class="info-content">
-                    <span class="info-label">Industry</span>
+                    <span class="info-label">Secteur</span>
                     <span class="info-value" *ngIf="!isEditing">{{ profile.secteurActivite || '-' }}</span>
                   </div>
                 </div>
                 <div class="info-item">
                   <div class="info-icon"><i class="bi bi-file-earmark-text"></i></div>
                   <div class="info-content">
-                    <span class="info-label">Trade register</span>
+                    <span class="info-label">Registre de commerce</span>
                     <span class="info-value" *ngIf="!isEditing">{{ profile.registreCommerce || '-' }}</span>
                     <input *ngIf="isEditing" type="text" [(ngModel)]="profile.registreCommerce"
-                           class="inline-edit-field" placeholder="Registration number">
+                           class="inline-edit-field" placeholder="Numéro de registre">
                   </div>
                 </div>
               </div>
@@ -225,7 +225,7 @@
                   <i class="bi bi-box-arrow-up-right link-arrow"></i>
                 </a>
                 <p class="no-links" *ngIf="!profile.siteWeb && !profile.lienLinkedIn && !profile.lienGitHub && !isEditing">
-                  No links added yet.
+                  Aucun lien ajouté pour le moment.
                 </p>
               </div>
             </div>
@@ -239,7 +239,7 @@
         <div class="content-grid">
           <div class="col-main">
 
-            <!-- Full address -->
+            <!-- Adresse complète -->
             <div class="section-card">
               <div class="section-header">
                 <div class="section-icon-wrap secondary"><i class="bi bi-geo-alt-fill"></i></div>
@@ -248,16 +248,16 @@
               <div class="section-body">
                 <div class="detail-grid">
                   <div class="detail-item">
-                    <label>Full address</label>
+                    <label>Adresse complète</label>
                     <span *ngIf="!isEditing">{{ profile.adresse || '-' }}</span>
                     <input *ngIf="isEditing" type="text" [(ngModel)]="profile.adresse"
-                           class="inline-edit-field" placeholder="Street, number...">
+                           class="inline-edit-field" placeholder="Rue, numéro...">
                   </div>
                   <div class="detail-item">
                     <label>Ville</label>
                     <span *ngIf="!isEditing">{{ profile.ville || '-' }}</span>
                     <input *ngIf="isEditing" type="text" [(ngModel)]="profile.ville"
-                           class="inline-edit-field" placeholder="Your city">
+                           class="inline-edit-field" placeholder="Votre ville">
                   </div>
                   <div class="detail-item">
                     <label>Code postal</label>
@@ -269,7 +269,7 @@
                     <label>Pays</label>
                     <span *ngIf="!isEditing">{{ profile.pays || '-' }}</span>
                     <input *ngIf="isEditing" type="text" [(ngModel)]="profile.pays"
-                           class="inline-edit-field" placeholder="Your country">
+                           class="inline-edit-field" placeholder="Votre pays">
                   </div>
                 </div>
               </div>
@@ -287,10 +287,10 @@
                     <label>Registre de commerce</label>
                     <span *ngIf="!isEditing">{{ profile.registreCommerce || '-' }}</span>
                     <input *ngIf="isEditing" type="text" [(ngModel)]="profile.registreCommerce"
-                           class="inline-edit-field" placeholder="Registration number">
+                           class="inline-edit-field" placeholder="Numéro de registre">
                   </div>
                   <div class="detail-item">
-                    <label>Industry sector</label>
+                    <label>Secteur d'activité</label>
                     <span *ngIf="!isEditing">{{ profile.secteurActivite || '-' }}</span>
                     <input *ngIf="isEditing" type="text" [(ngModel)]="profile.secteurActivite"
                            class="inline-edit-field" placeholder="Ex: IT, Finance...">
@@ -300,7 +300,7 @@
                     <span *ngIf="!isEditing">{{ profile.descriptionEntreprise || '-' }}</span>
                     <textarea *ngIf="isEditing" [(ngModel)]="profile.descriptionEntreprise"
                               class="edit-textarea" rows="4"
-                              placeholder="Company overview..."></textarea>
+                              placeholder="Présentation de l'entreprise..."></textarea>
                   </div>
                 </div>
               </div>
@@ -313,7 +313,7 @@
             <div class="section-card">
               <div class="section-header">
                 <div class="section-icon-wrap accent"><i class="bi bi-person-badge"></i></div>
-                <h2>Representative</h2>
+                <h2>Responsable</h2>
               </div>
               <div class="section-body">
                 <div class="detail-grid">
@@ -324,13 +324,13 @@
                            class="inline-edit-field" placeholder="Nom">
                   </div>
                   <div class="detail-item">
-                    <label>First name</label>
+                    <label>Prénom</label>
                     <span *ngIf="!isEditing">{{ profile.prenom || '-' }}</span>
                     <input *ngIf="isEditing" type="text" [(ngModel)]="profile.prenom"
-                           class="inline-edit-field" placeholder="First name">
+                           class="inline-edit-field" placeholder="Prénom">
                   </div>
                   <div class="detail-item">
-                    <label>Phone</label>
+                    <label>Téléphone</label>
                     <span *ngIf="!isEditing">{{ profile.telephone || '-' }}</span>
                     <input *ngIf="isEditing" type="tel" [(ngModel)]="profile.telephone"
                            class="inline-edit-field" placeholder="+216 XX XXX XXX">
@@ -345,7 +345,7 @@
                     <label>Genre</label>
                     <span *ngIf="!isEditing">{{ profile.genre || '-' }}</span>
                     <select *ngIf="isEditing" [(ngModel)]="profile.genre" class="inline-edit-field">
-                      <option value="">Select</option>
+                      <option value="">Sélectionner</option>
                       <option value="HOMME">Homme</option>
                       <option value="FEMME">Femme</option>
                       <option value="AUTRE">Autre</option>
@@ -366,7 +366,7 @@
             <div class="link-card-icon linkedin-bg"><i class="bi bi-linkedin"></i></div>
             <div class="link-card-body">
               <h3>LinkedIn</h3>
-              <p *ngIf="!isEditing" class="link-url">{{ profile.lienLinkedIn || 'Not provided' }}</p>
+              <p *ngIf="!isEditing" class="link-url">{{ profile.lienLinkedIn || 'Non renseigné' }}</p>
               <input *ngIf="isEditing" type="url" [(ngModel)]="profile.lienLinkedIn"
                      class="inline-edit-field" placeholder="https://linkedin.com/company/...">
             </div>
@@ -379,7 +379,7 @@
             <div class="link-card-icon github-bg"><i class="bi bi-github"></i></div>
             <div class="link-card-body">
               <h3>GitHub</h3>
-              <p *ngIf="!isEditing" class="link-url">{{ profile.lienGitHub || 'Not provided' }}</p>
+              <p *ngIf="!isEditing" class="link-url">{{ profile.lienGitHub || 'Non renseigné' }}</p>
               <input *ngIf="isEditing" type="url" [(ngModel)]="profile.lienGitHub"
                      class="inline-edit-field" placeholder="https://github.com/...">
             </div>
@@ -392,7 +392,7 @@
             <div class="link-card-icon web-bg"><i class="bi bi-globe"></i></div>
             <div class="link-card-body">
               <h3>Site Web / Portfolio</h3>
-              <p *ngIf="!isEditing" class="link-url">{{ profile.siteWeb || 'Not provided' }}</p>
+              <p *ngIf="!isEditing" class="link-url">{{ profile.siteWeb || 'Non renseigné' }}</p>
               <input *ngIf="isEditing" type="url" [(ngModel)]="profile.siteWeb"
                      class="inline-edit-field" placeholder="https://votre-site.com">
             </div>

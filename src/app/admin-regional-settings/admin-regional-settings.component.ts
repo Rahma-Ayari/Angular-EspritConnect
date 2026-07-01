@@ -56,7 +56,7 @@ export class AdminRegionalSettingsComponent implements OnInit {
   languageCatalog: LanguageOption[] = [
     { code: 'en_GB', label: 'English (UK)' },
     { code: 'en_US', label: 'English (US)' },
-    { code: 'fr_FR', label: 'French' },
+    { code: 'fr_FR', label: 'Français (French)' },
     { code: 'ar_TN', label: 'العربية (Tunisia)' },
     { code: 'de_DE', label: 'Deutsch (German)' },
     { code: 'es_ES', label: 'Español (Spanish)' },
@@ -245,7 +245,7 @@ export class AdminRegionalSettingsComponent implements OnInit {
     if (http?.status === 500) {
       return 'Server error while loading regional settings. Check Spring logs and the database.';
     }
-    return 'Unable to load regional settings.';
+    return 'Impossible de charger les paramètres régionaux.';
   }
 
   private mergeLanguageCatalog(s: RegionalSettings): void {

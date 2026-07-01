@@ -67,11 +67,11 @@ export class MessageUsersComponent implements OnInit {
   }
 
   get recipientsSummary(): string {
-    if (!this.selectedMailingList) return 'No recipients selected';
+    if (!this.selectedMailingList) return 'Aucun destinataire sélectionné';
     if (!this.selectedMembersCount) {
       return `Toute la liste "${this.selectedMailingList.name}"`;
     }
-    return `${this.selectedMembersCount} recipient(s) selected in "${this.selectedMailingList.name}"`;
+    return `${this.selectedMembersCount} destinataire(s) sélectionné(s) dans "${this.selectedMailingList.name}"`;
   }
 
   get canSend(): boolean {
@@ -84,7 +84,7 @@ export class MessageUsersComponent implements OnInit {
       .pipe(finalize(() => this.loadingLists = false))
       .subscribe({
         next: (lists) => this.mailingLists = lists || [],
-        error: () => this.showError("Unable to load mailing lists.")
+        error: () => this.showError("Impossible de charger les mailing lists.")
       });
   }
 
@@ -101,7 +101,7 @@ export class MessageUsersComponent implements OnInit {
     ).pipe(finalize(() => this.loadingMembers = false))
       .subscribe({
         next: (members) => this.members = members || [],
-        error: () => this.showError("Unable to load members of this list.")
+        error: () => this.showError("Impossible de charger les membres de cette liste.")
       });
   }
 
@@ -128,7 +128,7 @@ export class MessageUsersComponent implements OnInit {
 
   sendMessage(): void {
     if (!this.canSend || !this.selectedMailingListId) return;
-    if (!confirm(`Confirm send to: ${this.recipientsSummary} ?`)) return;
+    if (!confirm(`Confirmer l'envoi à: ${this.recipientsSummary} ?`)) return;
 
     this.sending = true;
     this.clearMessages();
@@ -145,10 +145,10 @@ export class MessageUsersComponent implements OnInit {
     this.http.post<void>(`${this.base}/api/email-communications/message-users/send-now`, payload)
       .pipe(finalize(() => this.sending = false))
       .subscribe({
-        next: () => this.showSuccess('Campaign sent successfully.'),
+        next: () => this.showSuccess('Campagne envoyée avec succès.'),
         error: (err) => {
           const backendMessage = err?.error?.message || err?.error || '';
-          this.showError(backendMessage ? `Send failed: ${backendMessage}` : "Error sending campaign.");
+          this.showError(backendMessage ? `Échec d'envoi : ${backendMessage}` : "Erreur lors de l'envoi de la campagne.");
         }
       });
   }
@@ -167,7 +167,7 @@ export class MessageUsersComponent implements OnInit {
   }
 
   resetForm(): void {
-    if (!confirm('Reset la campagne (destinataires + contenu) ?')) return;
+    if (!confirm('Réinitialiser la campagne (destinataires + contenu) ?')) return;
     this.clearMessages();
     this.selectedMailingListId = null;
     this.selectedMemberEmails = [];
@@ -188,7 +188,7 @@ export class MessageUsersComponent implements OnInit {
 
   buildPreviewHtml(): string {
     const subject = this.escapeHtml(this.messageForm.subject || 'Message Esprit Connect');
-    const body = this.messageForm.htmlBody || '<em>No content</em>';
+    const body = this.messageForm.htmlBody || '<em>Aucun contenu</em>';
 
     // Branded wrapper aligned with Activity Digest email design.
     return `<!DOCTYPE html>
@@ -205,7 +205,7 @@ export class MessageUsersComponent implements OnInit {
             <div style="font-size:32px; font-weight:800; letter-spacing:1px; margin:0; font-family:Arial, sans-serif;">
               ESPRIT<span style="color:#ffd2d2;">Connect</span>
             </div>
-            <div style="font-size:14px; opacity:0.85; margin-top:6px; font-family:Arial, sans-serif;">Learn differently</div>
+            <div style="font-size:14px; opacity:0.85; margin-top:6px; font-family:Arial, sans-serif;">Se former autrement</div>
           </div>
 
           <div style="padding:32px 32px 10px;">
@@ -218,9 +218,9 @@ export class MessageUsersComponent implements OnInit {
 
           <div style="background:linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color:#ffe4e6; padding:24px 24px; font-size:12px; text-align:center; font-family:Arial, sans-serif; border-top:1px solid #fecaca;">
             <div style="font-weight:600; color:#ffffff; margin-bottom:6px;">ESPRIT Connect</div>
-            <div style="margin-bottom:12px; opacity:0.8;">You receive this email because you are registered on the ESPRIT Connect platform.</div>
+            <div style="margin-bottom:12px; opacity:0.8;">Vous recevez cet email car vous êtes inscrit sur la plateforme ESPRIT Connect.</div>
             <div style="border-top:1px solid rgba(255,255,255,0.25); padding-top:12px; opacity:0.9;">
-              © 2026 ESPRIT — Honoris United Universities. All rights reserved.
+              © 2026 ESPRIT — Honoris United Universities. Tous droits réservés.
             </div>
           </div>
 

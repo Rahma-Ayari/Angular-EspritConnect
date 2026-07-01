@@ -1,24 +1,15 @@
-<div class="sj-page applications-page">
-  <header class="page-header-row">
+<div class="sj-page">
+  <header class="sj-page-header row-header">
     <div>
       <h1>My Applications</h1>
-      <p>Track your application journey across all stages.</p>
+      <p>Track every step of your hiring pipeline.</p>
     </div>
-    <button type="button" class="sj-btn-primary" routerLink="/dashboard/jobs/discover">+ New Application</button>
+    <div class="view-toggle">
+      <button type="button" [class.active]="view === 'table'" (click)="view = 'table'">Table</button>
+      <button type="button" [class.active]="view === 'kanban'" (click)="view = 'kanban'">Kanban</button>
+    </div>
   </header>
 
-  <div class="view-toggle">
-    <button type="button" [class.active]="view === 'kanban'" (click)="view = 'kanban'">Kanban</button>
-    <button type="button" [class.active]="view === 'table'" (click)="view = 'table'">Table</button>
-  </div>
-
-  <div class="sj-skeleton" *ngIf="loading" style="height: 280px"></div>
-
-  <app-application-tracker
-    *ngIf="!loading"
-    [applications]="applications"
-    [kanbanCards]="kanbanCards"
-    [view]="view"
-    (openJob)="openJob($event)">
-  </app-application-tracker>
+  <div class="sj-skeleton block-skel" *ngIf="loading"></div>
+  <app-application-tracker *ngIf="!loading" [applications]="applications" [view]="view"></app-application-tracker>
 </div>

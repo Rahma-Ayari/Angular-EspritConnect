@@ -6,8 +6,6 @@ import { RecommendedJobsComponent } from './pages/recommended-jobs/recommended-j
 import { MyApplicationsComponent } from './pages/my-applications/my-applications.component';
 import { SavedJobsComponent } from './pages/saved-jobs/saved-jobs.component';
 import { CareerAssistantComponent } from './pages/career-assistant/career-assistant.component';
-import { ResumeStudioComponent } from './pages/resume-studio/resume-studio.component';
-import { CoverLettersComponent } from './pages/cover-letters/cover-letters.component';
 import { JobDetailsComponent } from './pages/job-details/job-details.component';
 
 const routes: Routes = [
@@ -20,8 +18,6 @@ const routes: Routes = [
       { path: 'recommended', component: RecommendedJobsComponent },
       { path: 'applications', component: MyApplicationsComponent },
       { path: 'saved', component: SavedJobsComponent },
-      { path: 'resume-studio', component: ResumeStudioComponent },
-      { path: 'cover-letters', component: CoverLettersComponent },
       { path: 'ai-assistant', component: CareerAssistantComponent },
       { path: ':id', component: JobDetailsComponent }
     ]

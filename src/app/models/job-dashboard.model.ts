@@ -27,7 +27,6 @@ export interface EntrepriseVerification {
 
 export interface EntrepriseJobDashboardOverview {
   verification: EntrepriseVerification;
-  totalOffers: number;
   activeOffers: number;
   totalApplications: number;
   pendingApplications: number;
@@ -47,25 +46,9 @@ export interface CandidateMatch {
   filiere?: string;
   niveau?: string;
   scoreCompatibilite: number;
-  skillsScore?: number;
-  experienceScore?: number;
-  educationScore?: number;
   skillsMatched: string[];
   recommandations: string[];
   lettreMotivationExcerpt: string;
   hasResume: boolean;
   candidatureStatus: string;
-}
-
-/** Applicant row returned by GET /candidatures/offre/{id} */
-export interface OffreApplicant {
-  id: number;
-  etudiantId: number;
-  etudiantNom?: string;
-  etudiantEmail?: string;
-  filiere?: string;
-  scoreMatch?: number;
-  statutCandidature?: string;
-  fichierId?: number;
-  lettreMotivation?: string;
 }
