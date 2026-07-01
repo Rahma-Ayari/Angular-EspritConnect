@@ -27,6 +27,10 @@ export class JobsAiService {
     private cache: JobsAiCacheService
   ) {}
 
+  getStatus(): Observable<{ configured: boolean; message: string }> {
+    return this.http.get<{ configured: boolean; message: string }>(`${this.apiUrl}/status`);
+  }
+
   generateJobDescription(request: AiGenerateRequest, forceRefresh = false): Observable<AiJobGenerateWrapper> {
     const cacheKey = this.cache.buildKey('generate', request);
     if (!forceRefresh) {

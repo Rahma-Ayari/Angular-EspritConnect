@@ -122,14 +122,10 @@ export const KANBAN_COLUMNS: ApplicationUiStatus[] = [
   'REJECTED'
 ];
 
-export function mapApplicationUiStatus(backend: string, appliedAt?: string): ApplicationUiStatus {
+export function mapApplicationUiStatus(backend: string, _appliedAt?: string): ApplicationUiStatus {
   if (backend === 'ACCEPTEE') return 'ACCEPTED';
   if (backend === 'REFUSEE') return 'REJECTED';
-  if (appliedAt) {
-    const days = (Date.now() - new Date(appliedAt).getTime()) / (1000 * 60 * 60 * 24);
-    if (days > 14) return 'INTERVIEW';
-    if (days > 7) return 'TECHNICAL_TEST';
-    if (days > 3) return 'UNDER_REVIEW';
-  }
+  if (backend === 'EN_ENTRETIEN') return 'INTERVIEW';
+  if (backend === 'EN_ATTENTE') return 'APPLIED';
   return 'APPLIED';
 }

@@ -129,6 +129,46 @@
   margin-bottom: 12px;
 }
 
+.tm-offer-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.tm-offer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 140px;
+}
+
+.tm-offer:hover {
+  border-color: #cbd5e1;
+}
+
+.tm-offer.selected {
+  border-color: #cc0000;
+  background: #fff5f5;
+}
+
+.tm-offer-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.error-hint {
+  color: #dc2626;
+}
+
 .stats-row--analytics {
   margin-bottom: 16px;
 }

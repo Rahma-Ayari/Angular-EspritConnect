@@ -100,6 +100,9 @@ export interface TopMatchCandidate {
   etudiantEmail: string;
   filiere?: string;
   scoreCompatibilite: number;
+  skillsScore?: number;
+  experienceScore?: number;
+  educationScore?: number;
   aiScore?: number;
   skillsMatched: string[];
   recommendation?: string;

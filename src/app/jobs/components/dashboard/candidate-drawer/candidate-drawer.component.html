@@ -14,15 +14,53 @@
   <div class="drawer-body">
     <span class="ai-badge">{{ poweredBy }}</span>
 
-    <div class="drawer-skeleton" *ngIf="loading">
+    <div class="drawer-skeleton" *ngIf="summaryLoading">
       <div class="sk-block"></div>
       <div class="sk-block short"></div>
       <div class="sk-block"></div>
     </div>
 
     <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p class="success" *ngIf="actionMessage">{{ actionMessage }}</p>
 
-    <ng-container *ngIf="!loading && matchData">
+    <div class="status-pill" *ngIf="candidate">
+      Status: <strong>{{ statusLabel }}</strong>
+    </div>
+
+    <section class="decision-panel" *ngIf="candidate && !isFinalized">
+      <h4>Application decision</h4>
+      <p class="decision-hint">The student will receive an email for each action.</p>
+      <div class="decision-actions">
+        <button
+          type="button"
+          class="btn-decision proceed"
+          *ngIf="canProceed"
+          [disabled]="actionLoading"
+          (click)="proceedWithCandidate()">
+          Proceed to interview
+        </button>
+        <button
+          type="button"
+          class="btn-decision accept"
+          *ngIf="canAcceptDecline"
+          [disabled]="actionLoading"
+          (click)="acceptCandidate()">
+          Accept
+        </button>
+        <button
+          type="button"
+          class="btn-decision decline"
+          *ngIf="canAcceptDecline"
+          [disabled]="actionLoading"
+          (click)="declineCandidate()">
+          Decline
+        </button>
+      </div>
+    </section>
+
+    <p class="finalized-note" *ngIf="isFinalized">This application is finalized. No further actions available.</p>
+
+    <ng-container *ngIf="matchData">
       <div class="score-grid">
         <div class="score-card">
           <span>Overall</span>
@@ -56,17 +94,17 @@
         </div>
       </section>
 
-      <section *ngIf="summaryData">
-        <h4>AI Summary</h4>
+      <section *ngIf="!summaryLoading && summaryData">
+        <h4>Match Summary</h4>
         <p class="summary-text">{{ summaryData.summary }}</p>
         <p class="recommendation"><strong>Recommendation:</strong> {{ summaryData.recommendation || matchData.recommendation }}</p>
       </section>
     </ng-container>
   </div>
 
-  <div class="drawer-footer" *ngIf="!loading && summaryData">
-    <button type="button" class="btn-action" (click)="regenerate()">
-      <i class="bi bi-arrow-clockwise"></i> Regenerate
+  <div class="drawer-footer" *ngIf="matchData">
+    <button type="button" class="btn-action" *ngIf="aiConfigured" (click)="regenerate()" [disabled]="summaryLoading">
+      <i class="bi bi-stars"></i> {{ summaryLoading ? 'Generating…' : 'Enhance with AI' }}
     </button>
     <button type="button" class="btn-action" (click)="copySummary()">
       <i class="bi bi-clipboard"></i> Copy

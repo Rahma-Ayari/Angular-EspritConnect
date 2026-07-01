@@ -44,6 +44,7 @@ export interface JobFilter {
   status?: JobStatus[];
   department?: string;
   location?: string;
+  entrepriseId?: number;
   sortBy?: 'recent' | 'title' | 'applications' | 'deadline';
   sortOrder?: 'asc' | 'desc';
   page?: number;

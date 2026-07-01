@@ -59,13 +59,33 @@
 
       <!-- Top Matches tab -->
       <div *ngIf="activeTab === 'top-matches'" class="tab-panel">
-        <p class="tab-hint" *ngIf="!selectedJobId">Click a job row in All Offers to load AI-matched candidates.</p>
+        <p class="tab-hint">Select one of your offers to see AI-matched candidates.</p>
+
+        <div class="tm-offer-picker" *ngIf="jobs.length > 0">
+          <button
+            type="button"
+            class="tm-offer"
+            *ngFor="let job of jobs"
+            [class.selected]="selectedJobId === job.id"
+            (click)="selectJobForMatches(job)">
+            <span class="tm-offer-title">{{ job.title }}</span>
+            <span class="tm-offer-apps">{{ job.applicationCount || 0 }} applicants</span>
+          </button>
+        </div>
+
+        <p class="tab-hint" *ngIf="jobs.length === 0">
+          You have no offers yet. Create an offer first, then candidates who apply will appear here.
+        </p>
+
         <app-top-matches-panel
+          *ngIf="selectedJobId"
           [candidates]="topCandidates"
           [loading]="topMatchesLoading"
           [selectedOffreId]="selectedJobId"
           (candidateSelected)="onCandidateSelected($event)">
         </app-top-matches-panel>
+
+        <p class="tab-hint error-hint" *ngIf="topMatchesError">{{ topMatchesError }}</p>
       </div>
 
       <!-- Analytics tab -->
@@ -240,5 +260,6 @@
   [open]="drawerOpen"
   [candidate]="selectedCandidate"
   [offreId]="selectedJobId"
-  (closed)="closeDrawer()">
+  (closed)="closeDrawer()"
+  (statusUpdated)="onCandidateStatusUpdated($event)">
 </app-candidate-drawer>

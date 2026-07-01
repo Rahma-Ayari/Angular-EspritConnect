@@ -7,7 +7,8 @@ import {
   EntrepriseDocument,
   EntrepriseJobDashboardOverview,
   EntrepriseVerification,
-  OffreAiSuggestion
+  OffreAiSuggestion,
+  OffreApplicant
 } from '../models/job-dashboard.model';
 import { Offre, OffreRequest } from '../models/offre.model';
 
@@ -76,6 +77,21 @@ export class EntrepriseJobDashboardService {
   topCandidates(offreId: number, limit = 10): Observable<CandidateMatch[]> {
     return this.http.get<CandidateMatch[]>(
       `${this.api}/matchings/offre/${offreId}/candidates?limit=${limit}`
+    );
+  }
+
+  /** Reliable applicant list for an offer (used by Top Matches). */
+  getApplicants(offreId: number): Observable<OffreApplicant[]> {
+    return this.http.get<OffreApplicant[]>(`${this.api}/candidatures/offre/${offreId}`);
+  }
+
+  updateApplicationStatus(
+    candidatureId: number,
+    statut: 'EN_ENTRETIEN' | 'ACCEPTEE' | 'REFUSEE'
+  ): Observable<{ id: number; statutCandidature: string }> {
+    return this.http.patch<{ id: number; statutCandidature: string }>(
+      `${this.api}/candidatures/${candidatureId}/status`,
+      { statut }
     );
   }
 

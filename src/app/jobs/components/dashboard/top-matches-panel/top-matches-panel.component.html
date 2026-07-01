@@ -27,7 +27,7 @@
       *ngFor="let candidate of displayCandidates"
       class="match-item"
       (click)="selectCandidate(candidate)">
-      <div class="match-avatar">{{ candidate.etudiantNom.charAt(0) }}</div>
+      <div class="match-avatar">{{ initials(candidate) }}</div>
       <div class="match-info">
         <strong>{{ candidate.etudiantNom }}</strong>
         <span class="match-role">{{ candidate.filiere || 'Candidate' }}</span>
