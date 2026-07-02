@@ -3,7 +3,7 @@
   <div class="profile-header-premium">
     <div class="header-titles">
       <h1 class="profile-title">Mon Profil & Sécurité</h1>
-      <p class="profile-subtitle">Gérez vos informations personnelles et sécurisez votre compte</p>
+      <p class="profile-subtitle">Gerez vos informations personnelles et securisez votre compte</p>
     </div>
     <div class="header-actions">
       <button class="btn-edit" (click)="toggleEdit()" *ngIf="!isEditing">
@@ -63,30 +63,61 @@
           Informations Personnelles
         </h2>
         
-        <div class="form-grid">
+        <!-- View Mode -->
+        <div class="info-grid" *ngIf="!isEditing">
+          <div class="info-item">
+            <span class="info-label">Prénom</span>
+            <div class="info-value" [class.empty]="!profile.prenom">{{ profile.prenom || 'Non spécifié' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Nom de famille</span>
+            <div class="info-value" [class.empty]="!profile.nomProprietaire">{{ profile.nomProprietaire || 'Non spécifié' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Email Principal</span>
+            <div class="info-value">{{ profile.userId }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Téléphone</span>
+            <div class="info-value" [class.empty]="!profile.telephone">{{ profile.telephone || 'Non spécifié' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Date de Naissance</span>
+            <div class="info-value" [class.empty]="!profile.dateNaissance">
+              {{ profile.dateNaissance || 'Non spécifiée' }}
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Genre</span>
+            <div class="info-value" [class.empty]="!profile.genre">{{ profile.genre || 'Non spécifié' }}</div>
+          </div>
+        </div>
+
+        <!-- Edit Mode -->
+        <div class="form-grid" *ngIf="isEditing">
           <div class="form-group full-width">
             <label>Email</label>
             <input type="email" [value]="profile.userId" disabled class="form-control disabled">
           </div>
           <div class="form-group">
             <label>Nom</label>
-            <input type="text" [(ngModel)]="profile.nomProprietaire" [disabled]="!isEditing" class="form-control" placeholder="Votre nom">
+            <input type="text" [(ngModel)]="profile.nomProprietaire" class="form-control" placeholder="Votre nom">
           </div>
           <div class="form-group">
             <label>Prénom</label>
-            <input type="text" [(ngModel)]="profile.prenom" [disabled]="!isEditing" class="form-control" placeholder="Votre prénom">
+            <input type="text" [(ngModel)]="profile.prenom" class="form-control" placeholder="Votre prénom">
           </div>
           <div class="form-group">
             <label>Téléphone</label>
-            <input type="tel" [(ngModel)]="profile.telephone" [disabled]="!isEditing" class="form-control" placeholder="+216 XX XXX XXX">
+            <input type="tel" [(ngModel)]="profile.telephone" class="form-control" placeholder="+216 XX XXX XXX">
           </div>
           <div class="form-group">
             <label>Date de Naissance</label>
-            <input type="date" [(ngModel)]="profile.dateNaissance" [disabled]="!isEditing" class="form-control">
+            <input type="date" [(ngModel)]="profile.dateNaissance" class="form-control">
           </div>
           <div class="form-group">
             <label>Genre</label>
-            <select [(ngModel)]="profile.genre" [disabled]="!isEditing" class="form-control">
+            <select [(ngModel)]="profile.genre" class="form-control">
               <option value="">Sélectionner</option>
               <option value="HOMME">Homme</option>
               <option value="FEMME">Femme</option>
@@ -103,22 +134,43 @@
           Adresse
         </h2>
         
-        <div class="form-grid">
+        <!-- View Mode -->
+        <div class="info-grid" *ngIf="!isEditing">
+          <div class="info-item full-width">
+            <span class="info-label">Adresse complète</span>
+            <div class="info-value" [class.empty]="!profile.adresse">{{ profile.adresse || 'Non spécifiée' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Ville</span>
+            <div class="info-value" [class.empty]="!profile.ville">{{ profile.ville || 'Non spécifiée' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Code Postal</span>
+            <div class="info-value" [class.empty]="!profile.codePostal">{{ profile.codePostal || 'Non spécifié' }}</div>
+          </div>
+          <div class="info-item full-width">
+            <span class="info-label">Pays</span>
+            <div class="info-value" [class.empty]="!profile.pays">{{ profile.pays || 'Non spécifié' }}</div>
+          </div>
+        </div>
+
+        <!-- Edit Mode -->
+        <div class="form-grid" *ngIf="isEditing">
           <div class="form-group full-width">
             <label>Adresse complète</label>
-            <input type="text" [(ngModel)]="profile.adresse" [disabled]="!isEditing" class="form-control" placeholder="Rue, numéro...">
+            <input type="text" [(ngModel)]="profile.adresse" class="form-control" placeholder="Rue, numéro...">
           </div>
           <div class="form-group">
             <label>Ville</label>
-            <input type="text" [(ngModel)]="profile.ville" [disabled]="!isEditing" class="form-control" placeholder="Votre ville">
+            <input type="text" [(ngModel)]="profile.ville" class="form-control" placeholder="Votre ville">
           </div>
           <div class="form-group">
             <label>Code Postal</label>
-            <input type="text" [(ngModel)]="profile.codePostal" [disabled]="!isEditing" class="form-control" placeholder="XXXX">
+            <input type="text" [(ngModel)]="profile.codePostal" class="form-control" placeholder="XXXX">
           </div>
           <div class="form-group full-width">
             <label>Pays</label>
-            <input type="text" [(ngModel)]="profile.pays" [disabled]="!isEditing" class="form-control" placeholder="Votre pays">
+            <input type="text" [(ngModel)]="profile.pays" class="form-control" placeholder="Votre pays">
           </div>
         </div>
       </div>
@@ -130,59 +182,116 @@
           Informations d'inscription ({{ profile.typeProprietaire === 'ETUDIANT' ? 'Étudiant' : profile.typeProprietaire === 'ALUMNI' ? 'Alumni' : profile.typeProprietaire === 'ENTREPRISE' ? 'Entreprise' : profile.typeProprietaire }})
         </h2>
         
-        <!-- ETUDIANT FIELDS -->
-        <div class="form-grid" *ngIf="profile.typeProprietaire === 'ETUDIANT'">
-          <div class="form-group">
-            <label>Filière</label>
-            <input type="text" [(ngModel)]="profile.filiere" [disabled]="!isEditing" class="form-control" placeholder="Votre filière">
-          </div>
-          <div class="form-group">
-            <label>Niveau</label>
-            <select [(ngModel)]="profile.niveau" [disabled]="!isEditing" class="form-control">
-              <option value="DEBUTANT">Débutant</option>
-              <option value="INTERMEDIAIRE">Intermédiaire</option>
-              <option value="EXPERT">Expert</option>
-            </select>
-          </div>
+        <!-- View Mode -->
+        <div class="info-grid" *ngIf="!isEditing">
+          <!-- ETUDIANT -->
+          <ng-container *ngIf="profile.typeProprietaire === 'ETUDIANT'">
+            <div class="info-item">
+              <span class="info-label">Filière</span>
+              <div class="info-value" [class.empty]="!profile.filiere">{{ profile.filiere || 'Non spécifiée' }}</div>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Niveau</span>
+              <div class="info-value" [class.empty]="!profile.niveau">{{ profile.niveau || 'Non spécifié' }}</div>
+            </div>
+          </ng-container>
+
+          <!-- ALUMNI -->
+          <ng-container *ngIf="profile.typeProprietaire === 'ALUMNI'">
+            <div class="info-item">
+              <span class="info-label">Année de promotion</span>
+              <div class="info-value" [class.empty]="!profile.anneePromotion">{{ profile.anneePromotion || 'Non spécifiée' }}</div>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Domaine</span>
+              <div class="info-value" [class.empty]="!profile.domaine">{{ profile.domaine || 'Non spécifié' }}</div>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Entreprise actuelle</span>
+              <div class="info-value" [class.empty]="!profile.entrepriseActuelle">{{ profile.entrepriseActuelle || 'Non spécifiée' }}</div>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Disponible pour le mentorat</span>
+              <div class="info-value">
+                <i class="bi" [class.bi-check-circle-fill]="profile.disponibleMentorat" [style.color]="profile.disponibleMentorat ? 'var(--success)' : 'var(--text-muted)'"></i>
+                {{ profile.disponibleMentorat ? 'Disponible' : 'Non disponible / Non configuré' }}
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- ENTREPRISE -->
+          <ng-container *ngIf="profile.typeProprietaire === 'ENTREPRISE'">
+            <div class="info-item">
+              <span class="info-label">Registre de Commerce</span>
+              <div class="info-value" [class.empty]="!profile.registreCommerce">{{ profile.registreCommerce || 'Non spécifié' }}</div>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Secteur d'activité</span>
+              <div class="info-value" [class.empty]="!profile.secteurActivite">{{ profile.secteurActivite || 'Non spécifié' }}</div>
+            </div>
+            <div class="info-item full-width">
+              <span class="info-label">Description de l'entreprise</span>
+              <div class="info-value bio-text" [class.empty]="!profile.descriptionEntreprise">{{ profile.descriptionEntreprise || 'Aucune description fournie.' }}</div>
+            </div>
+          </ng-container>
         </div>
 
-        <!-- ALUMNI FIELDS -->
-        <div class="form-grid" *ngIf="profile.typeProprietaire === 'ALUMNI'">
-          <div class="form-group">
-            <label>Année de promotion</label>
-            <input type="number" [(ngModel)]="profile.anneePromotion" [disabled]="!isEditing" class="form-control" placeholder="Ex: 2024">
-          </div>
-          <div class="form-group">
-            <label>Domaine</label>
-            <input type="text" [(ngModel)]="profile.domaine" [disabled]="!isEditing" class="form-control" placeholder="Votre domaine">
-          </div>
-          <div class="form-group">
-            <label>Entreprise actuelle</label>
-            <input type="text" [(ngModel)]="profile.entrepriseActuelle" [disabled]="!isEditing" class="form-control" placeholder="Votre entreprise actuelle">
-          </div>
-          <div class="form-group full-width checkbox-group-premium">
-            <label class="checkbox-container">
-              <input type="checkbox" [(ngModel)]="profile.disponibleMentorat" [disabled]="!isEditing">
-              <span class="checkmark"></span>
-              Disponible pour le mentorat
-            </label>
-          </div>
-        </div>
-
-        <!-- ENTREPRISE FIELDS -->
-        <div class="form-grid" *ngIf="profile.typeProprietaire === 'ENTREPRISE'">
-          <div class="form-group">
-            <label>Registre de Commerce</label>
-            <input type="text" [(ngModel)]="profile.registreCommerce" [disabled]="!isEditing" class="form-control" placeholder="Numéro de registre">
-          </div>
-          <div class="form-group">
-            <label>Secteur d'activité</label>
-            <input type="text" [(ngModel)]="profile.secteurActivite" [disabled]="!isEditing" class="form-control" placeholder="Ex: IT, Finance...">
-          </div>
-          <div class="form-group full-width">
-            <label>Description de l'entreprise</label>
-            <textarea [(ngModel)]="profile.descriptionEntreprise" [disabled]="!isEditing" class="form-control textarea" rows="3" placeholder="Présentation de l'entreprise..."></textarea>
-          </div>
+        <!-- Edit Mode -->
+        <div class="form-grid" *ngIf="isEditing">
+          <!-- ETUDIANT FIELDS -->
+          <ng-container *ngIf="profile.typeProprietaire === 'ETUDIANT'">
+            <div class="form-group">
+              <label>Filière</label>
+              <input type="text" [(ngModel)]="profile.filiere" class="form-control" placeholder="Votre filière">
+            </div>
+            <div class="form-group">
+              <label>Niveau</label>
+              <select [(ngModel)]="profile.niveau" class="form-control">
+                <option value="DEBUTANT">Débutant</option>
+                <option value="INTERMEDIAIRE">Intermédiaire</option>
+                <option value="EXPERT">Expert</option>
+              </select>
+            </div>
+          </ng-container>
+  
+          <!-- ALUMNI FIELDS -->
+          <ng-container *ngIf="profile.typeProprietaire === 'ALUMNI'">
+            <div class="form-group">
+              <label>Année de promotion</label>
+              <input type="number" [(ngModel)]="profile.anneePromotion" class="form-control" placeholder="Ex: 2024">
+            </div>
+            <div class="form-group">
+              <label>Domaine</label>
+              <input type="text" [(ngModel)]="profile.domaine" class="form-control" placeholder="Votre domaine">
+            </div>
+            <div class="form-group">
+              <label>Entreprise actuelle</label>
+              <input type="text" [(ngModel)]="profile.entrepriseActuelle" class="form-control" placeholder="Votre entreprise actuelle">
+            </div>
+            <div class="form-group full-width checkbox-group-premium">
+              <label class="checkbox-container">
+                <input type="checkbox" [(ngModel)]="profile.disponibleMentorat">
+                <span class="checkmark"></span>
+                Disponible pour le mentorat
+              </label>
+            </div>
+          </ng-container>
+  
+          <!-- ENTREPRISE FIELDS -->
+          <ng-container *ngIf="profile.typeProprietaire === 'ENTREPRISE'">
+            <div class="form-group">
+              <label>Registre de Commerce</label>
+              <input type="text" [(ngModel)]="profile.registreCommerce" class="form-control" placeholder="Numéro de registre">
+            </div>
+            <div class="form-group">
+              <label>Secteur d'activité</label>
+              <input type="text" [(ngModel)]="profile.secteurActivite" class="form-control" placeholder="Ex: IT, Finance...">
+            </div>
+            <div class="form-group full-width">
+              <label>Description de l'entreprise</label>
+              <textarea [(ngModel)]="profile.descriptionEntreprise" class="form-control textarea" rows="3" placeholder="Présentation de l'entreprise..."></textarea>
+            </div>
+          </ng-container>
         </div>
       </div>
 
@@ -193,30 +302,66 @@
           Profil Professionnel
         </h2>
         
-        <div class="form-grid">
+        <!-- View Mode -->
+        <div class="info-grid" *ngIf="!isEditing">
+          <div class="info-item full-width">
+            <span class="info-label">Biographie</span>
+            <div class="info-value bio-text" [class.empty]="!profile.bio">{{ profile.bio || 'Aucune biographie rédigée.' }}</div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">LinkedIn</span>
+            <div class="info-value" [class.empty]="!profile.lienLinkedIn">
+              <a *ngIf="profile.lienLinkedIn" [href]="profile.lienLinkedIn" target="_blank" style="color: var(--secondary); text-decoration: none;">
+                <i class="bi bi-link-45deg"></i> Visiter le profil LinkedIn
+              </a>
+              <span *ngIf="!profile.lienLinkedIn">Non spécifié</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">GitHub</span>
+            <div class="info-value" [class.empty]="!profile.lienGitHub">
+              <a *ngIf="profile.lienGitHub" [href]="profile.lienGitHub" target="_blank" style="color: var(--text-main); text-decoration: none;">
+                <i class="bi bi-link-45deg"></i> Visiter le profil GitHub
+              </a>
+              <span *ngIf="!profile.lienGitHub">Non spécifié</span>
+            </div>
+          </div>
+          <div class="info-item full-width">
+            <span class="info-label">Site Web / Portfolio</span>
+            <div class="info-value" [class.empty]="!profile.siteWeb">
+              <a *ngIf="profile.siteWeb" [href]="profile.siteWeb" target="_blank" style="color: var(--primary); text-decoration: none;">
+                <i class="bi bi-link-45deg"></i> {{ profile.siteWeb }}
+              </a>
+              <span *ngIf="!profile.siteWeb">Non spécifié</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Edit Mode -->
+        <div class="form-grid" *ngIf="isEditing">
           <div class="form-group full-width">
             <label>Biographie</label>
-            <textarea [(ngModel)]="profile.bio" [disabled]="!isEditing" class="form-control textarea" rows="4" placeholder="Parlez-nous de vous, de vos objectifs..."></textarea>
+            <textarea [(ngModel)]="profile.bio" class="form-control textarea" rows="4" placeholder="Parlez-nous de vous, de vos objectifs..."></textarea>
           </div>
           <div class="form-group">
             <label>LinkedIn</label>
             <div class="input-with-icon">
               <i class="bi bi-linkedin"></i>
-              <input type="url" [(ngModel)]="profile.lienLinkedIn" [disabled]="!isEditing" class="form-control" placeholder="Lien LinkedIn">
+              <input type="url" [(ngModel)]="profile.lienLinkedIn" class="form-control" placeholder="Lien LinkedIn">
             </div>
           </div>
           <div class="form-group">
             <label>GitHub</label>
             <div class="input-with-icon">
               <i class="bi bi-github"></i>
-              <input type="url" [(ngModel)]="profile.lienGitHub" [disabled]="!isEditing" class="form-control" placeholder="Lien GitHub">
+              <input type="url" [(ngModel)]="profile.lienGitHub" class="form-control" placeholder="Lien GitHub">
             </div>
           </div>
           <div class="form-group full-width">
             <label>Site Web / Portfolio</label>
             <div class="input-with-icon">
               <i class="bi bi-globe"></i>
-              <input type="url" [(ngModel)]="profile.siteWeb" [disabled]="!isEditing" class="form-control" placeholder="https://votre-site.com">
+              <input type="url" [(ngModel)]="profile.siteWeb" class="form-control" placeholder="https://votre-site.com">
             </div>
           </div>
         </div>

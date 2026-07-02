@@ -10,6 +10,7 @@ import { AdminRegistrationSettingsComponent } from '../admin-registration-settin
 import { AdminHomepageSettingsComponent } from './pages/settings/admin-homepage-settings.component';
 import { JobsSettingsComponent } from './pages/jobs/jobs-settings.component';
 import { JobsImportComponent } from './pages/jobs/jobs-import.component';
+import { AdminUserProfileComponent } from './pages/user-management/admin-user-profile.component';
 
 const routes: Routes = [
   {
@@ -31,6 +32,7 @@ const routes: Routes = [
 
       { path: 'user-management/approval', component: UserApprovalsComponent },
       { path: 'user-management/enterprise-verification', component: EnterpriseVerificationComponent },
+      { path: 'user-management/user-profile/:userId', component: AdminUserProfileComponent },
       {
         path: 'events',
         loadChildren: () => import('./events/events.module').then(m => m.EventsModule)
