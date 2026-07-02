@@ -22,8 +22,23 @@
   cursor: pointer;
 }
 
-.empty {
-  color: var(--sj-muted);
-  text-align: center;
-  padding: 2rem;
+.expiry-warn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: #ea580c;
+  margin-top: 0.35rem;
+}
+
+.expiry-warn.expired {
+  color: #b91c1c;
+}
+
+.saved-item.expired {
+  opacity: 0.7;
+}
+
+.text-btn.danger:hover {
+  color: var(--sj-red);
 }

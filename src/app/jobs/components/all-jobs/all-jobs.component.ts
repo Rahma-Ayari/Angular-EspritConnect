@@ -1,8 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Subject, takeUntil, debounceTime, distinctUntilChanged, of, catchError, map } from 'rxjs';
 import { JobsService } from '../../services/jobs.service';
+import { EntrepriseJobDashboardService } from '../../../services/entreprise-job-dashboard.service';
+import { EntrepriseContextService } from '../../../services/entreprise-context.service';
 import { navigateJobs } from '../../jobs-router.util';
+import { TopMatchCandidate } from '../../ai/models/ai.model';
+import { EntrepriseJobDashboardOverview, CandidateMatch } from '../../../models/job-dashboard.model';
 import {
   JobOffer,
   JobFilter,
@@ -55,15 +59,48 @@ export class AllJobsComponent implements OnInit, OnDestroy {
   // Active menu tracking
   activeMenuId: number | null = null;
 
+  // Dashboard tabs
+  activeTab: 'offers' | 'top-matches' | 'analytics' = 'offers';
+  selectedJobId: number | null = null;
+  entrepriseId: number | null = null;
+  overview: EntrepriseJobDashboardOverview | null = null;
+
+  // AI Top Matches
+  topCandidates: TopMatchCandidate[] = [];
+  topMatchesLoading = false;
+  topMatchesError = '';
+  drawerOpen = false;
+  selectedCandidate: TopMatchCandidate | null = null;
+  topScores: number[] = [];
+
   constructor(
     private jobsService: JobsService,
+    private dashboardService: EntrepriseJobDashboardService,
+    private entrepriseContext: EntrepriseContextService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.loadJobs();
     this.setupSearchDebounce();
+    this.entrepriseContext.getEntrepriseId()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(id => {
+        this.entrepriseId = id;
+        this.loadOverview();
+        // Load jobs only after we know the enterprise, so the list is scoped to it.
+        this.loadJobs();
+      });
+  }
+
+  private loadOverview(): void {
+    if (!this.entrepriseId) return;
+    this.dashboardService.getOverview(this.entrepriseId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (ov) => (this.overview = ov),
+        error: () => (this.overview = null)
+      });
   }
 
   ngOnDestroy(): void {
@@ -93,6 +130,7 @@ export class AllJobsComponent implements OnInit, OnDestroy {
       search: this.searchQuery || undefined,
       status: this.selectedStatuses.length > 0 ? this.selectedStatuses : undefined,
       contractType: this.selectedTypes.length > 0 ? this.selectedTypes : undefined,
+      entrepriseId: this.entrepriseId ?? undefined,
       sortBy: this.sortBy,
       sortOrder: this.sortOrder,
       page: this.currentPage,
@@ -106,6 +144,7 @@ export class AllJobsComponent implements OnInit, OnDestroy {
           this.jobs = response.data.map(job => this.normalizeJob(job));
           this.totalItems = response.total;
           this.loading = false;
+          this.loadOverview();
         },
         error: (err) => {
           this.error = 'Failed to load job offers';
@@ -185,20 +224,26 @@ export class AllJobsComponent implements OnInit, OnDestroy {
   }
 
   get statsTotalOffers(): number {
+    if (this.overview) return this.overview.totalOffers;
     return this.totalItems;
   }
 
   get statsActive(): number {
+    if (this.overview) return this.overview.activeOffers;
     return this.jobs.filter(j => j.status === 'ACTIVE').length;
   }
 
   get statsTotalApplications(): number {
+    // Prefer the backend dashboard total (counts ALL of this enterprise's offers,
+    // across every page) instead of summing only the current page.
+    if (this.overview) return this.overview.totalApplications;
     return this.jobs.reduce((sum, j) => sum + (j.applicationCount || 0), 0);
   }
 
   get statsAvgApplications(): number {
-    if (!this.jobs.length) return 0;
-    return Math.round(this.statsTotalApplications / this.jobs.length);
+    const offers = this.overview ? this.overview.activeOffers : this.jobs.length;
+    if (!offers) return 0;
+    return Math.round(this.statsTotalApplications / offers);
   }
 
   // Navigation
@@ -345,5 +390,116 @@ export class AllJobsComponent implements OnInit, OnDestroy {
 
   navigateToImport(): void {
     navigateJobs(this.router, this.route, ['import']);
+  }
+
+  setTab(tab: 'offers' | 'top-matches' | 'analytics'): void {
+    this.activeTab = tab;
+    if (tab === 'top-matches') {
+      if (!this.selectedJobId && this.jobs.length > 0) {
+        const preferred =
+          this.jobs.find((j) => (j.applicationCount || 0) > 0) ?? this.jobs[0];
+        if (preferred?.id != null) {
+          this.selectJobForMatches(preferred);
+          return;
+        }
+      }
+      if (this.selectedJobId) {
+        this.loadTopMatches(this.selectedJobId);
+      }
+    }
+  }
+
+  selectJobForMatches(job: JobOffer): void {
+    if (!job.id) return;
+    this.selectedJobId = job.id;
+    this.loadTopMatches(job.id);
+  }
+
+  onCandidateSelected(candidate: TopMatchCandidate): void {
+    this.selectedCandidate = candidate;
+    this.drawerOpen = true;
+  }
+
+  closeDrawer(): void {
+    this.drawerOpen = false;
+    this.selectedCandidate = null;
+  }
+
+  onCandidateStatusUpdated(event: { candidatureId: number; statut: string }): void {
+    if (this.selectedCandidate?.candidatureId === event.candidatureId) {
+      this.selectedCandidate = { ...this.selectedCandidate, candidatureStatus: event.statut };
+    }
+    this.topCandidates = this.topCandidates.map((c) =>
+      c.candidatureId === event.candidatureId ? { ...c, candidatureStatus: event.statut } : c
+    );
+    if (this.selectedJobId) {
+      this.loadOverview();
+    }
+  }
+
+  private loadTopMatches(offreId: number): void {
+    this.topMatchesLoading = true;
+    this.topMatchesError = '';
+    this.topCandidates = [];
+
+    // One fast backend call: heuristic skill/readiness scoring (no LLM).
+    this.dashboardService.topCandidates(offreId, 20).pipe(
+      map((matches) => this.mapMatchesToCandidates(Array.isArray(matches) ? matches : [])),
+      catchError(() =>
+        this.dashboardService.getApplicants(offreId).pipe(
+          map((apps) => this.mapApplicantsFallback(Array.isArray(apps) ? apps : []))
+        )
+      ),
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (candidates) => {
+        this.topCandidates = candidates;
+        this.topScores = candidates
+          .map((c) => c.scoreCompatibilite)
+          .filter((s) => s > 0);
+        this.topMatchesLoading = false;
+      },
+      error: (err) => {
+        this.topCandidates = [];
+        this.topMatchesError =
+          err?.error?.message || err?.message || 'Could not load applicants for this offer.';
+        this.topMatchesLoading = false;
+      }
+    });
+  }
+
+  private mapMatchesToCandidates(matches: CandidateMatch[]): TopMatchCandidate[] {
+    return matches.map((m) => ({
+      candidatureId: m.candidatureId,
+      etudiantId: m.etudiantId,
+      etudiantNom: m.etudiantNom || m.etudiantEmail || 'Candidate',
+      etudiantEmail: m.etudiantEmail || '',
+      filiere: m.filiere,
+      scoreCompatibilite: Math.round(m.scoreCompatibilite ?? 0),
+      skillsScore: m.skillsScore,
+      experienceScore: m.experienceScore,
+      educationScore: m.educationScore,
+      skillsMatched: m.skillsMatched || [],
+      recommendation: m.recommandations?.[0],
+      hasResume: m.hasResume,
+      candidatureStatus: m.candidatureStatus || 'EN_ATTENTE'
+    }));
+  }
+
+  /** Fallback if matching endpoint is unavailable — list without scores. */
+  private mapApplicantsFallback(
+    apps: { id: number; etudiantId?: number; etudiantNom?: string; etudiantEmail?: string; filiere?: string; scoreMatch?: number; statutCandidature?: string; fichierId?: number }[]
+  ): TopMatchCandidate[] {
+    return apps.map((a) => ({
+      candidatureId: a.id,
+      etudiantId: a.etudiantId ?? 0,
+      etudiantNom: a.etudiantNom || a.etudiantEmail || 'Candidate',
+      etudiantEmail: a.etudiantEmail || '',
+      filiere: a.filiere,
+      scoreCompatibilite: Math.round(a.scoreMatch ?? 0),
+      skillsMatched: [],
+      hasResume: !!a.fichierId,
+      candidatureStatus: a.statutCandidature || 'EN_ATTENTE'
+    }));
   }
 }

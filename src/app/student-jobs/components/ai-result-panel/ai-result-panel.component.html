@@ -1,0 +1,28 @@
+<div class="ai-panel">
+  <div class="ai-panel-header" *ngIf="provider && !loading">
+    <span class="ai-badge"><i class="bi bi-stars"></i> {{ badge }}</span>
+    <div class="ai-actions" *ngIf="showActions">
+      <button type="button" class="ai-btn" (click)="regenerate.emit()" [disabled]="loading">
+        <i class="bi bi-arrow-clockwise"></i> Regenerate
+      </button>
+      <button type="button" class="ai-btn" (click)="onCopy()" *ngIf="copyText">
+        <i class="bi" [class.bi-check2]="copied" [class.bi-clipboard]="!copied"></i>
+        {{ copied ? 'Copied' : 'Copy' }}
+      </button>
+      <button type="button" class="ai-btn primary" (click)="accept.emit()" *ngIf="acceptLabel">
+        {{ acceptLabel }}
+      </button>
+    </div>
+  </div>
+
+  <div class="ai-loading" *ngIf="loading">
+    <div class="sj-skeleton line" *ngFor="let i of [1,2,3,4]"></div>
+    <p class="typing-hint"><span class="dot"></span><span class="dot"></span><span class="dot"></span> AI is thinking...</p>
+  </div>
+
+  <p class="ai-error" *ngIf="error && !loading">{{ error }}</p>
+
+  <div class="ai-content" *ngIf="!loading && !error">
+    <ng-content></ng-content>
+  </div>
+</div>
