@@ -17,7 +17,8 @@ import { ResetPasswordComponent } from './login/reset-password/reset-password.co
 import { ProfileComponent } from './profile/profile.component';
 import { SharedLayoutModule } from './shared/shared-layout.module';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
-import { GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule, GoogleSigninButtonModule, SOCIAL_AUTH_CONFIG } from '@abacritt/angularx-social-login';
+import { GoogleLoginProvider, SocialLoginModule, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
+import type { SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ActivityDigestModule } from './features/activity-digest/activity-digest.module';
@@ -46,6 +47,19 @@ import { ReportContentComponent } from './frontoffice/support/report-content.com
 import { ModerationQueueComponent } from './backoffice/intelligence/moderation-queue.component';
 import { HomepageComponent } from './homepage/homepage.component';
 import { CaptchaComponent } from './shared/captcha/captcha.component';
+
+export const socialAuthConfig: SocialAuthServiceConfig = {
+  autoLogin: false,
+  providers: [
+    {
+      id: GoogleLoginProvider.PROVIDER_ID,
+      provider: new GoogleLoginProvider('483287701118-an9qar20q70rg13s8firlpmu6jg4kpnf.apps.googleusercontent.com')
+    }
+  ],
+  onError: (err: any) => {
+    console.error(err);
+  }
+};
 
 @NgModule({
   declarations: [
@@ -99,22 +113,11 @@ import { CaptchaComponent } from './shared/captcha/captcha.component';
   providers: [
     provideClientHydration(),
     provideHttpClient(withFetch(), withInterceptorsFromDi()),
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     {
-      provide: SOCIAL_AUTH_CONFIG,
-      useValue: {
-        autoLogin: false,
-        providers: [
-          {
-            id: GoogleLoginProvider.PROVIDER_ID,
-            provider: new GoogleLoginProvider('483287701118-an9qar20q70rg13s8firlpmu6jg4kpnf.apps.googleusercontent.com')
-          }
-        ],
-        onError: (err) => {
-          console.error(err);
-        }
-      } as SocialAuthServiceConfig,
-    }
+      provide: 'SocialAuthServiceConfig',
+      useValue: socialAuthConfig
+    },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

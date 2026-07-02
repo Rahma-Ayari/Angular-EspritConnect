@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
@@ -67,7 +67,7 @@ export class AuthService {
     private http: HttpClient,
     private router: Router,
     private viewMode: ViewModeService,
-    private socialAuthService: SocialAuthService
+    @Optional() private socialAuthService?: SocialAuthService
   ) {}
 
   // ── Login ──────────────────────────────────────────────────────────────────
@@ -159,7 +159,9 @@ export class AuthService {
   // ── Logout ─────────────────────────────────────────────────────────────────
   logout(): void {
     // Sign out from Google social session (if any) to prevent auto-relogin
-    this.socialAuthService.signOut().catch(() => { /* ignore if no social session */ });
+    if (this.socialAuthService) {
+      this.socialAuthService.signOut().catch(() => { /* ignore if no social session */ });
+    }
 
     if (typeof window !== 'undefined') {
       localStorage.removeItem(this.TOKEN_KEY);
