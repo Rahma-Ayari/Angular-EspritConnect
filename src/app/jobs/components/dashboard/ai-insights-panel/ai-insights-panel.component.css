@@ -83,6 +83,37 @@
   cursor: pointer;
 }
 
+.panel-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-generate {
+  background: #C90C0F !important;
+  color: #fff !important;
+  border-color: #C90C0F !important;
+  font-weight: 600;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 16px 8px;
+  color: #6B7280;
+}
+
+.empty-state i {
+  font-size: 24px;
+  color: #C90C0F;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .insights-skeleton .sk-line {
   height: 12px;
   background: #F3F4F6;

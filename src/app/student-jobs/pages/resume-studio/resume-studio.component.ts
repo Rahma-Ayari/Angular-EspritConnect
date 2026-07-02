@@ -7,11 +7,8 @@ import { StudentContextService } from '../../services/student-context.service';
 import {
   RESUME_TEMPLATE,
   ResumeData,
-  StudentResumeReviewResult,
-  StudentResumeOptimizerResult
+  StudentResumeReviewResult
 } from '../../models/student-ai.model';
-import { JobOffer } from '../../../jobs/models/job.model';
-import { StudentJobsBrowseService } from '../../services/student-jobs-browse.service';
 
 @Component({
   selector: 'app-resume-studio',
@@ -23,14 +20,10 @@ export class ResumeStudioComponent implements OnInit {
   resume!: ResumeData;
   template = RESUME_TEMPLATE;
   templatePreview = '/assets/resume-templates/science-engineering-preview.png';
-  jobs: JobOffer[] = [];
-  selectedJobId?: number;
 
   importLoading = false;
   reviewLoading = false;
-  optimizeLoading = false;
   reviewResult?: StudentResumeReviewResult;
-  optimizeResult?: StudentResumeOptimizerResult;
   aiError = '';
   aiProvider = '';
   dragIndex = -1;
@@ -40,7 +33,6 @@ export class ResumeStudioComponent implements OnInit {
     private resumeTemplate: ResumeTemplateService,
     private studentAi: StudentAiService,
     private studentContext: StudentContextService,
-    private browse: StudentJobsBrowseService,
     private sanitizer: DomSanitizer
   ) {}
 
@@ -51,7 +43,6 @@ export class ResumeStudioComponent implements OnInit {
       this.resume.templateId = this.template.id;
       this.resumeStorage.save(this.resume);
     });
-    this.browse.search({ limit: 30, page: 1 }).subscribe((r) => (this.jobs = r.data));
   }
 
   get plainText(): string {
@@ -131,23 +122,6 @@ export class ResumeStudioComponent implements OnInit {
     });
   }
 
-  optimizeForJob(): void {
-    if (!this.selectedJobId) return;
-    this.optimizeLoading = true;
-    this.aiError = '';
-    this.studentAi.optimizeResume(this.selectedJobId, this.plainText).subscribe({
-      next: (r) => {
-        this.optimizeResult = r as any;
-        this.aiProvider = r.provider || '';
-        this.optimizeLoading = false;
-      },
-      error: (e) => {
-        this.aiError = e.message;
-        this.optimizeLoading = false;
-      }
-    });
-  }
-
   continueToEditor(): void {
     this.resume.templateId = this.template.id;
     this.resumeStorage.save(this.resume);
@@ -179,23 +153,6 @@ export class ResumeStudioComponent implements OnInit {
 
   exportDocx(): void {
     this.resumeTemplate.exportDocx(this.resume);
-  }
-
-  acceptOptimization(): void {
-    if (!this.optimizeResult) return;
-    const summary = this.optimizeResult.optimizedSummary;
-    if (summary) {
-      const sec = this.resume.sections.find((s) => s.type === 'experience');
-      if (sec && !sec.content?.trim()) {
-        sec.content = summary;
-      }
-    }
-    const bullets = this.optimizeResult.improvedBulletPoints;
-    if (bullets?.length) {
-      const sec = this.resume.sections.find((s) => s.type === 'experience');
-      if (sec) sec.content = bullets.map((b) => `• ${b}`).join('\n');
-    }
-    this.resumeStorage.save(this.resume);
   }
 
   sortedSections() {

@@ -156,8 +156,7 @@
 }
 
 .contact-row input,
-.section-head input,
-.optimizer-row select {
+.section-head input {
   width: 100%;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--sj-border);
@@ -189,12 +188,6 @@
   border-radius: 8px;
   padding: 0.5rem;
   resize: vertical;
-}
-
-.optimizer-row {
-  display: flex;
-  gap: 0.5rem;
-  margin: 1rem 0;
 }
 
 .export-btns {

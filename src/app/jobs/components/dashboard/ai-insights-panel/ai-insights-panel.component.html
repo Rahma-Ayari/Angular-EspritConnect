@@ -8,7 +8,17 @@
     <div class="sk-line" *ngFor="let _ of [1,2,3]"></div>
   </div>
 
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p class="error" *ngIf="errorMessage && !loading">{{ errorMessage }}</p>
+
+  <div class="empty-state" *ngIf="!loading && !insights && !errorMessage">
+    <i class="bi bi-stars"></i>
+    <p>Click below to analyze your recruitment data and get AI-powered insights.</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && !insights && errorMessage">
+    <i class="bi bi-exclamation-circle"></i>
+    <p>Insight generation failed. Wait a moment and try again.</p>
+  </div>
 
   <ng-container *ngIf="!loading && insights">
     <p class="insights-summary">{{ insights.summary }}</p>
@@ -23,12 +33,24 @@
     </ul>
   </ng-container>
 
-  <div class="panel-actions" *ngIf="!loading && insights">
-    <button type="button" (click)="regenerate()">
-      <i class="bi bi-arrow-clockwise"></i> Regenerate
+  <div class="panel-actions" *ngIf="!loading">
+    <button
+      type="button"
+      class="btn-generate"
+      *ngIf="!insights"
+      [disabled]="!canGenerate || loading"
+      (click)="generateInsights()">
+      <i class="bi" [ngClass]="errorMessage ? 'bi-arrow-clockwise' : 'bi-stars'"></i>
+      {{ errorMessage ? 'Try Again' : 'Generate Insights' }}
     </button>
-    <button type="button" (click)="copyInsights()">
-      <i class="bi bi-clipboard"></i> Copy
-    </button>
+
+    <ng-container *ngIf="insights">
+      <button type="button" (click)="regenerate()">
+        <i class="bi bi-arrow-clockwise"></i> Regenerate
+      </button>
+      <button type="button" (click)="copyInsights()">
+        <i class="bi bi-clipboard"></i> Copy
+      </button>
+    </ng-container>
   </div>
 </div>

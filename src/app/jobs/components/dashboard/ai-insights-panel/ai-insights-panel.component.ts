@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { JobsAiService } from '../../../ai/ai.service';
 import { AiRecruitmentInsightsResponse } from '../../../ai/models/ai.model';
@@ -9,7 +9,7 @@ import { poweredByText } from '../../../ai/providers/gemini.provider';
   templateUrl: './ai-insights-panel.component.html',
   styleUrls: ['./ai-insights-panel.component.css']
 })
-export class AiInsightsPanelComponent implements OnChanges, OnDestroy {
+export class AiInsightsPanelComponent implements OnDestroy {
   private destroy$ = new Subject<void>();
 
   @Input() totalOffers = 0;
@@ -23,14 +23,9 @@ export class AiInsightsPanelComponent implements OnChanges, OnDestroy {
   loading = false;
   insights: AiRecruitmentInsightsResponse | null = null;
   errorMessage = '';
+  hasGeneratedOnce = false;
 
   constructor(private aiService: JobsAiService) {}
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['totalOffers'] || changes['totalApplications'] || changes['selectedOffreId']) {
-      this.loadInsights(false);
-    }
-  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -39,6 +34,14 @@ export class AiInsightsPanelComponent implements OnChanges, OnDestroy {
 
   get poweredBy(): string {
     return poweredByText(this.insights?.provider);
+  }
+
+  get canGenerate(): boolean {
+    return this.totalOffers > 0 || this.totalApplications > 0;
+  }
+
+  generateInsights(): void {
+    this.loadInsights(this.hasGeneratedOnce);
   }
 
   regenerate(): void {
@@ -69,10 +72,11 @@ export class AiInsightsPanelComponent implements OnChanges, OnDestroy {
     }).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.insights = res;
+        this.hasGeneratedOnce = true;
         this.loading = false;
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Failed to load AI insights.';
+        this.errorMessage = err.error?.message || err.error?.error || 'Failed to load AI insights.';
         this.loading = false;
       }
     });

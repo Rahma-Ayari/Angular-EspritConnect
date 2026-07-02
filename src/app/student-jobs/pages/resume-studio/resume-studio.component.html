@@ -70,15 +70,6 @@
           <textarea [(ngModel)]="sec.content" rows="5" (blur)="saveSection()"
             [placeholder]="sec.type === 'experience' ? 'Role | 2024–2025\nCompany name\n• Achievement with metrics\n• Another bullet point' : 'Content...'"></textarea>
         </div>
-        <div class="optimizer-row">
-          <select [(ngModel)]="selectedJobId">
-            <option [ngValue]="undefined">Optimize for job...</option>
-            <option *ngFor="let j of jobs" [ngValue]="j.id">{{ j.title }}</option>
-          </select>
-          <button type="button" class="sj-btn-primary" (click)="optimizeForJob()" [disabled]="!selectedJobId || optimizeLoading">
-            AI Optimize
-          </button>
-        </div>
         <button type="button" class="sj-btn-outline" (click)="step = 4">Go to Export</button>
       </div>
 
@@ -100,14 +91,12 @@
       <div class="sj-card ats-card">
         <h3><i class="bi bi-bar-chart"></i> ATS Score</h3>
         <app-ai-result-panel
-          [loading]="reviewLoading || importLoading || optimizeLoading"
+          [loading]="reviewLoading || importLoading"
           [error]="aiError"
           [provider]="aiProvider"
           [copyText]="plainText"
-          [acceptLabel]="optimizeResult ? 'Accept Suggestions' : ''"
-          (regenerate)="runReview()"
-          (accept)="acceptOptimization()">
-          <div class="ats-score" *ngIf="reviewResult && !optimizeResult">
+          (regenerate)="runReview()">
+          <div class="ats-score" *ngIf="reviewResult">
             <div class="donut" [style.--pct]="reviewResult.atsScore + '%'">
               <span>{{ reviewResult.atsScore }}%</span>
             </div>
@@ -123,11 +112,6 @@
             <ul class="tips" *ngIf="reviewResult.suggestions?.length">
               <li *ngFor="let s of reviewResult.suggestions">{{ s }}</li>
             </ul>
-          </div>
-          <div *ngIf="optimizeResult">
-            <p><strong>Optimized for: {{ optimizeResult.jobTitle }}</strong></p>
-            <p>{{ optimizeResult.optimizedSummary }}</p>
-            <ul><li *ngFor="let b of optimizeResult.improvedBulletPoints">{{ b }}</li></ul>
           </div>
         </app-ai-result-panel>
       </div>
