@@ -1,27 +1,57 @@
-# AngularEspritConnect
+# Angular Esprit Connect
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.21.
+This repository contains the frontend for the Esprit Connect project.
 
-## Development server
+## Current status
+- Branch: `Esprit-Connect-Frontend`
+- Angular version: 18.2.x
+- Server-side rendering support via Angular SSR
+- Uses Angular Material, social login, and Express for SSR serving
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Project structure
+- `src/app/` — main Angular application code
+- `src/assets/` — static assets and email templates
+- `src/environments/` — environment configuration files
+- `server.ts` — Express server entry point for SSR
+- `angular.json` / `tsconfig.json` — build configuration
 
-## Code scaffolding
+## Local development
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Run the dev server:
+   ```bash
+   npm start
+   ```
+3. Open `http://localhost:4200/`
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Build and serve
+- Build the browser app:
+  ```bash
+  npm run build
+  ```
+- For SSR production-like serving:
+  ```bash
+  npm run serve:ssr:Angular-EspritConnect
+  ```
 
-## Build
+## Tests
+- Unit tests:
+  ```bash
+  npm test
+  ```
+- End-to-end tests:
+  ```bash
+  npm run e2e
+  ```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Important dependencies
+- `@angular/core`, `@angular/material`, `@angular/platform-server`
+- `@abacritt/angularx-social-login` for social authentication
+- `express` for SSR server hosting
+- `rxjs`, `zone.js`
 
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Notes
+- This frontend is designed to work with the backend service in `EspritConnect-1`.
+- Update `src/environments/environment.ts` with the backend API URL before running against a live backend.
