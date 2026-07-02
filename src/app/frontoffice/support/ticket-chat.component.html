@@ -42,11 +42,11 @@
             <!-- Ticket Attachment if any -->
             <div class="ticket-attachment-display" *ngIf="ticket.attachmentUrl" style="border-top: 1px solid var(--border); padding-top: 16px;">
               <strong style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 8px;">Attachment:</strong>
-              <a [href]="BASE_URL + ticket.attachmentUrl" target="_blank" class="btn-attachment-link">
+              <a [href]="fileUrl(ticket.attachmentUrl)" target="_blank" class="btn-attachment-link">
                 <i class="fa-solid fa-paperclip"></i> View Screenshot/File
               </a>
               <div *ngIf="isImageUrl(ticket.attachmentUrl)" class="attachment-img-preview">
-                <img [src]="BASE_URL + ticket.attachmentUrl" alt="Screenshot">
+                <img [src]="fileUrl(ticket.attachmentUrl)" alt="Screenshot">
               </div>
             </div>
           </div>
@@ -63,12 +63,12 @@
               <!-- Message attachment -->
               <div class="msg-attachment" *ngIf="msg.attachmentUrl">
                 <ng-container *ngIf="isImageUrl(msg.attachmentUrl); else fileLink">
-                  <a [href]="BASE_URL + msg.attachmentUrl" target="_blank">
-                    <img [src]="BASE_URL + msg.attachmentUrl" alt="attachment" class="msg-attachment-img">
+                  <a [href]="fileUrl(msg.attachmentUrl)" target="_blank">
+                    <img [src]="fileUrl(msg.attachmentUrl)" alt="attachment" class="msg-attachment-img">
                   </a>
                 </ng-container>
                 <ng-template #fileLink>
-                  <a [href]="BASE_URL + msg.attachmentUrl" target="_blank" class="msg-file-link">
+                  <a [href]="fileUrl(msg.attachmentUrl)" target="_blank" class="msg-file-link">
                     <i class="fa-solid fa-file-arrow-down"></i>
                     <span>Download file</span>
                   </a>

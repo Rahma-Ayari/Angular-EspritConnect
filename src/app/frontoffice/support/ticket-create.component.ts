@@ -48,7 +48,7 @@ export class TicketCreateComponent implements OnInit {
       this.isUploading = true;
       this.supportService.uploadFile(file).subscribe({
         next: (res) => {
-          this.attachmentUrl = this.supportService.resolveFileUrl(res.url);
+          this.attachmentUrl = res.url;
           this.isUploading = false;
         },
         error: (err) => {

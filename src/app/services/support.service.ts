@@ -30,8 +30,30 @@ export class SupportService {
 
   resolveFileUrl(path: string): string {
     if (!path) return path;
-    if (path.startsWith('http')) return path;
-    return `${environment.apiUrl}${path.startsWith('/') ? '' : '/'}${path}`;
+    const relative = this.normalizeAttachmentPath(path);
+    return `${environment.backendBaseUrl}${relative}`;
+  }
+
+  /** Canonical relative path: /api/front/support/files/{filename} */
+  private normalizeAttachmentPath(path: string): string {
+    let p = path.trim();
+
+    if (p.includes('://')) {
+      p = p.replace(/^https?:\/\/[^/]+/, '');
+    }
+    if (p.startsWith('/espritconnect')) {
+      p = p.slice('/espritconnect'.length);
+    }
+    while (p.includes('/api/api/')) {
+      p = p.replace('/api/api/', '/api/');
+    }
+
+    const match = p.match(/support\/files\/(.+)$/);
+    if (match) {
+      return `/api/front/support/files/${match[1]}`;
+    }
+
+    return p.startsWith('/') ? p : `/${p}`;
   }
 
   // --- Frontoffice: tickets ---

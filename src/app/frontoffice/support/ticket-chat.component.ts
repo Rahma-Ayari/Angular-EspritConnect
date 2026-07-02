@@ -3,8 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { SupportService } from '../../services/support.service';
 import { SupportTicket, TicketMessage, TicketStatus } from '../../models/support.model';
 import { Subscription, interval } from 'rxjs';
-import { environment } from '../../../environments/environment';
-
 @Component({
   selector: 'app-ticket-chat',
   templateUrl: './ticket-chat.component.html',
@@ -25,8 +23,6 @@ export class TicketChatComponent implements OnInit, OnDestroy {
   uploadedAttachmentUrl: string | null = null;
   isUploading: boolean = false;
   uploadError: string | null = null;
-  readonly BASE_URL = environment.backendBaseUrl;
-
   constructor(
     private route: ActivatedRoute,
     private supportService: SupportService
@@ -145,6 +141,10 @@ export class TicketChatComponent implements OnInit, OnDestroy {
       this.clearAttachment();
       this.loadMessages();
     });
+  }
+
+  fileUrl(path: string): string {
+    return this.supportService.resolveFileUrl(path);
   }
 
   isImageUrl(url: string): boolean {

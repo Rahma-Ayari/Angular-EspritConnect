@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SupportService } from '../../services/support.service';
 import { SupportTicket, TicketMessage, TicketStatus } from '../../models/support.model';
-import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-admin-ticket-detail',
@@ -26,7 +25,6 @@ export class AdminTicketDetailComponent implements OnInit {
   uploadedAttachmentUrl: string | null = null;
   isUploading: boolean = false;
   uploadError: string | null = null;
-  readonly BASE_URL = environment.backendBaseUrl;
 
   constructor(
     private route: ActivatedRoute,
@@ -147,6 +145,10 @@ export class AdminTicketDetailComponent implements OnInit {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     });
+  }
+
+  fileUrl(path: string): string {
+    return this.supportService.resolveFileUrl(path);
   }
 
   isImageUrl(url: string): boolean {
