@@ -18,7 +18,10 @@
   width: 72px;
 }
 
-.user-sidebar.collapsed .brand-logo-text,
+.user-sidebar.collapsed .brand-logo-image {
+  height: 28px;
+}
+
 .user-sidebar.collapsed .nav-label,
 .user-sidebar.collapsed .user-meta {
   opacity: 0;
@@ -42,6 +45,14 @@
   padding: 20px 16px;
   border-bottom: 1px solid #f3f4f6;
   min-height: 64px;
+}
+
+.brand-logo-image {
+  height: 36px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+  transition: height 0.3s ease;
 }
 
 .brand-mark {

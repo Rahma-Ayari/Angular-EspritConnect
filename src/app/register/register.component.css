@@ -168,6 +168,13 @@
   background: rgba(255, 255, 255, 0.15);
 }
 
+.brand-logo-img {
+  height: 36px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
 .brand-logo span {
   color: white;
   font-family: 'Outfit', sans-serif;
