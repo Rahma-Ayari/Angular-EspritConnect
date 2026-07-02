@@ -17,7 +17,7 @@ import { ResetPasswordComponent } from './login/reset-password/reset-password.co
 import { ProfileComponent } from './profile/profile.component';
 import { SharedLayoutModule } from './shared/shared-layout.module';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
-import { GoogleLoginProvider, SocialLoginModule, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
+import { GoogleLoginProvider, SocialLoginModule, GoogleSigninButtonModule, SOCIAL_AUTH_CONFIG } from '@abacritt/angularx-social-login';
 import type { SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
 
 import { ActivityDigestModule } from './features/activity-digest/activity-digest.module';
@@ -100,7 +100,7 @@ import { CaptchaComponent } from './shared/captcha/captcha.component';
     provideHttpClient(withFetch(), withInterceptorsFromDi()),
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     {
-      provide: 'SocialAuthServiceConfig',
+      provide: SOCIAL_AUTH_CONFIG,
       useValue: {
         autoLogin: false,
         providers: [
